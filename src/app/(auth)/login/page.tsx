@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-// import { useAuth } from "@/contexts/Auth";
-import { useAuth } from "../../../contexts/Auth";
+import { useAuth } from "@/contexts/Auth";
+// import { useAuth } from "../../../contexts/Auth";
 
 type IMode = "login" | "verify";
 
