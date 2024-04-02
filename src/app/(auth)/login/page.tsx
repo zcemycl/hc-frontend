@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/contexts/Auth";
+// import { useAuth } from "@/contexts/Auth";
+import { useAuth } from "../../../contexts/Auth";
 
 type IMode = "login" | "verify";
 
@@ -40,6 +41,7 @@ export default function Login() {
     if (isAuthenticated) {
       router.push("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -85,6 +87,7 @@ export default function Login() {
       }
     }
     respondAuthChallege(urlCode, urlEmail, isAuthenticated);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlCode, urlEmail, isAuthenticated, mode]);
 
   return (
