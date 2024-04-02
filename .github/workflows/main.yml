@@ -1,0 +1,23 @@
+name: Next CI
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+env:
+  node_version: 20
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: $node_version
+
+      - run: npm install
+      - run: |
+          npm run lint
+          npm run prettier:lint
