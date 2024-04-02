@@ -4,7 +4,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+COPY .husky/install.mjs ./.husky/
+RUN npm ci --production
 
 FROM base AS builder
 WORKDIR /app

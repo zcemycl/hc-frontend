@@ -1,0 +1,13 @@
+version: "3.9"
+networks:
+  net:
+    driver: bridge
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4556:3000
+    networks:
+      - net
