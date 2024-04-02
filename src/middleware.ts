@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
         success: false,
         message: "authentication failed -- unsupported token type",
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
   // validate jwk
@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
         success: false,
         message: "authentication failed -- unsupported jwk.",
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
   const pem = jwkToPem(jwk[0]);
@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
         success: false,
         message: `authentication failed -- ${e}.`,
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
 

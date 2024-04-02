@@ -46,10 +46,10 @@ export default function Login() {
     async function respondAuthChallege(
       urlCode: string,
       urlEmail: string,
-      isAuthenticated: boolean
+      isAuthenticated: boolean,
     ) {
       const cognito_user = JSON.parse(
-        localStorage.getItem("cognito_user") as string
+        localStorage.getItem("cognito_user") as string,
       );
       if (
         urlCode &&
@@ -63,7 +63,7 @@ export default function Login() {
         const resp = await answerCustomChallenge(
           sessionLoginId,
           urlCode,
-          urlEmail
+          urlEmail,
         );
         setMode("login");
         localStorage.setItem("mode", "login");

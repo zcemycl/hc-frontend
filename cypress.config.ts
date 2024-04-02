@@ -7,14 +7,14 @@ import { JSDOM } from "jsdom";
 
 async function get_login_link() {
   const credentials = JSON.parse(
-    fs.readFileSync(process.env.TEST_CYPRESS_GMAIL_CRED as string, "utf-8")
+    fs.readFileSync(process.env.TEST_CYPRESS_GMAIL_CRED as string, "utf-8"),
   );
 
   console.log(credentials);
   const auth = new google.auth.OAuth2(
     credentials.web.client_id,
     credentials.web.client_secret,
-    process.env.TEST_CYPRESS_GMAIL_API_REDIRECT_URI as string
+    process.env.TEST_CYPRESS_GMAIL_API_REDIRECT_URI as string,
   );
   auth.setCredentials({
     access_token: process.env.TEST_CYPRESS_GMAIL_ACCESS_TOKE as string,

@@ -18,12 +18,12 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
       }
     };
     window.addEventListener("mousedown", (e: Event) =>
-      handleOutSideSideBarClick(e)
+      handleOutSideSideBarClick(e),
     );
 
     return () => {
       window.removeEventListener("mousedown", (e: Event) =>
-        handleOutSideSideBarClick(e)
+        handleOutSideSideBarClick(e),
       );
     };
   }, [refSideBar]);

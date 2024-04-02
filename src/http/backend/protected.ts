@@ -17,7 +17,7 @@ export async function fetchProtected(token: string) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
   return response;
 }

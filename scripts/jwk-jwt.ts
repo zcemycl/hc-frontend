@@ -15,7 +15,7 @@ interface IOpenIdConf {
 
 async function fetchOpenIdConfig() {
   const resp = await fetch(
-    "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_gFjtuKT7J/.well-known/openid-configuration"
+    "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_gFjtuKT7J/.well-known/openid-configuration",
   );
   const res: IOpenIdConf = await resp.json();
   console.log(res);

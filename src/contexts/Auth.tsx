@@ -49,7 +49,7 @@ interface AuthContextType {
   answerCustomChallenge: (
     sessionId: string,
     code: string,
-    email: string
+    email: string,
   ) => Promise<RespondToAuthChallengeResponse>;
   amplifySignIn: (email: string) => {};
   amplifyConfirmSignIn: (email: string, code: string) => {};
@@ -67,7 +67,7 @@ export const AuthContext = createContext<AuthContextType>({
   answerCustomChallenge: function (
     sessionId: string,
     code: string,
-    email: string
+    email: string,
   ): Promise<RespondToAuthChallengeResponse> {
     throw new Error("Function not implemented.");
   },
@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   async function answerCustomChallenge(
     sessionId: string,
     code: string,
-    email: string
+    email: string,
   ) {
     const params: RespondToAuthChallengeRequest = {
       ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,

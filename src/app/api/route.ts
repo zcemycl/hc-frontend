@@ -8,6 +8,6 @@ export async function GET(request: Request) {
 
   return NextResponse.json(
     { id, username: identity.username },
-    { status: 200 }
+    { status: 200 },
   );
 }

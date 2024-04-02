@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "prettier:lint": "prettier --check .",
+    "prettier:format": "prettier --write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.0.21",
@@ -25,6 +28,17 @@
     "react-dom": "^18",
     "sharp": "^0.33.2"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*": [
+      "npm run prettier:format",
+      "git add"
+    ]
+  },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
     "@types/jwk-to-pem": "^2.0.3",
@@ -37,6 +51,7 @@
     "eslint-config-next": "14.1.4",
     "eslint-config-prettier": "^9.1.0",
     "googleapis": "^134.0.0",
+    "husky": "^9.0.11",
     "jsdom": "^24.0.0",
     "postcss": "^8",
     "prettier": "^3.2.5",

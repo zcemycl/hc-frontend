@@ -100,12 +100,12 @@ export default function NavBar() {
     };
 
     window.addEventListener("mousedown", (e: Event) =>
-      handleOutSideDropDownClick(e)
+      handleOutSideDropDownClick(e),
     );
 
     return () => {
       window.removeEventListener("mousedown", (e: Event) =>
-        handleOutSideDropDownClick(e)
+        handleOutSideDropDownClick(e),
       );
     };
   }, [refDropDown, refMenuBtn]);
