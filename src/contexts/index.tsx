@@ -1,2 +1,2 @@
-export { useAuth, AuthProvider, ProtectedRoute } from "@/contexts/Auth";
-export { useOpenBar, OpenBarProvider } from "@/contexts/OpenBar";
+export { useAuth, AuthProvider, ProtectedRoute } from "./Auth";
+export { useOpenBar, OpenBarProvider } from "./OpenBar";
