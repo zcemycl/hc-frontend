@@ -32,6 +32,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{env.node_version}}
+
+      - name: create .env.local file
+        run: |
+          touch .env.local
+          echo NEXT_PUBLIC_AWS_REGION=${{ secrets.NEXT_PUBLIC_AWS_REGION }} >> .env.local
+          echo NEXT_PUBLIC_AWS_COGNITO_USERPOOL_ID=${{ secrets.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_ID }} >> .env.local
+          echo NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID=${{ secrets.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID }} >> .env.local
+          echo NEXT_PUBLIC_AWS_ACCESS_KEY_ID=${{ secrets.NEXT_PUBLIC_AWS_ACCESS_KEY_ID }} >> .env.local
+          echo NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=${{ secrets.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY }} >> .env.local
+          echo NEXT_PUBLIC_ENV_NAME=${{ secrets.NEXT_PUBLIC_ENV_NAME }} >> .env.local
+          echo NEXT_PUBLIC_COGNITO_OPENID_CONF_URI=${{ secrets.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI }} >> .env.local
+          echo NEXT_PUBLIC_BACKEND_BASE_URL=${{ secrets.NEXT_PUBLIC_BACKEND_BASE_URL }} >> .env.local
+          echo NEXT_PUBLIC_DOMAIN_NAME=${{ secrets.NEXT_PUBLIC_DOMAIN_NAME }} >> .env.local
+          echo NEXT_PUBLIC_ADMIN_EMAIL=${{ secrets.NEXT_PUBLIC_ADMIN_EMAIL }} >> .env.local
+
       - run: |
           export HUSKY=0
           npm install --production

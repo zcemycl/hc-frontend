@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Environment Variables
+
+- `.env` for running `scripts` and `npm run dev`.
+- `.env.local` for running `npm run dev` locally.
+- `.env.sample` specifies what you need to setup.
+- `.env.production` for running in Dockerfile to push to ecr.
+
 ## Getting Started
 
 First, run the development server:
