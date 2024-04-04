@@ -9,8 +9,7 @@
     "lint": "next lint",
     "cypress:open": "cypress open",
     "prettier:lint": "prettier --check .",
-    "prettier:format": "prettier --write .",
-    "prepare": "node .husky/install.mjs"
+    "prettier:format": "prettier --write ."
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.0.21",
