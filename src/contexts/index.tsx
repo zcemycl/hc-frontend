@@ -1,2 +1,2 @@
-export { useAuth, AuthProvider, ProtectedRoute } from "./Auth";
-export { useOpenBar, OpenBarProvider } from "./OpenBar";
+export { useAuth, AuthProvider, ProtectedRoute } from "./auth";
+export { useOpenBar, OpenBarProvider } from "./openbar";

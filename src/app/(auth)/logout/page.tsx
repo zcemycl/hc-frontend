@@ -1,6 +1,6 @@
 "use client";
-// import { useAuth, useOpenBar } from "@/contexts";
-import { useAuth, useOpenBar } from "../../../contexts";
+import { useAuth, useOpenBar } from "@/contexts";
+// import { useAuth, useOpenBar } from "../../../contexts";
 import { useEffect } from "react";
 export default function Logout() {
   const { setIsAuthenticated, setCredentials } = useAuth();
