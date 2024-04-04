@@ -47,5 +47,5 @@ jobs:
           echo NEXT_PUBLIC_DOMAIN_NAME=${{ secrets.NEXT_PUBLIC_DOMAIN_NAME }} >> .env.local
           echo NEXT_PUBLIC_ADMIN_EMAIL=${{ secrets.NEXT_PUBLIC_ADMIN_EMAIL }} >> .env.local
 
-      - run: npm ci
+      - run: npm ci --production
       - run: npm run build
