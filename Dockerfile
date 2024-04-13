@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json* ./
 COPY .husky/install.mjs ./.husky/
-RUN npm ci --production
+RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
