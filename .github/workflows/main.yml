@@ -49,3 +49,23 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+
+      - name: Setup AWS ECR Details
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.NEXT_PUBLIC_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{secrets.NEXT_PUBLIC_AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-pf-aws-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push the tagged docker image to Amazon ECR
+        env:
+          ECR_REGISTRY: 312958015255.dkr.ecr.eu-west-2.amazonaws.com
+          ECR_REPOSITORY: hc-platform-main-next-app-image
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
