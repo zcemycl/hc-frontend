@@ -3,3 +3,4 @@ Dockerfile*
 *.md
 *.dockerignore
 scripts
+!public
