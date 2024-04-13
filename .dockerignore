@@ -1,6 +1,0 @@
-Dockerfile*
-.gitignore
-*.md
-*.dockerignore
-scripts
-!public
