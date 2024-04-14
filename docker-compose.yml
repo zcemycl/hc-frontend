@@ -8,6 +8,6 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 4556:3000
+      - 4556:8080
     networks:
       - net
