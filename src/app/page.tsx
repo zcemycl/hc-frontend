@@ -51,6 +51,7 @@ export default function Home() {
   async function handleSubmitRequestForm() {
     let config: SESClientConfig = {
       region: process.env.NEXT_PUBLIC_AWS_REGION as string,
+      credentials: () => Promise.resolve({} as any),
     };
     if (process.env.NEXT_PUBLIC_ENV_NAME === "local") {
       config = {
