@@ -1,4 +1,5 @@
 export async function fetchRoot() {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}`, {
     method: "GET",
     headers: {
@@ -10,6 +11,7 @@ export async function fetchRoot() {
 }
 
 export async function fetchProtected(token: string) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected`,
     {
