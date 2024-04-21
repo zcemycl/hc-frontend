@@ -111,8 +111,7 @@ export default function Home() {
         redirect("/logout");
       }
       const res = await resp.json();
-      const resp2 = await fetchProtected(credJson.AccessToken);
-      const res2 = await resp2.json();
+      const res2 = await fetchProtected(credJson.AccessToken);
       setData(res);
       setData2(res2);
       setIsLoading(false);
