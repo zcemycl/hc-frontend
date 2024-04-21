@@ -1,3 +1,5 @@
+"use server";
+
 export async function fetchRoot() {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}`, {
