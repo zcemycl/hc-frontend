@@ -93,6 +93,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
   useEffect(() => {
+    if (localStorage.getItem("credentials")) return;
     const credJson = JSON.parse(localStorage.getItem("credentials") as string);
     const expireAt = parseFloat(localStorage.getItem("expireAt") as string);
     if (new Date().getTime() / 1000 < expireAt && "AccessToken" in credJson) {

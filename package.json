@@ -17,6 +17,7 @@
     "@aws-sdk/client-cognito-identity": "^3.540.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.540.0",
     "@aws-sdk/client-ses": "^3.540.0",
+    "@nextui-org/dropdown": "^2.1.23",
     "aws-amplify": "^6.0.21",
     "dotenv": "^16.4.5",
     "jose": "^5.2.3",
