@@ -8,7 +8,7 @@ import {
   fetchFdalabelByTradename,
 } from "@/http/backend/protected";
 
-export const queryTypeMap = [
+const queryTypeMap = [
   {
     queryType: "setid",
     queryDisplayName: "Set ID",
