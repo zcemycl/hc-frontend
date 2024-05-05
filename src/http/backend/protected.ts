@@ -58,3 +58,21 @@ export async function fetchFdalabelByTradename(
   const res = await response.json();
   return res;
 }
+
+export async function fetchFdalabelByIndication(
+  indication: string,
+  token: string,
+) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_indication?indication=${indication}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  const res = await response.json();
+  return res;
+}

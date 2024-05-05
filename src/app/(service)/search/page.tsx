@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { redirect } from "next/navigation";
 import {
+  fetchFdalabelByIndication,
   fetchFdalabelBySetid,
   fetchFdalabelByTradename,
 } from "@/http/backend/protected";
@@ -44,6 +45,7 @@ export default function Search() {
   const [queryType, setQueryType] = useState("setid");
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
+  const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, credentials } = useAuth();
   useEffect(() => {
     console.log("search...");
@@ -119,6 +121,7 @@ export default function Search() {
               data-testid="search-btn"
               onClick={async (e) => {
                 e.preventDefault();
+                setDisplayDataIndex(null);
                 let res, resp;
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
@@ -131,6 +134,7 @@ export default function Search() {
                     credJson.AccessToken,
                   );
                   setDisplayData([resp]);
+                  setDisplayDataIndex(0);
                   console.log(resp);
                 } else if (queryType === "tradename") {
                   resp = await fetchFdalabelByTradename(
@@ -138,8 +142,15 @@ export default function Search() {
                     credJson.AccessToken,
                   );
                   setDisplayData([resp]);
+                  setDisplayDataIndex(0);
                   console.log(resp);
                 } else if (queryType === "indication") {
+                  resp = await fetchFdalabelByIndication(
+                    query,
+                    credJson.AccessToken,
+                  );
+                  setDisplayData(resp);
+                  console.log(resp);
                 }
               }}
               className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
@@ -148,15 +159,29 @@ export default function Search() {
             </button>
           </div>
           {displayData.length > 0 &&
-            displayData.map((each) => {
+            displayDataIndex != null &&
+            [displayData[displayDataIndex]].map((each) => {
               return (
                 <div
                   className="sm:w-1/2 flex flex-col w-screen p-10"
                   key={each.setid}
                 >
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    {each.tradename}
-                  </h2>
+                  <div className="flex justify-between">
+                    <h2 className="text-white text-lg mb-1 font-medium title-font">
+                      {each.tradename}
+                    </h2>
+                    {displayData.length > 1 && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDisplayDataIndex(null);
+                        }}
+                      >
+                        Back
+                      </button>
+                    )}
+                  </div>
+
                   <h2 className="text-white text-lg mb-1 font-medium title-font">
                     {each.setid}
                   </h2>
@@ -196,6 +221,36 @@ export default function Search() {
                       </table>
                     );
                   })}
+                </div>
+              );
+            })}
+          {displayData.length > 0 &&
+            displayDataIndex === null &&
+            displayData.map((each, idx) => {
+              return (
+                <div
+                  className="sm:w-1/2 flex flex-col w-screen p-10"
+                  key={each.setid}
+                >
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    {each.tradename}
+                  </h2>
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    {each.setid}
+                  </h2>
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    INDICATIONS AND USAGE
+                  </h2>
+                  <p>{each.indication}</p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDisplayDataIndex(idx);
+                    }}
+                  >
+                    View more...
+                  </button>
+                  <hr />
                 </div>
               );
             })}
