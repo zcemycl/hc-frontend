@@ -1,6 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ProtectedRoute } from "@/contexts";
+import { ProtectedRoute, useAuth } from "@/contexts";
+import { redirect } from "next/navigation";
+import {
+  fetchFdalabelBySetid,
+  fetchFdalabelByTradename,
+} from "@/http/backend/protected";
 
 export const queryTypeMap = [
   {
@@ -17,16 +22,35 @@ export const queryTypeMap = [
   },
 ];
 
+interface IAdverseEffectTable {
+  table: string[][];
+}
+
+interface IFdaLabel {
+  id?: number;
+  setid?: string;
+  tradename: string;
+  indication?: string;
+  pdf_link?: string;
+  xml_link?: string;
+  s3_bucket?: string;
+  s3_key?: string;
+  spl_effective_date: number;
+  adverse_effect_tables?: IAdverseEffectTable[];
+}
+
 export default function Search() {
   const [query, setQuery] = useState("");
   const [queryType, setQueryType] = useState("setid");
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
+  const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
+  const { setIsAuthenticated, credentials } = useAuth();
   useEffect(() => {
     console.log("search...");
   }, []);
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
+      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll">
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
             <h2 className="text-white text-lg mb-1 font-medium title-font">
@@ -95,12 +119,86 @@ export default function Search() {
               data-testid="search-btn"
               onClick={async (e) => {
                 e.preventDefault();
+                let res, resp;
+                if (credentials.length === 0) {
+                  setIsAuthenticated(false);
+                  redirect("/logout");
+                }
+                const credJson = JSON.parse(credentials);
+                if (queryType === "setid") {
+                  resp = await fetchFdalabelBySetid(
+                    query,
+                    credJson.AccessToken,
+                  );
+                  setDisplayData([resp]);
+                  console.log(resp);
+                } else if (queryType === "tradename") {
+                  resp = await fetchFdalabelByTradename(
+                    query,
+                    credJson.AccessToken,
+                  );
+                  setDisplayData([resp]);
+                  console.log(resp);
+                } else if (queryType === "indication") {
+                }
               }}
               className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
             >
               Submit
             </button>
           </div>
+          {displayData.length > 0 &&
+            displayData.map((each) => {
+              return (
+                <div
+                  className="sm:w-1/2 flex flex-col w-screen p-10"
+                  key={each.setid}
+                >
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    {each.tradename}
+                  </h2>
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    {each.setid}
+                  </h2>
+                  <p className="leading-relaxed">
+                    XML source:{" "}
+                    <a href={each.xml_link} target="_blank">
+                      {each.xml_link}
+                    </a>
+                  </p>
+                  <p className="leading-relaxed">
+                    Download pdf:{" "}
+                    <a href={each.pdf_link} target="_blank">
+                      {each.pdf_link}
+                    </a>
+                  </p>
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    INDICATIONS AND USAGE
+                  </h2>
+                  <p>{each.indication}</p>
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    ADVERSSE REACTIONS
+                  </h2>
+                  {each.adverse_effect_tables!.map((tabledata, tableid) => {
+                    return (
+                      <table key={tableid}>
+                        <tbody>
+                          {tabledata.table.map((tablerow, rowid) => {
+                            return (
+                              <tr key={rowid}>
+                                {tablerow.map((tdata, dataid) => {
+                                  return <td key={dataid}>{tdata}</td>;
+                                })}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    );
+                  })}
+                </div>
+              );
+            })}
         </div>
       </section>
     </ProtectedRoute>
