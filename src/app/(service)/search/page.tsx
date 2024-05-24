@@ -178,7 +178,7 @@ export default function Search() {
             [displayData[displayDataIndex]].map((each) => {
               return (
                 <div
-                  className="sm:w-1/2 flex flex-col w-screen p-10"
+                  className="sm:w-1/2 flex flex-col w-screen"
                   key={each.setid}
                 >
                   <div className="flex justify-between">
@@ -241,7 +241,25 @@ export default function Search() {
                       </>
                     );
                   })}
-                  <p>{each.indication}</p>
+                  {each.drug_interactions!.length > 0 && (
+                    <h2 className="text-white text-lg mb-1 font-medium title-font">
+                      DRUG INTERACTIONS
+                    </h2>
+                  )}
+                  {each.drug_interactions!.map((contentdata, contentid) => {
+                    if (contentdata.tag === "title") {
+                      return (
+                        <h3
+                          key={contentid}
+                          className="text-white text-lg mb-1 font-medium title-font"
+                        >
+                          {contentdata.content}
+                        </h3>
+                      );
+                    } else if (contentdata.tag === "content") {
+                      return <p key={contentid}>{contentdata.content}</p>;
+                    }
+                  })}
                   {each.clinical_trial_tables!.length > 0 && (
                     <h2 className="text-white text-lg mb-1 font-medium title-font">
                       CLINICAL TRIALS
