@@ -27,6 +27,19 @@ interface IAdverseEffectTable {
   table: string[][];
 }
 
+interface IClinicalTrialTable {
+  id: number;
+  s3_bucket?: string;
+  s3_key?: string;
+  content: { table: string[][] };
+}
+
+interface IDrugInteraction {
+  content: string;
+  id: number;
+  tag: string;
+}
+
 interface IFdaLabel {
   id?: number;
   setid?: string;
@@ -38,6 +51,8 @@ interface IFdaLabel {
   s3_key?: string;
   spl_effective_date: number;
   adverse_effect_tables?: IAdverseEffectTable[];
+  clinical_trial_tables?: IClinicalTrialTable[];
+  drug_interactions?: IDrugInteraction[];
 }
 
 export default function Search() {
@@ -201,24 +216,55 @@ export default function Search() {
                     INDICATIONS AND USAGE
                   </h2>
                   <p>{each.indication}</p>
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    ADVERSSE REACTIONS
-                  </h2>
+                  {each.adverse_effect_tables!.length > 0 && (
+                    <h2 className="text-white text-lg mb-1 font-medium title-font">
+                      ADVERSSE REACTIONS
+                    </h2>
+                  )}
                   {each.adverse_effect_tables!.map((tabledata, tableid) => {
                     return (
-                      <table key={tableid}>
-                        <tbody>
-                          {tabledata.table.map((tablerow, rowid) => {
-                            return (
-                              <tr key={rowid}>
-                                {tablerow.map((tdata, dataid) => {
-                                  return <td key={dataid}>{tdata}</td>;
-                                })}
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                      <>
+                        <table key={tableid}>
+                          <tbody>
+                            {tabledata.table.map((tablerow, rowid) => {
+                              return (
+                                <tr key={rowid}>
+                                  {tablerow.map((tdata, dataid) => {
+                                    return <td key={dataid}>{tdata}</td>;
+                                  })}
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                        <hr />
+                      </>
+                    );
+                  })}
+                  <p>{each.indication}</p>
+                  {each.clinical_trial_tables!.length > 0 && (
+                    <h2 className="text-white text-lg mb-1 font-medium title-font">
+                      CLINICAL TRIALS
+                    </h2>
+                  )}
+                  {each.clinical_trial_tables!.map((tabledata, tableid) => {
+                    return (
+                      <>
+                        <table key={tableid}>
+                          <tbody>
+                            {tabledata.content.table.map((tablerow, rowid) => {
+                              return (
+                                <tr key={rowid}>
+                                  {tablerow.map((tdata, dataid) => {
+                                    return <td key={dataid}>{tdata}</td>;
+                                  })}
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                        <hr />
+                      </>
                     );
                   })}
                 </div>
