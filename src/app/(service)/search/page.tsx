@@ -24,7 +24,7 @@ const queryTypeMap = [
 ];
 
 interface IAdverseEffectTable {
-  table: string[][];
+  content: { table: string[][] };
 }
 
 interface IClinicalTrialTable {
@@ -45,11 +45,13 @@ interface IFdaLabel {
   setid?: string;
   tradename: string;
   indication?: string;
+  manufacturer?: string;
   pdf_link?: string;
   xml_link?: string;
   s3_bucket?: string;
   s3_key?: string;
-  spl_effective_date: number;
+  spl_effective_date: string;
+  spl_earliest_date: string;
   adverse_effect_tables?: IAdverseEffectTable[];
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
@@ -175,12 +177,9 @@ export default function Search() {
           </div>
           {displayData.length > 0 &&
             displayDataIndex != null &&
-            [displayData[displayDataIndex]].map((each) => {
+            [displayData[displayDataIndex]].map((each, idx) => {
               return (
-                <div
-                  className="sm:w-1/2 flex flex-col w-screen"
-                  key={each.setid}
-                >
+                <div className="sm:w-1/2 flex flex-col w-screen" key={idx}>
                   <div className="flex justify-between">
                     <h2 className="text-white text-lg mb-1 font-medium title-font">
                       {each.tradename}
@@ -199,6 +198,13 @@ export default function Search() {
 
                   <h2 className="text-white text-lg mb-1 font-medium title-font">
                     {each.setid}
+                  </h2>
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    {new Date(each.spl_earliest_date).toLocaleDateString()} -{" "}
+                    {new Date(each.spl_effective_date).toLocaleDateString()}
+                  </h2>
+                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                    {each.manufacturer}
                   </h2>
                   <p className="leading-relaxed">
                     XML source:{" "}
@@ -226,15 +232,17 @@ export default function Search() {
                       <>
                         <table key={tableid}>
                           <tbody>
-                            {tabledata.table.map((tablerow, rowid) => {
-                              return (
-                                <tr key={rowid}>
-                                  {tablerow.map((tdata, dataid) => {
-                                    return <td key={dataid}>{tdata}</td>;
-                                  })}
-                                </tr>
-                              );
-                            })}
+                            {tabledata!.content.table!.map(
+                              (tablerow, rowid) => {
+                                return (
+                                  <tr key={rowid}>
+                                    {tablerow.map((tdata, dataid) => {
+                                      return <td key={dataid}>{tdata}</td>;
+                                    })}
+                                  </tr>
+                                );
+                              },
+                            )}
                           </tbody>
                         </table>
                         <hr />
@@ -292,10 +300,7 @@ export default function Search() {
             displayDataIndex === null &&
             displayData.map((each, idx) => {
               return (
-                <div
-                  className="sm:w-1/2 flex flex-col w-screen p-10"
-                  key={each.setid}
-                >
+                <div className="sm:w-1/2 flex flex-col w-screen p-10" key={idx}>
                   <h2 className="text-white text-lg mb-1 font-medium title-font">
                     {each.tradename}
                   </h2>
