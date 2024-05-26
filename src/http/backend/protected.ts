@@ -76,3 +76,21 @@ export async function fetchFdalabelByIndication(
   const res = await response.json();
   return res;
 }
+
+export async function fetchFdalabelHistoryBySetid(
+  setid: string,
+  token: string,
+) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabel/history/${setid}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  const res = await response.json();
+  return res;
+}

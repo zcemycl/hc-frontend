@@ -6,6 +6,7 @@ import {
   fetchFdalabelByIndication,
   fetchFdalabelBySetid,
   fetchFdalabelByTradename,
+  fetchFdalabelHistoryBySetid,
 } from "@/http/backend/protected";
 
 const queryTypeMap = [
@@ -57,16 +58,47 @@ interface IFdaLabel {
   drug_interactions?: IDrugInteraction[];
 }
 
+interface IFdaLabelHistory {
+  setids?: string[];
+  manufacturers?: string[];
+  spl_earliest_dates?: string[];
+  spl_effective_dates?: string[];
+}
+
 export default function Search() {
   const [query, setQuery] = useState("");
   const [queryType, setQueryType] = useState("setid");
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
+  const [displayHistoryData, setDisplayHistoryData] =
+    useState<IFdaLabelHistory>({});
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, credentials } = useAuth();
   useEffect(() => {
     console.log("search...");
   }, []);
+
+  useEffect(() => {
+    let resp;
+    if (credentials.length === 0) {
+      setIsAuthenticated(false);
+      redirect("/logout");
+    }
+    async function getData(credentials: string) {
+      const credJson = JSON.parse(credentials);
+      resp = await fetchFdalabelHistoryBySetid(
+        displayData[displayDataIndex as number].setid as string,
+        credJson.AccessToken,
+      );
+      setDisplayHistoryData(resp);
+      console.log(resp);
+    }
+    if (displayDataIndex != null) {
+      getData(credentials);
+    } else setDisplayHistoryData({});
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayDataIndex]);
   return (
     <ProtectedRoute>
       <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll">
@@ -218,6 +250,49 @@ export default function Search() {
                       {each.pdf_link}
                     </a>
                   </p>
+                  {displayDataIndex != null &&
+                    displayHistoryData!.setids &&
+                    displayHistoryData!.setids!.length > 1 && (
+                      <>
+                        <h2 className="text-white text-lg mb-1 font-medium title-font">
+                          HISTORY
+                        </h2>
+                        <table>
+                          <tbody>
+                            <tr>
+                              <th>Set ID</th>
+                              <th>Manufacturer</th>
+                              <th>SPL Earliest Date</th>
+                              <th>SPL Effective Date</th>
+                            </tr>
+                            {displayHistoryData.setids.map((setid, idx) => {
+                              return (
+                                <tr key={idx}>
+                                  <td>{setid}</td>
+                                  <td>
+                                    {displayHistoryData.manufacturers![idx]}
+                                  </td>
+                                  <td>
+                                    {new Date(
+                                      displayHistoryData.spl_earliest_dates![
+                                        idx
+                                      ],
+                                    ).toLocaleDateString()}
+                                  </td>
+                                  <td>
+                                    {new Date(
+                                      displayHistoryData.spl_effective_dates![
+                                        idx
+                                      ],
+                                    ).toLocaleDateString()}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </>
+                    )}
                   <h2 className="text-white text-lg mb-1 font-medium title-font">
                     INDICATIONS AND USAGE
                   </h2>
