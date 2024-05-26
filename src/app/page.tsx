@@ -12,10 +12,8 @@ import {
 } from "@aws-sdk/client-ses";
 import { useRouter } from "next/navigation";
 
-// import { fetchProtected } from "@/http/backend/protected";
-// import { fetchApiRoot } from "@/http/internal";
-import { fetchProtected } from "../http/backend/protected";
-import { fetchApiRoot } from "../http/internal";
+import { fetchProtected } from "@/http/backend/protected";
+import { fetchApiRoot } from "@/http/internal";
 
 interface IData {
   success?: boolean;
