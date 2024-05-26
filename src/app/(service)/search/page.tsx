@@ -10,6 +10,7 @@ import {
 } from "@/http/backend/protected";
 import { queryTypeMap } from "@/constants/search-query-type";
 import { IFdaLabel, IFdaLabelHistory } from "@/types/fdalabel";
+import { convert_datetime_to_date } from "@/utils";
 
 export default function Search() {
   const [query, setQuery] = useState("");
@@ -20,9 +21,6 @@ export default function Search() {
     useState<IFdaLabelHistory>({});
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, credentials } = useAuth();
-  useEffect(() => {
-    console.log("search...");
-  }, []);
 
   useEffect(() => {
     let resp;
@@ -178,8 +176,8 @@ export default function Search() {
                     {each.setid}
                   </h2>
                   <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    {new Date(each.spl_earliest_date).toLocaleDateString()} -{" "}
-                    {new Date(each.spl_effective_date).toLocaleDateString()}
+                    {convert_datetime_to_date(each.spl_earliest_date)} -{" "}
+                    {convert_datetime_to_date(each.spl_effective_date)}
                   </h2>
                   <h2 className="text-white text-lg mb-1 font-medium title-font">
                     {each.manufacturer}
@@ -219,18 +217,18 @@ export default function Search() {
                                     {displayHistoryData.manufacturers![idx]}
                                   </td>
                                   <td>
-                                    {new Date(
+                                    {convert_datetime_to_date(
                                       displayHistoryData.spl_earliest_dates![
                                         idx
                                       ],
-                                    ).toLocaleDateString()}
+                                    )}
                                   </td>
                                   <td>
-                                    {new Date(
+                                    {convert_datetime_to_date(
                                       displayHistoryData.spl_effective_dates![
                                         idx
                                       ],
-                                    ).toLocaleDateString()}
+                                    )}
                                   </td>
                                 </tr>
                               );
