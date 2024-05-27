@@ -51,6 +51,7 @@ jobs:
         run: |
           rm cypress.config.ts
           rm -r cypress/
+          rm -r scripts
 
       - name: create .env.local file
         run: |
