@@ -35,6 +35,10 @@ jobs:
         with:
           node-version: ${{env.node_version}}
 
+      - name: remove files for building production
+        run: |
+          rm cypress.config.ts
+
       - name: create .env.local file
         run: |
           touch .env.local
