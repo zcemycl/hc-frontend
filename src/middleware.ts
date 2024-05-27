@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify, importSPKI } from "jose";
-// @ts-ignore
 import jwkToPem from "jwk-to-pem";
 
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;

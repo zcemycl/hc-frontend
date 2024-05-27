@@ -18,6 +18,10 @@
     "jsx": "preserve",
     "incremental": true,
     "rootDir": "./",
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types/"
+    ],
     "plugins": [
       {
         "name": "next"
