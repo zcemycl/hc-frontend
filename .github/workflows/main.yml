@@ -26,9 +26,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    # env:
-    #   NODE_ENV: "production"
-    #   CI: true
+    env:
+      NODE_ENV: "production"
+      CI: true
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
