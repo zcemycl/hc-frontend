@@ -243,7 +243,7 @@ export default function Search() {
                   <p>{each.indication}</p>
                   {each.adverse_effect_tables!.length > 0 && (
                     <h2 className="text-white text-lg mb-1 font-medium title-font">
-                      ADVERSSE REACTIONS
+                      ADVERSE REACTIONS
                     </h2>
                   )}
                   {each.adverse_effect_tables!.map((tabledata, tableid) => {
@@ -320,9 +320,18 @@ export default function Search() {
             displayData.map((each, idx) => {
               return (
                 <div className="sm:w-1/2 flex flex-col w-screen p-10" key={idx}>
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    {each.tradename}
-                  </h2>
+                  <div className="flex justify-between">
+                    <h2 className="text-white text-lg mb-1 font-medium title-font">
+                      {each.tradename}
+                    </h2>
+                    <input
+                      type="checkbox"
+                      onClick={(e) => {
+                        console.log(each.setid);
+                      }}
+                    />
+                  </div>
+
                   <h2 className="text-white text-lg mb-1 font-medium title-font">
                     {each.setid}
                   </h2>
