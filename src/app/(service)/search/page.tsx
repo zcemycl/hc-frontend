@@ -21,6 +21,9 @@ export default function Search() {
     useState<IFdaLabelHistory>({});
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, credentials } = useAuth();
+  const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
+    new Set(),
+  );
 
   useEffect(() => {
     let resp;
@@ -149,6 +152,12 @@ export default function Search() {
               className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
             >
               Submit
+            </button>
+            <button
+              onClick={(e) => console.log(setIdsToCompare)}
+              className="text-black bg-green-600 border-0 py-2 px-6 focus:outline-none hover:bg-green-700 rounded text-lg"
+            >
+              Compare Adverse Effects
             </button>
           </div>
           {displayData.length > 0 &&
@@ -327,7 +336,20 @@ export default function Search() {
                     <input
                       type="checkbox"
                       onClick={(e) => {
-                        console.log(each.setid);
+                        const ischecked = (e.target as HTMLInputElement)
+                          .checked;
+                        if (ischecked) {
+                          setSetIdsToCompare((prev) =>
+                            new Set(prev).add(each.setid as string),
+                          );
+                        } else {
+                          setSetIdsToCompare(
+                            (prev) =>
+                              new Set(
+                                Array.from(prev).filter((x) => x != each.setid),
+                              ),
+                          );
+                        }
                       }}
                     />
                   </div>
