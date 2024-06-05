@@ -94,3 +94,24 @@ export async function fetchFdalabelHistoryBySetid(
   const res = await response.json();
   return res;
 }
+
+export async function fetchFdalabelCompareAdverseEffects(
+  setids: string[],
+  token: string,
+) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabel/compare/adverse-effects/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        setids: setids,
+      }),
+    },
+  );
+  const res = await response.json();
+  return res;
+}

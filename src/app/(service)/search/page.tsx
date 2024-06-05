@@ -7,6 +7,7 @@ import {
   fetchFdalabelBySetid,
   fetchFdalabelByTradename,
   fetchFdalabelHistoryBySetid,
+  fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend/protected";
 import { queryTypeMap } from "@/constants/search-query-type";
 import { IFdaLabel, IFdaLabelHistory } from "@/types/fdalabel";
@@ -154,7 +155,21 @@ export default function Search() {
               Submit
             </button>
             <button
-              onClick={(e) => console.log(setIdsToCompare)}
+              onClick={async (e) => {
+                e.preventDefault();
+                console.log(setIdsToCompare);
+                let res, resp;
+                if (credentials.length === 0) {
+                  setIsAuthenticated(false);
+                  redirect("/logout");
+                }
+                const credJson = JSON.parse(credentials);
+                resp = await fetchFdalabelCompareAdverseEffects(
+                  Array.from(setIdsToCompare),
+                  credJson.AccessToken,
+                );
+                console.log(resp);
+              }}
               className="text-black bg-green-600 border-0 py-2 px-6 focus:outline-none hover:bg-green-700 rounded text-lg"
             >
               Compare Adverse Effects
