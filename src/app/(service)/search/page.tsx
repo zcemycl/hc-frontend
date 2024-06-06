@@ -13,6 +13,10 @@ import { queryTypeMap } from "@/constants/search-query-type";
 import { IFdaLabel, IFdaLabelHistory } from "@/types/fdalabel";
 import { convert_datetime_to_date } from "@/utils";
 
+interface ICompareAETable {
+  table?: string[][];
+}
+
 export default function Search() {
   const [query, setQuery] = useState("");
   const [queryType, setQueryType] = useState("setid");
@@ -25,6 +29,7 @@ export default function Search() {
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
+  const [compareTable, setCompareTable] = useState<ICompareAETable>({});
 
   useEffect(() => {
     let resp;
@@ -168,6 +173,7 @@ export default function Search() {
                   Array.from(setIdsToCompare),
                   credJson.AccessToken,
                 );
+                setCompareTable(resp);
                 console.log(resp);
               }}
               className="text-black bg-green-600 border-0 py-2 px-6 focus:outline-none hover:bg-green-700 rounded text-lg"
@@ -175,6 +181,24 @@ export default function Search() {
               Compare Adverse Effects
             </button>
           </div>
+          {compareTable.table?.length !== 0 && (
+            <>
+              <table>
+                <tbody>
+                  {compareTable.table?.map((tablerow, rowid) => {
+                    return (
+                      <tr key={rowid}>
+                        {tablerow.map((tdata, dataid) => {
+                          return <td key={dataid}>{tdata}</td>;
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </>
+          )}
+
           {displayData.length > 0 &&
             displayDataIndex != null &&
             [displayData[displayDataIndex]].map((each, idx) => {
