@@ -124,6 +124,7 @@ export default function Search() {
               onClick={async (e) => {
                 e.preventDefault();
                 setDisplayDataIndex(null);
+                setSetIdsToCompare(new Set());
                 let res, resp;
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
@@ -404,6 +405,7 @@ export default function Search() {
                     onClick={(e) => {
                       e.preventDefault();
                       setDisplayDataIndex(idx);
+                      setSetIdsToCompare(new Set());
                     }}
                   >
                     View more...
