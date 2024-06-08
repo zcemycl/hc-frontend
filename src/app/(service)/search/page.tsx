@@ -375,6 +375,7 @@ export default function Search() {
                     </h2>
                     <input
                       type="checkbox"
+                      checked={setIdsToCompare.has(each.setid as string)}
                       onClick={(e) => {
                         const ischecked = (e.target as HTMLInputElement)
                           .checked;
