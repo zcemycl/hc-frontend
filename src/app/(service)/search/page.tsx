@@ -184,13 +184,17 @@ export default function Search() {
           </div>
           {compareTable.table?.length !== 0 && (
             <>
-              <table>
+              <table className="border">
                 <tbody>
                   {compareTable.table?.map((tablerow, rowid) => {
                     return (
                       <tr key={rowid}>
                         {tablerow.map((tdata, dataid) => {
-                          return <td key={dataid}>{tdata}</td>;
+                          return (
+                            <td className="border" key={dataid}>
+                              {tdata}
+                            </td>
+                          );
                         })}
                       </tr>
                     );
@@ -253,26 +257,26 @@ export default function Search() {
                         <table>
                           <tbody>
                             <tr>
-                              <th>Set ID</th>
-                              <th>Manufacturer</th>
-                              <th>SPL Earliest Date</th>
-                              <th>SPL Effective Date</th>
+                              <th className="border">Set ID</th>
+                              <th className="border">Manufacturer</th>
+                              <th className="border">SPL Earliest Date</th>
+                              <th className="border">SPL Effective Date</th>
                             </tr>
                             {displayHistoryData.setids.map((setid, idx) => {
                               return (
                                 <tr key={idx}>
-                                  <td>{setid}</td>
-                                  <td>
+                                  <td className="border">{setid}</td>
+                                  <td className="border">
                                     {displayHistoryData.manufacturers![idx]}
                                   </td>
-                                  <td>
+                                  <td className="border">
                                     {convert_datetime_to_date(
                                       displayHistoryData.spl_earliest_dates![
                                         idx
                                       ],
                                     )}
                                   </td>
-                                  <td>
+                                  <td className="border">
                                     {convert_datetime_to_date(
                                       displayHistoryData.spl_effective_dates![
                                         idx
@@ -305,7 +309,11 @@ export default function Search() {
                                 return (
                                   <tr key={rowid}>
                                     {tablerow.map((tdata, dataid) => {
-                                      return <td key={dataid}>{tdata}</td>;
+                                      return (
+                                        <td className="border" key={dataid}>
+                                          {tdata}
+                                        </td>
+                                      );
                                     })}
                                   </tr>
                                 );
@@ -350,7 +358,11 @@ export default function Search() {
                               return (
                                 <tr key={rowid}>
                                   {tablerow.map((tdata, dataid) => {
-                                    return <td key={dataid}>{tdata}</td>;
+                                    return (
+                                      <td className="border" key={dataid}>
+                                        {tdata}
+                                      </td>
+                                    );
                                   })}
                                 </tr>
                               );
