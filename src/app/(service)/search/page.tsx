@@ -138,7 +138,6 @@ export default function Search() {
                   );
                   setDisplayData([resp]);
                   setDisplayDataIndex(0);
-                  console.log(resp);
                 } else if (queryType === "tradename") {
                   resp = await fetchFdalabelByTradename(
                     query,
@@ -146,41 +145,46 @@ export default function Search() {
                   );
                   setDisplayData([resp]);
                   setDisplayDataIndex(0);
-                  console.log(resp);
                 } else if (queryType === "indication") {
                   resp = await fetchFdalabelByIndication(
                     query,
                     credJson.AccessToken,
                   );
                   setDisplayData(resp);
-                  console.log(resp);
+                }
+                console.log(resp);
+                if (resp.detail?.error! === "AUTH_EXPIRED") {
+                  setIsAuthenticated(false);
+                  redirect("/logout");
                 }
               }}
               className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
             >
               Submit
             </button>
-            <button
-              onClick={async (e) => {
-                e.preventDefault();
-                console.log(setIdsToCompare);
-                let res, resp;
-                if (credentials.length === 0) {
-                  setIsAuthenticated(false);
-                  redirect("/logout");
-                }
-                const credJson = JSON.parse(credentials);
-                resp = await fetchFdalabelCompareAdverseEffects(
-                  Array.from(setIdsToCompare),
-                  credJson.AccessToken,
-                );
-                setCompareTable(resp);
-                console.log(resp);
-              }}
-              className="text-black bg-green-600 border-0 py-2 px-6 focus:outline-none hover:bg-green-700 rounded text-lg"
-            >
-              Compare Adverse Effects
-            </button>
+            {Array.from(setIdsToCompare).length > 1 && (
+              <button
+                onClick={async (e) => {
+                  e.preventDefault();
+                  console.log(setIdsToCompare);
+                  let res, resp;
+                  if (credentials.length === 0) {
+                    setIsAuthenticated(false);
+                    redirect("/logout");
+                  }
+                  const credJson = JSON.parse(credentials);
+                  resp = await fetchFdalabelCompareAdverseEffects(
+                    Array.from(setIdsToCompare),
+                    credJson.AccessToken,
+                  );
+                  setCompareTable(resp);
+                  console.log(resp);
+                }}
+                className="text-black bg-green-600 border-0 py-2 px-6 focus:outline-none hover:bg-green-700 rounded text-lg"
+              >
+                Compare Adverse Effects
+              </button>
+            )}
           </div>
           {compareTable.table?.length !== 0 && (
             <>
