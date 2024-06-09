@@ -46,3 +46,7 @@ export interface IFdaLabelHistory {
   spl_earliest_dates?: string[];
   spl_effective_dates?: string[];
 }
+
+export interface ICompareAETable {
+  table?: string[][];
+}

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, FC, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { redirect } from "next/navigation";
 import {
@@ -9,49 +9,10 @@ import {
   fetchFdalabelHistoryBySetid,
   fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend/protected";
+import PaginationBar from "@/components/pagebar";
 import { queryTypeMap } from "@/constants/search-query-type";
-import { IFdaLabel, IFdaLabelHistory } from "@/types/fdalabel";
+import { IFdaLabel, IFdaLabelHistory, ICompareAETable } from "@/types/fdalabel";
 import { convert_datetime_to_date } from "@/utils";
-
-interface ICompareAETable {
-  table?: string[][];
-}
-
-interface PaginationProps {
-  topN: number;
-  pageN: number;
-  nPerPage: number;
-  setPageN: (i: number) => void;
-}
-
-const PaginationBar: FC<PaginationProps> = ({
-  topN,
-  pageN,
-  nPerPage,
-  setPageN,
-}) => {
-  const buttons = [];
-  for (let i = 0; i < topN / nPerPage; i++) {
-    buttons.push(
-      <button
-        key={i}
-        onClick={() => setPageN(i)}
-        className={`text-white
-       ${pageN == i ? "bg-indigo-600" : "bg-indigo-500"}
-       border-0 
-       py-2 
-       px-5 
-       focus:outline-none 
-       hover:bg-indigo-600 
-       rounded 
-       text-lg`}
-      >
-        {i + 1}
-      </button>,
-    );
-  }
-  return <>{...buttons}</>;
-};
 
 export default function Search() {
   const [query, setQuery] = useState("");
