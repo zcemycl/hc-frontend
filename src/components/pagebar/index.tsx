@@ -20,7 +20,7 @@ const PaginationBar: FC<PaginationProps> = ({
         key={i}
         onClick={() => setPageN(i)}
         className={`text-white
-         ${pageN == i ? "bg-indigo-600" : "bg-indigo-500"}
+         ${pageN == i ? "bg-indigo-600" : ""}
          border-0 
          py-2 
          px-5 
