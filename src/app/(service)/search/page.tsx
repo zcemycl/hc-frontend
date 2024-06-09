@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { redirect } from "next/navigation";
 import {
@@ -17,6 +17,42 @@ interface ICompareAETable {
   table?: string[][];
 }
 
+interface PaginationProps {
+  topN: number;
+  pageN: number;
+  nPerPage: number;
+  setPageN: (i: number) => void;
+}
+
+const PaginationBar: FC<PaginationProps> = ({
+  topN,
+  pageN,
+  nPerPage,
+  setPageN,
+}) => {
+  const buttons = [];
+  for (let i = 0; i < topN / nPerPage; i++) {
+    buttons.push(
+      <button
+        key={i}
+        onClick={() => setPageN(i)}
+        className={`text-white
+       ${pageN == i ? "bg-indigo-600" : "bg-indigo-500"}
+       border-0 
+       py-2 
+       px-5 
+       focus:outline-none 
+       hover:bg-indigo-600 
+       rounded 
+       text-lg`}
+      >
+        {i + 1}
+      </button>,
+    );
+  }
+  return <>{...buttons}</>;
+};
+
 export default function Search() {
   const [query, setQuery] = useState("");
   const [queryType, setQueryType] = useState("setid");
@@ -30,7 +66,11 @@ export default function Search() {
     new Set(),
   );
   const [compareTable, setCompareTable] = useState<ICompareAETable>({});
+  const [topN, setTopN] = useState(30);
+  const [pageN, setPageN] = useState(0);
+  const [nPerPage, setNPerPage] = useState(10);
 
+  // show individual drug data
   useEffect(() => {
     let resp;
     if (credentials.length === 0) {
@@ -52,6 +92,58 @@ export default function Search() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayDataIndex]);
+
+  // refresh drug list when page is changed
+  useEffect(() => {
+    async function pageCallback(pageN: number) {
+      setDisplayDataIndex(null);
+      setCompareTable({});
+      let res, resp;
+      if (credentials.length === 0) {
+        setIsAuthenticated(false);
+        redirect("/logout");
+      }
+      const credJson = JSON.parse(credentials);
+      if (queryType === "setid") {
+        resp = await fetchFdalabelBySetid(
+          query,
+          credJson.AccessToken,
+          undefined,
+          pageN * nPerPage,
+          undefined,
+        );
+        setDisplayData([resp]);
+        setDisplayDataIndex(0);
+      } else if (queryType === "tradename") {
+        resp = await fetchFdalabelByTradename(
+          query,
+          credJson.AccessToken,
+          undefined,
+          pageN * nPerPage,
+          undefined,
+        );
+        setDisplayData([resp]);
+        setDisplayDataIndex(0);
+      } else if (queryType === "indication") {
+        resp = await fetchFdalabelByIndication(
+          query,
+          credJson.AccessToken,
+          undefined,
+          pageN * nPerPage,
+          undefined,
+        );
+        setDisplayData(resp);
+      }
+      console.log(resp);
+      if (resp.detail?.error! === "AUTH_EXPIRED") {
+        setIsAuthenticated(false);
+        redirect("/logout");
+      }
+    }
+    if (query !== "") pageCallback(pageN);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageN]);
+
   return (
     <ProtectedRoute>
       <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll">
@@ -125,6 +217,7 @@ export default function Search() {
                 e.preventDefault();
                 setDisplayDataIndex(null);
                 setSetIdsToCompare(new Set());
+                setCompareTable({});
                 let res, resp;
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
@@ -135,6 +228,9 @@ export default function Search() {
                   resp = await fetchFdalabelBySetid(
                     query,
                     credJson.AccessToken,
+                    undefined,
+                    pageN * nPerPage,
+                    undefined,
                   );
                   setDisplayData([resp]);
                   setDisplayDataIndex(0);
@@ -142,6 +238,9 @@ export default function Search() {
                   resp = await fetchFdalabelByTradename(
                     query,
                     credJson.AccessToken,
+                    undefined,
+                    pageN * nPerPage,
+                    undefined,
                   );
                   setDisplayData([resp]);
                   setDisplayDataIndex(0);
@@ -149,6 +248,9 @@ export default function Search() {
                   resp = await fetchFdalabelByIndication(
                     query,
                     credJson.AccessToken,
+                    undefined,
+                    pageN * nPerPage,
+                    undefined,
                   );
                   setDisplayData(resp);
                 }
@@ -380,57 +482,73 @@ export default function Search() {
                 </div>
               );
             })}
-          {displayData.length > 0 &&
-            displayDataIndex === null &&
-            displayData.map((each, idx) => {
-              return (
-                <div className="sm:w-1/2 flex flex-col w-screen p-10" key={idx}>
-                  <div className="flex justify-between">
-                    <h2 className="text-white text-lg mb-1 font-medium title-font">
-                      {each.tradename}
-                    </h2>
-                    <input
-                      type="checkbox"
-                      checked={setIdsToCompare.has(each.setid as string)}
-                      onClick={(e) => {
-                        const ischecked = (e.target as HTMLInputElement)
-                          .checked;
-                        if (ischecked) {
-                          setSetIdsToCompare((prev) =>
-                            new Set(prev).add(each.setid as string),
-                          );
-                        } else {
-                          setSetIdsToCompare(
-                            (prev) =>
-                              new Set(
-                                Array.from(prev).filter((x) => x != each.setid),
-                              ),
-                          );
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    {each.setid}
-                  </h2>
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    INDICATIONS AND USAGE
-                  </h2>
-                  <p>{each.indication}</p>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setDisplayDataIndex(idx);
-                      setSetIdsToCompare(new Set());
-                    }}
-                  >
-                    View more...
-                  </button>
-                  <hr />
-                </div>
-              );
-            })}
+          {/* list of drugs */}
+          {displayData.length > 0 && displayDataIndex === null && (
+            <>
+              {displayData.map((each, idx) => {
+                return (
+                  <>
+                    <div
+                      className="sm:w-1/2 flex flex-col w-screen p-10"
+                      key={idx}
+                    >
+                      <div className="flex justify-between">
+                        <h2 className="text-white text-lg mb-1 font-medium title-font">
+                          {each.tradename}
+                        </h2>
+                        <input
+                          type="checkbox"
+                          checked={setIdsToCompare.has(each.setid as string)}
+                          onClick={(e) => {
+                            const ischecked = (e.target as HTMLInputElement)
+                              .checked;
+                            if (ischecked) {
+                              setSetIdsToCompare((prev) =>
+                                new Set(prev).add(each.setid as string),
+                              );
+                            } else {
+                              setSetIdsToCompare(
+                                (prev) =>
+                                  new Set(
+                                    Array.from(prev).filter(
+                                      (x) => x != each.setid,
+                                    ),
+                                  ),
+                              );
+                            }
+                          }}
+                          readOnly={true}
+                        />
+                      </div>
+                      <h2 className="text-white text-lg mb-1 font-medium title-font">
+                        Initial US Approval Year:{" "}
+                        {each.initial_us_approval_year}
+                      </h2>
+                      <p>{each.indication}</p>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDisplayDataIndex(idx);
+                          setSetIdsToCompare(new Set());
+                        }}
+                      >
+                        View more...
+                      </button>
+                      <hr />
+                    </div>
+                  </>
+                );
+              })}
+              <div className="flex justify-center space-x-1">
+                <PaginationBar
+                  topN={topN}
+                  pageN={pageN}
+                  nPerPage={nPerPage}
+                  setPageN={(i: number) => setPageN(i)}
+                />
+              </div>
+            </>
+          )}
         </div>
       </section>
     </ProtectedRoute>

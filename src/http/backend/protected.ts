@@ -26,9 +26,15 @@ export async function fetchProtected(token: string) {
   return res;
 }
 
-export async function fetchFdalabelBySetid(setid: string, token: string) {
+export async function fetchFdalabelBySetid(
+  setid: string,
+  token: string,
+  maxn = 30,
+  offset = 0,
+  limit = 10,
+) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel?setid=${setid}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel?setid=${setid}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
     {
       method: "GET",
       headers: {
@@ -44,9 +50,12 @@ export async function fetchFdalabelBySetid(setid: string, token: string) {
 export async function fetchFdalabelByTradename(
   tradename: string,
   token: string,
+  maxn: number = 30,
+  offset: number = 0,
+  limit: number = 10,
 ) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_tradename?tradename=${tradename}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_tradename?tradename=${tradename}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
     {
       method: "GET",
       headers: {
@@ -62,9 +71,12 @@ export async function fetchFdalabelByTradename(
 export async function fetchFdalabelByIndication(
   indication: string,
   token: string,
+  maxn: number = 30,
+  offset: number = 0,
+  limit: number = 10,
 ) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_indication?indication=${indication}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_indication?indication=${indication}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
     {
       method: "GET",
       headers: {

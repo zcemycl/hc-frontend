@@ -2,6 +2,12 @@ export interface IAdverseEffectTable {
   content: { table: string[][] };
 }
 
+export interface IClinicalTrial {
+  content: string;
+  id: number;
+  tag: string;
+}
+
 export interface IClinicalTrialTable {
   id: number;
   s3_bucket?: string;
@@ -25,9 +31,11 @@ export interface IFdaLabel {
   xml_link?: string;
   s3_bucket?: string;
   s3_key?: string;
+  initial_us_approval_year?: number;
   spl_effective_date: string;
   spl_earliest_date: string;
   adverse_effect_tables?: IAdverseEffectTable[];
+  clinical_trials?: IClinicalTrial[];
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
 }

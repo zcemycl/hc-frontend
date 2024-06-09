@@ -51,7 +51,9 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                       >
                         {keyValue.icon}
-                        <span className="ms-3">{keyValue.name}</span>
+                        <span key={keyValue.name} className="ms-3">
+                          {keyValue.name}
+                        </span>
                       </Link>
                     </li>
                   );
