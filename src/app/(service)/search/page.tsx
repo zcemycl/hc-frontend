@@ -301,9 +301,8 @@ export default function Search() {
                   focus:outline-none hover:bg-green-700 
                   transition-all duration-200 ease-in-out
                   rounded
-                  text-lg
                   w-3/4
-                  ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6" : "h-0"}`}
+                  ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6 text-lg" : "h-0 text-[0px]"}`}
                 >
                   Compare Adverse Effects
                 </button>
@@ -312,9 +311,8 @@ export default function Search() {
                   bg-red-600 
                   hover:bg-red-700
                   transition-all duration-200 ease-in-out
-                  text-lg
                   text-white
-                  ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6 w-1/4" : "w-0 h-0 text-[0px]"}
+                  ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6 w-1/4 text-lg" : "w-0 h-0 text-[0px]"}
                   rounded
                   border-0`}
                   onClick={() => {
