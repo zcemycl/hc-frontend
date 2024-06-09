@@ -186,10 +186,11 @@ export default function Search() {
               data-testid="search-btn"
               onClick={async (e) => {
                 e.preventDefault();
+                setPageN(0);
                 setDisplayDataIndex(null);
                 setSetIdsToCompare(new Set());
                 setCompareTable({});
-                let res, resp;
+                let resp;
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
                   redirect("/logout");
@@ -426,6 +427,23 @@ export default function Search() {
                       CLINICAL TRIALS
                     </h2>
                   )}
+                  {each.clinical_trials!.map((contentdata, contentid) => {
+                    if (
+                      contentdata.tag === "title" &&
+                      contentdata.content !== "14 CLINICAL STUDIES"
+                    ) {
+                      return (
+                        <h3
+                          key={contentid}
+                          className="text-white text-lg mb-1 font-medium title-font"
+                        >
+                          {contentdata.content}
+                        </h3>
+                      );
+                    } else if (contentdata.tag === "content") {
+                      return <p key={contentid}>{contentdata.content}</p>;
+                    }
+                  })}
                   {each.clinical_trial_tables!.map((tabledata, tableid) => {
                     return (
                       <>
@@ -495,12 +513,16 @@ export default function Search() {
                         Initial US Approval Year:{" "}
                         {each.initial_us_approval_year}
                       </h2>
+                      {each.distance && (
+                        <h2 className="text-white text-lg mb-1 font-medium title-font">
+                          Indication Proximity: {each.distance.toFixed(3)}
+                        </h2>
+                      )}
                       <p>{each.indication}</p>
                       <button
                         onClick={(e) => {
                           e.preventDefault();
                           setDisplayDataIndex(idx);
-                          setSetIdsToCompare(new Set());
                         }}
                       >
                         View more...
