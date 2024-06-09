@@ -163,11 +163,27 @@ export default function Search() {
                 className={`items-center z-10 justify-between w-auto transition-transform ${isQueryTypeDropdownOpen ? "scale-y-100" : "scale-y-0"}`}
                 id="navbar-dropdown"
               >
-                <ul className="flex flex-col p-2 md:p-0 mt-1 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse dark:bg-gray-800  dark:border-gray-700">
+                <ul className="flex flex-col border-white border-2">
                   {queryTypeMap.map((keyValue) => {
                     return (
-                      <li key={keyValue.queryType}>
+                      <li
+                        key={keyValue.queryType}
+                        className={`
+                          rounded 
+                          ${queryType === keyValue.queryType ? "bg-indigo-600" : "bg-indigo-500"}`}
+                      >
                         <button
+                          key={keyValue.queryType}
+                          className={`text-white
+                            ${queryType === keyValue.queryType ? "bg-indigo-600" : "bg-indigo-500"}
+                            border-0
+                            w-full
+                            py-2
+                            px-5 
+                            focus:outline-none 
+                            hover:bg-indigo-600 
+                            rounded 
+                            text-sm`}
                           onClick={(e) => {
                             e.preventDefault();
                             setQueryType(keyValue.queryType);
