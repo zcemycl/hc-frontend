@@ -278,53 +278,53 @@ export default function Search() {
               >
                 Submit
               </button>
-              {Array.from(setIdsToCompare).length > 1 && (
-                <div
-                  className={`flex flex-row ${compareTable.table && compareTable.table.length === 0 ? "space-x-0" : "space-x-1"}`}
-                >
-                  <button
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      console.log(setIdsToCompare);
-                      let res, resp;
-                      if (credentials.length === 0) {
-                        setIsAuthenticated(false);
-                        redirect("/logout");
-                      }
-                      const credJson = JSON.parse(credentials);
-                      resp = await fetchFdalabelCompareAdverseEffects(
-                        Array.from(setIdsToCompare),
-                        credJson.AccessToken,
-                      );
-                      setCompareTable(resp);
-                      console.log(resp);
-                    }}
-                    className={`text-black bg-green-600 
-                  border-0 py-2 px-6 
+              <div className={`flex flex-row space-x-1`}>
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    console.log(setIdsToCompare);
+                    let res, resp;
+                    if (credentials.length === 0) {
+                      setIsAuthenticated(false);
+                      redirect("/logout");
+                    }
+                    const credJson = JSON.parse(credentials);
+                    resp = await fetchFdalabelCompareAdverseEffects(
+                      Array.from(setIdsToCompare),
+                      credJson.AccessToken,
+                    );
+                    setCompareTable(resp);
+                    console.log(resp);
+                  }}
+                  className={`text-black bg-green-600 
+                  border-0
                   focus:outline-none hover:bg-green-700 
                   transition-all duration-200 ease-in-out
-                  rounded text-lg 
-                  ${compareTable.table && compareTable.table.length === 0 ? "w-full" : "w-3/4"}`}
-                  >
-                    Compare Adverse Effects
-                  </button>
-                  <button
-                    className={`
+                  rounded
+                  text-lg
+                  w-3/4
+                  ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6" : "h-0"}`}
+                >
+                  Compare Adverse Effects
+                </button>
+                <button
+                  className={`
                   bg-red-600 
                   hover:bg-red-700
                   transition-all duration-200 ease-in-out
-                  ${compareTable.table && compareTable.table.length === 0 ? "w-0 object-none text-[0px]" : "w-1/4 text-lg py-2 px-6 text-white"}
+                  text-lg
+                  text-white
+                  ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6 w-1/4" : "w-0 h-0 text-[0px]"}
                   rounded
                   border-0`}
-                    onClick={() => {
-                      setCompareTable({ table: [] });
-                      setSetIdsToCompare(new Set());
-                    }}
-                  >
-                    Reset
-                  </button>
-                </div>
-              )}
+                  onClick={() => {
+                    setCompareTable({ table: [] });
+                    setSetIdsToCompare(new Set());
+                  }}
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
           {compareTable.table?.length !== 0 && (
