@@ -14,7 +14,7 @@ const PaginationBar: FC<PaginationProps> = ({
   setPageN,
 }) => {
   const buttons = [];
-  for (let i = 0; i < topN / nPerPage; i++) {
+  for (let i = 0; i < Math.ceil(topN / nPerPage); i++) {
     buttons.push(
       <button
         key={i}

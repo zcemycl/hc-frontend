@@ -16,7 +16,7 @@ import { convert_datetime_to_date } from "@/utils";
 
 export default function Search() {
   const [query, setQuery] = useState("");
-  const [queryType, setQueryType] = useState("setid");
+  const [queryType, setQueryType] = useState("indication");
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayHistoryData, setDisplayHistoryData] =
@@ -70,7 +70,7 @@ export default function Search() {
         resp = await fetchFdalabelBySetid(
           query,
           credJson.AccessToken,
-          undefined,
+          topN,
           pageN * nPerPage,
           undefined,
         );
@@ -80,7 +80,7 @@ export default function Search() {
         resp = await fetchFdalabelByTradename(
           query,
           credJson.AccessToken,
-          undefined,
+          topN,
           pageN * nPerPage,
           undefined,
         );
@@ -90,7 +90,7 @@ export default function Search() {
         resp = await fetchFdalabelByIndication(
           query,
           credJson.AccessToken,
-          undefined,
+          topN,
           pageN * nPerPage,
           undefined,
         );
@@ -135,12 +135,34 @@ export default function Search() {
                 className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
               />
             </div>
-            <div className="py-1 flex items-center text-base justify-end">
+            <div className="py-1 flex justify-between items-center text-base">
+              <div className="flex justify-start space-x-3">
+                <label htmlFor="">Top N: </label>
+                <input
+                  type="number"
+                  min="10"
+                  max="100"
+                  step="5"
+                  value={topN}
+                  className="border-2 border-indigo-500 rounded"
+                  onChange={(e) => {
+                    setTopN(parseInt(e.currentTarget.value));
+                  }}
+                />
+              </div>
               <button
                 // ref={refMenuBtn}
                 data-collapse-toggle="navbar-dropdown"
                 type="button"
-                className="inline-flex items-center p-2 w-auto h-10 mr-1 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                className="inline-flex items-center 
+                  border-2
+                  border-indigo-900
+                  p-2 w-auto h-10 mr-1 justify-center 
+                  text-sm text-gray-500 rounded-lg 
+                  hover:bg-gray-100 focus:outline-none 
+                  focus:ring-2 focus:ring-gray-200 
+                  dark:text-gray-400 dark:hover:bg-gray-700 
+                  dark:focus:ring-gray-600"
                 aria-controls="navbar-dropdown"
                 aria-expanded="false"
                 onClick={() =>
@@ -188,6 +210,7 @@ export default function Search() {
                             e.preventDefault();
                             setQueryType(keyValue.queryType);
                             setIsQueryTypeDropdownOpen(false);
+                            setDisplayData([]);
                           }}
                         >
                           {keyValue.queryDisplayName}
@@ -216,7 +239,7 @@ export default function Search() {
                   resp = await fetchFdalabelBySetid(
                     query,
                     credJson.AccessToken,
-                    undefined,
+                    topN,
                     pageN * nPerPage,
                     undefined,
                   );
@@ -226,7 +249,7 @@ export default function Search() {
                   resp = await fetchFdalabelByTradename(
                     query,
                     credJson.AccessToken,
-                    undefined,
+                    topN,
                     pageN * nPerPage,
                     undefined,
                   );
@@ -236,7 +259,7 @@ export default function Search() {
                   resp = await fetchFdalabelByIndication(
                     query,
                     credJson.AccessToken,
-                    undefined,
+                    topN,
                     pageN * nPerPage,
                     undefined,
                   );
