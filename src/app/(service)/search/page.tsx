@@ -26,7 +26,9 @@ export default function Search() {
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
-  const [compareTable, setCompareTable] = useState<ICompareAETable>({});
+  const [compareTable, setCompareTable] = useState<ICompareAETable>({
+    table: [],
+  });
   const [topN, setTopN] = useState(30);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, setNPerPage] = useState(10);
@@ -59,7 +61,7 @@ export default function Search() {
   useEffect(() => {
     async function pageCallback(pageN: number) {
       setDisplayDataIndex(null);
-      setCompareTable({});
+      setCompareTable({ table: [] });
       let res, resp;
       if (credentials.length === 0) {
         setIsAuthenticated(false);
@@ -221,83 +223,109 @@ export default function Search() {
                 </ul>
               </div>
             </div>
-            <button
-              data-testid="search-btn"
-              onClick={async (e) => {
-                e.preventDefault();
-                setPageN(0);
-                setDisplayDataIndex(null);
-                setSetIdsToCompare(new Set());
-                setCompareTable({});
-                let resp;
-                if (credentials.length === 0) {
-                  setIsAuthenticated(false);
-                  redirect("/logout");
-                }
-                const credJson = JSON.parse(credentials);
-                if (queryType === "setid") {
-                  resp = await fetchFdalabelBySetid(
-                    query,
-                    credJson.AccessToken,
-                    topN,
-                    pageN * nPerPage,
-                    undefined,
-                  );
-                  setDisplayData([resp]);
-                  setDisplayDataIndex(0);
-                } else if (queryType === "tradename") {
-                  resp = await fetchFdalabelByTradename(
-                    query,
-                    credJson.AccessToken,
-                    topN,
-                    pageN * nPerPage,
-                    undefined,
-                  );
-                  setDisplayData([resp]);
-                  setDisplayDataIndex(0);
-                } else if (queryType === "indication") {
-                  resp = await fetchFdalabelByIndication(
-                    query,
-                    credJson.AccessToken,
-                    topN,
-                    pageN * nPerPage,
-                    undefined,
-                  );
-                  setDisplayData(resp);
-                }
-                console.log(resp);
-                if (resp.detail?.error! === "AUTH_EXPIRED") {
-                  setIsAuthenticated(false);
-                  redirect("/logout");
-                }
-              }}
-              className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-            >
-              Submit
-            </button>
-            {Array.from(setIdsToCompare).length > 1 && (
+            <div className="flex flex-col space-y-1">
               <button
+                data-testid="search-btn"
                 onClick={async (e) => {
                   e.preventDefault();
-                  console.log(setIdsToCompare);
-                  let res, resp;
+                  setPageN(0);
+                  setDisplayDataIndex(null);
+                  setSetIdsToCompare(new Set());
+                  setCompareTable({ table: [] });
+                  let resp;
                   if (credentials.length === 0) {
                     setIsAuthenticated(false);
                     redirect("/logout");
                   }
                   const credJson = JSON.parse(credentials);
-                  resp = await fetchFdalabelCompareAdverseEffects(
-                    Array.from(setIdsToCompare),
-                    credJson.AccessToken,
-                  );
-                  setCompareTable(resp);
+                  if (queryType === "setid") {
+                    resp = await fetchFdalabelBySetid(
+                      query,
+                      credJson.AccessToken,
+                      topN,
+                      pageN * nPerPage,
+                      undefined,
+                    );
+                    setDisplayData([resp]);
+                    setDisplayDataIndex(0);
+                  } else if (queryType === "tradename") {
+                    resp = await fetchFdalabelByTradename(
+                      query,
+                      credJson.AccessToken,
+                      topN,
+                      pageN * nPerPage,
+                      undefined,
+                    );
+                    setDisplayData([resp]);
+                    setDisplayDataIndex(0);
+                  } else if (queryType === "indication") {
+                    resp = await fetchFdalabelByIndication(
+                      query,
+                      credJson.AccessToken,
+                      topN,
+                      pageN * nPerPage,
+                      undefined,
+                    );
+                    setDisplayData(resp);
+                  }
                   console.log(resp);
+                  if (resp.detail?.error! === "AUTH_EXPIRED") {
+                    setIsAuthenticated(false);
+                    redirect("/logout");
+                  }
                 }}
-                className="text-black bg-green-600 border-0 py-2 px-6 focus:outline-none hover:bg-green-700 rounded text-lg"
+                className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg w-full"
               >
-                Compare Adverse Effects
+                Submit
               </button>
-            )}
+              {Array.from(setIdsToCompare).length > 1 && (
+                <div
+                  className={`flex flex-row ${compareTable.table && compareTable.table.length === 0 ? "space-x-0" : "space-x-1"}`}
+                >
+                  <button
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      console.log(setIdsToCompare);
+                      let res, resp;
+                      if (credentials.length === 0) {
+                        setIsAuthenticated(false);
+                        redirect("/logout");
+                      }
+                      const credJson = JSON.parse(credentials);
+                      resp = await fetchFdalabelCompareAdverseEffects(
+                        Array.from(setIdsToCompare),
+                        credJson.AccessToken,
+                      );
+                      setCompareTable(resp);
+                      console.log(resp);
+                    }}
+                    className={`text-black bg-green-600 
+                  border-0 py-2 px-6 
+                  focus:outline-none hover:bg-green-700 
+                  transition-all duration-200 ease-in-out
+                  rounded text-lg 
+                  ${compareTable.table && compareTable.table.length === 0 ? "w-full" : "w-3/4"}`}
+                  >
+                    Compare Adverse Effects
+                  </button>
+                  <button
+                    className={`
+                  bg-red-600 
+                  hover:bg-red-700
+                  transition-all duration-200 ease-in-out
+                  ${compareTable.table && compareTable.table.length === 0 ? "w-0 object-none text-[0px]" : "w-1/4 text-lg py-2 px-6 text-white"}
+                  rounded
+                  border-0`}
+                    onClick={() => {
+                      setCompareTable({ table: [] });
+                      setSetIdsToCompare(new Set());
+                    }}
+                  >
+                    Reset
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           {compareTable.table?.length !== 0 && (
             <>
