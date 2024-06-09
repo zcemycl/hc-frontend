@@ -25,6 +25,7 @@ export interface IFdaLabel {
   id?: number;
   setid?: string;
   tradename: string;
+  distance?: number;
   indication?: string;
   manufacturer?: string;
   pdf_link?: string;
