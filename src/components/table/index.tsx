@@ -7,4 +7,10 @@ const TableCell: FC<{
   return <td className="border">{children}</td>;
 };
 
-export { TableCell };
+const TableHeadCell: FC<{
+  children: ReactNode;
+}> = ({ children }) => {
+  return <th className="border">{children}</th>;
+};
+
+export { TableCell, TableHeadCell };

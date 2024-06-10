@@ -13,8 +13,9 @@ import PaginationBar from "@/components/pagebar";
 import { queryTypeMap } from "@/constants/search-query-type";
 import { IFdaLabel, IFdaLabelHistory, ICompareAETable } from "@/types/fdalabel";
 import { convert_datetime_to_date } from "@/utils";
-import { TableCell } from "@/components/table";
+import { TableCell, TableHeadCell } from "@/components/table";
 import { TypographyH2 } from "@/components/typography";
+import { DropDownBtn, DropDownItem, DropDownList } from "@/components/dropdown";
 
 export default function Search() {
   const [query, setQuery] = useState("");
@@ -152,77 +153,39 @@ export default function Search() {
                   }}
                 />
               </div>
-              <button
-                // ref={refMenuBtn}
-                data-collapse-toggle="navbar-dropdown"
-                type="button"
-                className="inline-flex items-center 
-                  border-2
-                  border-indigo-900
-                  p-2 w-auto h-10 mr-1 justify-center 
-                  text-sm text-gray-500 rounded-lg 
-                  hover:bg-gray-100 focus:outline-none 
-                  focus:ring-2 focus:ring-gray-200 
-                  dark:text-gray-400 dark:hover:bg-gray-700 
-                  dark:focus:ring-gray-600"
-                aria-controls="navbar-dropdown"
-                aria-expanded="false"
-                onClick={() =>
-                  setIsQueryTypeDropdownOpen(!isQueryTypeDropdownOpen)
-                }
-              >
-                <span className="sr-only">Open main menu</span>
-                Query Type:{" "}
-                {
-                  queryTypeMap.filter((each) => each.queryType === queryType)[0]
-                    .queryDisplayName
-                }
-              </button>
-            </div>
-            <div
-              className="flex w-full justify-end h-0"
-              // ref={refDropDown}
-            >
-              <div
-                className={`items-center z-10 justify-between w-auto transition-transform ${isQueryTypeDropdownOpen ? "scale-y-100" : "scale-y-0"}`}
-                id="navbar-dropdown"
-              >
-                <ul className="flex flex-col border-white border-2">
-                  {queryTypeMap.map((keyValue) => {
-                    return (
-                      <li
-                        key={keyValue.queryType}
-                        className={`
-                          rounded 
-                          ${queryType === keyValue.queryType ? "bg-indigo-600" : "bg-indigo-500"}`}
-                      >
-                        <button
-                          key={keyValue.queryType}
-                          className={`text-white
-                            ${queryType === keyValue.queryType ? "bg-indigo-600" : "bg-indigo-500"}
-                            border-0
-                            w-full
-                            py-2
-                            px-5 
-                            focus:outline-none 
-                            hover:bg-indigo-600 
-                            rounded 
-                            text-sm`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setQueryType(keyValue.queryType);
-                            setIsQueryTypeDropdownOpen(false);
-                            setDisplayData([]);
-                          }}
-                        >
-                          {keyValue.queryDisplayName}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
+              <div>
+                <DropDownBtn
+                  onClick={() =>
+                    setIsQueryTypeDropdownOpen(!isQueryTypeDropdownOpen)
+                  }
+                >
+                  Query Type:{" "}
+                  {
+                    queryTypeMap.filter(
+                      (each) => each.queryType === queryType,
+                    )[0].queryDisplayName
+                  }
+                </DropDownBtn>
+                <div
+                  className="flex w-full justify-end h-0"
+                  // ref={refDropDown}
+                >
+                  <DropDownList
+                    selected={queryType}
+                    displayNameKey="queryDisplayName"
+                    selectionKey="queryType"
+                    allOptions={queryTypeMap}
+                    isOpen={isQueryTypeDropdownOpen}
+                    setSelectionKey={setQueryType}
+                    resetCallback={() => {
+                      setIsQueryTypeDropdownOpen(false);
+                      setDisplayData([]);
+                    }}
+                  />
+                </div>
               </div>
             </div>
+
             <div className="flex flex-col space-y-1">
               <button
                 data-testid="search-btn"
@@ -489,10 +452,10 @@ export default function Search() {
                         <table>
                           <tbody>
                             <tr>
-                              <th className="border">Set ID</th>
-                              <th className="border">Manufacturer</th>
-                              <th className="border">SPL Earliest Date</th>
-                              <th className="border">SPL Effective Date</th>
+                              <TableHeadCell>Set ID</TableHeadCell>
+                              <TableHeadCell>Manufacturer</TableHeadCell>
+                              <TableHeadCell>SPL Earliest Date</TableHeadCell>
+                              <TableHeadCell>SPL Effective Date</TableHeadCell>
                             </tr>
                             {displayHistoryData.setids.map((setid, idx) => {
                               return (
