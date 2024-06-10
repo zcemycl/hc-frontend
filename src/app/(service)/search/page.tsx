@@ -13,6 +13,8 @@ import PaginationBar from "@/components/pagebar";
 import { queryTypeMap } from "@/constants/search-query-type";
 import { IFdaLabel, IFdaLabelHistory, ICompareAETable } from "@/types/fdalabel";
 import { convert_datetime_to_date } from "@/utils";
+import { TableCell } from "@/components/table";
+import { TypographyH2 } from "@/components/typography";
 
 export default function Search() {
   const [query, setQuery] = useState("");
@@ -122,9 +124,7 @@ export default function Search() {
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
-            <h2 className="text-white text-lg mb-1 font-medium title-font">
-              Search
-            </h2>
+            <TypographyH2>Search</TypographyH2>
             <p className="leading-relaxed mb-5">Please enter your query.</p>
             <div className="relative mb-4">
               <input
@@ -333,11 +333,7 @@ export default function Search() {
                     return (
                       <tr key={rowid}>
                         {tablerow.map((tdata, dataid) => {
-                          return (
-                            <td className="border" key={dataid}>
-                              {tdata}
-                            </td>
-                          );
+                          return <TableCell key={dataid}>{tdata}</TableCell>;
                         })}
                       </tr>
                     );
@@ -353,9 +349,7 @@ export default function Search() {
               return (
                 <div className="sm:w-1/2 flex flex-col w-screen" key={idx}>
                   <div className="flex justify-between">
-                    <h2 className="text-white text-lg mb-1 font-medium title-font">
-                      {each.tradename}
-                    </h2>
+                    <TypographyH2>{each.tradename}</TypographyH2>
                     {displayData.length > 1 && (
                       <button
                         onClick={(e) => {
@@ -367,17 +361,12 @@ export default function Search() {
                       </button>
                     )}
                   </div>
-
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    {each.setid}
-                  </h2>
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
+                  <TypographyH2>{each.setid}</TypographyH2>
+                  <TypographyH2>
                     {convert_datetime_to_date(each.spl_earliest_date)} -{" "}
                     {convert_datetime_to_date(each.spl_effective_date)}
-                  </h2>
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    {each.manufacturer}
-                  </h2>
+                  </TypographyH2>
+                  <TypographyH2>{each.manufacturer}</TypographyH2>
                   <p className="leading-relaxed">
                     XML source:{" "}
                     <a href={each.xml_link} target="_blank">
@@ -390,13 +379,113 @@ export default function Search() {
                       {each.pdf_link}
                     </a>
                   </p>
+
+                  <TypographyH2>INDICATIONS AND USAGE</TypographyH2>
+                  <p>{each.indication}</p>
+                  {each.adverse_effect_tables!.length > 0 && (
+                    <>
+                      <TypographyH2>ADVERSE REACTIONS</TypographyH2>
+                      {each.adverse_effect_tables!.map((tabledata, tableid) => {
+                        return (
+                          <>
+                            <table key={tableid}>
+                              <tbody>
+                                {tabledata!.content.table!.map(
+                                  (tablerow, rowid) => {
+                                    return (
+                                      <tr key={rowid}>
+                                        {tablerow.map((tdata, dataid) => {
+                                          return (
+                                            <td className="border" key={dataid}>
+                                              {tdata}
+                                            </td>
+                                          );
+                                        })}
+                                      </tr>
+                                    );
+                                  },
+                                )}
+                              </tbody>
+                            </table>
+                            <hr />
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {each.drug_interactions!.length > 0 && (
+                    <>
+                      <TypographyH2>DRUG INTERACTIONS</TypographyH2>
+                      {each.drug_interactions!.map((contentdata, contentid) => {
+                        if (contentdata.tag === "title") {
+                          return (
+                            <h3
+                              key={contentid}
+                              className="text-white text-lg mb-1 font-medium title-font"
+                            >
+                              {contentdata.content}
+                            </h3>
+                          );
+                        } else if (contentdata.tag === "content") {
+                          return <p key={contentid}>{contentdata.content}</p>;
+                        }
+                      })}
+                    </>
+                  )}
+                  {each.clinical_trials!.length > 0 && (
+                    <>
+                      <TypographyH2>CLINICAL TRIALS</TypographyH2>
+                      {each.clinical_trials!.map((contentdata, contentid) => {
+                        if (
+                          contentdata.tag === "title" &&
+                          contentdata.content !== "14 CLINICAL STUDIES"
+                        ) {
+                          return (
+                            <h3
+                              key={contentid}
+                              className="text-white text-lg mb-1 font-medium title-font"
+                            >
+                              {contentdata.content}
+                            </h3>
+                          );
+                        } else if (contentdata.tag === "content") {
+                          return <p key={contentid}>{contentdata.content}</p>;
+                        }
+                      })}
+                      {each.clinical_trial_tables!.map((tabledata, tableid) => {
+                        return (
+                          <>
+                            <table key={tableid}>
+                              <tbody>
+                                {tabledata.content.table.map(
+                                  (tablerow, rowid) => {
+                                    return (
+                                      <tr key={rowid}>
+                                        {tablerow.map((tdata, dataid) => {
+                                          return (
+                                            <td className="border" key={dataid}>
+                                              {tdata}
+                                            </td>
+                                          );
+                                        })}
+                                      </tr>
+                                    );
+                                  },
+                                )}
+                              </tbody>
+                            </table>
+                            <hr />
+                          </>
+                        );
+                      })}
+                    </>
+                  )}
+                  {/* show history */}
                   {displayDataIndex != null &&
                     displayHistoryData!.setids &&
                     displayHistoryData!.setids!.length > 1 && (
                       <>
-                        <h2 className="text-white text-lg mb-1 font-medium title-font">
-                          HISTORY
-                        </h2>
+                        <TypographyH2>HISTORY</TypographyH2>
                         <table>
                           <tbody>
                             <tr>
@@ -433,109 +522,10 @@ export default function Search() {
                         </table>
                       </>
                     )}
-                  <h2 className="text-white text-lg mb-1 font-medium title-font">
-                    INDICATIONS AND USAGE
-                  </h2>
-                  <p>{each.indication}</p>
-                  {each.adverse_effect_tables!.length > 0 && (
-                    <h2 className="text-white text-lg mb-1 font-medium title-font">
-                      ADVERSE REACTIONS
-                    </h2>
-                  )}
-                  {each.adverse_effect_tables!.map((tabledata, tableid) => {
-                    return (
-                      <>
-                        <table key={tableid}>
-                          <tbody>
-                            {tabledata!.content.table!.map(
-                              (tablerow, rowid) => {
-                                return (
-                                  <tr key={rowid}>
-                                    {tablerow.map((tdata, dataid) => {
-                                      return (
-                                        <td className="border" key={dataid}>
-                                          {tdata}
-                                        </td>
-                                      );
-                                    })}
-                                  </tr>
-                                );
-                              },
-                            )}
-                          </tbody>
-                        </table>
-                        <hr />
-                      </>
-                    );
-                  })}
-                  {each.drug_interactions!.length > 0 && (
-                    <h2 className="text-white text-lg mb-1 font-medium title-font">
-                      DRUG INTERACTIONS
-                    </h2>
-                  )}
-                  {each.drug_interactions!.map((contentdata, contentid) => {
-                    if (contentdata.tag === "title") {
-                      return (
-                        <h3
-                          key={contentid}
-                          className="text-white text-lg mb-1 font-medium title-font"
-                        >
-                          {contentdata.content}
-                        </h3>
-                      );
-                    } else if (contentdata.tag === "content") {
-                      return <p key={contentid}>{contentdata.content}</p>;
-                    }
-                  })}
-                  {each.clinical_trial_tables!.length > 0 && (
-                    <h2 className="text-white text-lg mb-1 font-medium title-font">
-                      CLINICAL TRIALS
-                    </h2>
-                  )}
-                  {each.clinical_trials!.map((contentdata, contentid) => {
-                    if (
-                      contentdata.tag === "title" &&
-                      contentdata.content !== "14 CLINICAL STUDIES"
-                    ) {
-                      return (
-                        <h3
-                          key={contentid}
-                          className="text-white text-lg mb-1 font-medium title-font"
-                        >
-                          {contentdata.content}
-                        </h3>
-                      );
-                    } else if (contentdata.tag === "content") {
-                      return <p key={contentid}>{contentdata.content}</p>;
-                    }
-                  })}
-                  {each.clinical_trial_tables!.map((tabledata, tableid) => {
-                    return (
-                      <>
-                        <table key={tableid}>
-                          <tbody>
-                            {tabledata.content.table.map((tablerow, rowid) => {
-                              return (
-                                <tr key={rowid}>
-                                  {tablerow.map((tdata, dataid) => {
-                                    return (
-                                      <td className="border" key={dataid}>
-                                        {tdata}
-                                      </td>
-                                    );
-                                  })}
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                        <hr />
-                      </>
-                    );
-                  })}
                 </div>
               );
             })}
+
           {/* list of drugs */}
           {displayData.length > 0 && displayDataIndex === null && (
             <>
@@ -547,9 +537,7 @@ export default function Search() {
                       key={idx}
                     >
                       <div className="flex justify-between">
-                        <h2 className="text-white text-lg mb-1 font-medium title-font">
-                          {each.tradename}
-                        </h2>
+                        <TypographyH2>{each.tradename}</TypographyH2>
                         <input
                           type="checkbox"
                           checked={setIdsToCompare.has(each.setid as string)}
@@ -574,14 +562,14 @@ export default function Search() {
                           readOnly={true}
                         />
                       </div>
-                      <h2 className="text-white text-lg mb-1 font-medium title-font">
+                      <TypographyH2>
                         Initial US Approval Year:{" "}
                         {each.initial_us_approval_year}
-                      </h2>
+                      </TypographyH2>
                       {each.distance && (
-                        <h2 className="text-white text-lg mb-1 font-medium title-font">
+                        <TypographyH2>
                           Indication Proximity: {each.distance.toFixed(3)}
-                        </h2>
+                        </TypographyH2>
                       )}
                       <p>{each.indication}</p>
                       <button
