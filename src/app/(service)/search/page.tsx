@@ -15,12 +15,14 @@ import { IFdaLabel, IFdaLabelHistory, ICompareAETable } from "@/types/fdalabel";
 import { convert_datetime_to_date } from "@/utils";
 import { TableCell, TableHeadCell } from "@/components/table";
 import { TypographyH2 } from "@/components/typography";
-import { DropDownBtn, DropDownItem, DropDownList } from "@/components/dropdown";
+import { DropDownBtn, DropDownList } from "@/components/dropdown";
+import { sortByMap } from "@/constants/search-sort-type";
 
 export default function Search() {
   const [query, setQuery] = useState("");
   const [queryType, setQueryType] = useState("indication");
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
+  const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayHistoryData, setDisplayHistoryData] =
     useState<IFdaLabelHistory>({});
@@ -29,12 +31,13 @@ export default function Search() {
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
+  const [sortBy, setSortBy] = useState("relevance");
   const [compareTable, setCompareTable] = useState<ICompareAETable>({
     table: [],
   });
   const [topN, setTopN] = useState(30);
   const [pageN, setPageN] = useState(0);
-  const [nPerPage, setNPerPage] = useState(10);
+  const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
 
   // show individual drug data
@@ -153,35 +156,68 @@ export default function Search() {
                   }}
                 />
               </div>
-              <div>
-                <DropDownBtn
-                  onClick={() =>
-                    setIsQueryTypeDropdownOpen(!isQueryTypeDropdownOpen)
-                  }
-                >
-                  Query Type:{" "}
-                  {
-                    queryTypeMap.filter(
-                      (each) => each.queryType === queryType,
-                    )[0].queryDisplayName
-                  }
-                </DropDownBtn>
-                <div
-                  className="flex w-full justify-end h-0"
-                  // ref={refDropDown}
-                >
-                  <DropDownList
-                    selected={queryType}
-                    displayNameKey="queryDisplayName"
-                    selectionKey="queryType"
-                    allOptions={queryTypeMap}
-                    isOpen={isQueryTypeDropdownOpen}
-                    setSelectionKey={setQueryType}
-                    resetCallback={() => {
-                      setIsQueryTypeDropdownOpen(false);
-                      setDisplayData([]);
-                    }}
-                  />
+              <div className="flex flex-row justify-end space-x-1">
+                <div>
+                  <DropDownBtn
+                    extraClassName="justify-end w-full"
+                    onClick={() =>
+                      setIsSortByDropdownOpen(!isSortByDropdownOpen)
+                    }
+                  >
+                    Sort By:{" "}
+                    {
+                      sortByMap.filter((each) => each.sortType === sortBy)[0]
+                        .sortDisplayName
+                    }
+                  </DropDownBtn>
+                  <div
+                    className="flex w-full justify-end h-0"
+                    // ref={refDropDown}
+                  >
+                    <DropDownList
+                      selected={sortBy}
+                      displayNameKey="sortDisplayName"
+                      selectionKey="sortType"
+                      allOptions={sortByMap}
+                      isOpen={isSortByDropdownOpen}
+                      setSelectionKey={setSortBy}
+                      resetCallback={() => {
+                        setIsSortByDropdownOpen(false);
+                        setDisplayData([]);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <DropDownBtn
+                    onClick={() =>
+                      setIsQueryTypeDropdownOpen(!isQueryTypeDropdownOpen)
+                    }
+                  >
+                    Query Type:{" "}
+                    {
+                      queryTypeMap.filter(
+                        (each) => each.queryType === queryType,
+                      )[0].queryDisplayName
+                    }
+                  </DropDownBtn>
+                  <div
+                    className="flex w-full justify-end h-0"
+                    // ref={refDropDown}
+                  >
+                    <DropDownList
+                      selected={queryType}
+                      displayNameKey="queryDisplayName"
+                      selectionKey="queryType"
+                      allOptions={queryTypeMap}
+                      isOpen={isQueryTypeDropdownOpen}
+                      setSelectionKey={setQueryType}
+                      resetCallback={() => {
+                        setIsQueryTypeDropdownOpen(false);
+                        setDisplayData([]);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

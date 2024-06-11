@@ -107,14 +107,14 @@ const DropDownList: FC<{
         {allOptions.map((keyValue) => {
           return (
             <DropDownItem
-              key={keyValue.queryType}
+              key={keyValue[selectionKey]}
               selected={selected}
               displayNameKey={displayNameKey}
               selectionKey={selectionKey}
               optionKeyVal={keyValue}
               onClick={(e) => {
                 e.preventDefault();
-                setSelectionKey(keyValue.queryType);
+                setSelectionKey(keyValue[selectionKey]);
                 resetCallback();
               }}
               {...props}
