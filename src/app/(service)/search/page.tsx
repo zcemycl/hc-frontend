@@ -358,9 +358,9 @@ export default function Search() {
                                       <tr key={rowid}>
                                         {tablerow.map((tdata, dataid) => {
                                           return (
-                                            <td className="border" key={dataid}>
+                                            <TableCell key={dataid}>
                                               {tdata}
-                                            </td>
+                                            </TableCell>
                                           );
                                         })}
                                       </tr>
@@ -425,9 +425,9 @@ export default function Search() {
                                       <tr key={rowid}>
                                         {tablerow.map((tdata, dataid) => {
                                           return (
-                                            <td className="border" key={dataid}>
+                                            <TableCell key={dataid}>
                                               {tdata}
-                                            </td>
+                                            </TableCell>
                                           );
                                         })}
                                       </tr>
@@ -459,24 +459,24 @@ export default function Search() {
                             {displayHistoryData.setids.map((setid, idx) => {
                               return (
                                 <tr key={idx}>
-                                  <td className="border">{setid}</td>
-                                  <td className="border">
+                                  <TableCell>{setid}</TableCell>
+                                  <TableCell>
                                     {displayHistoryData.manufacturers![idx]}
-                                  </td>
-                                  <td className="border">
+                                  </TableCell>
+                                  <TableCell>
                                     {convert_datetime_to_date(
                                       displayHistoryData.spl_earliest_dates![
                                         idx
                                       ],
                                     )}
-                                  </td>
-                                  <td className="border">
+                                  </TableCell>
+                                  <TableCell>
                                     {convert_datetime_to_date(
                                       displayHistoryData.spl_effective_dates![
                                         idx
                                       ],
                                     )}
-                                  </td>
+                                  </TableCell>
                                 </tr>
                               );
                             })}

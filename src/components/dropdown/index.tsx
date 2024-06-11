@@ -100,7 +100,10 @@ const DropDownList: FC<{
                 ${isOpen ? "scale-y-100" : "scale-y-0"}`}
       id="navbar-dropdown"
     >
-      <ul className="flex flex-col border-white border-2">
+      <ul
+        className="flex flex-col border-indigo-900 
+        border-l-2 border-r-2 border-b-2 rounded"
+      >
         {allOptions.map((keyValue) => {
           return (
             <DropDownItem
