@@ -185,7 +185,6 @@ export default function Search() {
                 </div>
               </div>
             </div>
-
             <div className="flex flex-col space-y-1">
               <button
                 data-testid="search-btn"

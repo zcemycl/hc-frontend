@@ -1,13 +1,16 @@
 "use client";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, RefObject } from "react";
 
 const DropDownBtn: FC<{
   children: ReactNode;
+  forwardRef?: RefObject<HTMLButtonElement>;
+  extraClassName?: string;
   onClick: (e: React.MouseEvent<HTMLElement>) => void;
-}> = ({ children, ...props }) => {
+}> = ({ children, extraClassName, forwardRef, ...props }) => {
   return (
     <button
-      className="inline-flex items-center 
+      ref={forwardRef}
+      className={`inline-flex items-center 
             border-2
             border-indigo-900
             p-2 w-auto h-10 mr-1 justify-center 
@@ -15,7 +18,9 @@ const DropDownBtn: FC<{
             hover:bg-gray-100 focus:outline-none 
             focus:ring-2 focus:ring-gray-200 
             dark:text-gray-400 dark:hover:bg-gray-700 
-            dark:focus:ring-gray-600"
+            dark:focus:ring-gray-600
+            ${extraClassName}
+        `}
       aria-controls="navbar-dropdown"
       aria-expanded="false"
       data-collapse-toggle="navbar-dropdown"
@@ -63,7 +68,7 @@ const DropDownItem: FC<{
             text-sm`}
         {...props}
       >
-        {optionKeyVal[displayNameKey]}
+        {children ? children : optionKeyVal[displayNameKey]}
       </button>
     </li>
   );

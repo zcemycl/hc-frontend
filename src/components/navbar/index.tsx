@@ -1,78 +1,15 @@
 "use client";
 import React, { useRef, useEffect } from "react";
-import { useTheme } from "next-themes";
 import { useOpenBar, useAuth } from "@/contexts";
 import Link from "next/link";
 import { navbar_dropdown } from "@/constants/navbar-dropdown";
 import { useRouter } from "next/navigation";
-import { ProfileIcon, MoonIcon, SunIcon, LayerIcon, MenuIcon } from "@/icons";
+import { ProfileIcon, LayerIcon, MenuIcon } from "@/icons";
+import { DropDownBtn } from "../dropdown";
+import Button from "../lightdarktoggle";
 
 export default interface NavBarProps {
   isDark: boolean;
-}
-
-function Button() {
-  const { theme, setTheme } = useTheme();
-  useEffect(() => {
-    const currentTheme = localStorage.getItem("theme") ?? "dark";
-    setTheme(currentTheme);
-  }, []);
-  return (
-    <button
-      onClick={() => {
-        if (theme == "dark") {
-          localStorage.setItem("theme", "light");
-          setTheme("light");
-        } else {
-          localStorage.setItem("theme", "dark");
-          setTheme("dark");
-        }
-      }}
-      className="
-            w-12
-            h-6
-            rounded-full
-            p-1
-            mr-2
-            bg-blue-700
-            dark:bg-gray-600
-            relative
-            transition-colors
-            duration-500
-            ease-in
-            focus:outline-none
-            focus:ring-2
-            focus:ring-blue-700
-            dark:focus:ring-blue-600
-            focus:border-transparent
-            flex-end
-        "
-    >
-      <div className="w-4 h-4 absolute left-1">
-        <MoonIcon />
-      </div>
-      <div className="w-4 h-4 absolute dark:hidden right-1 border-black">
-        <SunIcon />
-      </div>
-      <div
-        id="toggle"
-        className="
-            rounded-full
-            w-4
-            h-4
-            bg-white
-            dark:bg-blue-500
-            relative
-            ml-0
-            dark:ml-6
-            pointer-events-none
-            transition-all
-            duration-300
-            ease-out
-        "
-      ></div>
-    </button>
-  );
 }
 
 export default function NavBar() {
@@ -87,10 +24,10 @@ export default function NavBar() {
     const handleOutSideDropDownClick = ({ target }: Event) => {
       const isInsideDropDown = (
         refDropDown.current as unknown as HTMLDivElement
-      ).contains(target as Node);
+      )?.contains(target as Node);
       const isInsideMenuBtn = (
         refMenuBtn.current as unknown as HTMLDivElement
-      ).contains(target as Node);
+      )?.contains(target as Node);
       if (!isInsideDropDown) {
         if (isInsideMenuBtn) {
           return;
@@ -108,6 +45,7 @@ export default function NavBar() {
         handleOutSideDropDownClick(e),
       );
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refDropDown, refMenuBtn]);
   return (
     <header className="text-gray-400 bg-gray-900 body-font fixed w-full">
@@ -136,24 +74,13 @@ export default function NavBar() {
           </nav>
           <div className="ml-4 py-1 pl-4 border-l border-gray-700	flex items-center text-base justify-center">
             <Button />
-            <button
-              ref={refMenuBtn}
-              data-collapse-toggle="navbar-dropdown"
-              type="button"
-              className="
-                inline-flex items-center 
-                p-2 w-10 h-10 mr-1 justify-center 
-                text-sm text-gray-500 rounded-lg md:hidden 
-                hover:bg-gray-100 focus:outline-none 
-                focus:ring-2 focus:ring-gray-200 
-                dark:text-gray-400 dark:hover:bg-gray-700 
-                dark:focus:ring-gray-600"
-              aria-controls="navbar-dropdown"
-              aria-expanded="false"
+            <DropDownBtn
+              forwardRef={refMenuBtn}
+              extraClassName="md:hidden"
               onClick={() => setIsDropDownOpen(!isDropDownOpen)}
             >
               <MenuIcon />
-            </button>
+            </DropDownBtn>
             <button
               type="button"
               data-testid="icon-login-btn"
