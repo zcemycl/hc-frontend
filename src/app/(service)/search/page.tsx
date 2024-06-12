@@ -11,7 +11,14 @@ import {
 } from "@/http/backend/protected";
 import PaginationBar from "@/components/pagebar";
 import { queryTypeMap } from "@/constants/search-query-type";
-import { IFdaLabel, IFdaLabelHistory, ICompareAETable } from "@/types/fdalabel";
+import {
+  IFdaLabel,
+  IFdaLabelHistory,
+  ICompareAETable,
+  IAdverseEffectTable,
+  IDrugInteraction,
+  IClinicalTrial,
+} from "@/types/fdalabel";
 import { convert_datetime_to_date } from "@/utils";
 import { TableCell, TableHeadCell } from "@/components/table";
 import { TypographyH2 } from "@/components/typography";
@@ -77,24 +84,22 @@ export default function Search() {
       const credJson = JSON.parse(credentials);
       if (queryType === "setid") {
         resp = await fetchFdalabelBySetid(
-          query[0],
+          query,
           credJson.AccessToken,
           topN,
           pageN * nPerPage,
           undefined,
         );
-        setDisplayData([resp]);
-        setDisplayDataIndex(0);
+        setDisplayData(resp);
       } else if (queryType === "tradename") {
         resp = await fetchFdalabelByTradename(
-          query[0],
+          query,
           credJson.AccessToken,
           topN,
           pageN * nPerPage,
           undefined,
         );
-        setDisplayData([resp]);
-        setDisplayDataIndex(0);
+        setDisplayData(resp);
       } else if (queryType === "indication") {
         resp = await fetchFdalabelByIndication(
           query[0],
@@ -196,21 +201,23 @@ export default function Search() {
                 ),
               )}
             </div>
-            <div className="py-1 flex justify-between items-center text-base">
-              <div className="flex justify-start space-x-3">
-                <label htmlFor="">Top N: </label>
-                <input
-                  type="number"
-                  min="10"
-                  max="100"
-                  step="5"
-                  value={topN}
-                  className="border-2 border-indigo-500 rounded"
-                  onChange={(e) => {
-                    setTopN(parseInt(e.currentTarget.value));
-                  }}
-                />
-              </div>
+            <div className="py-1 flex justify-end items-center text-base space-x-1">
+              {queryType === "indication" && (
+                <div className="flex justify-start space-x-3">
+                  <label htmlFor="">Top N: </label>
+                  <input
+                    type="number"
+                    min="10"
+                    max="100"
+                    step="5"
+                    value={topN}
+                    className="border-2 border-indigo-500 rounded"
+                    onChange={(e) => {
+                      setTopN(parseInt(e.currentTarget.value));
+                    }}
+                  />
+                </div>
+              )}
               <div className="flex flex-row justify-end space-x-1">
                 {queryType === "indication" && (
                   <div>
@@ -295,24 +302,22 @@ export default function Search() {
                   const credJson = JSON.parse(credentials);
                   if (queryType === "setid") {
                     resp = await fetchFdalabelBySetid(
-                      query[0],
+                      query,
                       credJson.AccessToken,
                       topN,
                       pageN * nPerPage,
                       undefined,
                     );
-                    setDisplayData([resp]);
-                    setDisplayDataIndex(0);
+                    setDisplayData(resp);
                   } else if (queryType === "tradename") {
                     resp = await fetchFdalabelByTradename(
-                      query[0],
+                      query,
                       credJson.AccessToken,
                       topN,
                       pageN * nPerPage,
                       undefined,
                     );
-                    setDisplayData([resp]);
-                    setDisplayDataIndex(0);
+                    setDisplayData(resp);
                   } else if (queryType === "indication") {
                     resp = await fetchFdalabelByIndication(
                       query[0],
@@ -438,7 +443,8 @@ export default function Search() {
 
                   <TypographyH2>INDICATIONS AND USAGE</TypographyH2>
                   <p>{each.indication}</p>
-                  {each.adverse_effect_tables!.length > 0 && (
+                  {(each.adverse_effect_tables as IAdverseEffectTable[])
+                    ?.length > 0 && (
                     <>
                       <TypographyH2>ADVERSE REACTIONS</TypographyH2>
                       {each.adverse_effect_tables!.map((tabledata, tableid) => {
@@ -469,7 +475,8 @@ export default function Search() {
                       })}
                     </>
                   )}
-                  {each.drug_interactions!.length > 0 && (
+                  {(each.drug_interactions as IDrugInteraction[])?.length >
+                    0 && (
                     <>
                       <TypographyH2>DRUG INTERACTIONS</TypographyH2>
                       {each.drug_interactions!.map((contentdata, contentid) => {
@@ -488,7 +495,7 @@ export default function Search() {
                       })}
                     </>
                   )}
-                  {each.clinical_trials!.length > 0 && (
+                  {(each.clinical_trials as IClinicalTrial[])?.length > 0 && (
                     <>
                       <TypographyH2>CLINICAL TRIALS</TypographyH2>
                       {each.clinical_trials!.map((contentdata, contentid) => {
@@ -618,6 +625,9 @@ export default function Search() {
                           readOnly={true}
                         />
                       </div>
+                      {queryType !== "indication" && (
+                        <TypographyH2>{each.setid}</TypographyH2>
+                      )}
                       <TypographyH2>
                         Initial US Approval Year:{" "}
                         {each.initial_us_approval_year}
@@ -643,7 +653,7 @@ export default function Search() {
               })}
               <div className="flex justify-center space-x-1">
                 <PaginationBar
-                  topN={topN}
+                  topN={queryType === "indication" ? topN : displayData.length}
                   pageN={pageN}
                   nPerPage={nPerPage}
                   setPageN={(i: number) => {
