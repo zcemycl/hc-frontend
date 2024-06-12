@@ -74,9 +74,10 @@ export async function fetchFdalabelByIndication(
   maxn: number = 30,
   offset: number = 0,
   limit: number = 10,
+  sort_by: string = "relevance",
 ) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_indication?indication=${indication}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_indication?indication=${indication}&maxn=${maxn}&offset=${offset}&limit=${limit}&sort_by=${sort_by}`,
     {
       method: "GET",
       headers: {

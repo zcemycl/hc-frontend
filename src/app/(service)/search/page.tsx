@@ -101,6 +101,7 @@ export default function Search() {
           topN,
           pageN * nPerPage,
           undefined,
+          sortBy,
         );
         setDisplayData(resp);
       }
@@ -263,6 +264,7 @@ export default function Search() {
                       topN,
                       pageN * nPerPage,
                       undefined,
+                      sortBy,
                     );
                     setDisplayData(resp);
                   }
