@@ -19,7 +19,7 @@ import { DropDownBtn, DropDownList } from "@/components/dropdown";
 import { sortByMap } from "@/constants/search-sort-type";
 
 export default function Search() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState("indication");
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
   const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
@@ -38,6 +38,7 @@ export default function Search() {
   const [topN, setTopN] = useState(30);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
+  const [nSearch, setNSearch] = useState(1);
   const refSearchResGroup = useRef(null);
 
   // show individual drug data
@@ -76,7 +77,7 @@ export default function Search() {
       const credJson = JSON.parse(credentials);
       if (queryType === "setid") {
         resp = await fetchFdalabelBySetid(
-          query,
+          query[0],
           credJson.AccessToken,
           topN,
           pageN * nPerPage,
@@ -86,7 +87,7 @@ export default function Search() {
         setDisplayDataIndex(0);
       } else if (queryType === "tradename") {
         resp = await fetchFdalabelByTradename(
-          query,
+          query[0],
           credJson.AccessToken,
           topN,
           pageN * nPerPage,
@@ -96,7 +97,7 @@ export default function Search() {
         setDisplayDataIndex(0);
       } else if (queryType === "indication") {
         resp = await fetchFdalabelByIndication(
-          query,
+          query[0],
           credJson.AccessToken,
           topN,
           pageN * nPerPage,
@@ -111,7 +112,7 @@ export default function Search() {
         redirect("/logout");
       }
     }
-    if (query !== "") {
+    if (query[0] !== "") {
       pageCallback(pageN);
       (refSearchResGroup.current as any).scrollTo({
         top: 0,
@@ -131,16 +132,69 @@ export default function Search() {
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
             <TypographyH2>Search</TypographyH2>
             <p className="leading-relaxed mb-5">Please enter your query.</p>
-            <div className="relative mb-4">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                data-testid="login-email-input"
-                value={query}
-                onChange={(e) => setQuery(e.currentTarget.value)}
-                className="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              />
+            <div className="flex flex-col flex-nowrap space-y-2 mb-2">
+              {Array.from(
+                { length: queryType !== "indication" ? nSearch : 1 },
+                (_, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-row 
+                    space-x-1 items-center h-[2rem]"
+                  >
+                    <input
+                      type="search"
+                      id="search"
+                      name="search"
+                      data-testid="search-input"
+                      value={query[i]}
+                      key={i}
+                      onChange={(e) => {
+                        let qs = Array.from(query);
+                        qs[i] = e.currentTarget.value;
+                        setQuery(qs);
+                      }}
+                      className="w-full bg-gray-800 h-full
+                      rounded border border-gray-700 
+                      focus:border-indigo-500 focus:ring-2 
+                      focus:ring-indigo-900 text-base outline-none 
+                      text-gray-100 py-1 px-3 leading-8 transition-colors 
+                      duration-200 ease-in-out"
+                    />
+                    <div
+                      className="flex flex-col
+                      items-center justify-center content-center
+                      space-y-0
+                      h-full"
+                    >
+                      {queryType !== "indication" && (
+                        <button
+                          className="w-[1rem] h-1/2 p-0 leading-[0px] m-0"
+                          onClick={() => {
+                            if (nSearch === 1) return;
+                            setNSearch((prev) => prev - 1);
+                            let qs = Array.from(query);
+                            qs.splice(i, 1);
+                            setQuery(qs);
+                          }}
+                        >
+                          -
+                        </button>
+                      )}
+                      {queryType !== "indication" && i === nSearch - 1 && (
+                        <button
+                          className="w-[1rem] h-1/2 p-0 leading-[0px] m-0"
+                          onClick={() => {
+                            setNSearch((prev) => prev + 1);
+                            setQuery((prev) => [...prev, ""]);
+                          }}
+                        >
+                          +
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ),
+              )}
             </div>
             <div className="py-1 flex justify-between items-center text-base">
               <div className="flex justify-start space-x-3">
@@ -158,38 +212,40 @@ export default function Search() {
                 />
               </div>
               <div className="flex flex-row justify-end space-x-1">
-                <div>
-                  <DropDownBtn
-                    extraClassName="justify-end w-full"
-                    onClick={() =>
-                      setIsSortByDropdownOpen(!isSortByDropdownOpen)
-                    }
-                  >
-                    Sort By:{" "}
-                    {
-                      sortByMap.filter((each) => each.sortType === sortBy)[0]
-                        .sortDisplayName
-                    }
-                  </DropDownBtn>
-                  <div
-                    className="flex w-full justify-end h-0"
-                    // ref={refDropDown}
-                  >
-                    <DropDownList
-                      selected={sortBy}
-                      displayNameKey="sortDisplayName"
-                      selectionKey="sortType"
-                      allOptions={sortByMap}
-                      isOpen={isSortByDropdownOpen}
-                      setSelectionKey={setSortBy}
-                      resetCallback={() => {
-                        setIsSortByDropdownOpen(false);
-                        setDisplayData([]);
-                      }}
-                    />
+                {queryType === "indication" && (
+                  <div>
+                    <DropDownBtn
+                      extraClassName="justify-end w-full"
+                      onClick={() =>
+                        setIsSortByDropdownOpen(!isSortByDropdownOpen)
+                      }
+                    >
+                      Sort By:{" "}
+                      {
+                        sortByMap.filter((each) => each.sortType === sortBy)[0]
+                          .sortDisplayName
+                      }
+                    </DropDownBtn>
+                    <div
+                      className="flex w-full justify-end h-0"
+                      // ref={refDropDown}
+                    >
+                      <DropDownList
+                        selected={sortBy}
+                        displayNameKey="sortDisplayName"
+                        selectionKey="sortType"
+                        allOptions={sortByMap}
+                        isOpen={isSortByDropdownOpen}
+                        setSelectionKey={setSortBy}
+                        resetCallback={() => {
+                          setIsSortByDropdownOpen(false);
+                          setDisplayData([]);
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div>
+                )}
+                <div className="transition-all">
                   <DropDownBtn
                     onClick={() =>
                       setIsQueryTypeDropdownOpen(!isQueryTypeDropdownOpen)
@@ -239,7 +295,7 @@ export default function Search() {
                   const credJson = JSON.parse(credentials);
                   if (queryType === "setid") {
                     resp = await fetchFdalabelBySetid(
-                      query,
+                      query[0],
                       credJson.AccessToken,
                       topN,
                       pageN * nPerPage,
@@ -249,7 +305,7 @@ export default function Search() {
                     setDisplayDataIndex(0);
                   } else if (queryType === "tradename") {
                     resp = await fetchFdalabelByTradename(
-                      query,
+                      query[0],
                       credJson.AccessToken,
                       topN,
                       pageN * nPerPage,
@@ -259,7 +315,7 @@ export default function Search() {
                     setDisplayDataIndex(0);
                   } else if (queryType === "indication") {
                     resp = await fetchFdalabelByIndication(
-                      query,
+                      query[0],
                       credJson.AccessToken,
                       topN,
                       pageN * nPerPage,
