@@ -1,16 +1,5 @@
 "use server";
 
-export async function fetchRoot() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const res = response.json();
-  return res;
-}
-
 export async function fetchProtected(token: string) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected`,
@@ -116,19 +105,17 @@ export async function fetchFdalabelCompareAdverseEffects(
   setids: string[],
   token: string,
 ) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabel/compare/adverse-effects/`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        setids: setids,
-      }),
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabels/compare/adverse-effects`;
+  const response = await fetch(API_URI, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-  );
+    body: JSON.stringify({
+      setids: setids,
+    }),
+  });
   const res = await response.json();
   return res;
 }
