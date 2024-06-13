@@ -33,9 +33,10 @@ export async function fetchFdalabelBySetid(
   offset = 0,
   limit = 10,
 ) {
-  let setids_param = setid.join("&setid=");
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabels/search_by_id`;
+  let setids_param = setid.join("&id=");
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel?setid=${setids_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
+    `${API_URI}?id=${setids_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
     {
       method: "GET",
       headers: {
@@ -55,10 +56,11 @@ export async function fetchFdalabelByTradename(
   offset: number = 0,
   limit: number = 10,
 ) {
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabels/search_by_tradename`;
   let tradenames_param = tradename.join("&tradename=");
   console.log(tradenames_param);
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_tradename?tradename=${tradenames_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
+    `${API_URI}?tradename=${tradenames_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
     {
       method: "GET",
       headers: {
@@ -79,8 +81,9 @@ export async function fetchFdalabelByIndication(
   limit: number = 10,
   sort_by: string = "relevance",
 ) {
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabels/search_by_indication`;
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/protected/fdalabel_by_indication?indication=${indication}&maxn=${maxn}&offset=${offset}&limit=${limit}&sort_by=${sort_by}`,
+    `${API_URI}?indication=${indication}&maxn=${maxn}&offset=${offset}&limit=${limit}&sort_by=${sort_by}`,
     {
       method: "GET",
       headers: {
@@ -97,16 +100,14 @@ export async function fetchFdalabelHistoryBySetid(
   setid: string,
   token: string,
 ) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabel/history/${setid}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabels/history`;
+  const response = await fetch(`${API_URI}/${setid}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-  );
+  });
   const res = await response.json();
   return res;
 }
