@@ -56,7 +56,7 @@ export default function NavBar() {
             className="flex title-font font-medium items-center text-white mb-0"
           >
             <LayerIcon />
-            <span className="ml-3 text-xl">Drugig</span>
+            <span className="ml-3 text-xl">RXScope</span>
           </Link>
           <nav className="hidden md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-700	md:flex md:flex-wrap items-center text-base justify-center">
             {navbar_dropdown.map((keyValue) => {
