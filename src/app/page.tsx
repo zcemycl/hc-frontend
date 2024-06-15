@@ -131,28 +131,28 @@ export default function Home() {
                   : ""}
               </h1>
               <div className="leading-relaxed">
-                Pour-over craft beer pug drinking vinegar live-edge gastropub,
-                keytar neutra sustainable fingerstache kickstarter.
+                Welcome to RXScope Platform!{" "}
+                {isAuthenticated
+                  ? ""
+                  : "Please Login to start using our Tools."}
               </div>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
               <h2 className="title-font font-medium text-3xl text-white">
-                2.7K
+                15.3K
               </h2>
               <p className="leading-relaxed">Drugs</p>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">
-                1.8K
-              </h2>
+              <h2 className="title-font font-medium text-3xl text-white">3</h2>
               <p className="leading-relaxed">Users</p>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">35</h2>
+              <h2 className="title-font font-medium text-3xl text-white">1</h2>
               <p className="leading-relaxed">Data Sources</p>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">4</h2>
+              <h2 className="title-font font-medium text-3xl text-white">1</h2>
               <p className="leading-relaxed">Products</p>
             </div>
           </div>
@@ -170,18 +170,19 @@ export default function Home() {
       <section className="text-gray-400 bg-gray-900 body-font relative">
         <div className="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
           <div className="lg:w-2/3 md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
+            {/* https://www.maps.ie/create-google-map/ */}
             <iframe
               width="100%"
               height="100%"
               title="map"
               className="absolute inset-0"
-              src="https://maps.google.com/maps?width=100%&height=600&hl=en&q=%C4%B0zmir+(My%20Business%20Name)&ie=UTF8&t=&z=14&iwloc=B&output=embed"
               style={{
-                filter: "grayscale(1) contrast(1.2) opacity(0.16)",
+                filter: "grayscale(0) contrast(1) opacity(0.8)",
                 border: 0,
                 overflow: "hidden",
                 margin: 0,
               }}
+              src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=London+(RXScope)&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
             ></iframe>
             <div className="bg-gray-900 relative flex flex-wrap py-6 rounded shadow-md">
               <div className="lg:w-1/2 px-6 mt-4 lg:mt-0">
