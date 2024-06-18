@@ -5,3 +5,6 @@ export { LayerIcon } from "./LayerIcon";
 export { MenuIcon } from "./MenuIcon";
 export { PieIcon } from "./PieIcon";
 export { LogoutIcon } from "./LogoutIcon";
+export { JupyterIcon } from "./JupyterIcon";
+export { ChatbotIcon } from "./ChatbotIcon";
+export { AnnotateIcon } from "./AnnotateIcon";
