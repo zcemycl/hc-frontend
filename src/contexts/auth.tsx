@@ -192,14 +192,43 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
 
 export const useAuth = () => useContext(AuthContext);
 
+async function dummy_cred() {
+  const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
+  const openid_conf = await (await fetch(openid_conf_uri as string)).json();
+  const resp = await fetch(openid_conf["token_endpoint"], {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: "fake",
+      client_secret: "fake",
+      mock_type: "user",
+    }),
+  });
+  const access_token = (await resp.json())["access_token"];
+  return access_token;
+}
+
 export const ProtectedRoute = ({
   children,
 }: {
   children?: React.ReactNode;
 }) => {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) {
-    redirect("/login");
+  const { isAuthenticated, setIsAuthenticated, setCredentials } = useAuth();
+  if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") {
+    if (!isAuthenticated) {
+      redirect("/login");
+    }
+  } else {
+    const access_token = dummy_cred();
+    const credentials = JSON.stringify({
+      AccessToken: access_token,
+      ExpiresIn: 3600,
+      IdToken: "",
+      RefreshToken: "",
+      TokenType: "Bearer",
+    });
+    setCredentials(credentials);
+    setIsAuthenticated(true);
   }
   return children;
 };

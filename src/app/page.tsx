@@ -12,7 +12,6 @@ import {
 } from "@aws-sdk/client-ses";
 import { useRouter } from "next/navigation";
 
-import { fetchProtected } from "@/http/backend/protected";
 import { fetchApiRoot } from "@/http/internal";
 
 interface IData {
@@ -20,10 +19,6 @@ interface IData {
   message?: string;
   id?: number;
   username?: string;
-}
-
-interface IData2 {
-  Hello?: string;
 }
 
 interface IRequestForm {
@@ -36,7 +31,6 @@ export default function Home() {
   const router = useRouter();
   const { isAuthenticated, setIsAuthenticated, credentials } = useAuth();
   const [data, setData] = useState<IData>({});
-  const [data2, setData2] = useState<IData2>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const defaultRequestForm = {
     name: "",
@@ -51,16 +45,14 @@ export default function Home() {
       region: process.env.NEXT_PUBLIC_AWS_REGION as string,
       credentials: () => Promise.resolve({} as any),
     };
-    if (process.env.NEXT_PUBLIC_ENV_NAME === "local") {
-      config = {
-        ...config,
-        credentials: {
-          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
-          secretAccessKey: process.env
-            .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
-        },
-      };
-    }
+    config = {
+      ...config,
+      credentials: {
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
+        secretAccessKey: process.env
+          .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
+      },
+    };
     const ses_client = new SESClient(config);
     const input: SendEmailCommandInput = {
       Source: `no-reply@${process.env.NEXT_PUBLIC_DOMAIN_NAME as string}`,
@@ -109,9 +101,7 @@ export default function Home() {
         redirect("/logout");
       }
       const res = await resp.json();
-      const res2 = await fetchProtected(credJson.AccessToken);
       setData(res);
-      setData2(res2);
       setIsLoading(false);
     }
     getData(credentials);
@@ -127,7 +117,7 @@ export default function Home() {
                 {isAuthenticated
                   ? isLoading
                     ? "is Loading"
-                    : `${data!.id}-${data!.username}-${data2!.Hello}`
+                    : `${data!.id}-${data!.username}`
                   : ""}
               </h1>
               <div className="leading-relaxed">

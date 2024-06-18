@@ -51,9 +51,11 @@ export default function Search() {
   // show individual drug data
   useEffect(() => {
     let resp;
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      redirect("/logout");
+    if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") {
+      if (credentials.length === 0) {
+        setIsAuthenticated(false);
+        redirect("/logout");
+      }
     }
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
