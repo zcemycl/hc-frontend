@@ -27,7 +27,10 @@ export async function POST(request: Request) {
     "secretAccessKey" in data &&
     data.secretAccessKey !== ""
   ) {
-    credentials = data;
+    credentials = (({ accessKeyId, secretAccessKey }) => ({
+      accessKeyId,
+      secretAccessKey,
+    }))(data);
   }
 
   let config = {
