@@ -1,5 +1,47 @@
+"use client";
 import { ProtectedRoute } from "@/contexts";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
+import {
+  CreatePresignedDomainUrlCommand,
+  CreateUserProfileCommand,
+  DescribeUserProfileCommand,
+  DescribeUserProfileResponse,
+  ListUserProfilesCommand,
+  ListUserProfilesRequest,
+  SageMakerClient,
+  SageMakerClientConfig,
+  UserProfileDetails,
+  UserSettings,
+} from "@aws-sdk/client-sagemaker";
+
+const rolearn =
+  "arn:aws:iam::975050053093:role/terraform-20240619075858415000000001";
+
+async function handleJupyterBtnCallback() {
+  let config = {
+    region: "eu-west-2",
+  } as SageMakerClientConfig;
+  if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
+    config = {
+      ...config,
+      credentials: {
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
+        secretAccessKey: process.env
+          .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
+      },
+    };
+  }
+  const client = new SageMakerClient(config);
+  const input = {
+    // CreatePresignedDomainUrlRequest
+    DomainId: "d-oa2xxqb4psru", // required
+    UserProfileName: "leo-leung-test", // required
+    ExpiresInSeconds: 30,
+  };
+  const command = new CreatePresignedDomainUrlCommand(input);
+  const response = await client.send(command);
+  console.log(response.AuthorizedUrl);
+}
 
 export default function AI() {
   return (
@@ -29,6 +71,10 @@ export default function AI() {
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-green-600 
                 rounded text-2xl w-full"
+              onClick={() => {
+                console.log("Open JupyterLab");
+                handleJupyterBtnCallback();
+              }}
             >
               <JupyterIcon />
               Jupyter Lab
