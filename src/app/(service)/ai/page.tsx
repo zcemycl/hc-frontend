@@ -9,7 +9,7 @@ async function fetchApiAI(token: string) {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
-  const resp = await fetch(`/api/ai`, {
+  const resp = await fetch(`/api/private/service/ai`, {
     method: "POST",
     body: JSON.stringify({
       accessKeyId:

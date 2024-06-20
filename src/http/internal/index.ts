@@ -3,6 +3,9 @@ export async function fetchApiRoot(id: number, token: string) {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
-  const resp = await fetch(`/api?id=${id}`, { method: "GET", headers });
+  const resp = await fetch(`/api/private/?id=${id}`, {
+    method: "GET",
+    headers,
+  });
   return resp;
 }

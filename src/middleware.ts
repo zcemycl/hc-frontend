@@ -63,5 +63,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/api/(private)/:path*",
+  matcher: ["/api/private/:path*"],
 };
