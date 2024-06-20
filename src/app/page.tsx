@@ -3,46 +3,16 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
+import { IRequestDemoForm } from "@/types/home";
 
 import { fetchApiRoot } from "@/http/internal";
+import { sendEmail } from "@/http/internal/aws/ses";
 
 interface IData {
   success?: boolean;
   message?: string;
   id?: number;
   username?: string;
-}
-
-interface IRequestForm {
-  name: string;
-  email: string;
-  message: string;
-}
-
-async function sendEmail(requestForm: IRequestForm) {
-  const headers = {
-    "Content-Type": "application/json",
-  };
-  const resp = await fetch(`/api/request_demo`, {
-    method: "POST",
-    body: JSON.stringify({
-      name: requestForm.name,
-      email: requestForm.email,
-      message: requestForm.message,
-      domain_name: process.env.NEXT_PUBLIC_DOMAIN_NAME,
-      admin_email: process.env.NEXT_PUBLIC_ADMIN_EMAIL,
-      accessKeyId:
-        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
-          ? process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
-          : "",
-      secretAccessKey:
-        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
-          ? process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
-          : "",
-    }),
-    headers,
-  });
-  return await resp.json();
 }
 
 export default function Home() {
@@ -57,11 +27,10 @@ export default function Home() {
     message: "",
   };
   const [requestForm, setRequestForm] =
-    useState<IRequestForm>(defaultRequestForm);
+    useState<IRequestDemoForm>(defaultRequestForm);
 
   async function handleSubmitRequestForm() {
     const resp = await sendEmail(requestForm);
-    console.log(resp);
     const tmpRequestForm = {
       ...requestForm,
       message: "",

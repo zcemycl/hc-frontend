@@ -1,30 +1,9 @@
 "use client";
 import { ProtectedRoute, useAuth } from "@/contexts";
+import { create_presigned_url } from "@/http/internal/aws/sagemaker";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect } from "next/navigation";
 import { useState } from "react";
-
-async function fetchApiAI(token: string) {
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-  const resp = await fetch(`/api/private/service/ai`, {
-    method: "POST",
-    body: JSON.stringify({
-      accessKeyId:
-        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
-          ? process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
-          : "",
-      secretAccessKey:
-        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
-          ? process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
-          : "",
-    }),
-    headers,
-  });
-  return await resp.json();
-}
 
 export default function AI() {
   const { setIsAuthenticated, credentials } = useAuth();
@@ -116,7 +95,7 @@ export default function AI() {
                   redirect("/logout");
                 }
                 const credJson = JSON.parse(credentials);
-                const resp = await fetchApiAI(credJson.AccessToken);
+                const resp = await create_presigned_url(credJson.AccessToken);
                 setJupyterLink(resp.url);
                 setIsOpenModal(true);
               }}
