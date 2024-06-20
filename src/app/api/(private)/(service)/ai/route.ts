@@ -15,6 +15,8 @@ import {
 } from "@aws-sdk/client-sagemaker";
 
 const credentials_ = fromContainerMetadata({ timeout: 2000, maxRetries: 1 });
+const rolearn =
+  "arn:aws:iam::975050053093:role/terraform-20240619075858415000000001";
 
 export async function POST(request: Request) {
   const data = await request.json();

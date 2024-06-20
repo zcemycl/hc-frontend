@@ -2,14 +2,7 @@
 import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
-import {
-  SESClient,
-  SendEmailCommand,
-  SendEmailCommandInput,
-  SESClientConfig,
-} from "@aws-sdk/client-ses";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 import { fetchApiRoot } from "@/http/internal";
 
@@ -24,6 +17,32 @@ interface IRequestForm {
   name: string;
   email: string;
   message: string;
+}
+
+async function sendEmail(requestForm: IRequestForm) {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const resp = await fetch(`/api/request_demo`, {
+    method: "POST",
+    body: JSON.stringify({
+      name: requestForm.name,
+      email: requestForm.email,
+      message: requestForm.message,
+      domain_name: process.env.NEXT_PUBLIC_DOMAIN_NAME,
+      admin_email: process.env.NEXT_PUBLIC_ADMIN_EMAIL,
+      accessKeyId:
+        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
+          ? process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
+          : "",
+      secretAccessKey:
+        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
+          ? process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
+          : "",
+    }),
+    headers,
+  });
+  return await resp.json();
 }
 
 export default function Home() {
@@ -41,40 +60,8 @@ export default function Home() {
     useState<IRequestForm>(defaultRequestForm);
 
   async function handleSubmitRequestForm() {
-    let config: SESClientConfig = {
-      region: process.env.NEXT_PUBLIC_AWS_REGION as string,
-      credentials: () => Promise.resolve({} as any),
-    };
-    config = {
-      ...config,
-      credentials: {
-        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
-        secretAccessKey: process.env
-          .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
-      },
-    };
-    const ses_client = new SESClient(config);
-    const input: SendEmailCommandInput = {
-      Source: `no-reply@${process.env.NEXT_PUBLIC_DOMAIN_NAME as string}`,
-      Destination: {
-        ToAddresses: [process.env.NEXT_PUBLIC_ADMIN_EMAIL as string],
-      },
-      Message: {
-        Subject: {
-          Data: "RXScope Website Login Request",
-          Charset: "UTF-8",
-        },
-        Body: {
-          Html: {
-            Data: `<body><p>${requestForm.name} (${requestForm.email}): ${requestForm.message}</p></body>`,
-            Charset: "UTF-8",
-          },
-        },
-      },
-    };
-    const command = new SendEmailCommand(input);
-    const response = await ses_client.send(command);
-    console.log(response);
+    const resp = await sendEmail(requestForm);
+    console.log(resp);
     const tmpRequestForm = {
       ...requestForm,
       message: "",
@@ -93,6 +80,7 @@ export default function Home() {
         RefreshToken: "",
         TokenType: "Bearer",
       });
+      console.log(credentials);
       setCredentials(credentials);
       setIsAuthenticated(true);
       localStorage.setItem("credentials", credentials);

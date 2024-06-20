@@ -2,8 +2,6 @@
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect } from "next/navigation";
-const rolearn =
-  "arn:aws:iam::975050053093:role/terraform-20240619075858415000000001";
 
 async function fetchApiAI(token: string) {
   const headers = {
