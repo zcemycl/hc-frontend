@@ -80,7 +80,6 @@ export default function Home() {
         RefreshToken: "",
         TokenType: "Bearer",
       });
-      console.log(credentials);
       setCredentials(credentials);
       setIsAuthenticated(true);
       localStorage.setItem("credentials", credentials);
@@ -278,10 +277,6 @@ export default function Home() {
             >
               Submit
             </button>
-            <p className="text-xs text-gray-400 text-opacity-90 mt-3">
-              Chicharrones blog helvetica normcore iceland tousled brook viral
-              artisan.
-            </p>
           </div>
         </div>
       </section>

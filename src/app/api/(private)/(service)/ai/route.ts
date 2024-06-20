@@ -43,7 +43,5 @@ export async function POST(request: Request) {
   };
   const command = new CreatePresignedDomainUrlCommand(input);
   const response = await client.send(command);
-  console.log(response.AuthorizedUrl);
-
-  return NextResponse.json({ hello: response.AuthorizedUrl }, { status: 200 });
+  return NextResponse.json({ url: response.AuthorizedUrl }, { status: 200 });
 }
