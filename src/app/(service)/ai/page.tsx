@@ -1,49 +1,34 @@
 "use client";
-import { ProtectedRoute } from "@/contexts";
+import { ProtectedRoute, useAuth } from "@/contexts";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
-import {
-  CreatePresignedDomainUrlCommand,
-  CreateUserProfileCommand,
-  DescribeUserProfileCommand,
-  DescribeUserProfileResponse,
-  ListUserProfilesCommand,
-  ListUserProfilesRequest,
-  SageMakerClient,
-  SageMakerClientConfig,
-  UserProfileDetails,
-  UserSettings,
-} from "@aws-sdk/client-sagemaker";
-
+import { redirect } from "next/navigation";
 const rolearn =
   "arn:aws:iam::975050053093:role/terraform-20240619075858415000000001";
 
-async function handleJupyterBtnCallback() {
-  let config = {
-    region: "eu-west-2",
-  } as SageMakerClientConfig;
-  if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
-    config = {
-      ...config,
-      credentials: {
-        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
-        secretAccessKey: process.env
-          .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
-      },
-    };
-  }
-  const client = new SageMakerClient(config);
-  const input = {
-    // CreatePresignedDomainUrlRequest
-    DomainId: "d-oa2xxqb4psru", // required
-    UserProfileName: "leo-leung-test", // required
-    ExpiresInSeconds: 30,
+async function fetchApiAI(token: string) {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
   };
-  const command = new CreatePresignedDomainUrlCommand(input);
-  const response = await client.send(command);
-  console.log(response.AuthorizedUrl);
+  const resp = await fetch(`/api/ai`, {
+    method: "POST",
+    body: JSON.stringify({
+      accessKeyId:
+        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
+          ? process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
+          : "",
+      secretAccessKey:
+        process.env.NEXT_PUBLIC_ENV_NAME === "local-dev"
+          ? process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
+          : "",
+    }),
+    headers,
+  });
+  return await resp.json();
 }
 
 export default function AI() {
+  const { setIsAuthenticated, credentials } = useAuth();
   return (
     <ProtectedRoute>
       <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
@@ -71,9 +56,15 @@ export default function AI() {
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-green-600 
                 rounded text-2xl w-full"
-              onClick={() => {
+              onClick={async () => {
                 console.log("Open JupyterLab");
-                handleJupyterBtnCallback();
+                if (credentials.length === 0) {
+                  setIsAuthenticated(false);
+                  redirect("/logout");
+                }
+                const credJson = JSON.parse(credentials);
+                const resp = await fetchApiAI(credJson.AccessToken);
+                console.log(resp);
               }}
             >
               <JupyterIcon />

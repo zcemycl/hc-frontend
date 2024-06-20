@@ -1,6 +1,5 @@
 "use client";
 import { useAuth } from "@/contexts";
-// import { useAuth } from "../contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
@@ -29,7 +28,8 @@ interface IRequestForm {
 
 export default function Home() {
   const router = useRouter();
-  const { isAuthenticated, setIsAuthenticated, credentials } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, credentials, setCredentials } =
+    useAuth();
   const [data, setData] = useState<IData>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const defaultRequestForm = {
@@ -85,10 +85,23 @@ export default function Home() {
   }
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
+      const credentials = JSON.stringify({
+        AccessToken: process.env.NEXT_PUBLIC_DUMMY_ACCESS_TOKEN,
+        ExpiresIn: 3600,
+        IdToken: "",
+        RefreshToken: "",
+        TokenType: "Bearer",
+      });
+      setCredentials(credentials);
+      setIsAuthenticated(true);
+      localStorage.setItem("credentials", credentials);
+    }
     const requestFormJson =
       JSON.parse(localStorage.getItem("requestForm") as string) ??
       defaultRequestForm;
     setRequestForm(requestFormJson);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
