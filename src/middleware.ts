@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
       issuer: openid_conf.issuer,
     });
   } catch (e) {
-    console.log(e);
+    console.log("error: ", e);
     return Response.json(
       {
         success: false,

@@ -8,6 +8,8 @@ import { IRequestDemoForm } from "@/types/home";
 import { fetchApiRoot } from "@/http/internal";
 import { sendEmail } from "@/http/internal/aws/ses";
 
+import { dummy_cred } from "@/utils";
+
 interface IData {
   success?: boolean;
   message?: string;
@@ -41,18 +43,21 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
-      const credentials = JSON.stringify({
-        AccessToken: process.env.NEXT_PUBLIC_DUMMY_ACCESS_TOKEN,
-        ExpiresIn: 3600,
-        IdToken: "",
-        RefreshToken: "",
-        TokenType: "Bearer",
-      });
-      setCredentials(credentials);
-      setIsAuthenticated(true);
-      localStorage.setItem("credentials", credentials);
-    }
+    dummy_cred().then((x) => {
+      if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
+        const credentials = JSON.stringify({
+          AccessToken: x,
+          ExpiresIn: 3600,
+          IdToken: "",
+          RefreshToken: "",
+          TokenType: "Bearer",
+        });
+        setCredentials(credentials);
+        setIsAuthenticated(true);
+        localStorage.setItem("credentials", credentials);
+      }
+    });
+
     const requestFormJson =
       JSON.parse(localStorage.getItem("requestForm") as string) ??
       defaultRequestForm;
