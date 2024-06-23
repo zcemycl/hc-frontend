@@ -26,6 +26,7 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
         handleOutSideSideBarClick(e),
       );
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refSideBar]);
 
   return (

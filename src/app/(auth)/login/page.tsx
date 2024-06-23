@@ -12,6 +12,7 @@ export default function Login() {
   const searchParams = useSearchParams();
   const {
     isAuthenticated,
+    setRole,
     setIsAuthenticated,
     signIn,
     answerCustomChallenge,

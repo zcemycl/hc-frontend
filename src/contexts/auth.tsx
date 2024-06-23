@@ -11,7 +11,6 @@ import React, {
 import { Amplify } from "aws-amplify";
 import { defaultStorage } from "aws-amplify/utils";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
-// import {} from "aws-amplify/auth";
 import {
   CognitoIdentityProviderClient,
   InitiateAuthCommand,
@@ -24,6 +23,7 @@ import {
 // import { CognitoIdentity } from "@aws-sdk/client-cognito-identity";
 import { redirect } from "next/navigation";
 import { signIn as login, confirmSignIn } from "aws-amplify/auth";
+import { UserRoleEnum } from "@/types/users";
 // import CognitoProvider from "next-auth/providers/cognito";
 
 Amplify.configure({
@@ -44,6 +44,8 @@ interface AuthContextType {
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   credentials: string;
   setCredentials: Dispatch<SetStateAction<string>>;
+  role: UserRoleEnum;
+  setRole: Dispatch<SetStateAction<UserRoleEnum>>;
   signIn: (email: string) => Promise<InitiateAuthResponse>;
   cognitoIdentity: CognitoIdentityProviderClient;
   answerCustomChallenge: (
@@ -81,14 +83,17 @@ export const AuthContext = createContext<AuthContextType>({
   setCredentials: function (value: React.SetStateAction<string>): void {
     throw new Error("Function not implemented.");
   },
+  role: UserRoleEnum.USER,
+  setRole: function (value: React.SetStateAction<UserRoleEnum>): void {
+    throw new Error("Function not implemented.");
+  },
 });
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState<string>("");
-  const cognitoIdentity = new CognitoIdentityProviderClient({
-    region: process.env.NEXT_PUBLIC_AWS_REGION,
-  });
+  const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
+
   // const cognitoidentity = new CognitoIdentity({
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
@@ -103,63 +108,65 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     }
   }, []);
 
-  async function signIn(email: string) {
-    const params: InitiateAuthRequest = {
-      AuthFlow: "CUSTOM_AUTH",
-      ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
-      AuthParameters: {
-        USERNAME: email,
-      },
-    };
-    const command = new InitiateAuthCommand(params);
-    try {
-      const response: InitiateAuthResponse =
-        await cognitoIdentity.send(command);
-      return response;
-    } catch (err) {
-      console.log(err);
-      return {};
-    }
-  }
-
-  async function answerCustomChallenge(
-    sessionId: string,
-    code: string,
-    email: string,
-  ) {
-    const params: RespondToAuthChallengeRequest = {
-      ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
-      ChallengeName: "CUSTOM_CHALLENGE",
-      Session: sessionId,
-      ChallengeResponses: { USERNAME: email, ANSWER: code },
-    };
-    const command = new RespondToAuthChallengeCommand(params);
-    try {
-      const response: RespondToAuthChallengeResponse =
-        await cognitoIdentity.send(command);
-      return response;
-    } catch (err) {
-      console.log(err);
-      return {};
-    }
-  }
-
-  async function amplifySignIn(email: string) {
-    const resp = await login({
-      username: email,
-      options: { authFlowType: "CUSTOM_WITHOUT_SRP" },
-    });
-    return resp;
-  }
-
-  async function amplifyConfirmSignIn(code: string) {
-    const resp = await confirmSignIn({
-      challengeResponse: code,
-    });
-    return resp;
-  }
-
   const AuthProviderValue = useMemo<AuthContextType>(() => {
+    const cognitoIdentity = new CognitoIdentityProviderClient({
+      region: process.env.NEXT_PUBLIC_AWS_REGION,
+    });
+    async function signIn(email: string) {
+      const params: InitiateAuthRequest = {
+        AuthFlow: "CUSTOM_AUTH",
+        ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
+        AuthParameters: {
+          USERNAME: email,
+        },
+      };
+      const command = new InitiateAuthCommand(params);
+      try {
+        const response: InitiateAuthResponse =
+          await cognitoIdentity.send(command);
+        return response;
+      } catch (err) {
+        console.log(err);
+        return {};
+      }
+    }
+
+    async function answerCustomChallenge(
+      sessionId: string,
+      code: string,
+      email: string,
+    ) {
+      const params: RespondToAuthChallengeRequest = {
+        ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
+        ChallengeName: "CUSTOM_CHALLENGE",
+        Session: sessionId,
+        ChallengeResponses: { USERNAME: email, ANSWER: code },
+      };
+      const command = new RespondToAuthChallengeCommand(params);
+      try {
+        const response: RespondToAuthChallengeResponse =
+          await cognitoIdentity.send(command);
+        return response;
+      } catch (err) {
+        console.log(err);
+        return {};
+      }
+    }
+
+    async function amplifySignIn(email: string) {
+      const resp = await login({
+        username: email,
+        options: { authFlowType: "CUSTOM_WITHOUT_SRP" },
+      });
+      return resp;
+    }
+
+    async function amplifyConfirmSignIn(code: string) {
+      const resp = await confirmSignIn({
+        challengeResponse: code,
+      });
+      return resp;
+    }
     return {
       isAuthenticated,
       setIsAuthenticated,
@@ -170,17 +177,16 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       answerCustomChallenge,
       amplifySignIn,
       amplifyConfirmSignIn,
+      role,
+      setRole,
     };
   }, [
     isAuthenticated,
     setIsAuthenticated,
     credentials,
     setCredentials,
-    cognitoIdentity,
-    signIn,
-    answerCustomChallenge,
-    amplifySignIn,
-    amplifyConfirmSignIn,
+    role,
+    setRole,
   ]);
 
   return (
