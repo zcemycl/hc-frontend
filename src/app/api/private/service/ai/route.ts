@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fromContainerMetadata } from "@aws-sdk/credential-providers";
+import { export_aws_credentials } from "@/utils";
 
 import {
   CreatePresignedDomainUrlCommand,
@@ -20,18 +21,7 @@ const rolearn =
 
 export async function POST(request: Request) {
   const data = await request.json();
-  let credentials: any = credentials_;
-  if (
-    "accessKeyId" in data &&
-    data.accessKeyId !== "" &&
-    "secretAccessKey" in data &&
-    data.secretAccessKey !== ""
-  ) {
-    credentials = (({ accessKeyId, secretAccessKey }) => ({
-      accessKeyId,
-      secretAccessKey,
-    }))(data);
-  }
+  const credentials = export_aws_credentials(data, credentials_);
 
   let config = {
     region: "eu-west-2",
