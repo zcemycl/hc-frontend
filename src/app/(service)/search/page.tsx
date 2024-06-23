@@ -48,6 +48,41 @@ export default function Search() {
   const [nSearch, setNSearch] = useState(1);
   const refSearchResGroup = useRef(null);
 
+  async function search_query_by_type() {
+    const credJson = JSON.parse(credentials);
+    let resp;
+    if (queryType === "setid") {
+      resp = await fetchFdalabelBySetid(
+        query,
+        credJson.AccessToken,
+        topN,
+        pageN * nPerPage,
+        undefined,
+      );
+      setDisplayData(resp);
+    } else if (queryType === "tradename") {
+      resp = await fetchFdalabelByTradename(
+        query,
+        credJson.AccessToken,
+        topN,
+        pageN * nPerPage,
+        undefined,
+      );
+      setDisplayData(resp);
+    } else if (queryType === "indication") {
+      resp = await fetchFdalabelByIndication(
+        query[0],
+        credJson.AccessToken,
+        topN,
+        pageN * nPerPage,
+        undefined,
+        sortBy,
+      );
+      setDisplayData(resp);
+    }
+    return resp;
+  }
+
   // show individual drug data
   useEffect(() => {
     let resp;
@@ -78,41 +113,11 @@ export default function Search() {
     async function pageCallback(pageN: number) {
       setDisplayDataIndex(null);
       setCompareTable({ table: [] });
-      let res, resp;
       if (credentials.length === 0) {
         setIsAuthenticated(false);
         redirect("/logout");
       }
-      const credJson = JSON.parse(credentials);
-      if (queryType === "setid") {
-        resp = await fetchFdalabelBySetid(
-          query,
-          credJson.AccessToken,
-          topN,
-          pageN * nPerPage,
-          undefined,
-        );
-        setDisplayData(resp);
-      } else if (queryType === "tradename") {
-        resp = await fetchFdalabelByTradename(
-          query,
-          credJson.AccessToken,
-          topN,
-          pageN * nPerPage,
-          undefined,
-        );
-        setDisplayData(resp);
-      } else if (queryType === "indication") {
-        resp = await fetchFdalabelByIndication(
-          query[0],
-          credJson.AccessToken,
-          topN,
-          pageN * nPerPage,
-          undefined,
-          sortBy,
-        );
-        setDisplayData(resp);
-      }
+      const resp = await search_query_by_type();
       console.log(resp);
       if (resp.detail?.error! === "AUTH_EXPIRED") {
         setIsAuthenticated(false);
@@ -296,41 +301,11 @@ export default function Search() {
                   setDisplayDataIndex(null);
                   setSetIdsToCompare(new Set());
                   setCompareTable({ table: [] });
-                  let resp;
                   if (credentials.length === 0) {
                     setIsAuthenticated(false);
                     redirect("/logout");
                   }
-                  const credJson = JSON.parse(credentials);
-                  if (queryType === "setid") {
-                    resp = await fetchFdalabelBySetid(
-                      query,
-                      credJson.AccessToken,
-                      topN,
-                      pageN * nPerPage,
-                      undefined,
-                    );
-                    setDisplayData(resp);
-                  } else if (queryType === "tradename") {
-                    resp = await fetchFdalabelByTradename(
-                      query,
-                      credJson.AccessToken,
-                      topN,
-                      pageN * nPerPage,
-                      undefined,
-                    );
-                    setDisplayData(resp);
-                  } else if (queryType === "indication") {
-                    resp = await fetchFdalabelByIndication(
-                      query[0],
-                      credJson.AccessToken,
-                      topN,
-                      pageN * nPerPage,
-                      undefined,
-                      sortBy,
-                    );
-                    setDisplayData(resp);
-                  }
+                  const resp = await search_query_by_type();
                   console.log(resp);
                   if (resp.detail?.error! === "AUTH_EXPIRED") {
                     setIsAuthenticated(false);
