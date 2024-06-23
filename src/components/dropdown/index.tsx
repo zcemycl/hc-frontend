@@ -81,7 +81,7 @@ const DropDownList: FC<{
   allOptions: { [key: string]: string }[];
   isOpen: boolean;
   resetCallback: Function;
-  setSelectionKey: (s: string) => void;
+  setSelectionKey: (s: any) => void;
 }> = ({
   selected,
   displayNameKey,

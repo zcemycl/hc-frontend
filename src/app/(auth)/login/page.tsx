@@ -3,9 +3,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts";
-// import { useAuth } from "../../../contexts";
-
-type IMode = "login" | "verify";
+import { SiteMode } from "./types";
 
 export default function Login() {
   const router = useRouter();
@@ -21,19 +19,19 @@ export default function Login() {
   const [email, setEmail] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
   const urlEmail = decodeURIComponent(searchParams.get("email") ?? "");
-  const [mode, setMode] = useState<string>("");
+  const [mode, setMode] = useState<SiteMode>(SiteMode.LOGIN);
 
   const submitCallback = async function (email: string) {
     const resp = await signIn(email);
     localStorage.setItem("cognito_user", JSON.stringify(resp));
-    localStorage.setItem("mode", "verify");
+    localStorage.setItem("mode", SiteMode.VERIFY);
     localStorage.setItem("email", email);
     router.push("/prelogin");
   };
 
   useEffect(() => {
-    const curMode = localStorage.getItem("mode") ?? "login";
-    setMode(curMode);
+    const curMode = localStorage.getItem("mode") ?? SiteMode.LOGIN;
+    setMode(curMode as SiteMode);
     const curEmail = localStorage.getItem("email") ?? "";
     setEmail(curEmail);
   }, []);
@@ -58,7 +56,7 @@ export default function Login() {
         urlCode &&
         urlEmail &&
         "Session" in cognito_user &&
-        mode === "verify" &&
+        mode === SiteMode.VERIFY &&
         !isAuthenticated
       ) {
         const sessionLoginId = cognito_user.Session;
@@ -68,8 +66,8 @@ export default function Login() {
           urlCode,
           urlEmail,
         );
-        setMode("login");
-        localStorage.setItem("mode", "login");
+        setMode(SiteMode.LOGIN);
+        localStorage.setItem("mode", SiteMode.LOGIN);
         const expiresAt =
           new Date().getTime() / 1000 + resp.AuthenticationResult?.ExpiresIn!;
         const credentials = JSON.stringify(resp.AuthenticationResult);

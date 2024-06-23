@@ -24,10 +24,13 @@ import { TableCell, TableHeadCell } from "@/components/table";
 import { TypographyH2 } from "@/components/typography";
 import { DropDownBtn, DropDownList } from "@/components/dropdown";
 import { sortByMap } from "@/constants/search-sort-type";
+import { SortByEnum, SearchQueryTypeEnum } from "./types";
 
 export default function Search() {
   const [query, setQuery] = useState<string[]>([""]);
-  const [queryType, setQueryType] = useState("indication");
+  const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
+    SearchQueryTypeEnum.INDICATION,
+  );
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
   const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
@@ -38,7 +41,7 @@ export default function Search() {
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
-  const [sortBy, setSortBy] = useState("relevance");
+  const [sortBy, setSortBy] = useState<SortByEnum>(SortByEnum.RELEVANCE);
   const [compareTable, setCompareTable] = useState<ICompareAETable>({
     table: [],
   });
@@ -51,7 +54,7 @@ export default function Search() {
   async function search_query_by_type() {
     const credJson = JSON.parse(credentials);
     let resp;
-    if (queryType === "setid") {
+    if (queryType === SearchQueryTypeEnum.SETID) {
       resp = await fetchFdalabelBySetid(
         query,
         credJson.AccessToken,
@@ -60,7 +63,7 @@ export default function Search() {
         undefined,
       );
       setDisplayData(resp);
-    } else if (queryType === "tradename") {
+    } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
       resp = await fetchFdalabelByTradename(
         query,
         credJson.AccessToken,
@@ -69,7 +72,7 @@ export default function Search() {
         undefined,
       );
       setDisplayData(resp);
-    } else if (queryType === "indication") {
+    } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fetchFdalabelByIndication(
         query[0],
         credJson.AccessToken,
