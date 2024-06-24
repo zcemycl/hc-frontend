@@ -4,6 +4,7 @@ import { sidebar_constant } from "@/constants/sidebar";
 import { useAuth, useOpenBar } from "@/contexts";
 import Link from "next/link";
 import { UserRoleEnum } from "@/types/users";
+import { AdminIcon } from "@/icons";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {
   const { role } = useAuth();
@@ -16,7 +17,7 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
           {
             name: "Admin Console",
             path: "/admin",
-            icon: <p>fdf</p>,
+            icon: <AdminIcon />,
             testid: "admin-link",
           },
         ]

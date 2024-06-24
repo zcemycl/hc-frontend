@@ -1,3 +1,4 @@
+export { AdminIcon } from "./AdminIcon";
 export { ProfileIcon } from "./ProfileIcon";
 export { MoonIcon } from "./MoonIcon";
 export { SunIcon } from "./SunIcon";
