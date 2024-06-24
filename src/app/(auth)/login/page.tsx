@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useAuth } from "@/contexts";
 import { SiteMode } from "./types";
 import { UserRoleEnum } from "@/types/users";
+import { fetchUserInfoByName } from "@/http/backend/users";
+// import { fetchUserInfoByName } from "@/http/backend/users";
 
 export default function Login() {
   const router = useRouter();
@@ -74,7 +76,11 @@ export default function Login() {
         const credentials = JSON.stringify(resp.AuthenticationResult);
         localStorage.setItem("credentials", credentials);
         setCredentials(credentials);
-        setRole(UserRoleEnum.ADMIN);
+        const resp_user = await fetchUserInfoByName(
+          cognito_user.ChallengeParameters.USERNAME,
+          resp.AuthenticationResult?.AccessToken as string,
+        );
+        setRole(resp_user.role as UserRoleEnum);
         localStorage.setItem("expireAt", expiresAt.toString());
         if (
           resp &&
