@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts";
 import { SiteMode } from "./types";
+import { UserRoleEnum } from "@/types/users";
 
 export default function Login() {
   const router = useRouter();
@@ -73,6 +74,7 @@ export default function Login() {
         const credentials = JSON.stringify(resp.AuthenticationResult);
         localStorage.setItem("credentials", credentials);
         setCredentials(credentials);
+        setRole(UserRoleEnum.ADMIN);
         localStorage.setItem("expireAt", expiresAt.toString());
         if (
           resp &&

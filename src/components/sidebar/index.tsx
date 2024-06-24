@@ -1,12 +1,27 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 import { sidebar_constant } from "@/constants/sidebar";
-import { useOpenBar } from "@/contexts";
+import { useAuth, useOpenBar } from "@/contexts";
 import Link from "next/link";
+import { UserRoleEnum } from "@/types/users";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {
+  const { role } = useAuth();
   const { isSideBarOpen, setIsSideBarOpen } = useOpenBar();
   const refSideBar = useRef(null);
+  const sidebar_items = [
+    ...sidebar_constant,
+    ...(role === UserRoleEnum.ADMIN
+      ? [
+          {
+            name: "Admin Console",
+            path: "/admin",
+            icon: <p>fdf</p>,
+            testid: "admin-link",
+          },
+        ]
+      : []),
+  ];
 
   useEffect(() => {
     const handleOutSideSideBarClick = ({ target }: Event) => {
@@ -42,7 +57,7 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
           >
             <div className="min-h-screen z-0 px-3 py-4 w-64 bg-gray-50 dark:bg-gray-800">
               <ul className="space-y-2 font-medium">
-                {sidebar_constant.map((keyValue) => {
+                {sidebar_items.map((keyValue) => {
                   return (
                     <li key={keyValue.name}>
                       <Link

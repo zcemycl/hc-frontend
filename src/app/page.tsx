@@ -9,6 +9,7 @@ import { fetchApiRoot } from "@/http/internal";
 import { sendEmail } from "@/http/internal/aws/ses";
 
 import { dummy_cred } from "@/utils";
+import { UserRoleEnum } from "@/types/users";
 
 interface IData {
   success?: boolean;
@@ -19,8 +20,13 @@ interface IData {
 
 export default function Home() {
   const router = useRouter();
-  const { isAuthenticated, setIsAuthenticated, credentials, setCredentials } =
-    useAuth();
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    credentials,
+    setCredentials,
+    setRole,
+  } = useAuth();
   const [data, setData] = useState<IData>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const defaultRequestForm = {
@@ -54,6 +60,7 @@ export default function Home() {
         });
         setCredentials(credentials);
         setIsAuthenticated(true);
+        setRole(UserRoleEnum.ADMIN);
         localStorage.setItem("credentials", credentials);
       }
     });
