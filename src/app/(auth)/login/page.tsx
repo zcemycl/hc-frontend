@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts";
 import { SiteMode } from "./types";
 import { UserRoleEnum } from "@/types/users";
 import { fetchUserInfoByName } from "@/http/backend/users";
-// import { fetchUserInfoByName } from "@/http/backend/users";
 
 export default function Login() {
   const router = useRouter();

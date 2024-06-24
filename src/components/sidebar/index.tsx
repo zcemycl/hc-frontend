@@ -11,17 +11,17 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
   const { isSideBarOpen, setIsSideBarOpen } = useOpenBar();
   const refSideBar = useRef(null);
   const sidebar_items = [
-    ...sidebar_constant,
     ...(role === UserRoleEnum.ADMIN
       ? [
           {
-            name: "Admin Console",
+            name: "Admin Panel",
             path: "/admin",
             icon: <AdminIcon />,
             testid: "admin-link",
           },
         ]
       : []),
+    ...sidebar_constant,
   ];
 
   useEffect(() => {

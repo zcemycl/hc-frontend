@@ -98,7 +98,7 @@ export default function Home() {
                 {isAuthenticated
                   ? isLoading
                     ? "is Loading"
-                    : `${data!.id}-${data!.username}`
+                    : `${data!.username}`
                   : ""}
               </h1>
               <div className="leading-relaxed">
