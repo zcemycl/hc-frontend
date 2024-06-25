@@ -149,7 +149,10 @@ export default function Search() {
             <p className="leading-relaxed mb-5">Please enter your query.</p>
             <div className="flex flex-col flex-nowrap space-y-2 mb-2">
               {Array.from(
-                { length: queryType !== "indication" ? nSearch : 1 },
+                {
+                  length:
+                    queryType !== SearchQueryTypeEnum.INDICATION ? nSearch : 1,
+                },
                 (_, i) => (
                   <div
                     key={i}
@@ -181,7 +184,7 @@ export default function Search() {
                       space-y-0
                       h-full"
                     >
-                      {queryType !== "indication" && (
+                      {queryType !== SearchQueryTypeEnum.INDICATION && (
                         <button
                           className="w-[1rem] h-1/2 p-0 leading-[0px] m-0"
                           onClick={() => {
@@ -195,24 +198,25 @@ export default function Search() {
                           -
                         </button>
                       )}
-                      {queryType !== "indication" && i === nSearch - 1 && (
-                        <button
-                          className="w-[1rem] h-1/2 p-0 leading-[0px] m-0"
-                          onClick={() => {
-                            setNSearch((prev) => prev + 1);
-                            setQuery((prev) => [...prev, ""]);
-                          }}
-                        >
-                          +
-                        </button>
-                      )}
+                      {queryType !== SearchQueryTypeEnum.INDICATION &&
+                        i === nSearch - 1 && (
+                          <button
+                            className="w-[1rem] h-1/2 p-0 leading-[0px] m-0"
+                            onClick={() => {
+                              setNSearch((prev) => prev + 1);
+                              setQuery((prev) => [...prev, ""]);
+                            }}
+                          >
+                            +
+                          </button>
+                        )}
                     </div>
                   </div>
                 ),
               )}
             </div>
             <div className="py-1 flex justify-end items-center text-base space-x-1">
-              {queryType === "indication" && (
+              {queryType === SearchQueryTypeEnum.INDICATION && (
                 <div className="flex justify-start space-x-3">
                   <label htmlFor="">Top N: </label>
                   <input
@@ -229,7 +233,7 @@ export default function Search() {
                 </div>
               )}
               <div className="flex flex-row justify-end space-x-1">
-                {queryType === "indication" && (
+                {queryType === SearchQueryTypeEnum.INDICATION && (
                   <div>
                     <DropDownBtn
                       extraClassName="justify-end w-full"
@@ -605,7 +609,7 @@ export default function Search() {
                           readOnly={true}
                         />
                       </div>
-                      {queryType !== "indication" && (
+                      {queryType !== SearchQueryTypeEnum.INDICATION && (
                         <TypographyH2>{each.setid}</TypographyH2>
                       )}
                       <TypographyH2>
@@ -633,7 +637,11 @@ export default function Search() {
               })}
               <div className="flex justify-center space-x-1">
                 <PaginationBar
-                  topN={queryType === "indication" ? topN : displayData.length}
+                  topN={
+                    queryType === SearchQueryTypeEnum.INDICATION
+                      ? topN
+                      : displayData.length
+                  }
                   pageN={pageN}
                   nPerPage={nPerPage}
                   setPageN={(i: number) => {
