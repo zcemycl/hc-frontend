@@ -16,6 +16,7 @@ interface IData {
   message?: string;
   id?: number;
   username?: string;
+  role?: UserRoleEnum;
 }
 
 export default function Home() {
@@ -49,7 +50,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    dummy_cred().then((x) => {
+    dummy_cred("leo.leung.rxscope").then((x) => {
       if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
         const credentials = JSON.stringify({
           AccessToken: x,
@@ -60,8 +61,6 @@ export default function Home() {
         });
         setCredentials(credentials);
         setIsAuthenticated(true);
-        setRole(UserRoleEnum.ADMIN);
-        // setRole(UserRoleEnum.USER);
         localStorage.setItem("credentials", credentials);
       }
     });
@@ -83,6 +82,9 @@ export default function Home() {
         redirect("/logout");
       }
       const res = await resp.json();
+      if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
+        setRole(res.role);
+      }
       setData(res);
       setIsLoading(false);
     }
