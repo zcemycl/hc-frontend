@@ -7,7 +7,7 @@ import { IUser } from "@/types/users";
 import { useRouter } from "next/navigation";
 import PaginationBar from "@/components/pagebar";
 import { convert_datetime_to_date } from "@/utils";
-import { delete_user } from "@/http/internal/aws/cognito";
+import { create_user, delete_user } from "@/http/internal/aws/cognito";
 
 export default function Admin() {
   const refUserGroup = useRef(null);
@@ -49,8 +49,17 @@ export default function Admin() {
               <button
                 className="w-[1rem] h-1/2 p-1 leading-[0px] m-0
             bg-green-300 rounded-full text-black hover:bg-green-500"
-                onClick={() => {
+                onClick={async () => {
+                  const credJson = JSON.parse(credentials);
                   console.log("adding user");
+                  // const resp = await create_user(
+                  //   "fhaha", "fhaha265@gmail.com", credJson.AccessToken);
+                  const resp = await create_user(
+                    "leo.leung.faculty",
+                    "leo.leung@faculty.ai",
+                    credJson.AccessToken,
+                  );
+                  console.log(resp);
                 }}
               >
                 +
@@ -75,7 +84,12 @@ export default function Admin() {
                         onClick={async () => {
                           const credJson = JSON.parse(credentials);
                           console.log("deleting user");
-                          await delete_user("fhaha", credJson.AccessToken);
+                          // await delete_user("fhaha", credJson.AccessToken);
+                          await delete_user(
+                            "leo.leung.faculty",
+                            "leo.leung@faculty.ai",
+                            credJson.AccessToken,
+                          );
                         }}
                       >
                         x
