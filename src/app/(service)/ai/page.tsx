@@ -5,6 +5,7 @@ import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import { UserRoleEnum } from "@/types/users";
+import Modal from "@/components/modal";
 
 export default function AI() {
   const { setIsAuthenticated, credentials, role } = useAuth();
@@ -18,58 +19,21 @@ export default function AI() {
           className="container px-2 py-24 mx-auto grid justify-items-center
     "
         >
-          <div
-            id="default-modal"
-            tabIndex={-1}
-            aria-hidden="true"
-            className={`fixed place-items-center transition-all
-            z-10 justify-center items-center w-full md:inset-0 h-full 
-            ${isOpenModal ? "scale-100" : "scale-0"}`}
+          <Modal
+            title="Jupyter Lab Link"
+            isOpenModal={isOpenModal}
+            setIsOpenModal={() => setIsOpenModal(false)}
           >
-            <div className="relative p-4 w-full h-full">
-              <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 translate-x-1/2 -translate-y-1/2 top-1/2">
-                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Jupyter Lab Link
-                  </h3>
-                  <button
-                    type="button"
-                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 
-                          rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center 
-                          dark:hover:bg-gray-600 dark:hover:text-white"
-                    data-modal-hide="default-modal"
-                    onClick={() => setIsOpenModal(false)}
-                  >
-                    <svg
-                      className="w-3 h-3"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 14"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                      />
-                    </svg>
-                    <span className="sr-only">Close modal</span>
-                  </button>
-                </div>
-                <div className="p-4 md:p-5 space-y-4">
-                  <a
-                    className="text-base leading-relaxed text-gray-500 dark:text-gray-400 underline"
-                    href={jupyterLink}
-                    target="_blank"
-                  >
-                    Click here to open Jupyter Lab ...
-                  </a>
-                </div>
-              </div>
+            <div className="p-4 md:p-5 space-y-4">
+              <a
+                className="text-base leading-relaxed text-gray-500 dark:text-gray-400 underline"
+                href={jupyterLink}
+                target="_blank"
+              >
+                Click here to open Jupyter Lab ...
+              </a>
             </div>
-          </div>
+          </Modal>
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10 space-y-2">
             <h2 className="text-white text-lg mb-1 font-medium title-font">
               AI Tools

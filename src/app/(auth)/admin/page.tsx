@@ -8,12 +8,22 @@ import { useRouter } from "next/navigation";
 import PaginationBar from "@/components/pagebar";
 import { convert_datetime_to_date } from "@/utils";
 import { create_user, delete_user } from "@/http/internal/aws/cognito";
+import Modal from "@/components/modal";
+
+interface IAddUserInfo {
+  username?: string;
+  email?: string;
+}
 
 export default function Admin() {
   const refUserGroup = useRef(null);
   const router = useRouter();
   const { credentials, setIsAuthenticated } = useAuth();
+  const [isOpenAddUserModal, setIsOpenAddUserModal] = useState(false);
+  const [isOpenDelUserModal, setIsOpenDelUserModal] = useState(false);
+  const [addUserInfo, setAddUserInfo] = useState<IAddUserInfo>({});
   const [displayData, setDisplayData] = useState<IUser[]>([]);
+  const [delUserIndex, setDelUserIndex] = useState<number>(0);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
 
@@ -43,6 +53,74 @@ export default function Admin() {
         ref={refUserGroup}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
+          <Modal
+            title={`Confirm Delete User -- ${displayData[delUserIndex]?.email} ?`}
+            isOpenModal={isOpenDelUserModal}
+            setIsOpenModal={setIsOpenDelUserModal}
+          >
+            <div className="content-center justify-center flex py-2">
+              <button
+                className="
+              px-10 py-5
+              rounded-lg bg-red-700 hover:bg-red-900 
+              text-white"
+                onClick={async () => {
+                  const credJson = JSON.parse(credentials);
+                  await delete_user(
+                    displayData[delUserIndex].username,
+                    displayData[delUserIndex].email,
+                    credJson.AccessToken,
+                  );
+                  setIsOpenDelUserModal(false);
+                  setDelUserIndex(0);
+                }}
+              >
+                YES
+              </button>
+            </div>
+          </Modal>
+          <Modal
+            title={`Enter New User Information`}
+            isOpenModal={isOpenAddUserModal}
+            setIsOpenModal={setIsOpenAddUserModal}
+          >
+            <div className="flex flex-col space-y-2 px-10 py-5">
+              <div>
+                <label htmlFor="">Username</label>
+                <input
+                  type="text"
+                  className="bg-white w-full"
+                  onChange={(e) => {
+                    setAddUserInfo({
+                      ...addUserInfo,
+                      username: e.currentTarget.value,
+                    });
+                  }}
+                />
+              </div>
+              <div>
+                <label htmlFor="">Email Address</label>
+                <input
+                  type="text"
+                  className="bg-white w-full"
+                  onChange={(e) => {
+                    setAddUserInfo({
+                      ...addUserInfo,
+                      email: e.currentTarget.value,
+                    });
+                  }}
+                />
+              </div>
+              <div>
+                <button
+                  className="text-black bg-green-200 hover:bg-green-400 
+                    p-6 rounded-lg"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </Modal>
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
             <div className="flex justify-between">
               <TypographyH2>Admin Panel</TypographyH2>
@@ -52,14 +130,14 @@ export default function Admin() {
                 onClick={async () => {
                   const credJson = JSON.parse(credentials);
                   console.log("adding user");
+                  setIsOpenAddUserModal(true);
+
                   // const resp = await create_user(
-                  //   "fhaha", "fhaha265@gmail.com", credJson.AccessToken);
-                  const resp = await create_user(
-                    "leo.leung.faculty",
-                    "leo.leung@faculty.ai",
-                    credJson.AccessToken,
-                  );
-                  console.log(resp);
+                  //   "leo.leung.faculty",
+                  //   "leo.leung@faculty.ai",
+                  //   credJson.AccessToken,
+                  // );
+                  // console.log(resp);
                 }}
               >
                 +
@@ -82,14 +160,9 @@ export default function Admin() {
                         className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
                         bg-red-600 rounded-full text-white hover:bg-red-700"
                         onClick={async () => {
-                          const credJson = JSON.parse(credentials);
                           console.log("deleting user");
-                          // await delete_user("fhaha", credJson.AccessToken);
-                          await delete_user(
-                            "leo.leung.faculty",
-                            "leo.leung@faculty.ai",
-                            credJson.AccessToken,
-                          );
+                          setIsOpenDelUserModal(true);
+                          setDelUserIndex(idx);
                         }}
                       >
                         x
