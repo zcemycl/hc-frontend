@@ -77,20 +77,20 @@ export default function AI() {
             <button
               type="button"
               className="text-white bg-red-500 border-0 py-2
-                flex justify-start content-center text-center
+                flex justify-between content-center text-center
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-red-600 
                 rounded text-2xl w-full"
             >
+              <p>Annotation</p>
               <AnnotateIcon />
-              Annotation
             </button>
             <button
               disabled={isNotAdmin}
               type="button"
               title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
               className={`focus:outline-none border-0 py-2
-                flex justify-start content-center text-center
+                flex justify-between content-center text-center
                 align-middle items-center text-white
                 px-6 ${isNotAdmin ? "bg-slate-500" : "bg-green-500 hover:bg-green-600"}
                 rounded text-2xl w-full`}
@@ -106,19 +106,19 @@ export default function AI() {
                 setIsOpenModal(true);
               }}
             >
+              <p>Jupyter Lab</p>
               <JupyterIcon />
-              Jupyter Lab
             </button>
             <button
               type="button"
               className="text-white bg-blue-500 border-0 py-2
-                flex justify-start content-center text-center
+                flex justify-between content-center text-center
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-blue-600 
                 rounded text-2xl w-full"
             >
+              <p>Chatbot</p>
               <ChatbotIcon />
-              Chatbot
             </button>
           </div>
         </div>
