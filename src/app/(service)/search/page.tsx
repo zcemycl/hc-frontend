@@ -371,21 +371,19 @@ export default function Search() {
             </div>
           </div>
           {compareTable.table?.length !== 0 && (
-            <>
-              <table className="border">
-                <tbody>
-                  {compareTable.table?.map((tablerow, rowid) => {
-                    return (
-                      <tr key={rowid}>
-                        {tablerow.map((tdata, dataid) => {
-                          return <TableCell key={dataid}>{tdata}</TableCell>;
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </>
+            <table className="border">
+              <tbody>
+                {compareTable.table?.map((tablerow, rowid) => {
+                  return (
+                    <tr key={rowid}>
+                      {tablerow.map((tdata, dataid) => {
+                        return <TableCell key={dataid}>{tdata}</TableCell>;
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           )}
 
           {displayData.length > 0 &&
@@ -578,61 +576,58 @@ export default function Search() {
             <>
               {displayData.map((each, idx) => {
                 return (
-                  <>
-                    <div
-                      className="sm:w-1/2 flex flex-col w-screen p-10"
-                      key={idx}
-                    >
-                      <div className="flex justify-between">
-                        <TypographyH2>{each.tradename}</TypographyH2>
-                        <input
-                          type="checkbox"
-                          checked={setIdsToCompare.has(each.setid as string)}
-                          onClick={(e) => {
-                            const ischecked = (e.target as HTMLInputElement)
-                              .checked;
-                            if (ischecked) {
-                              setSetIdsToCompare((prev) =>
-                                new Set(prev).add(each.setid as string),
-                              );
-                            } else {
-                              setSetIdsToCompare(
-                                (prev) =>
-                                  new Set(
-                                    Array.from(prev).filter(
-                                      (x) => x != each.setid,
-                                    ),
-                                  ),
-                              );
-                            }
-                          }}
-                          readOnly={true}
-                        />
-                      </div>
-                      {queryType !== SearchQueryTypeEnum.INDICATION && (
-                        <TypographyH2>{each.setid}</TypographyH2>
-                      )}
-                      <TypographyH2>
-                        Initial US Approval Year:{" "}
-                        {each.initial_us_approval_year}
-                      </TypographyH2>
-                      {each.distance && (
-                        <TypographyH2>
-                          Indication Proximity: {each.distance.toFixed(3)}
-                        </TypographyH2>
-                      )}
-                      <p>{each.indication}</p>
-                      <button
+                  <div
+                    className="sm:w-1/2 flex flex-col w-screen p-10"
+                    key={each.setid}
+                  >
+                    <div className="flex justify-between">
+                      <TypographyH2>{each.tradename}</TypographyH2>
+                      <input
+                        type="checkbox"
+                        checked={setIdsToCompare.has(each.setid as string)}
                         onClick={(e) => {
-                          e.preventDefault();
-                          setDisplayDataIndex(idx);
+                          const ischecked = (e.target as HTMLInputElement)
+                            .checked;
+                          if (ischecked) {
+                            setSetIdsToCompare((prev) =>
+                              new Set(prev).add(each.setid as string),
+                            );
+                          } else {
+                            setSetIdsToCompare(
+                              (prev) =>
+                                new Set(
+                                  Array.from(prev).filter(
+                                    (x) => x != each.setid,
+                                  ),
+                                ),
+                            );
+                          }
                         }}
-                      >
-                        View more...
-                      </button>
-                      <hr />
+                        readOnly={true}
+                      />
                     </div>
-                  </>
+                    {queryType !== SearchQueryTypeEnum.INDICATION && (
+                      <TypographyH2>{each.setid}</TypographyH2>
+                    )}
+                    <TypographyH2>
+                      Initial US Approval Year: {each.initial_us_approval_year}
+                    </TypographyH2>
+                    {each.distance && (
+                      <TypographyH2>
+                        Indication Proximity: {each.distance.toFixed(3)}
+                      </TypographyH2>
+                    )}
+                    <p>{each.indication}</p>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDisplayDataIndex(idx);
+                      }}
+                    >
+                      View more...
+                    </button>
+                    <hr />
+                  </div>
                 );
               })}
               <div className="flex justify-center space-x-1">

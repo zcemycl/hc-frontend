@@ -203,7 +203,7 @@ export const ProtectedRoute = ({
 }: {
   children?: React.ReactNode;
 }) => {
-  const { isAuthenticated, setIsAuthenticated, setCredentials } = useAuth();
+  const { isAuthenticated } = useAuth();
   if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") {
     if (!isAuthenticated) {
       redirect("/login");
