@@ -41,12 +41,21 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   const data = await request.json();
+  const { searchParams } = new URL(request.url);
+  const name = searchParams.get("name");
   const credentials = export_aws_credentials(data, credentials_);
   let config = {
     region: "eu-west-2",
     credentials,
   } as CognitoIdentityProviderClientConfig;
   const client = new CognitoIdentityProviderClient(config);
+  const input = {
+    UserPoolId: "eu-west-2_wYaHLvNIY",
+    Username: name as string,
+  };
+  const command = new AdminDeleteUserCommand(input);
+  const response = await client.send(command);
+  console.log("hello", response);
 
   return NextResponse.json({}, { status: 200 });
 }

@@ -7,6 +7,7 @@ import { IUser } from "@/types/users";
 import { useRouter } from "next/navigation";
 import PaginationBar from "@/components/pagebar";
 import { convert_datetime_to_date } from "@/utils";
+import { delete_user } from "@/http/internal/aws/cognito";
 
 export default function Admin() {
   const refUserGroup = useRef(null);
@@ -71,8 +72,10 @@ export default function Admin() {
                       <button
                         className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
                         bg-red-600 rounded-full text-white hover:bg-red-700"
-                        onClick={() => {
+                        onClick={async () => {
+                          const credJson = JSON.parse(credentials);
                           console.log("deleting user");
+                          await delete_user("fhaha", credJson.AccessToken);
                         }}
                       >
                         x
