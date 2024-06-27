@@ -4,7 +4,7 @@ import { sidebar_constant } from "@/constants/sidebar";
 import { useAuth, useOpenBar } from "@/contexts";
 import Link from "next/link";
 import { UserRoleEnum } from "@/types/users";
-import { AdminIcon } from "@/icons";
+import { AdminIcon, JupyterIcon } from "@/icons";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {
   const { role } = useAuth();
@@ -19,9 +19,20 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
             icon: <AdminIcon />,
             testid: "admin-link",
           },
+          {
+            name: "Jupyter Lab",
+            path: "/jupyterlab",
+            icon: (
+              <div className="">
+                <JupyterIcon />
+              </div>
+            ),
+            testid: "jupyterlab-link",
+          },
         ]
       : []),
     ...sidebar_constant,
+    ...(role === UserRoleEnum.ADMIN ? [] : []),
   ];
 
   useEffect(() => {

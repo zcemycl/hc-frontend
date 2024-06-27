@@ -6,8 +6,10 @@ export function JupyterIcon() {
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
+      width="24"
+      height="24"
       // strokeWidth="2"
-      className="w-12 h-12 text-green-900 bg-transparent"
+      className="text-green-900 bg-transparent"
       viewBox="0 0 128 128"
     >
       <path
