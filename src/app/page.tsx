@@ -60,7 +60,8 @@ export default function Home() {
         });
         setCredentials(credentials);
         setIsAuthenticated(true);
-        setRole(UserRoleEnum.ADMIN);
+        // setRole(UserRoleEnum.ADMIN);
+        setRole(UserRoleEnum.USER);
         localStorage.setItem("credentials", credentials);
       }
     });

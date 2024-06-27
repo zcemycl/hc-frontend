@@ -4,11 +4,13 @@ import { create_presigned_url } from "@/http/internal/aws/sagemaker";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect } from "next/navigation";
 import { useState } from "react";
+import { UserRoleEnum } from "@/types/users";
 
 export default function AI() {
-  const { setIsAuthenticated, credentials } = useAuth();
+  const { setIsAuthenticated, credentials, role } = useAuth();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
+  const isNotAdmin = role !== UserRoleEnum.ADMIN;
   return (
     <ProtectedRoute>
       <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
@@ -73,6 +75,7 @@ export default function AI() {
               AI Tools
             </h2>
             <button
+              type="button"
               className="text-white bg-red-500 border-0 py-2
                 flex justify-start content-center text-center
                 align-middle items-center 
@@ -83,11 +86,14 @@ export default function AI() {
               Annotation
             </button>
             <button
-              className="text-white bg-green-500 border-0 py-2
+              disabled={isNotAdmin}
+              type="button"
+              title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
+              className={`focus:outline-none border-0 py-2
                 flex justify-start content-center text-center
-                align-middle items-center 
-                px-6 focus:outline-none hover:bg-green-600 
-                rounded text-2xl w-full"
+                align-middle items-center text-white
+                px-6 ${isNotAdmin ? "bg-slate-500" : "bg-green-500 hover:bg-green-600"}
+                rounded text-2xl w-full`}
               onClick={async () => {
                 console.log("Open JupyterLab");
                 if (credentials.length === 0) {
@@ -104,6 +110,7 @@ export default function AI() {
               Jupyter Lab
             </button>
             <button
+              type="button"
               className="text-white bg-blue-500 border-0 py-2
                 flex justify-start content-center text-center
                 align-middle items-center 
