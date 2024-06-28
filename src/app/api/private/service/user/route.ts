@@ -63,7 +63,7 @@ export async function POST(request: Request) {
   const sesresp = await sesclient.send(sescmd);
   console.log(sesresp);
 
-  return NextResponse.json((response as AdminCreateUserCommandOutput)["User"], {
+  return NextResponse.json((response as AdminCreateUserCommandOutput).User, {
     status: 200,
   });
 }
