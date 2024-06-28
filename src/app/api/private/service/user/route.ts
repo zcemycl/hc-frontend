@@ -4,10 +4,12 @@ import { export_aws_credentials } from "@/utils";
 
 import {
   AdminCreateUserCommand,
+  AdminCreateUserCommandOutput,
   AdminDeleteUserCommand,
   CognitoIdentityProviderClient,
   DeliveryMediumType,
   MessageActionType,
+  UsernameExistsException,
 } from "@aws-sdk/client-cognito-identity-provider";
 import {
   SESClient,
@@ -46,15 +48,24 @@ export async function POST(request: Request) {
     DesiredDeliveryMediums: ["EMAIL"] as DeliveryMediumType[],
     MessageAction: "SUPPRESS" as MessageActionType,
   };
+  let response;
   const command = new AdminCreateUserCommand(input);
-  const response = await client.send(command);
+  try {
+    response = await client.send(command);
+  } catch (e) {
+    if (e instanceof UsernameExistsException) {
+      return NextResponse.json(e, { status: 409 });
+    }
+  }
   const sescmd = new VerifyEmailIdentityCommand({
     EmailAddress: data.email as string,
   });
   const sesresp = await sesclient.send(sescmd);
   console.log(sesresp);
 
-  return NextResponse.json(response["User"], { status: 200 });
+  return NextResponse.json((response as AdminCreateUserCommandOutput)["User"], {
+    status: 200,
+  });
 }
 
 export async function DELETE(request: Request) {

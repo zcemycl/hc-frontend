@@ -3,16 +3,24 @@ import { useRef, useState, useEffect } from "react";
 import { TypographyH2 } from "@/components/typography";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { fetchUserAll } from "@/http/backend/users";
-import { IUser } from "@/types/users";
+import { IUser, UserRoleEnum } from "@/types/users";
 import { useRouter } from "next/navigation";
 import PaginationBar from "@/components/pagebar";
 import { convert_datetime_to_date } from "@/utils";
 import { create_user, delete_user } from "@/http/internal/aws/cognito";
+import { createUserPostgres, deleteUserById } from "@/http/backend/users";
 import Modal from "@/components/modal";
+import {
+  EXCLUDE_EMAIL_DELETE,
+  EXCLUDE_EMAIL_PATCH,
+  userRoleMap,
+} from "@/constants/users";
+import { DropDownBtn, DropDownList } from "@/components/dropdown";
 
 interface IAddUserInfo {
-  username?: string;
-  email?: string;
+  username: string;
+  email: string;
+  role: UserRoleEnum;
 }
 
 export default function Admin() {
@@ -21,7 +29,12 @@ export default function Admin() {
   const { credentials, setIsAuthenticated } = useAuth();
   const [isOpenAddUserModal, setIsOpenAddUserModal] = useState(false);
   const [isOpenDelUserModal, setIsOpenDelUserModal] = useState(false);
-  const [addUserInfo, setAddUserInfo] = useState<IAddUserInfo>({});
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const [addUserInfo, setAddUserInfo] = useState<IAddUserInfo>({
+    username: "",
+    email: "",
+    role: UserRoleEnum.USER,
+  });
   const [displayData, setDisplayData] = useState<IUser[]>([]);
   const [delUserIndex, setDelUserIndex] = useState<number>(0);
   const [pageN, setPageN] = useState(0);
@@ -32,6 +45,11 @@ export default function Admin() {
       if (credentials.length === 0) {
         setIsAuthenticated(false);
         router.push("/logout");
+      }
+    } else {
+      if (credentials.length === 0) {
+        setIsAuthenticated(false);
+        router.push("/");
       }
     }
     async function getData(credentials: string) {
@@ -44,6 +62,7 @@ export default function Admin() {
       setDisplayData(resp);
     }
     getData(credentials);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -71,8 +90,18 @@ export default function Admin() {
                     displayData[delUserIndex].email,
                     credJson.AccessToken,
                   );
+                  await deleteUserById(
+                    displayData[delUserIndex].id,
+                    credJson.AccessToken,
+                  );
                   setIsOpenDelUserModal(false);
                   setDelUserIndex(0);
+                  const resp = await fetchUserAll(
+                    credJson.AccessToken,
+                    pageN * nPerPage,
+                    nPerPage,
+                  );
+                  setDisplayData(resp);
                 }}
               >
                 YES
@@ -90,7 +119,9 @@ export default function Admin() {
                 <input
                   type="text"
                   className="bg-white w-full"
+                  defaultValue={addUserInfo.username}
                   onChange={(e) => {
+                    e.preventDefault();
                     setAddUserInfo({
                       ...addUserInfo,
                       username: e.currentTarget.value,
@@ -103,7 +134,9 @@ export default function Admin() {
                 <input
                   type="text"
                   className="bg-white w-full"
+                  defaultValue={addUserInfo.email}
                   onChange={(e) => {
+                    e.preventDefault();
                     setAddUserInfo({
                       ...addUserInfo,
                       email: e.currentTarget.value,
@@ -111,10 +144,75 @@ export default function Admin() {
                   }}
                 />
               </div>
-              <div>
+              <div className="flex flex-row justify-end space-x-1">
+                <div>
+                  <DropDownBtn
+                    extraClassName="justify-end w-full
+                      bg-blue-500 hover:bg-blue-700
+                      text-black"
+                    onClick={() => {
+                      setIsRoleDropdownOpen(!isRoleDropdownOpen);
+                    }}
+                  >
+                    Role:{" "}
+                    {
+                      userRoleMap.filter(
+                        (each) => each.roleDisplayName === addUserInfo.role,
+                      )[0].roleDisplayName
+                    }
+                  </DropDownBtn>
+                  <div className="flex w-full justify-end h-0">
+                    <DropDownList
+                      selected={addUserInfo.role}
+                      displayNameKey="roleDisplayName"
+                      selectionKey="roleDisplayName"
+                      allOptions={userRoleMap}
+                      isOpen={isRoleDropdownOpen}
+                      setSelectionKey={(s: UserRoleEnum) => {
+                        setAddUserInfo({
+                          ...addUserInfo,
+                          role: s as UserRoleEnum,
+                        });
+                      }}
+                      resetCallback={() => {
+                        setIsRoleDropdownOpen(false);
+                        // setAddUserInfo((prev) => ({...prev, role: UserRoleEnum.USER}))
+                      }}
+                    />
+                  </div>
+                </div>
                 <button
                   className="text-black bg-green-200 hover:bg-green-400 
-                    p-6 rounded-lg"
+                    px-6 py-3 rounded-lg"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    const credJson = JSON.parse(credentials);
+                    const res = await create_user(
+                      addUserInfo.username,
+                      addUserInfo.email,
+                      credJson.AccessToken,
+                    );
+                    console.log(res);
+                    const sub = res.Attributes.filter(
+                      (each: { Name: string }) => each.Name === "sub",
+                    )[0].Value;
+                    const final_res = await createUserPostgres(
+                      addUserInfo.username,
+                      addUserInfo.email,
+                      sub,
+                      res.Enabled,
+                      addUserInfo.role,
+                      credJson.AccessToken,
+                    );
+                    console.log(final_res);
+                    setIsOpenAddUserModal(false);
+                    const resp = await fetchUserAll(
+                      credJson.AccessToken,
+                      pageN * nPerPage,
+                      nPerPage,
+                    );
+                    setDisplayData(resp);
+                  }}
                 >
                   Submit
                 </button>
@@ -128,16 +226,8 @@ export default function Admin() {
                 className="w-[1rem] h-1/2 p-1 leading-[0px] m-0
             bg-green-300 rounded-full text-black hover:bg-green-500"
                 onClick={async () => {
-                  const credJson = JSON.parse(credentials);
                   console.log("adding user");
                   setIsOpenAddUserModal(true);
-
-                  // const resp = await create_user(
-                  //   "leo.leung.faculty",
-                  //   "leo.leung@faculty.ai",
-                  //   credJson.AccessToken,
-                  // );
-                  // console.log(resp);
                 }}
               >
                 +
@@ -156,17 +246,19 @@ export default function Admin() {
                       <TypographyH2>
                         {each.username} [{each.role}]
                       </TypographyH2>
-                      <button
-                        className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
+                      {!EXCLUDE_EMAIL_DELETE.includes(each.email) && (
+                        <button
+                          className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
                         bg-red-600 rounded-full text-white hover:bg-red-700"
-                        onClick={async () => {
-                          console.log("deleting user");
-                          setIsOpenDelUserModal(true);
-                          setDelUserIndex(idx);
-                        }}
-                      >
-                        x
-                      </button>
+                          onClick={async () => {
+                            console.log("deleting user");
+                            setIsOpenDelUserModal(true);
+                            setDelUserIndex(idx);
+                          }}
+                        >
+                          x
+                        </button>
+                      )}
                     </div>
 
                     <TypographyH2>Email Address: {each.email}</TypographyH2>
