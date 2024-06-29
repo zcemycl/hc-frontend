@@ -1,21 +1,27 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import { TypographyH2 } from "@/components/typography";
 import { ProtectedRoute, useAuth } from "@/contexts";
-import { fetchUserAll } from "@/http/backend/users";
-import { IUser, UserRoleEnum } from "@/types/users";
+import {
+  fetchUserAll,
+  createUserPostgres,
+  deleteUserById,
+} from "@/http/backend";
+import { IUser, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
-import PaginationBar from "@/components/pagebar";
+import {
+  PaginationBar,
+  Modal,
+  DropDownBtn,
+  DropDownList,
+  TypographyH2,
+} from "@/components";
 import { convert_datetime_to_date } from "@/utils";
-import { create_user, delete_user } from "@/http/internal/aws/cognito";
-import { createUserPostgres, deleteUserById } from "@/http/backend/users";
-import Modal from "@/components/modal";
+import { create_user, delete_user } from "@/http/internal";
 import {
   EXCLUDE_EMAIL_DELETE,
   EXCLUDE_EMAIL_PATCH,
   userRoleMap,
-} from "@/constants/users";
-import { DropDownBtn, DropDownList } from "@/components/dropdown";
+} from "@/constants";
 
 interface IAddUserInfo {
   username: string;

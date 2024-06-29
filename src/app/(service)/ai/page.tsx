@@ -1,11 +1,11 @@
 "use client";
 import { ProtectedRoute, useAuth } from "@/contexts";
-import { create_presigned_url } from "@/http/internal/aws/sagemaker";
+import { create_presigned_url } from "@/http/internal";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { UserRoleEnum } from "@/types/users";
-import Modal from "@/components/modal";
+import { Modal } from "@/components";
 
 export default function AI() {
   const router = useRouter();

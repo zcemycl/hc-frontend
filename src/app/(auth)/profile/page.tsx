@@ -1,5 +1,5 @@
 "use client";
-import { TypographyH2 } from "@/components/typography";
+import { TypographyH2 } from "@/components";
 import { ProtectedRoute } from "@/contexts";
 
 export default function Profile() {
