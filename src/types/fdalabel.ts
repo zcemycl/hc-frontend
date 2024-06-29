@@ -1,6 +1,12 @@
-export interface IAdverseEffectTable {
-  content: { table: string[][] };
+export interface IBaseTable {
+  table: string[][];
 }
+
+export interface IBaseTableNoHead {
+  content: IBaseTable;
+}
+
+export interface IAdverseEffectTable extends IBaseTableNoHead {}
 
 export interface IClinicalTrial {
   content: string;
@@ -8,11 +14,10 @@ export interface IClinicalTrial {
   tag: string;
 }
 
-export interface IClinicalTrialTable {
+export interface IClinicalTrialTable extends IBaseTableNoHead {
   id: number;
   s3_bucket?: string;
   s3_key?: string;
-  content: { table: string[][] };
 }
 
 export interface IDrugInteraction {
@@ -48,6 +53,4 @@ export interface IFdaLabelHistory {
   spl_effective_dates?: string[];
 }
 
-export interface ICompareAETable {
-  table?: string[][];
-}
+export interface ICompareAETable extends IBaseTable {}

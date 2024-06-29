@@ -16,6 +16,7 @@ import {
   TypographyH2,
   TableCell,
   TableHeadCell,
+  Table,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import {
@@ -376,19 +377,7 @@ export default function Search() {
             </div>
           </div>
           {compareTable.table?.length !== 0 && (
-            <table className="border">
-              <tbody>
-                {compareTable.table?.map((tablerow, rowid) => {
-                  return (
-                    <tr key={rowid}>
-                      {tablerow.map((tdata, dataid) => {
-                        return <TableCell key={dataid}>{tdata}</TableCell>;
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <Table {...{ content: compareTable }} />
           )}
 
           {displayData.length > 0 &&
@@ -455,25 +444,7 @@ export default function Search() {
                       {each.adverse_effect_tables!.map((tabledata, tableid) => {
                         return (
                           <>
-                            <table key={tableid}>
-                              <tbody>
-                                {tabledata!.content.table!.map(
-                                  (tablerow, rowid) => {
-                                    return (
-                                      <tr key={rowid}>
-                                        {tablerow.map((tdata, dataid) => {
-                                          return (
-                                            <TableCell key={dataid}>
-                                              {tdata}
-                                            </TableCell>
-                                          );
-                                        })}
-                                      </tr>
-                                    );
-                                  },
-                                )}
-                              </tbody>
-                            </table>
+                            <Table key={tableid} {...tabledata} />
                             <hr />
                           </>
                         );
@@ -523,25 +494,7 @@ export default function Search() {
                       {each.clinical_trial_tables!.map((tabledata, tableid) => {
                         return (
                           <>
-                            <table key={tableid}>
-                              <tbody>
-                                {tabledata.content.table.map(
-                                  (tablerow, rowid) => {
-                                    return (
-                                      <tr key={rowid}>
-                                        {tablerow.map((tdata, dataid) => {
-                                          return (
-                                            <TableCell key={dataid}>
-                                              {tdata}
-                                            </TableCell>
-                                          );
-                                        })}
-                                      </tr>
-                                    );
-                                  },
-                                )}
-                              </tbody>
-                            </table>
+                            <Table key={tableid} {...tabledata} />
                             <hr />
                           </>
                         );

@@ -1,5 +1,6 @@
 "use client";
 import { FC, ReactNode } from "react";
+import { IBaseTableNoHead } from "@/types";
 
 const TableCell: FC<{
   children: ReactNode;
@@ -13,4 +14,24 @@ const TableHeadCell: FC<{
   return <th className="border">{children}</th>;
 };
 
-export { TableCell, TableHeadCell };
+interface ITableProps extends IBaseTableNoHead {}
+
+const Table = (tabledata: ITableProps) => {
+  return (
+    <table>
+      <tbody>
+        {tabledata!.content.table!.map((tablerow, rowid) => {
+          return (
+            <tr key={rowid}>
+              {tablerow.map((tdata, dataid) => {
+                return <TableCell key={dataid}>{tdata}</TableCell>;
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};
+
+export { TableCell, TableHeadCell, Table };
