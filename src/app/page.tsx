@@ -10,7 +10,11 @@ import { sendEmail } from "@/http/internal/aws/ses";
 
 import { dummy_cred } from "@/utils";
 import { UserRoleEnum } from "@/types/users";
-import { fetchFdalabelCount, fetchUserCount } from "@/http/backend/public";
+import {
+  fetchFdalabelCount,
+  fetchUserCount,
+  fetchUserInfoByName,
+} from "@/http/backend";
 
 interface IData {
   success?: boolean;
@@ -28,6 +32,7 @@ export default function Home() {
     credentials,
     setCredentials,
     setRole,
+    setUserId,
   } = useAuth();
   const [data, setData] = useState<IData>({});
   const [fdalabelCount, setFdalabelCount] = useState(0);
@@ -53,8 +58,9 @@ export default function Home() {
   }
 
   useEffect(() => {
-    dummy_cred("leo.leung.rxscope").then((x) => {
-      if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
+    if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
+      const dummy_username = "leo.leung.rxscope";
+      dummy_cred(dummy_username).then((x) => {
         const credentials = JSON.stringify({
           AccessToken: x,
           ExpiresIn: 3600,
@@ -65,8 +71,15 @@ export default function Home() {
         setCredentials(credentials);
         setIsAuthenticated(true);
         localStorage.setItem("credentials", credentials);
-      }
-    });
+        fetchUserInfoByName(
+          dummy_username,
+          JSON.parse(credentials).AccessToken,
+        ).then((x) => {
+          setRole(x.role as UserRoleEnum);
+          setUserId(x.id);
+        });
+      });
+    }
 
     const requestFormJson =
       JSON.parse(localStorage.getItem("requestForm") as string) ??

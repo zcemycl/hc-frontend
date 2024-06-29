@@ -46,6 +46,8 @@ interface AuthContextType {
   setCredentials: Dispatch<SetStateAction<string>>;
   role: UserRoleEnum;
   setRole: Dispatch<SetStateAction<UserRoleEnum>>;
+  userId: number | null;
+  setUserId: Dispatch<SetStateAction<number | null>>;
   signIn: (email: string) => Promise<InitiateAuthResponse>;
   cognitoIdentity: CognitoIdentityProviderClient;
   answerCustomChallenge: (
@@ -87,12 +89,17 @@ export const AuthContext = createContext<AuthContextType>({
   setRole: function (value: React.SetStateAction<UserRoleEnum>): void {
     throw new Error("Function not implemented.");
   },
+  userId: null,
+  setUserId: function (value: React.SetStateAction<number | null>): void {
+    throw new Error("Function not implemented.");
+  },
 });
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState<string>("");
   const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
+  const [userId, setUserId] = useState<number | null>(null);
 
   // const cognitoidentity = new CognitoIdentity({
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
@@ -179,6 +186,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       amplifyConfirmSignIn,
       role,
       setRole,
+      userId,
+      setUserId,
     };
   }, [
     isAuthenticated,
@@ -187,6 +196,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     setCredentials,
     role,
     setRole,
+    userId,
+    setUserId,
   ]);
 
   return (

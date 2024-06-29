@@ -17,6 +17,7 @@ export default function Login() {
     signIn,
     answerCustomChallenge,
     setCredentials,
+    setUserId,
   } = useAuth();
   const [email, setEmail] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
@@ -80,6 +81,7 @@ export default function Login() {
           resp.AuthenticationResult?.AccessToken as string,
         );
         setRole(resp_user.role as UserRoleEnum);
+        setUserId(resp_user.id);
         localStorage.setItem("expireAt", expiresAt.toString());
         if (
           resp &&

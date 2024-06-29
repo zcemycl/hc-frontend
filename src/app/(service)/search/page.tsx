@@ -4,11 +4,10 @@ import { ProtectedRoute, useAuth } from "@/contexts";
 import { redirect, useRouter } from "next/navigation";
 import {
   fetchFdalabelByIndication,
-  fetchFdalabelBySetid,
   fetchFdalabelByTradename,
   fetchFdalabelHistoryBySetid,
   fetchFdalabelCompareAdverseEffects,
-} from "@/http/backend/protected";
+} from "@/http/backend";
 import PaginationBar from "@/components/pagebar";
 import { queryTypeMap } from "@/constants/search-query-type";
 import {
