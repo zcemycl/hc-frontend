@@ -441,7 +441,7 @@ export default function Search() {
                           "
                             onClick={(e) => {
                               e.preventDefault();
-                              router.push(`/annotate/${each.setid}`);
+                              router.push(`/annotate/fdalabel/${each.setid}`);
                             }}
                           >
                             Annotate
