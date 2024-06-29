@@ -6,3 +6,4 @@ export * from "./dropdown";
 export * from "./table";
 export * from "./typography";
 export { default as Modal } from "./modal";
+export * from "./fdalabel";

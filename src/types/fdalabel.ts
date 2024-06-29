@@ -6,13 +6,15 @@ export interface IBaseTableNoHead {
   content: IBaseTable;
 }
 
-export interface IAdverseEffectTable extends IBaseTableNoHead {}
-
-export interface IClinicalTrial {
-  content: string;
+export interface IBaseTitleContent {
   id: number;
   tag: string;
+  content: string;
 }
+
+export interface IAdverseEffectTable extends IBaseTableNoHead {}
+
+export interface IClinicalTrial extends IBaseTitleContent {}
 
 export interface IClinicalTrialTable extends IBaseTableNoHead {
   id: number;
@@ -20,11 +22,7 @@ export interface IClinicalTrialTable extends IBaseTableNoHead {
   s3_key?: string;
 }
 
-export interface IDrugInteraction {
-  content: string;
-  id: number;
-  tag: string;
-}
+export interface IDrugInteraction extends IBaseTitleContent {}
 
 export interface IFdaLabel {
   id?: number;

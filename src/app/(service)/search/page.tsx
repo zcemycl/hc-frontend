@@ -17,6 +17,7 @@ import {
   TableCell,
   TableHeadCell,
   Table,
+  TitleContent,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import {
@@ -455,42 +456,27 @@ export default function Search() {
                     0 && (
                     <>
                       <TypographyH2>DRUG INTERACTIONS</TypographyH2>
-                      {each.drug_interactions!.map((contentdata, contentid) => {
-                        if (contentdata.tag === "title") {
-                          return (
-                            <h3
-                              key={contentid}
-                              className="text-white text-lg mb-1 font-medium title-font"
-                            >
-                              {contentdata.content}
-                            </h3>
-                          );
-                        } else if (contentdata.tag === "content") {
-                          return <p key={contentid}>{contentdata.content}</p>;
-                        }
-                      })}
+                      {each.drug_interactions!.map((contentdata, contentid) => (
+                        <TitleContent
+                          key={contentid}
+                          {...{ data: contentdata, includeTitle: true }}
+                        />
+                      ))}
                     </>
                   )}
                   {(each.clinical_trials as IClinicalTrial[])?.length > 0 && (
                     <>
                       <TypographyH2>CLINICAL TRIALS</TypographyH2>
-                      {each.clinical_trials!.map((contentdata, contentid) => {
-                        if (
-                          contentdata.tag === "title" &&
-                          contentdata.content !== "14 CLINICAL STUDIES"
-                        ) {
-                          return (
-                            <h3
-                              key={contentid}
-                              className="text-white text-lg mb-1 font-medium title-font"
-                            >
-                              {contentdata.content}
-                            </h3>
-                          );
-                        } else if (contentdata.tag === "content") {
-                          return <p key={contentid}>{contentdata.content}</p>;
-                        }
-                      })}
+                      {each.clinical_trials!.map((contentdata, contentid) => (
+                        <TitleContent
+                          key={contentid}
+                          {...{
+                            data: contentdata,
+                            includeTitle:
+                              contentdata.content !== "14 CLINICAL STUDIES",
+                          }}
+                        />
+                      ))}
                       {each.clinical_trial_tables!.map((tabledata, tableid) => {
                         return (
                           <>
