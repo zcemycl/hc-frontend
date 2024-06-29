@@ -6,6 +6,7 @@ import {
   fetchFdalabelByIndication,
   fetchFdalabelByTradename,
   fetchFdalabelHistoryBySetid,
+  fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend";
 import PaginationBar from "@/components/pagebar";
