@@ -1,5 +1,7 @@
 "use client";
+import { TypographyH2 } from "@/components";
 import { useAuth, useOpenBar } from "@/contexts";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function Logout() {
@@ -19,9 +21,18 @@ export default function Logout() {
     "
       >
         <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
-          <h2 className="text-white text-lg mb-1 font-medium title-font">
-            Logout
-          </h2>
+          <TypographyH2>Logout</TypographyH2>
+          <p className="leading-relaxed mb-5">
+            Thank you for using our Healthcare Platform RXScope website.
+          </p>
+          <p className="leading-relaxed mb-5">We love to see you again.</p>
+          <p className="leading-relaxed mb-5">
+            You have been log out. To log in again, please click{" "}
+            <Link className="text-green-400" href="/login">
+              HERE
+            </Link>
+            .
+          </p>
         </div>
       </div>
     </section>
