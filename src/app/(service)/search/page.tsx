@@ -9,7 +9,14 @@ import {
   fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend";
-import { PaginationBar } from "@/components";
+import {
+  PaginationBar,
+  DropDownBtn,
+  DropDownList,
+  TypographyH2,
+  TableCell,
+  TableHeadCell,
+} from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import {
   IFdaLabel,
@@ -21,9 +28,6 @@ import {
   UserRoleEnum,
 } from "@/types";
 import { convert_datetime_to_date } from "@/utils";
-import { TableCell, TableHeadCell } from "@/components";
-import { TypographyH2 } from "@/components";
-import { DropDownBtn, DropDownList } from "@/components";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 
 export default function Search() {
