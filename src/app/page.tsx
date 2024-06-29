@@ -10,6 +10,7 @@ import { sendEmail } from "@/http/internal/aws/ses";
 
 import { dummy_cred } from "@/utils";
 import { UserRoleEnum } from "@/types/users";
+import { fetchFdalabelCount, fetchUserCount } from "@/http/backend/public";
 
 interface IData {
   success?: boolean;
@@ -29,6 +30,8 @@ export default function Home() {
     setRole,
   } = useAuth();
   const [data, setData] = useState<IData>({});
+  const [fdalabelCount, setFdalabelCount] = useState(0);
+  const [userCount, setUserCount] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const defaultRequestForm = {
     name: "",
@@ -69,6 +72,8 @@ export default function Home() {
       JSON.parse(localStorage.getItem("requestForm") as string) ??
       defaultRequestForm;
     setRequestForm(requestFormJson);
+    fetchFdalabelCount().then((x) => setFdalabelCount(x));
+    fetchUserCount().then((x) => setUserCount(x));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -113,12 +118,18 @@ export default function Home() {
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
               <h2 className="title-font font-medium text-3xl text-white">
-                15.3K
+                {(fdalabelCount / 1000).toLocaleString("en-US", {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                })}
+                K
               </h2>
               <p className="leading-relaxed">Drugs</p>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">3</h2>
+              <h2 className="title-font font-medium text-3xl text-white">
+                {userCount}
+              </h2>
               <p className="leading-relaxed">Users</p>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
