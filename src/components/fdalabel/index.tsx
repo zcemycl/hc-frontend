@@ -1,6 +1,4 @@
-"use client";
 import { IBaseTitleContent } from "@/types";
-import { useEffect } from "react";
 
 interface ITitleContentProps {
   data: IBaseTitleContent;
@@ -8,9 +6,6 @@ interface ITitleContentProps {
 }
 
 function TitleContent({ data, includeTitle }: ITitleContentProps) {
-  useEffect(() => {
-    console.log(data);
-  }, []);
   if (data.tag === "title" && includeTitle) {
     return (
       <h3 className="text-white text-lg mb-1 font-medium title-font">
