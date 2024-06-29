@@ -9,8 +9,8 @@ import {
   fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend";
-import PaginationBar from "@/components/pagebar";
-import { queryTypeMap } from "@/constants/search-query-type";
+import { PaginationBar } from "@/components";
+import { queryTypeMap, sortByMap } from "@/constants";
 import {
   IFdaLabel,
   IFdaLabelHistory,
@@ -18,14 +18,13 @@ import {
   IAdverseEffectTable,
   IDrugInteraction,
   IClinicalTrial,
-} from "@/types/fdalabel";
+  UserRoleEnum,
+} from "@/types";
 import { convert_datetime_to_date } from "@/utils";
-import { TableCell, TableHeadCell } from "@/components/table";
-import { TypographyH2 } from "@/components/typography";
-import { DropDownBtn, DropDownList } from "@/components/dropdown";
-import { sortByMap } from "@/constants/search-sort-type";
+import { TableCell, TableHeadCell } from "@/components";
+import { TypographyH2 } from "@/components";
+import { DropDownBtn, DropDownList } from "@/components";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
-import { UserRoleEnum } from "@/types/users";
 
 export default function Search() {
   const router = useRouter();
