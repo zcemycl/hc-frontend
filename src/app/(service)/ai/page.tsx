@@ -2,12 +2,13 @@
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { create_presigned_url } from "@/http/internal/aws/sagemaker";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { UserRoleEnum } from "@/types/users";
 import Modal from "@/components/modal";
 
 export default function AI() {
+  const router = useRouter();
   const { setIsAuthenticated, credentials, role } = useAuth();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
@@ -45,6 +46,7 @@ export default function AI() {
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-red-600 
                 rounded text-2xl w-full"
+              onClick={() => router.push("/annotate")}
             >
               <p>Annotation</p>
               <AnnotateIcon />
@@ -80,6 +82,7 @@ export default function AI() {
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-blue-600 
                 rounded text-2xl w-full"
+              onClick={() => router.push("/chatbot")}
             >
               <p>Chatbot</p>
               <ChatbotIcon />
