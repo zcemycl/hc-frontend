@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { ProtectedRoute, useAuth } from "@/contexts";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import {
   fetchFdalabelByIndication,
   fetchFdalabelBySetid,
@@ -25,8 +25,10 @@ import { TypographyH2 } from "@/components/typography";
 import { DropDownBtn, DropDownList } from "@/components/dropdown";
 import { sortByMap } from "@/constants/search-sort-type";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
+import { UserRoleEnum } from "@/types/users";
 
 export default function Search() {
+  const router = useRouter();
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
     SearchQueryTypeEnum.INDICATION,
@@ -37,7 +39,7 @@ export default function Search() {
   const [displayHistoryData, setDisplayHistoryData] =
     useState<IFdaLabelHistory>({});
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
-  const { setIsAuthenticated, credentials } = useAuth();
+  const { setIsAuthenticated, credentials, role } = useAuth();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -118,13 +120,13 @@ export default function Search() {
       setCompareTable({ table: [] });
       if (credentials.length === 0) {
         setIsAuthenticated(false);
-        redirect("/logout");
+        router.push("/logout");
       }
       const resp = await search_query_by_type();
       console.log(resp);
       if (resp.detail?.error! === "AUTH_EXPIRED") {
         setIsAuthenticated(false);
-        redirect("/logout");
+        router.push("/logout");
       }
     }
     if (query[0] !== "") {
@@ -428,7 +430,25 @@ export default function Search() {
                   {(each.adverse_effect_tables as IAdverseEffectTable[])
                     ?.length > 0 && (
                     <>
-                      <TypographyH2>ADVERSE REACTIONS</TypographyH2>
+                      <div className="flex justify-between py-2">
+                        <TypographyH2>ADVERSE REACTIONS</TypographyH2>
+                        {role === UserRoleEnum.ADMIN && (
+                          <button
+                            className="bg-red-600 
+                          hover:bg-red-700
+                          py-2 px-6 rounded
+                          text-white
+                          "
+                            onClick={(e) => {
+                              e.preventDefault();
+                              router.push(`/annotate/${each.setid}`);
+                            }}
+                          >
+                            Annotate
+                          </button>
+                        )}
+                      </div>
+
                       {each.adverse_effect_tables!.map((tabledata, tableid) => {
                         return (
                           <>
