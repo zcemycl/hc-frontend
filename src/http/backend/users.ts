@@ -1,6 +1,6 @@
 "use server";
 
-import { UserRoleEnum } from "@/types/users";
+import { UserRoleEnum } from "@/types";
 
 export async function fetchUserInfoById(id: number, token: string) {
   const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/id/${id}`;

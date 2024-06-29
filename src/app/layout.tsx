@@ -1,6 +1,4 @@
-import NavBar from "@/components/navbar";
-import Footer from "@/components/footer";
-import SideBar from "@/components/sidebar";
+import { NavBar, Footer, SideBar } from "@/components";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider, OpenBarProvider } from "@/contexts";

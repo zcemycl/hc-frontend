@@ -6,6 +6,9 @@ export async function fetchApiRoot(id: number, token: string) {
   const resp = await fetch(`/api/private/?id=${id}`, {
     method: "GET",
     headers,
+    cache: "force-cache",
   });
   return resp;
 }
+
+export * from "./aws";

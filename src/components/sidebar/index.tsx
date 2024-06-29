@@ -1,9 +1,9 @@
 "use client";
 import React, { useRef, useEffect } from "react";
-import { sidebar_constant } from "@/constants/sidebar";
+import { sidebar_constant } from "@/constants";
 import { useAuth, useOpenBar } from "@/contexts";
 import Link from "next/link";
-import { UserRoleEnum } from "@/types/users";
+import { UserRoleEnum } from "@/types";
 import { AdminIcon, JupyterIcon } from "@/icons";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {

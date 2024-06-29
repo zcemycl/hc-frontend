@@ -3,13 +3,11 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { IRequestDemoForm } from "@/types/home";
+import { IRequestDemoForm, UserRoleEnum } from "@/types";
 
-import { fetchApiRoot } from "@/http/internal";
-import { sendEmail } from "@/http/internal/aws/ses";
+import { fetchApiRoot, sendEmail } from "@/http/internal";
 
 import { dummy_cred } from "@/utils";
-import { UserRoleEnum } from "@/types/users";
 import {
   fetchFdalabelCount,
   fetchUserCount,
