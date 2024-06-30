@@ -45,19 +45,26 @@ interface IData {
 }
 
 const TableFromCols = ({ keyvalue, data }: IData) => {
+  const displayNames = Object.values(keyvalue);
   return (
     <table>
       <tbody>
         <tr>
-          {Object.values(keyvalue).map((displayName: string, idx: number) => {
-            return <TableHeadCell key={idx}>{displayName}</TableHeadCell>;
+          {displayNames.map((displayName: string) => {
+            return (
+              <TableHeadCell key={displayName}>{displayName}</TableHeadCell>
+            );
           })}
         </tr>
         {data[Object.keys(keyvalue)[0] as string].map((val, idx) => {
           return (
-            <tr key={idx}>
+            <tr key={`${displayNames[idx]}-${idx}`}>
               {Object.keys(keyvalue).map((key, idx_key) => {
-                return <TableCell key={idx_key}>{data[key][idx]}</TableCell>;
+                return (
+                  <TableCell key={`${displayNames[idx]}-${idx}-${idx_key}`}>
+                    {data[key][idx]}
+                  </TableCell>
+                );
               })}
             </tr>
           );

@@ -109,7 +109,7 @@ function DrugInteractionSection({
           <TypographyH2>DRUG INTERACTIONS</TypographyH2>
           {drug_interactions!.map((contentdata, contentid) => (
             <TitleContent
-              key={contentid}
+              key={`di-${contentid}`}
               {...{ data: contentdata, includeTitle: true }}
             />
           ))}
@@ -181,7 +181,7 @@ function ClinicalTrialSection({
           <TypographyH2>CLINICAL TRIALS</TypographyH2>
           {clinical_trials!.map((contentdata, contentid) => (
             <TitleContent
-              key={contentid}
+              key={`ct-content-${contentid}`}
               {...{
                 data: contentdata,
                 includeTitle: contentdata.content !== "14 CLINICAL STUDIES",
@@ -191,7 +191,7 @@ function ClinicalTrialSection({
           {clinical_trial_tables!.map((tabledata, tableid) => {
             return (
               <Fragment key={`${id}-${tableid}`}>
-                <Table key={tableid} {...tabledata} />
+                <Table {...tabledata} />
                 <hr />
               </Fragment>
             );
