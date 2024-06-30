@@ -8,18 +8,11 @@ import {
   fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend";
-import {
-  PaginationBar,
-  DropDownBtn,
-  DropDownList,
-  TypographyH2,
-  Table,
-  FdaLabel,
-} from "@/components";
-import { sortByMap } from "@/constants";
+import { PaginationBar, TypographyH2, Table, FdaLabel } from "@/components";
 import { IFdaLabel, ICompareAETable } from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
+import { SortByDropdown } from "./SortByDropdown";
 
 export default function Search() {
   const router = useRouter();
@@ -27,7 +20,6 @@ export default function Search() {
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
     SearchQueryTypeEnum.INDICATION,
   );
-  const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, credentials } = useAuth();
@@ -202,37 +194,11 @@ export default function Search() {
               )}
               <div className="flex flex-row justify-end space-x-1">
                 {queryType === SearchQueryTypeEnum.INDICATION && (
-                  <div>
-                    <DropDownBtn
-                      extraClassName="justify-end w-full"
-                      onClick={() =>
-                        setIsSortByDropdownOpen(!isSortByDropdownOpen)
-                      }
-                    >
-                      Sort By:{" "}
-                      {
-                        sortByMap.filter((each) => each.sortType === sortBy)[0]
-                          .sortDisplayName
-                      }
-                    </DropDownBtn>
-                    <div
-                      className="flex w-full justify-end h-0"
-                      // ref={refDropDown}
-                    >
-                      <DropDownList
-                        selected={sortBy}
-                        displayNameKey="sortDisplayName"
-                        selectionKey="sortType"
-                        allOptions={sortByMap}
-                        isOpen={isSortByDropdownOpen}
-                        setSelectionKey={setSortBy}
-                        resetCallback={() => {
-                          setIsSortByDropdownOpen(false);
-                          setDisplayData([]);
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <SortByDropdown
+                    sortBy={sortBy}
+                    setSortBy={(q) => setSortBy(q)}
+                    additionalResetCallback={() => setDisplayData([])}
+                  />
                 )}
                 <QueryTypeDropdown
                   queryType={queryType}
