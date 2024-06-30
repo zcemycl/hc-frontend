@@ -7,6 +7,7 @@ import {
   fetchFdalabelByTradename,
   fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
+  addHistoryByUserId,
 } from "@/http/backend";
 import {
   PaginationBar,
@@ -16,7 +17,12 @@ import {
   SearchBar,
   FdaLabelShort,
 } from "@/components";
-import { IFdaLabel, ICompareAETable } from "@/types";
+import {
+  IFdaLabel,
+  ICompareAETable,
+  SearchActionEnum,
+  UserHistoryCategoryEnum,
+} from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
@@ -29,7 +35,7 @@ export default function Search() {
   );
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
-  const { setIsAuthenticated, credentials } = useAuth();
+  const { setIsAuthenticated, credentials, userId } = useAuth();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -53,6 +59,18 @@ export default function Search() {
         0,
         -1,
       );
+      await addHistoryByUserId(
+        userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.SEARCH,
+          query,
+          additional_settings: {
+            queryType,
+          },
+        },
+        credJson.AccessToken,
+      );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
       resp = await fetchFdalabelByTradename(
         query,
@@ -60,6 +78,18 @@ export default function Search() {
         topN,
         0,
         -1,
+      );
+      await addHistoryByUserId(
+        userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.SEARCH,
+          query,
+          additional_settings: {
+            queryType,
+          },
+        },
+        credJson.AccessToken,
       );
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fetchFdalabelByIndication(
@@ -69,6 +99,21 @@ export default function Search() {
         pageN * nPerPage,
         undefined,
         sortBy,
+      );
+      await addHistoryByUserId(
+        userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.SEARCH,
+          query,
+          additional_settings: {
+            sortBy,
+            queryType,
+            pageN: `${pageN}`,
+            nPerPage: `${nPerPage}`,
+          },
+        },
+        credJson.AccessToken,
       );
     }
     setDisplayData(resp);
@@ -191,6 +236,19 @@ export default function Search() {
                     );
                     setCompareTable(resp);
                     console.log(resp);
+                    await addHistoryByUserId(
+                      userId as number,
+                      UserHistoryCategoryEnum.SEARCH,
+                      {
+                        action: SearchActionEnum.COMPARE_AE,
+                        query: Array.from(setIdsToCompare) as string[],
+                        additional_settings: {
+                          query,
+                          queryType,
+                        },
+                      },
+                      credJson.AccessToken,
+                    );
                   }}
                   className={`text-black bg-green-600 
                   border-0

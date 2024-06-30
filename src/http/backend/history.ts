@@ -20,6 +20,8 @@ export async function addHistoryByUserId(
   token: string,
 ) {
   const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/${id}`;
+  console.log(category);
+  console.log(detail);
   const response = await fetch(API_URI, {
     method: "POST",
     headers: {

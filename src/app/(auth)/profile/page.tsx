@@ -24,6 +24,7 @@ export default function Profile() {
     }
     const credJson = JSON.parse(credentials);
     getProfile(userId as number, credJson.AccessToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
