@@ -19,6 +19,8 @@ import {
   ClinicalTrialSection,
   DrugInteractionSection,
   IndicationSection,
+  AdverseReactionSection,
+  FdaLabelHistory,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import {
@@ -28,7 +30,6 @@ import {
   IAdverseEffectTable,
   IDrugInteraction,
   IClinicalTrial,
-  UserRoleEnum,
 } from "@/types";
 import { convert_datetime_to_date } from "@/utils";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
@@ -42,10 +43,8 @@ export default function Search() {
   const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
   const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
-  const [displayHistoryData, setDisplayHistoryData] =
-    useState<IFdaLabelHistory>({});
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
-  const { setIsAuthenticated, credentials, role } = useAuth();
+  const { setIsAuthenticated, credentials } = useAuth();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -93,31 +92,6 @@ export default function Search() {
     }
     return resp;
   }
-
-  // show individual drug data
-  useEffect(() => {
-    let resp;
-    if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") {
-      if (credentials.length === 0) {
-        setIsAuthenticated(false);
-        redirect("/logout");
-      }
-    }
-    async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
-      resp = await fetchFdalabelHistoryBySetid(
-        displayData[displayDataIndex as number].setid as string,
-        credJson.AccessToken,
-      );
-      setDisplayHistoryData(resp);
-      console.log(resp);
-    }
-    if (displayDataIndex != null) {
-      getData(credentials);
-    } else setDisplayHistoryData({});
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayDataIndex]);
 
   // refresh drug list when page is changed
   useEffect(() => {
@@ -422,35 +396,10 @@ export default function Search() {
                   <IndicationSection indication={each.indication!} />
                   {(each.adverse_effect_tables as IAdverseEffectTable[])
                     ?.length > 0 && (
-                    <>
-                      <div className="flex justify-between py-2">
-                        <TypographyH2>ADVERSE REACTIONS</TypographyH2>
-                        {role === UserRoleEnum.ADMIN && (
-                          <button
-                            className="bg-red-600 
-                          hover:bg-red-700
-                          py-2 px-6 rounded
-                          text-white
-                          "
-                            onClick={(e) => {
-                              e.preventDefault();
-                              router.push(`/annotate/fdalabel/${each.setid}`);
-                            }}
-                          >
-                            Annotate
-                          </button>
-                        )}
-                      </div>
-
-                      {each.adverse_effect_tables!.map((tabledata, tableid) => {
-                        return (
-                          <>
-                            <Table key={tableid} {...tabledata} />
-                            <hr />
-                          </>
-                        );
-                      })}
-                    </>
+                    <AdverseReactionSection
+                      setid={each.setid!}
+                      adverse_effect_tables={each.adverse_effect_tables!}
+                    />
                   )}
                   {(each.drug_interactions as IDrugInteraction[])?.length >
                     0 && (
@@ -465,35 +414,10 @@ export default function Search() {
                     />
                   )}
                   {/* show history */}
-                  {displayDataIndex != null &&
-                    displayHistoryData!.setids &&
-                    displayHistoryData!.setids!.length > 1 && (
-                      <>
-                        <TypographyH2>HISTORY</TypographyH2>
-                        <TableFromCols
-                          {...{
-                            keyvalue: {
-                              setid: "Set ID",
-                              manufacturers: "Manufacturer",
-                              spl_earliest_dates: "SPL Earliest Date",
-                              spl_effective_dates: "SPL Effective Date",
-                            },
-                            data: {
-                              setid: displayHistoryData?.setids!,
-                              manufacturers: displayHistoryData?.manufacturers!,
-                              spl_earliest_dates:
-                                displayHistoryData?.spl_earliest_dates!.map(
-                                  (x) => convert_datetime_to_date(x),
-                                ),
-                              spl_effective_dates:
-                                displayHistoryData?.spl_effective_dates!.map(
-                                  (x) => convert_datetime_to_date(x),
-                                ),
-                            },
-                          }}
-                        />
-                      </>
-                    )}
+                  <FdaLabelHistory
+                    setid={each.setid!}
+                    displayDataIndex={displayDataIndex}
+                  />
                 </div>
               );
             })}

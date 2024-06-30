@@ -81,6 +81,7 @@ export async function fetchFdalabelHistoryBySetid(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    cache: "force-cache",
   });
   const res = await response.json();
   return res;
