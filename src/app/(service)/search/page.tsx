@@ -19,6 +19,7 @@ import {
 import { queryTypeMap, sortByMap } from "@/constants";
 import { IFdaLabel, ICompareAETable } from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
+import { QueryTypeDropdown } from "./QueryTypeDropdown";
 
 export default function Search() {
   const router = useRouter();
@@ -234,37 +235,11 @@ export default function Search() {
                     </div>
                   </div>
                 )}
-                <div className="transition-all">
-                  <DropDownBtn
-                    onClick={() =>
-                      setIsQueryTypeDropdownOpen(!isQueryTypeDropdownOpen)
-                    }
-                  >
-                    Query Type:{" "}
-                    {
-                      queryTypeMap.filter(
-                        (each) => each.queryType === queryType,
-                      )[0].queryDisplayName
-                    }
-                  </DropDownBtn>
-                  <div
-                    className="flex w-full justify-end h-0"
-                    // ref={refDropDown}
-                  >
-                    <DropDownList
-                      selected={queryType}
-                      displayNameKey="queryDisplayName"
-                      selectionKey="queryType"
-                      allOptions={queryTypeMap}
-                      isOpen={isQueryTypeDropdownOpen}
-                      setSelectionKey={setQueryType}
-                      resetCallback={() => {
-                        setIsQueryTypeDropdownOpen(false);
-                        setDisplayData([]);
-                      }}
-                    />
-                  </div>
-                </div>
+                <QueryTypeDropdown
+                  queryType={queryType}
+                  setQueryType={(q) => setQueryType(q)}
+                  additionalResetCallback={() => setDisplayData([])}
+                />
               </div>
             </div>
             <div className="flex flex-col space-y-1">
