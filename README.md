@@ -22,6 +22,7 @@
   E -->|query| F[(Postgres)]
   ```
 - Cloud Deployment
+
   ```mermaid
   flowchart TB;
   subgraph AWS
