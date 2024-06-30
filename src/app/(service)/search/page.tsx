@@ -393,12 +393,10 @@ export default function Search() {
                   <DrugInteractionSection
                     drug_interactions={each.drug_interactions!}
                   />
-                  {(each.clinical_trials as IClinicalTrial[])?.length > 0 && (
-                    <ClinicalTrialSection
-                      clinical_trials={each.clinical_trials!}
-                      clinical_trial_tables={each.clinical_trial_tables!}
-                    />
-                  )}
+                  <ClinicalTrialSection
+                    clinical_trials={each.clinical_trials!}
+                    clinical_trial_tables={each.clinical_trial_tables!}
+                  />
                   <FdaLabelHistory
                     setid={each.setid!}
                     displayDataIndex={displayDataIndex}

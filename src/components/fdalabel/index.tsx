@@ -119,24 +119,28 @@ function ClinicalTrialSection({
 }) {
   return (
     <>
-      <TypographyH2>CLINICAL TRIALS</TypographyH2>
-      {clinical_trials!.map((contentdata, contentid) => (
-        <TitleContent
-          key={contentid}
-          {...{
-            data: contentdata,
-            includeTitle: contentdata.content !== "14 CLINICAL STUDIES",
-          }}
-        />
-      ))}
-      {clinical_trial_tables!.map((tabledata, tableid) => {
-        return (
-          <>
-            <Table key={tableid} {...tabledata} />
-            <hr />
-          </>
-        );
-      })}
+      {(clinical_trials as IClinicalTrial[])?.length > 0 && (
+        <>
+          <TypographyH2>CLINICAL TRIALS</TypographyH2>
+          {clinical_trials!.map((contentdata, contentid) => (
+            <TitleContent
+              key={contentid}
+              {...{
+                data: contentdata,
+                includeTitle: contentdata.content !== "14 CLINICAL STUDIES",
+              }}
+            />
+          ))}
+          {clinical_trial_tables!.map((tabledata, tableid) => {
+            return (
+              <>
+                <Table key={tableid} {...tabledata} />
+                <hr />
+              </>
+            );
+          })}
+        </>
+      )}
     </>
   );
 }
