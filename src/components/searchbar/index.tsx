@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useId } from "react";
 
 function SearchBar({
   conditionForMultiBars,
@@ -10,6 +10,7 @@ function SearchBar({
   query: string[];
   setQuery: (s: string[]) => void;
 }) {
+  const id = useId();
   const [nSearch, setNSearch] = useState(1);
 
   return (
@@ -20,7 +21,7 @@ function SearchBar({
         },
         (_, i) => (
           <div
-            key={i}
+            key={`${id}-${i}`}
             className="flex flex-row 
                     space-x-1 items-center h-[2rem]"
           >

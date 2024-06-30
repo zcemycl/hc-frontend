@@ -1,5 +1,5 @@
 "use client";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useId } from "react";
 import { IBaseTableNoHead } from "@/types";
 
 const TableCell: FC<{
@@ -15,14 +15,17 @@ const TableHeadCell: FC<{
 };
 
 const Table = (tabledata: IBaseTableNoHead) => {
+  const id = useId();
   return (
-    <table>
-      <tbody>
+    <table key={id}>
+      <tbody key={id}>
         {tabledata!.content.table!.map((tablerow, rowid) => {
           return (
-            <tr key={rowid}>
+            <tr key={`${tablerow.join("-")}-${rowid}`}>
               {tablerow.map((tdata, dataid) => {
-                return <TableCell key={dataid}>{tdata}</TableCell>;
+                return (
+                  <TableCell key={`${tdata}-${dataid}`}>{tdata}</TableCell>
+                );
               })}
             </tr>
           );

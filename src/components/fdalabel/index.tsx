@@ -13,7 +13,7 @@ import { Table, TableFromCols } from "../table";
 import { TypographyH2 } from "../typography";
 import { useAuth } from "@/contexts";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useId } from "react";
 import { fetchFdalabelHistoryBySetid } from "@/http/backend";
 import { convert_datetime_to_date } from "@/utils";
 
@@ -126,12 +126,13 @@ function AdverseReactionSection({
   setid: string;
   adverse_effect_tables: IAdverseEffectTable[];
 }) {
+  const id = useId();
   const router = useRouter();
   const { role } = useAuth();
   return (
-    <>
+    <Fragment key={id}>
       {(adverse_effect_tables as IAdverseEffectTable[])?.length > 0 && (
-        <>
+        <Fragment key={id}>
           <div className="flex justify-between py-2">
             <TypographyH2>ADVERSE REACTIONS</TypographyH2>
             {role === UserRoleEnum.ADMIN && (
@@ -153,15 +154,15 @@ function AdverseReactionSection({
 
           {adverse_effect_tables!.map((tabledata, tableid) => {
             return (
-              <>
-                <Table key={tableid} {...tabledata} />
+              <Fragment key={`${id}-${tableid}`}>
+                <Table {...tabledata} />
                 <hr />
-              </>
+              </Fragment>
             );
           })}
-        </>
+        </Fragment>
       )}
-    </>
+    </Fragment>
   );
 }
 
@@ -172,10 +173,11 @@ function ClinicalTrialSection({
   clinical_trials: IClinicalTrial[];
   clinical_trial_tables: IClinicalTrialTable[];
 }) {
+  const id = useId();
   return (
-    <>
+    <Fragment key={id}>
       {(clinical_trials as IClinicalTrial[])?.length > 0 && (
-        <>
+        <Fragment key={id}>
           <TypographyH2>CLINICAL TRIALS</TypographyH2>
           {clinical_trials!.map((contentdata, contentid) => (
             <TitleContent
@@ -188,15 +190,15 @@ function ClinicalTrialSection({
           ))}
           {clinical_trial_tables!.map((tabledata, tableid) => {
             return (
-              <>
+              <Fragment key={`${id}-${tableid}`}>
                 <Table key={tableid} {...tabledata} />
                 <hr />
-              </>
+              </Fragment>
             );
           })}
-        </>
+        </Fragment>
       )}
-    </>
+    </Fragment>
   );
 }
 
