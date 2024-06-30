@@ -394,13 +394,10 @@ export default function Search() {
                   </p>
 
                   <IndicationSection indication={each.indication!} />
-                  {(each.adverse_effect_tables as IAdverseEffectTable[])
-                    ?.length > 0 && (
-                    <AdverseReactionSection
-                      setid={each.setid!}
-                      adverse_effect_tables={each.adverse_effect_tables!}
-                    />
-                  )}
+                  <AdverseReactionSection
+                    setid={each.setid!}
+                    adverse_effect_tables={each.adverse_effect_tables!}
+                  />
                   {(each.drug_interactions as IDrugInteraction[])?.length >
                     0 && (
                     <DrugInteractionSection
@@ -413,7 +410,6 @@ export default function Search() {
                       clinical_trial_tables={each.clinical_trial_tables!}
                     />
                   )}
-                  {/* show history */}
                   <FdaLabelHistory
                     setid={each.setid!}
                     displayDataIndex={displayDataIndex}

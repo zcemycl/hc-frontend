@@ -71,33 +71,37 @@ function AdverseReactionSection({
   const { role } = useAuth();
   return (
     <>
-      <div className="flex justify-between py-2">
-        <TypographyH2>ADVERSE REACTIONS</TypographyH2>
-        {role === UserRoleEnum.ADMIN && (
-          <button
-            className="bg-red-600 
+      {(adverse_effect_tables as IAdverseEffectTable[])?.length > 0 && (
+        <>
+          <div className="flex justify-between py-2">
+            <TypographyH2>ADVERSE REACTIONS</TypographyH2>
+            {role === UserRoleEnum.ADMIN && (
+              <button
+                className="bg-red-600 
           hover:bg-red-700
           py-2 px-6 rounded
           text-white
           "
-            onClick={(e) => {
-              e.preventDefault();
-              router.push(`/annotate/fdalabel/${setid}`);
-            }}
-          >
-            Annotate
-          </button>
-        )}
-      </div>
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(`/annotate/fdalabel/${setid}`);
+                }}
+              >
+                Annotate
+              </button>
+            )}
+          </div>
 
-      {adverse_effect_tables!.map((tabledata, tableid) => {
-        return (
-          <>
-            <Table key={tableid} {...tabledata} />
-            <hr />
-          </>
-        );
-      })}
+          {adverse_effect_tables!.map((tabledata, tableid) => {
+            return (
+              <>
+                <Table key={tableid} {...tabledata} />
+                <hr />
+              </>
+            );
+          })}
+        </>
+      )}
     </>
   );
 }
