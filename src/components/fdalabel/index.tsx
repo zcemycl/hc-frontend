@@ -49,13 +49,17 @@ function DrugInteractionSection({
 }) {
   return (
     <>
-      <TypographyH2>DRUG INTERACTIONS</TypographyH2>
-      {drug_interactions!.map((contentdata, contentid) => (
-        <TitleContent
-          key={contentid}
-          {...{ data: contentdata, includeTitle: true }}
-        />
-      ))}
+      {(drug_interactions as IDrugInteraction[])?.length > 0 && (
+        <>
+          <TypographyH2>DRUG INTERACTIONS</TypographyH2>
+          {drug_interactions!.map((contentdata, contentid) => (
+            <TitleContent
+              key={contentid}
+              {...{ data: contentdata, includeTitle: true }}
+            />
+          ))}
+        </>
+      )}
     </>
   );
 }

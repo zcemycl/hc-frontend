@@ -15,7 +15,6 @@ import {
   DropDownList,
   TypographyH2,
   Table,
-  TableFromCols,
   ClinicalTrialSection,
   DrugInteractionSection,
   IndicationSection,
@@ -23,14 +22,7 @@ import {
   FdaLabelHistory,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
-import {
-  IFdaLabel,
-  IFdaLabelHistory,
-  ICompareAETable,
-  IAdverseEffectTable,
-  IDrugInteraction,
-  IClinicalTrial,
-} from "@/types";
+import { IFdaLabel, ICompareAETable, IClinicalTrial } from "@/types";
 import { convert_datetime_to_date } from "@/utils";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 
@@ -398,12 +390,9 @@ export default function Search() {
                     setid={each.setid!}
                     adverse_effect_tables={each.adverse_effect_tables!}
                   />
-                  {(each.drug_interactions as IDrugInteraction[])?.length >
-                    0 && (
-                    <DrugInteractionSection
-                      drug_interactions={each.drug_interactions!}
-                    />
-                  )}
+                  <DrugInteractionSection
+                    drug_interactions={each.drug_interactions!}
+                  />
                   {(each.clinical_trials as IClinicalTrial[])?.length > 0 && (
                     <ClinicalTrialSection
                       clinical_trials={each.clinical_trials!}
