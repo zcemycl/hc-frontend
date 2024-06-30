@@ -2,8 +2,10 @@ import {
   IBaseTitleContent,
   IClinicalTrial,
   IClinicalTrialTable,
+  IDrugInteraction,
 } from "@/types";
-import { TypographyH2, Table } from "@/components";
+import { Table } from "../table";
+import { TypographyH2 } from "../typography";
 
 interface ITitleContentProps {
   data: IBaseTitleContent;
@@ -20,6 +22,33 @@ function TitleContent({ data, includeTitle }: ITitleContentProps) {
   } else if (data.tag === "content") {
     return <p>{data.content}</p>;
   }
+}
+
+function IndicationSection({ indication }: { indication: string }) {
+  return (
+    <>
+      <TypographyH2>INDICATIONS AND USAGE</TypographyH2>
+      <p>{indication}</p>
+    </>
+  );
+}
+
+function DrugInteractionSection({
+  drug_interactions,
+}: {
+  drug_interactions: IDrugInteraction[];
+}) {
+  return (
+    <>
+      <TypographyH2>DRUG INTERACTIONS</TypographyH2>
+      {drug_interactions!.map((contentdata, contentid) => (
+        <TitleContent
+          key={contentid}
+          {...{ data: contentdata, includeTitle: true }}
+        />
+      ))}
+    </>
+  );
 }
 
 function ClinicalTrialSection({
@@ -53,4 +82,9 @@ function ClinicalTrialSection({
   );
 }
 
-export { TitleContent, ClinicalTrialSection };
+export {
+  TitleContent,
+  IndicationSection,
+  ClinicalTrialSection,
+  DrugInteractionSection,
+};

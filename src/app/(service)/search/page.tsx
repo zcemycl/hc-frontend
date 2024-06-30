@@ -15,9 +15,10 @@ import {
   DropDownList,
   TypographyH2,
   Table,
-  TitleContent,
   TableFromCols,
   ClinicalTrialSection,
+  DrugInteractionSection,
+  IndicationSection,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import {
@@ -418,8 +419,7 @@ export default function Search() {
                     </a>
                   </p>
 
-                  <TypographyH2>INDICATIONS AND USAGE</TypographyH2>
-                  <p>{each.indication}</p>
+                  <IndicationSection indication={each.indication!} />
                   {(each.adverse_effect_tables as IAdverseEffectTable[])
                     ?.length > 0 && (
                     <>
@@ -454,22 +454,14 @@ export default function Search() {
                   )}
                   {(each.drug_interactions as IDrugInteraction[])?.length >
                     0 && (
-                    <>
-                      <TypographyH2>DRUG INTERACTIONS</TypographyH2>
-                      {each.drug_interactions!.map((contentdata, contentid) => (
-                        <TitleContent
-                          key={contentid}
-                          {...{ data: contentdata, includeTitle: true }}
-                        />
-                      ))}
-                    </>
+                    <DrugInteractionSection
+                      drug_interactions={each.drug_interactions!}
+                    />
                   )}
                   {(each.clinical_trials as IClinicalTrial[])?.length > 0 && (
                     <ClinicalTrialSection
-                      {...{
-                        clinical_trials: each.clinical_trials!,
-                        clinical_trial_tables: each.clinical_trial_tables!,
-                      }}
+                      clinical_trials={each.clinical_trials!}
+                      clinical_trial_tables={each.clinical_trial_tables!}
                     />
                   )}
                   {/* show history */}
