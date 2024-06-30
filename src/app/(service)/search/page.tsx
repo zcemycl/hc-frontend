@@ -16,7 +16,7 @@ import {
   Table,
   FdaLabel,
 } from "@/components";
-import { queryTypeMap, sortByMap } from "@/constants";
+import { sortByMap } from "@/constants";
 import { IFdaLabel, ICompareAETable } from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
@@ -27,7 +27,6 @@ export default function Search() {
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
     SearchQueryTypeEnum.INDICATION,
   );
-  const [isQueryTypeDropdownOpen, setIsQueryTypeDropdownOpen] = useState(false);
   const [isSortByDropdownOpen, setIsSortByDropdownOpen] = useState(false);
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
