@@ -1,4 +1,9 @@
-import { IBaseTitleContent } from "@/types";
+import {
+  IBaseTitleContent,
+  IClinicalTrial,
+  IClinicalTrialTable,
+} from "@/types";
+import { TypographyH2, Table } from "@/components";
 
 interface ITitleContentProps {
   data: IBaseTitleContent;
@@ -17,4 +22,35 @@ function TitleContent({ data, includeTitle }: ITitleContentProps) {
   }
 }
 
-export { TitleContent };
+function ClinicalTrialSection({
+  clinical_trials,
+  clinical_trial_tables,
+}: {
+  clinical_trials: IClinicalTrial[];
+  clinical_trial_tables: IClinicalTrialTable[];
+}) {
+  return (
+    <>
+      <TypographyH2>CLINICAL TRIALS</TypographyH2>
+      {clinical_trials!.map((contentdata, contentid) => (
+        <TitleContent
+          key={contentid}
+          {...{
+            data: contentdata,
+            includeTitle: contentdata.content !== "14 CLINICAL STUDIES",
+          }}
+        />
+      ))}
+      {clinical_trial_tables!.map((tabledata, tableid) => {
+        return (
+          <>
+            <Table key={tableid} {...tabledata} />
+            <hr />
+          </>
+        );
+      })}
+    </>
+  );
+}
+
+export { TitleContent, ClinicalTrialSection };

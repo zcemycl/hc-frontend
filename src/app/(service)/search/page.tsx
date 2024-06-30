@@ -14,11 +14,10 @@ import {
   DropDownBtn,
   DropDownList,
   TypographyH2,
-  TableCell,
-  TableHeadCell,
   Table,
   TitleContent,
   TableFromCols,
+  ClinicalTrialSection,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import {
@@ -466,27 +465,12 @@ export default function Search() {
                     </>
                   )}
                   {(each.clinical_trials as IClinicalTrial[])?.length > 0 && (
-                    <>
-                      <TypographyH2>CLINICAL TRIALS</TypographyH2>
-                      {each.clinical_trials!.map((contentdata, contentid) => (
-                        <TitleContent
-                          key={contentid}
-                          {...{
-                            data: contentdata,
-                            includeTitle:
-                              contentdata.content !== "14 CLINICAL STUDIES",
-                          }}
-                        />
-                      ))}
-                      {each.clinical_trial_tables!.map((tabledata, tableid) => {
-                        return (
-                          <>
-                            <Table key={tableid} {...tabledata} />
-                            <hr />
-                          </>
-                        );
-                      })}
-                    </>
+                    <ClinicalTrialSection
+                      {...{
+                        clinical_trials: each.clinical_trials!,
+                        clinical_trial_tables: each.clinical_trial_tables!,
+                      }}
+                    />
                   )}
                   {/* show history */}
                   {displayDataIndex != null &&
