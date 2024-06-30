@@ -14,9 +14,7 @@ const TableHeadCell: FC<{
   return <th className="border">{children}</th>;
 };
 
-interface ITableProps extends IBaseTableNoHead {}
-
-const Table = (tabledata: ITableProps) => {
+const Table = (tabledata: IBaseTableNoHead) => {
   return (
     <table>
       <tbody>
@@ -34,4 +32,40 @@ const Table = (tabledata: ITableProps) => {
   );
 };
 
-export { TableCell, TableHeadCell, Table };
+interface IData {
+  keyvalue: {
+    [colname: string]: string;
+  };
+  data: {
+    [colname: string]: string[];
+  };
+}
+
+const TableFromCols = ({ data }: { data: IData }) => {
+  return (
+    <table>
+      <tbody>
+        <tr>
+          {Object.values(data.keyvalue).map(
+            (displayName: string, idx: number) => {
+              return <TableHeadCell key={idx}>{displayName}</TableHeadCell>;
+            },
+          )}
+        </tr>
+        {data.data[Object.keys(data.keyvalue)[0] as string].map((val, idx) => {
+          return (
+            <tr key={idx}>
+              {Object.keys(data.keyvalue).map((key, idx_key) => {
+                return (
+                  <TableCell key={idx_key}>{data.data[key][idx]}</TableCell>
+                );
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};
+
+export { TableCell, TableHeadCell, Table, TableFromCols };

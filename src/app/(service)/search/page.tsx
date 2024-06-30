@@ -18,6 +18,7 @@ import {
   TableHeadCell,
   Table,
   TitleContent,
+  TableFromCols,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import {
@@ -493,40 +494,31 @@ export default function Search() {
                     displayHistoryData!.setids!.length > 1 && (
                       <>
                         <TypographyH2>HISTORY</TypographyH2>
-                        <table>
-                          <tbody>
-                            <tr>
-                              <TableHeadCell>Set ID</TableHeadCell>
-                              <TableHeadCell>Manufacturer</TableHeadCell>
-                              <TableHeadCell>SPL Earliest Date</TableHeadCell>
-                              <TableHeadCell>SPL Effective Date</TableHeadCell>
-                            </tr>
-                            {displayHistoryData.setids.map((setid, idx) => {
-                              return (
-                                <tr key={idx}>
-                                  <TableCell>{setid}</TableCell>
-                                  <TableCell>
-                                    {displayHistoryData.manufacturers![idx]}
-                                  </TableCell>
-                                  <TableCell>
-                                    {convert_datetime_to_date(
-                                      displayHistoryData.spl_earliest_dates![
-                                        idx
-                                      ],
-                                    )}
-                                  </TableCell>
-                                  <TableCell>
-                                    {convert_datetime_to_date(
-                                      displayHistoryData.spl_effective_dates![
-                                        idx
-                                      ],
-                                    )}
-                                  </TableCell>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
+                        <TableFromCols
+                          {...{
+                            data: {
+                              keyvalue: {
+                                setid: "Set ID",
+                                manufacturers: "Manufacturer",
+                                spl_earliest_dates: "SPL Earliest Date",
+                                spl_effective_dates: "SPL Effective Date",
+                              },
+                              data: {
+                                setid: displayHistoryData?.setids!,
+                                manufacturers:
+                                  displayHistoryData?.manufacturers!,
+                                spl_earliest_dates:
+                                  displayHistoryData?.spl_earliest_dates!.map(
+                                    (x) => convert_datetime_to_date(x),
+                                  ),
+                                spl_effective_dates:
+                                  displayHistoryData?.spl_effective_dates!.map(
+                                    (x) => convert_datetime_to_date(x),
+                                  ),
+                              },
+                            },
+                          }}
+                        />
                       </>
                     )}
                 </div>
