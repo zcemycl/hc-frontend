@@ -5,7 +5,6 @@ import { redirect, useRouter } from "next/navigation";
 import {
   fetchFdalabelByIndication,
   fetchFdalabelByTradename,
-  fetchFdalabelHistoryBySetid,
   fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend";
@@ -20,10 +19,10 @@ import {
   IndicationSection,
   AdverseReactionSection,
   FdaLabelHistory,
+  IntroSection,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
-import { IFdaLabel, ICompareAETable, IClinicalTrial } from "@/types";
-import { convert_datetime_to_date } from "@/utils";
+import { IFdaLabel, ICompareAETable } from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 
 export default function Search() {
@@ -353,36 +352,18 @@ export default function Search() {
             [displayData[displayDataIndex]].map((each, idx) => {
               return (
                 <div className="sm:w-1/2 flex flex-col w-screen" key={idx}>
-                  <div className="flex justify-between">
-                    <TypographyH2>{each.tradename}</TypographyH2>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setDisplayDataIndex(null);
-                      }}
-                    >
-                      Back
-                    </button>
-                  </div>
-                  <TypographyH2>{each.setid}</TypographyH2>
-                  <TypographyH2>
-                    {convert_datetime_to_date(each.spl_earliest_date)} -{" "}
-                    {convert_datetime_to_date(each.spl_effective_date)}
-                  </TypographyH2>
-                  <TypographyH2>{each.manufacturer}</TypographyH2>
-                  <p className="leading-relaxed">
-                    XML source:{" "}
-                    <a href={each.xml_link} target="_blank">
-                      {each.xml_link}
-                    </a>
-                  </p>
-                  <p className="leading-relaxed">
-                    Download pdf:{" "}
-                    <a href={each.pdf_link} target="_blank">
-                      {each.pdf_link}
-                    </a>
-                  </p>
-
+                  <IntroSection
+                    {...{
+                      setid: each.setid!,
+                      tradename: each.tradename!,
+                      spl_earliest_date: each.spl_earliest_date!,
+                      spl_effective_date: each.spl_effective_date!,
+                      manufacturer: each.manufacturer!,
+                      xml_link: each.xml_link!,
+                      pdf_link: each.pdf_link!,
+                      back_btn_callback: (s) => setDisplayDataIndex(s),
+                    }}
+                  />
                   <IndicationSection indication={each.indication!} />
                   <AdverseReactionSection
                     setid={each.setid!}
