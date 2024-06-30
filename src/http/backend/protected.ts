@@ -3,23 +3,21 @@
 export async function fetchFdalabelBySetid(
   setid: string[],
   token: string,
-  maxn = 30,
-  offset = 0,
-  limit = 10,
+  maxn: number = 30,
+  offset: number = 0,
+  limit: number | null = 10,
 ) {
   const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabels/search_by_id`;
   let setids_param = setid.join("&id=");
-  const response = await fetch(
-    `${API_URI}?id=${setids_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "force-cache",
+  let API_URI_PAGINATION = `${API_URI}?id=${setids_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`;
+  const response = await fetch(API_URI_PAGINATION, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-  );
+    cache: "force-cache",
+  });
   const res = await response.json();
   return res;
 }
@@ -29,22 +27,19 @@ export async function fetchFdalabelByTradename(
   token: string,
   maxn: number = 30,
   offset: number = 0,
-  limit: number = 10,
+  limit: number | null = 10,
 ) {
   const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/fdalabels/search_by_tradename`;
   let tradenames_param = tradename.join("&tradename=");
-  console.log(tradenames_param);
-  const response = await fetch(
-    `${API_URI}?tradename=${tradenames_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "force-cache",
+  let API_URI_PAGINATION = `${API_URI}?tradename=${tradenames_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`;
+  const response = await fetch(API_URI_PAGINATION, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-  );
+    cache: "force-cache",
+  });
   const res = await response.json();
   return res;
 }

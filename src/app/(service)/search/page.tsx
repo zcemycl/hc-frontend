@@ -50,16 +50,16 @@ export default function Search() {
         query,
         credJson.AccessToken,
         topN,
-        pageN * nPerPage,
-        undefined,
+        0,
+        -1,
       );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
       resp = await fetchFdalabelByTradename(
         query,
         credJson.AccessToken,
         topN,
-        pageN * nPerPage,
-        undefined,
+        0,
+        -1,
       );
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fetchFdalabelByIndication(
@@ -238,7 +238,10 @@ export default function Search() {
           {/* list of drugs */}
           {displayData.length > 0 && displayDataIndex === null && (
             <>
-              {displayData.map((each, idx) => {
+              {(queryType === SearchQueryTypeEnum.INDICATION
+                ? displayData
+                : displayData.slice(pageN * nPerPage, (pageN + 1) * nPerPage)
+              ).map((each, idx) => {
                 return (
                   <FdaLabelShort
                     key={each.setid}
