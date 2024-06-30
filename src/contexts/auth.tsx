@@ -215,10 +215,8 @@ export const ProtectedRoute = ({
   children?: React.ReactNode;
 }) => {
   const { isAuthenticated } = useAuth();
-  if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") {
-    if (!isAuthenticated) {
-      redirect("/login");
-    }
+  if (!isAuthenticated) {
+    redirect(process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/");
   }
   return children;
 };
