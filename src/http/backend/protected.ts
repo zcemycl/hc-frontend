@@ -17,6 +17,7 @@ export async function fetchFdalabelBySetid(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      cache: "force-cache",
     },
   );
   const res = await response.json();
@@ -41,6 +42,7 @@ export async function fetchFdalabelByTradename(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      cache: "force-cache",
     },
   );
   const res = await response.json();
@@ -64,6 +66,7 @@ export async function fetchFdalabelByIndication(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      cache: "force-cache",
     },
   );
   const res = await response.json();

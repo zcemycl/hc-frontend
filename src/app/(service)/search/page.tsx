@@ -39,7 +39,6 @@ export default function Search() {
   const [topN, setTopN] = useState(30);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
-  const [nSearch, setNSearch] = useState(1);
   const refSearchResGroup = useRef(null);
 
   async function search_query_by_type() {
