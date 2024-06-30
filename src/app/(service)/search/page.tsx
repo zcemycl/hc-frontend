@@ -163,15 +163,11 @@ export default function Search() {
     if (historyId !== null) {
       const credJson = JSON.parse(credentials);
       fetchHistoryById(parseInt(historyId), credJson.AccessToken).then(
-        (history) => {
+        async (history) => {
           if (history.category === UserHistoryCategoryEnum.SEARCH) {
             if (history.detail.action === SearchActionEnum.SEARCH) {
               setQueryType(history.detail.additional_settings.queryType);
               setQuery(history.detail.query);
-              search_query_by_type(
-                history.detail.query,
-                history.detail.additional_settings.queryType,
-              );
             }
           }
         },

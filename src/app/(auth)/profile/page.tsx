@@ -1,7 +1,7 @@
 "use client";
 import { TypographyH2 } from "@/components";
 import { ProtectedRoute, useAuth } from "@/contexts";
-import { useState, useEffect, useId, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { fetchHistoryByUserId, fetchUserInfoById } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import {
