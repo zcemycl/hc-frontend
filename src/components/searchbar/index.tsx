@@ -1,5 +1,5 @@
 "use client";
-import { useState, useId } from "react";
+import { useState, useId, useEffect } from "react";
 
 function SearchBar({
   conditionForMultiBars,
@@ -12,6 +12,10 @@ function SearchBar({
 }) {
   const id = useId();
   const [nSearch, setNSearch] = useState(1);
+
+  useEffect(() => {
+    setNSearch(query.length);
+  }, [query]);
 
   return (
     <div className="flex flex-col flex-nowrap space-y-2 mb-2">

@@ -35,3 +35,16 @@ export async function addHistoryByUserId(
   });
   return {};
 }
+
+export async function fetchHistoryById(id: number, token: string) {
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/history_id/${id}`;
+  const response = await fetch(API_URI, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const res = await response.json();
+  return res;
+}

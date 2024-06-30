@@ -11,3 +11,15 @@ export enum AnnotationCategoryEnum {
   ADVERSE_EFFECT_TABLE = "adverse_effect_table",
   CLINICAL_TRIAL_TABLE = "clinical_trial_table",
 }
+
+export interface IHistory {
+  id: number;
+  category: UserHistoryCategoryEnum;
+  detail: {
+    action: string;
+    query: string[];
+    additional_settings: {
+      [key: string]: any;
+    };
+  };
+}

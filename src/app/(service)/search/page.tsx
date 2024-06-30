@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { ProtectedRoute, useAuth } from "@/contexts";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import {
   fetchFdalabelByIndication,
   fetchFdalabelByTradename,
   fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
   addHistoryByUserId,
+  fetchHistoryById,
 } from "@/http/backend";
 import {
   PaginationBar,
@@ -22,13 +23,16 @@ import {
   ICompareAETable,
   SearchActionEnum,
   UserHistoryCategoryEnum,
+  IHistory,
 } from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
 
-export default function Search({ queryParam }: { queryParam?: string[] }) {
-  console.log(queryParam);
+export default function Search() {
+  const searchParams = useSearchParams();
+  const historyId = searchParams.get("historyId");
+
   const router = useRouter();
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
@@ -49,7 +53,10 @@ export default function Search({ queryParam }: { queryParam?: string[] }) {
   const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
 
-  async function search_query_by_type() {
+  async function search_query_by_type(
+    query: string[],
+    queryType: SearchQueryTypeEnum,
+  ) {
     const credJson = JSON.parse(credentials);
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
@@ -130,7 +137,7 @@ export default function Search({ queryParam }: { queryParam?: string[] }) {
         setIsAuthenticated(false);
         router.push("/logout");
       }
-      const resp = await search_query_by_type();
+      const resp = await search_query_by_type(query, queryType);
       console.log(resp);
       if (resp.detail?.error! === "AUTH_EXPIRED") {
         setIsAuthenticated(false);
@@ -146,6 +153,33 @@ export default function Search({ queryParam }: { queryParam?: string[] }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageN]);
+
+  // from profile history
+  useEffect(() => {
+    if (credentials.length === 0) {
+      setIsAuthenticated(false);
+      router.push("/logout");
+    }
+    if (historyId !== null) {
+      const credJson = JSON.parse(credentials);
+      fetchHistoryById(parseInt(historyId), credJson.AccessToken).then(
+        (history) => {
+          if (history.category === UserHistoryCategoryEnum.SEARCH) {
+            if (history.detail.action === SearchActionEnum.SEARCH) {
+              setQueryType(history.detail.additional_settings.queryType);
+              setQuery(history.detail.query);
+              search_query_by_type(
+                history.detail.query,
+                history.detail.additional_settings.queryType,
+              );
+            }
+          }
+        },
+      );
+      // recoverHistory(parseInt(historyId as string));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [historyId]);
 
   return (
     <ProtectedRoute>
@@ -209,7 +243,7 @@ export default function Search({ queryParam }: { queryParam?: string[] }) {
                     setIsAuthenticated(false);
                     redirect("/logout");
                   }
-                  const resp = await search_query_by_type();
+                  const resp = await search_query_by_type(query, queryType);
                   console.log(resp);
                   if (resp.detail?.error! === "AUTH_EXPIRED") {
                     setIsAuthenticated(false);

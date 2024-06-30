@@ -4,19 +4,12 @@ import { ProtectedRoute, useAuth } from "@/contexts";
 import { useState, useEffect, useId, Fragment } from "react";
 import { fetchHistoryByUserId, fetchUserInfoById } from "@/http/backend";
 import { useRouter } from "next/navigation";
-import { IUser, UserHistoryCategoryEnum } from "@/types";
-
-interface IHistory {
-  id: number;
-  category: UserHistoryCategoryEnum;
-  detail: {
-    action: string;
-    query: string[];
-    additional_settings: {
-      [key: string]: any;
-    };
-  };
-}
+import {
+  IUser,
+  SearchActionEnum,
+  UserHistoryCategoryEnum,
+  IHistory,
+} from "@/types";
 
 export default function Profile() {
   const { userId, credentials, setIsAuthenticated } = useAuth();
@@ -67,9 +60,12 @@ export default function Profile() {
                   .map((x, idx) => {
                     return (
                       <button
+                        disabled={
+                          x.detail.action === SearchActionEnum.COMPARE_AE
+                        }
                         key={`history-${idx}`}
                         onClick={(e) => {
-                          router.push("/search");
+                          router.push(`/search?historyId=${x.id}`);
                         }}
                         className="hover:bg-green-200 
                       focus:bg-blue-200 transition
