@@ -266,7 +266,15 @@ function FdaLabelHistory({
   );
 }
 
-function FdaLabel({ each }: { each: IFdaLabel }) {
+function FdaLabel({
+  each,
+  back_btn_callback,
+  displayDataIndex,
+}: {
+  each: IFdaLabel;
+  displayDataIndex: number | null;
+  back_btn_callback: (s: any) => void;
+}) {
   return (
     <>
       <IntroSection
@@ -278,7 +286,7 @@ function FdaLabel({ each }: { each: IFdaLabel }) {
           manufacturer: each.manufacturer!,
           xml_link: each.xml_link!,
           pdf_link: each.pdf_link!,
-          back_btn_callback: (s) => setDisplayDataIndex(s),
+          back_btn_callback,
         }}
       />
       <IndicationSection indication={each.indication!} />

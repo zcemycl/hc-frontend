@@ -347,7 +347,11 @@ export default function Search() {
             [displayData[displayDataIndex]].map((each, idx) => {
               return (
                 <div className="sm:w-1/2 flex flex-col w-screen" key={idx}>
-                  <FdaLabel each={each} />
+                  <FdaLabel
+                    each={each}
+                    displayDataIndex={displayDataIndex}
+                    back_btn_callback={(s) => setDisplayDataIndex(s)}
+                  />
                 </div>
               );
             })}
