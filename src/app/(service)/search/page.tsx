@@ -8,7 +8,13 @@ import {
   fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
 } from "@/http/backend";
-import { PaginationBar, TypographyH2, Table, FdaLabel } from "@/components";
+import {
+  PaginationBar,
+  TypographyH2,
+  Table,
+  FdaLabel,
+  SearchBar,
+} from "@/components";
 import { IFdaLabel, ICompareAETable } from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
@@ -107,74 +113,13 @@ export default function Search() {
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
             <TypographyH2>Search</TypographyH2>
             <p className="leading-relaxed mb-5">Please enter your query.</p>
-            <div className="flex flex-col flex-nowrap space-y-2 mb-2">
-              {Array.from(
-                {
-                  length:
-                    queryType !== SearchQueryTypeEnum.INDICATION ? nSearch : 1,
-                },
-                (_, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-row 
-                    space-x-1 items-center h-[2rem]"
-                  >
-                    <input
-                      type="search"
-                      id="search"
-                      name="search"
-                      data-testid="search-input"
-                      value={query[i]}
-                      key={i}
-                      onChange={(e) => {
-                        let qs = Array.from(query);
-                        qs[i] = e.currentTarget.value;
-                        setQuery(qs);
-                      }}
-                      className="w-full bg-gray-800 h-full
-                      rounded border border-gray-700 
-                      focus:border-indigo-500 focus:ring-2 
-                      focus:ring-indigo-900 text-base outline-none 
-                      text-gray-100 py-1 px-3 leading-8 transition-colors 
-                      duration-200 ease-in-out"
-                    />
-                    <div
-                      className="flex flex-col
-                      items-center justify-center content-center
-                      space-y-0
-                      h-full"
-                    >
-                      {queryType !== SearchQueryTypeEnum.INDICATION && (
-                        <button
-                          className="w-[1rem] h-1/2 p-0 leading-[0px] m-0"
-                          onClick={() => {
-                            if (nSearch === 1) return;
-                            setNSearch((prev) => prev - 1);
-                            let qs = Array.from(query);
-                            qs.splice(i, 1);
-                            setQuery(qs);
-                          }}
-                        >
-                          -
-                        </button>
-                      )}
-                      {queryType !== SearchQueryTypeEnum.INDICATION &&
-                        i === nSearch - 1 && (
-                          <button
-                            className="w-[1rem] h-1/2 p-0 leading-[0px] m-0"
-                            onClick={() => {
-                              setNSearch((prev) => prev + 1);
-                              setQuery((prev) => [...prev, ""]);
-                            }}
-                          >
-                            +
-                          </button>
-                        )}
-                    </div>
-                  </div>
-                ),
-              )}
-            </div>
+            <SearchBar
+              query={query}
+              setQuery={(s) => setQuery(s)}
+              conditionForMultiBars={
+                queryType !== SearchQueryTypeEnum.INDICATION
+              }
+            />
             <div className="py-1 flex justify-end items-center text-base space-x-1">
               {queryType === SearchQueryTypeEnum.INDICATION && (
                 <div className="flex justify-start space-x-3">

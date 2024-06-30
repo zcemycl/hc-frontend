@@ -7,3 +7,4 @@ export * from "./table";
 export * from "./typography";
 export { default as Modal } from "./modal";
 export * from "./fdalabel";
+export * from "./searchbar";
