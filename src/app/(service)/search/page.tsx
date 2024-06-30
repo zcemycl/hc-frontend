@@ -226,19 +226,15 @@ export default function Search() {
             <Table {...{ content: compareTable }} />
           )}
 
-          {displayData.length > 0 &&
-            displayDataIndex != null &&
-            [displayData[displayDataIndex]].map((each, idx) => {
-              return (
-                <div className="sm:w-1/2 flex flex-col w-screen" key={idx}>
-                  <FdaLabel
-                    each={each}
-                    displayDataIndex={displayDataIndex}
-                    back_btn_callback={(s) => setDisplayDataIndex(s)}
-                  />
-                </div>
-              );
-            })}
+          {displayData.length > 0 && displayDataIndex != null && (
+            <div className="sm:w-1/2 flex flex-col w-screen">
+              <FdaLabel
+                each={displayData[displayDataIndex]}
+                displayDataIndex={displayDataIndex}
+                back_btn_callback={(s) => setDisplayDataIndex(s)}
+              />
+            </div>
+          )}
 
           {/* list of drugs */}
           {displayData.length > 0 && displayDataIndex === null && (

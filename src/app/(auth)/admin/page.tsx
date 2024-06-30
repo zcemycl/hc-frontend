@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useId } from "react";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import {
   fetchUserAll,
@@ -30,6 +30,7 @@ interface IAddUserInfo {
 }
 
 export default function Admin() {
+  const id = useId();
   const refUserGroup = useRef(null);
   const router = useRouter();
   const { credentials, setIsAuthenticated } = useAuth();
@@ -246,7 +247,7 @@ export default function Admin() {
                 return (
                   <div
                     className="sm:w-1/2 flex flex-col w-screen px-10 py-5"
-                    key={each.id}
+                    key={`${id}-user-profile-${each.id}`}
                   >
                     <div className="flex justify-between">
                       <TypographyH2>
