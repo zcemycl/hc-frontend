@@ -1,20 +1,35 @@
 "use client";
 import { TypographyH2 } from "@/components";
 import { ProtectedRoute, useAuth } from "@/contexts";
-import { useState, useEffect, useId } from "react";
-import { fetchUserInfoById } from "@/http/backend";
+import { useState, useEffect, useId, Fragment } from "react";
+import { fetchHistoryByUserId, fetchUserInfoById } from "@/http/backend";
 import { useRouter } from "next/navigation";
-import { IUser } from "@/types";
+import { IUser, UserHistoryCategoryEnum } from "@/types";
+
+interface IHistory {
+  id: number;
+  category: UserHistoryCategoryEnum;
+  detail: {
+    action: string;
+    query: string[];
+    additional_settings: {
+      [key: string]: any;
+    };
+  };
+}
 
 export default function Profile() {
   const { userId, credentials, setIsAuthenticated } = useAuth();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
+  const [history, setHistory] = useState<IHistory[]>([]);
 
   useEffect(() => {
     async function getProfile(id: number, token: string) {
       const userInfo = await fetchUserInfoById(id, token);
       setProfileInfo({ ...profileInfo, ...userInfo });
+      const historyInfo = await fetchHistoryByUserId(id, token);
+      setHistory(historyInfo);
     }
     if (credentials.length === 0) {
       setIsAuthenticated(false);
@@ -44,7 +59,34 @@ export default function Profile() {
 
               <hr className="mb-2" />
               <TypographyH2>Search</TypographyH2>
-              <p className="leading-relaxed mb-1">No Record ...</p>
+              {history.length === 0 ? (
+                <p className="leading-relaxed mb-1">No Record ...</p>
+              ) : (
+                history
+                  .filter((x) => x.category === UserHistoryCategoryEnum.SEARCH)
+                  .map((x, idx) => {
+                    return (
+                      <button
+                        key={`history-${idx}`}
+                        onClick={(e) => {
+                          router.push("/search");
+                        }}
+                        className="hover:bg-green-200 
+                      focus:bg-blue-200 transition
+                      justify-start content-start
+                      rounded px-2 hover:text-black"
+                      >
+                        <div className="flex justify-between">
+                          <p className="leading-relaxed">{x.detail.action}</p>
+                          <p className="leading-relaxed">
+                            {x.detail.additional_settings.queryType}
+                          </p>
+                        </div>
+                        <p className="text-2">{`[\"${x.detail.query.join('", "')}\"]`}</p>
+                      </button>
+                    );
+                  })
+              )}
               <hr className="mb-2" />
               <TypographyH2>Annotation</TypographyH2>
               <p className="leading-relaxed mb-1">No Record ...</p>

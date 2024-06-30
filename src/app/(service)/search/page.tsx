@@ -27,7 +27,8 @@ import { SortByEnum, SearchQueryTypeEnum } from "./types";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
 
-export default function Search() {
+export default function Search({ queryParam }: { queryParam?: string[] }) {
+  console.log(queryParam);
   const router = useRouter();
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
