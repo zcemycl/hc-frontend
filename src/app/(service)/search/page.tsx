@@ -355,16 +355,14 @@ export default function Search() {
                 <div className="sm:w-1/2 flex flex-col w-screen" key={idx}>
                   <div className="flex justify-between">
                     <TypographyH2>{each.tradename}</TypographyH2>
-                    {displayData.length > 1 && (
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setDisplayDataIndex(null);
-                        }}
-                      >
-                        Back
-                      </button>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDisplayDataIndex(null);
+                      }}
+                    >
+                      Back
+                    </button>
                   </div>
                   <TypographyH2>{each.setid}</TypographyH2>
                   <TypographyH2>
