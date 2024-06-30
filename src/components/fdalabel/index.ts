@@ -6,3 +6,4 @@ export * from "./AdverseReactionSection";
 export * from "./ClinicalTrialSection";
 export * from "./FdaLabelHistory";
 export * from "./FdaLabel";
+export * from "./FdaLabelShort";

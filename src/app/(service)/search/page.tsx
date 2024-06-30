@@ -14,6 +14,7 @@ import {
   Table,
   FdaLabel,
   SearchBar,
+  FdaLabelShort,
 } from "@/components";
 import { IFdaLabel, ICompareAETable } from "@/types";
 import { SortByEnum, SearchQueryTypeEnum } from "./types";
@@ -241,58 +242,34 @@ export default function Search() {
             <>
               {displayData.map((each, idx) => {
                 return (
-                  <div
-                    className="sm:w-1/2 flex flex-col w-screen p-10"
+                  <FdaLabelShort
                     key={each.setid}
-                  >
-                    <div className="flex justify-between">
-                      <TypographyH2>{each.tradename}</TypographyH2>
-                      <input
-                        type="checkbox"
-                        checked={setIdsToCompare.has(each.setid as string)}
-                        onClick={(e) => {
-                          const ischecked = (e.target as HTMLInputElement)
-                            .checked;
-                          if (ischecked) {
-                            setSetIdsToCompare((prev) =>
-                              new Set(prev).add(each.setid as string),
-                            );
-                          } else {
-                            setSetIdsToCompare(
-                              (prev) =>
-                                new Set(
-                                  Array.from(prev).filter(
-                                    (x) => x != each.setid,
-                                  ),
-                                ),
-                            );
-                          }
-                        }}
-                        readOnly={true}
-                      />
-                    </div>
-                    {queryType !== SearchQueryTypeEnum.INDICATION && (
-                      <TypographyH2>{each.setid}</TypographyH2>
-                    )}
-                    <TypographyH2>
-                      Initial US Approval Year: {each.initial_us_approval_year}
-                    </TypographyH2>
-                    {each.distance && (
-                      <TypographyH2>
-                        Indication Proximity: {each.distance.toFixed(3)}
-                      </TypographyH2>
-                    )}
-                    <p>{each.indication}</p>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setDisplayDataIndex(idx);
-                      }}
-                    >
-                      View more...
-                    </button>
-                    <hr />
-                  </div>
+                    {...{
+                      setid: each.setid!,
+                      tradename: each.tradename!,
+                      showCheckbox: setIdsToCompare.has(each.setid as string),
+                      initial_us_approval_year: each.initial_us_approval_year!,
+                      distance: each.distance!,
+                      indication: each.indication!,
+                      selectMultipleCallback: (e) => {
+                        const ischecked = (e.target as HTMLInputElement)
+                          .checked;
+                        if (ischecked) {
+                          setSetIdsToCompare((prev) =>
+                            new Set(prev).add(each.setid as string),
+                          );
+                        } else {
+                          setSetIdsToCompare(
+                            (prev) =>
+                              new Set(
+                                Array.from(prev).filter((x) => x != each.setid),
+                              ),
+                          );
+                        }
+                      },
+                      clickExpandCallback: () => setDisplayDataIndex(idx),
+                    }}
+                  />
                 );
               })}
               <div className="flex justify-center space-x-1">
