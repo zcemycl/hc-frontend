@@ -496,26 +496,23 @@ export default function Search() {
                         <TypographyH2>HISTORY</TypographyH2>
                         <TableFromCols
                           {...{
+                            keyvalue: {
+                              setid: "Set ID",
+                              manufacturers: "Manufacturer",
+                              spl_earliest_dates: "SPL Earliest Date",
+                              spl_effective_dates: "SPL Effective Date",
+                            },
                             data: {
-                              keyvalue: {
-                                setid: "Set ID",
-                                manufacturers: "Manufacturer",
-                                spl_earliest_dates: "SPL Earliest Date",
-                                spl_effective_dates: "SPL Effective Date",
-                              },
-                              data: {
-                                setid: displayHistoryData?.setids!,
-                                manufacturers:
-                                  displayHistoryData?.manufacturers!,
-                                spl_earliest_dates:
-                                  displayHistoryData?.spl_earliest_dates!.map(
-                                    (x) => convert_datetime_to_date(x),
-                                  ),
-                                spl_effective_dates:
-                                  displayHistoryData?.spl_effective_dates!.map(
-                                    (x) => convert_datetime_to_date(x),
-                                  ),
-                              },
+                              setid: displayHistoryData?.setids!,
+                              manufacturers: displayHistoryData?.manufacturers!,
+                              spl_earliest_dates:
+                                displayHistoryData?.spl_earliest_dates!.map(
+                                  (x) => convert_datetime_to_date(x),
+                                ),
+                              spl_effective_dates:
+                                displayHistoryData?.spl_effective_dates!.map(
+                                  (x) => convert_datetime_to_date(x),
+                                ),
                             },
                           }}
                         />

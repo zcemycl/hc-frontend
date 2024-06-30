@@ -41,24 +41,20 @@ interface IData {
   };
 }
 
-const TableFromCols = ({ data }: { data: IData }) => {
+const TableFromCols = ({ keyvalue, data }: IData) => {
   return (
     <table>
       <tbody>
         <tr>
-          {Object.values(data.keyvalue).map(
-            (displayName: string, idx: number) => {
-              return <TableHeadCell key={idx}>{displayName}</TableHeadCell>;
-            },
-          )}
+          {Object.values(keyvalue).map((displayName: string, idx: number) => {
+            return <TableHeadCell key={idx}>{displayName}</TableHeadCell>;
+          })}
         </tr>
-        {data.data[Object.keys(data.keyvalue)[0] as string].map((val, idx) => {
+        {data[Object.keys(keyvalue)[0] as string].map((val, idx) => {
           return (
             <tr key={idx}>
-              {Object.keys(data.keyvalue).map((key, idx_key) => {
-                return (
-                  <TableCell key={idx_key}>{data.data[key][idx]}</TableCell>
-                );
+              {Object.keys(keyvalue).map((key, idx_key) => {
+                return <TableCell key={idx_key}>{data[key][idx]}</TableCell>;
               })}
             </tr>
           );
