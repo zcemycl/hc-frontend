@@ -53,7 +53,6 @@ export default function Search() {
         pageN * nPerPage,
         undefined,
       );
-      setDisplayData(resp);
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
       resp = await fetchFdalabelByTradename(
         query,
@@ -62,7 +61,6 @@ export default function Search() {
         pageN * nPerPage,
         undefined,
       );
-      setDisplayData(resp);
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fetchFdalabelByIndication(
         query[0],
@@ -72,8 +70,8 @@ export default function Search() {
         undefined,
         sortBy,
       );
-      setDisplayData(resp);
     }
+    setDisplayData(resp);
     return resp;
   }
 
