@@ -14,12 +14,7 @@ import {
   DropDownList,
   TypographyH2,
   Table,
-  ClinicalTrialSection,
-  DrugInteractionSection,
-  IndicationSection,
-  AdverseReactionSection,
-  FdaLabelHistory,
-  IntroSection,
+  FdaLabel,
 } from "@/components";
 import { queryTypeMap, sortByMap } from "@/constants";
 import { IFdaLabel, ICompareAETable } from "@/types";
@@ -352,34 +347,7 @@ export default function Search() {
             [displayData[displayDataIndex]].map((each, idx) => {
               return (
                 <div className="sm:w-1/2 flex flex-col w-screen" key={idx}>
-                  <IntroSection
-                    {...{
-                      setid: each.setid!,
-                      tradename: each.tradename!,
-                      spl_earliest_date: each.spl_earliest_date!,
-                      spl_effective_date: each.spl_effective_date!,
-                      manufacturer: each.manufacturer!,
-                      xml_link: each.xml_link!,
-                      pdf_link: each.pdf_link!,
-                      back_btn_callback: (s) => setDisplayDataIndex(s),
-                    }}
-                  />
-                  <IndicationSection indication={each.indication!} />
-                  <AdverseReactionSection
-                    setid={each.setid!}
-                    adverse_effect_tables={each.adverse_effect_tables!}
-                  />
-                  <DrugInteractionSection
-                    drug_interactions={each.drug_interactions!}
-                  />
-                  <ClinicalTrialSection
-                    clinical_trials={each.clinical_trials!}
-                    clinical_trial_tables={each.clinical_trial_tables!}
-                  />
-                  <FdaLabelHistory
-                    setid={each.setid!}
-                    displayDataIndex={displayDataIndex}
-                  />
+                  <FdaLabel each={each} />
                 </div>
               );
             })}

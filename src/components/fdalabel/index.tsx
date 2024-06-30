@@ -5,6 +5,7 @@ import {
   IClinicalTrial,
   IClinicalTrialTable,
   IDrugInteraction,
+  IFdaLabel,
   IFdaLabelHistory,
   UserRoleEnum,
 } from "@/types";
@@ -265,6 +266,39 @@ function FdaLabelHistory({
   );
 }
 
+function FdaLabel({ each }: { each: IFdaLabel }) {
+  return (
+    <>
+      <IntroSection
+        {...{
+          setid: each.setid!,
+          tradename: each.tradename!,
+          spl_earliest_date: each.spl_earliest_date!,
+          spl_effective_date: each.spl_effective_date!,
+          manufacturer: each.manufacturer!,
+          xml_link: each.xml_link!,
+          pdf_link: each.pdf_link!,
+          back_btn_callback: (s) => setDisplayDataIndex(s),
+        }}
+      />
+      <IndicationSection indication={each.indication!} />
+      <AdverseReactionSection
+        setid={each.setid!}
+        adverse_effect_tables={each.adverse_effect_tables!}
+      />
+      <DrugInteractionSection drug_interactions={each.drug_interactions!} />
+      <ClinicalTrialSection
+        clinical_trials={each.clinical_trials!}
+        clinical_trial_tables={each.clinical_trial_tables!}
+      />
+      <FdaLabelHistory
+        setid={each.setid!}
+        displayDataIndex={displayDataIndex}
+      />
+    </>
+  );
+}
+
 export {
   TitleContent,
   IntroSection,
@@ -273,4 +307,5 @@ export {
   ClinicalTrialSection,
   DrugInteractionSection,
   FdaLabelHistory,
+  FdaLabel,
 };
