@@ -152,9 +152,9 @@ export default function Home() {
               <p className="leading-relaxed">Products</p>
             </div>
           </div>
-          <div className="lg:w-1/2 sm:w-1/3 w-full rounded-lg overflow-hidden mt-6 sm:mt-0">
+          <div className="w-[600px] h-[300px] rounded-lg mt-6 sm:mt-0">
             <Image
-              className="object-cover object-center w-full h-full"
+              className="object-none object-center w-full h-full overflow-visible"
               src="https://raw.githubusercontent.com/zcemycl/systemDeploy/main/docs/resources/neo4j.png"
               alt="stats"
               width={600}
