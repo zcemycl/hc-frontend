@@ -246,13 +246,13 @@ export default function Admin() {
               {displayData.map((each, idx) => {
                 return (
                   <div
-                    className="sm:w-1/2 flex flex-col w-screen px-10 py-5"
+                    className="sm:w-1/2 flex flex-col w-screen px-10 py-1 space-y-2"
                     key={`${id}-user-profile-${each.id}`}
                   >
                     <div className="flex justify-between">
-                      <TypographyH2>
+                      <p className="leading-relaxed">
                         {each.username} [{each.role}]
-                      </TypographyH2>
+                      </p>
                       {!EXCLUDE_EMAIL_DELETE.includes(each.email) && (
                         <button
                           className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
@@ -268,11 +268,19 @@ export default function Admin() {
                       )}
                     </div>
 
-                    <TypographyH2>Email Address: {each.email}</TypographyH2>
-                    <TypographyH2>
+                    <p
+                      className="text-xs text-left text-clip
+                          whitespace-nowrap"
+                    >
+                      Email Address: {each.email}
+                    </p>
+                    <p
+                      className="text-xs text-left text-clip
+                          whitespace-nowrap"
+                    >
                       Creation Date:{" "}
                       {convert_datetime_to_date(each.created_date)}
-                    </TypographyH2>
+                    </p>
                     <hr />
                   </div>
                 );

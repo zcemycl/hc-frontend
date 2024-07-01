@@ -3,7 +3,7 @@ export function LogoutIcon() {
     <svg
       className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
+      fill="white"
       viewBox="0 0 32 32"
       aria-hidden="true"
     >

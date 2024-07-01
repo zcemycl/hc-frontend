@@ -1,4 +1,4 @@
-import { LogoutIcon } from "@/icons";
+import { FeedbackIcon, LogoutIcon, ProfileIcon } from "@/icons";
 
 export const sidebar_constant = [
   {
@@ -6,6 +6,12 @@ export const sidebar_constant = [
     path: "/profile",
     icon: <p>PF</p>,
     testid: "profile-link",
+  },
+  {
+    name: "Feedback",
+    path: "/feedback",
+    icon: <FeedbackIcon />,
+    testid: "feedback-link",
   },
   {
     name: "Logout",

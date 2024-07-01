@@ -4,7 +4,9 @@ export function ProfileIcon() {
       className="w-12 h-12"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 200 200"
-      fill="black"
+      // width="24"
+      // height="24"
+      fill="white"
     >
       <path
         fill="white"

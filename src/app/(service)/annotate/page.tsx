@@ -1,8 +1,10 @@
 "use client";
 import { TypographyH2 } from "@/components";
 import { ProtectedRoute, useAuth } from "@/contexts";
+import { useRouter } from "next/navigation";
 
 export default function Annotate() {
+  const router = useRouter();
   return (
     <ProtectedRoute>
       <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
@@ -22,6 +24,37 @@ export default function Annotate() {
               evaluation.
             </p>
             <TypographyH2>Tasks</TypographyH2>
+            <div className="flex flex-col space-y-4">
+              <button
+                className="text-white 
+                bg-indigo-500 hover:bg-indigo-600
+                border-0 py-3 px-6 rounded text-left
+                focus:outline-none text-xl w-full"
+                onClick={() => {
+                  router.push("/annotate/fdalabel/adverse_effect_table");
+                }}
+              >
+                Adverse Effects Table
+              </button>
+              <button
+                disabled={true}
+                className={`text-white 
+                ${false ? "bg-indigo-500 hover:bg-indigo-600" : "bg-slate-500"}
+                border-0 py-3 px-6 rounded text-left
+                focus:outline-none text-xl w-full`}
+              >
+                Clinical Trials Table
+              </button>
+              <button
+                disabled={true}
+                className={`text-white 
+                ${false ? "bg-indigo-500 hover:bg-indigo-600" : "bg-slate-500"}
+                border-0 py-3 px-6 rounded text-left
+                focus:outline-none text-xl w-full`}
+              >
+                Dosage Form
+              </button>
+            </div>
           </div>
         </div>
       </section>

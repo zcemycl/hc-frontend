@@ -11,6 +11,8 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
   const { isSideBarOpen, setIsSideBarOpen } = useOpenBar();
   const refSideBar = useRef(null);
   const sidebar_items = [
+    ...(role === UserRoleEnum.ADMIN ? [] : []),
+    ...sidebar_constant,
     ...(role === UserRoleEnum.ADMIN
       ? [
           {
@@ -21,8 +23,6 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
           },
         ]
       : []),
-    ...sidebar_constant,
-    ...(role === UserRoleEnum.ADMIN ? [] : []),
   ];
 
   useEffect(() => {

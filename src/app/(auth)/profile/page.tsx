@@ -51,7 +51,7 @@ export default function Profile() {
               <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
 
               <hr className="mb-2" />
-              <TypographyH2>Search</TypographyH2>
+              <TypographyH2>Search Activities</TypographyH2>
               {history.length === 0 ? (
                 <p className="leading-relaxed mb-1">No Record ...</p>
               ) : (
@@ -68,9 +68,10 @@ export default function Profile() {
                           router.push(`/search?historyId=${x.id}`);
                         }}
                         className="hover:bg-green-200 
-                      focus:bg-blue-200 transition
-                      justify-start content-start
-                      rounded px-2 hover:text-black"
+                        text-clip overflow-clip
+                        focus:bg-blue-200 transition
+                        justify-start content-start
+                        rounded px-2 hover:text-black"
                       >
                         <div className="flex justify-between">
                           <p className="leading-relaxed">{x.detail.action}</p>
@@ -78,7 +79,12 @@ export default function Profile() {
                             {x.detail.additional_settings.queryType}
                           </p>
                         </div>
-                        <p className="text-2">{`[\"${x.detail.query.join('", "')}\"]`}</p>
+                        <p
+                          className="text-xs text-left text-clip
+                          whitespace-nowrap"
+                        >
+                          {`[\"${x.detail.query.join('", "')}\"]`}
+                        </p>
                       </button>
                     );
                   })
