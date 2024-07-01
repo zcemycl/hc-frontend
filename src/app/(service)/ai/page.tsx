@@ -5,7 +5,7 @@ import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { UserRoleEnum } from "@/types/users";
-import { Modal } from "@/components";
+import { Modal, TypographyH2 } from "@/components";
 
 export default function AI() {
   const router = useRouter();
@@ -36,12 +36,13 @@ export default function AI() {
             </div>
           </Modal>
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10 space-y-2">
-            <h2 className="text-white text-lg mb-1 font-medium title-font">
-              AI Tools
-            </h2>
+            <TypographyH2>AI Tools</TypographyH2>
+            <p className="leading-relaxed mb-5">
+              Tools to explore, align and train our AI models.
+            </p>
             <button
               type="button"
-              className="text-white bg-red-500 border-0 py-2
+              className="text-white bg-red-500 border-0 py-3
                 flex justify-between content-center text-center
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-red-600 
@@ -51,11 +52,15 @@ export default function AI() {
               <p>Annotation</p>
               <AnnotateIcon />
             </button>
+            <p className="px-6 mb-1 text-xs text-right">
+              Create benchmark dataset to train and evaluate.
+            </p>
+
             <button
               disabled={isNotAdmin}
               type="button"
               title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
-              className={`focus:outline-none border-0 py-2
+              className={`focus:outline-none border-0 py-3
                 flex justify-between content-center text-center
                 align-middle items-center text-white
                 px-6 ${isNotAdmin ? "bg-slate-500" : "bg-green-500 hover:bg-green-600"}
@@ -75,9 +80,12 @@ export default function AI() {
               <p>Jupyter Lab</p>
               <JupyterIcon />
             </button>
+            <p className="px-6 mb-1 text-xs text-right">
+              Explore new data and machine learning model.
+            </p>
             <button
               type="button"
-              className="text-white bg-blue-500 border-0 py-2
+              className="text-white bg-blue-500 border-0 py-3
                 flex justify-between content-center text-center
                 align-middle items-center 
                 px-6 focus:outline-none hover:bg-blue-600 
@@ -87,6 +95,9 @@ export default function AI() {
               <p>Chatbot</p>
               <ChatbotIcon />
             </button>
+            <p className="px-6 mb-1 text-xs text-right">
+              Test AI Assistant to discover and compare drugs.
+            </p>
           </div>
         </div>
       </section>

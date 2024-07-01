@@ -19,16 +19,6 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
             icon: <AdminIcon />,
             testid: "admin-link",
           },
-          {
-            name: "Jupyter Lab",
-            path: "/jupyterlab",
-            icon: (
-              <div className="">
-                <JupyterIcon />
-              </div>
-            ),
-            testid: "jupyterlab-link",
-          },
         ]
       : []),
     ...sidebar_constant,
@@ -72,17 +62,23 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
                 {sidebar_items.map((keyValue) => {
                   return (
                     <li key={keyValue.name}>
-                      <Link
-                        href={keyValue.path}
-                        key={keyValue.name}
-                        data-testid={keyValue.testid}
-                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                      >
-                        {keyValue.icon}
-                        <span key={keyValue.name} className="ms-3">
-                          {keyValue.name}
-                        </span>
-                      </Link>
+                      {
+                        <Link
+                          href={keyValue.path}
+                          key={keyValue.name}
+                          data-testid={keyValue.testid}
+                          // pointer-events-none
+                          className="flex 
+                          items-center p-2 text-gray-900 
+                          rounded-lg dark:text-white hover:bg-gray-100 
+                          dark:hover:bg-gray-700 group"
+                        >
+                          {keyValue.icon}
+                          <span key={keyValue.name} className="ms-3">
+                            {keyValue.name}
+                          </span>
+                        </Link>
+                      }
                     </li>
                   );
                 })}
