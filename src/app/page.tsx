@@ -155,7 +155,7 @@ export default function Home() {
           <div className="w-[600px] h-[300px] rounded-lg mt-6 sm:mt-0">
             <Image
               className="object-none object-center w-full h-full overflow-visible"
-              src="https://raw.githubusercontent.com/zcemycl/systemDeploy/main/docs/resources/neo4j.png"
+              src="/images/neo4j.png"
               alt="stats"
               width={600}
               height={300}

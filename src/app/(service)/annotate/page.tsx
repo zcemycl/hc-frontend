@@ -31,7 +31,7 @@ export default function Annotate() {
                 border-0 py-3 px-6 rounded text-left
                 focus:outline-none text-xl w-full"
                 onClick={() => {
-                  router.push("/annotate/fdalabel/adverse_effect_table");
+                  router.push("/annotate/adverse_effect_table");
                 }}
               >
                 Adverse Effects Table
