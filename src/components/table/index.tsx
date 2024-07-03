@@ -9,6 +9,32 @@ import {
 } from "react";
 import { IBaseTableNoHead, IBaseTable, IBaseSelectTable } from "@/types";
 
+const setup_selectable_row_map = (n_rows: number, n_cols: number) => {
+  let tmp = Array.from({ length: n_rows }, () =>
+    Array.from({ length: n_cols }, () => false),
+  );
+  for (let i = 0; i < n_rows; i++) {
+    tmp[i][0] = true;
+  }
+  return tmp;
+};
+
+const setup_selectable_col_map = (n_rows: number, n_cols: number) => {
+  let tmp = Array.from({ length: n_rows }, () =>
+    Array.from({ length: n_cols }, () => false),
+  );
+  for (let i = 0; i < n_cols; i++) {
+    tmp[0][i] = true;
+  }
+  return tmp;
+};
+
+const setup_selectable_cell_map = (n_rows: number, n_cols: number) => {
+  return Array.from({ length: n_rows }, () =>
+    Array.from({ length: n_cols }, () => true),
+  );
+};
+
 const TableCell: FC<{
   children: ReactNode;
   rowid: number;
@@ -126,4 +152,12 @@ const TableFromCols = ({ keyvalue, data }: IData) => {
   );
 };
 
-export { TableCell, TableHeadCell, Table, TableFromCols };
+export {
+  TableCell,
+  TableHeadCell,
+  Table,
+  TableFromCols,
+  setup_selectable_row_map,
+  setup_selectable_col_map,
+  setup_selectable_cell_map,
+};

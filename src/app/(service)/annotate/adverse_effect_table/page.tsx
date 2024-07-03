@@ -1,5 +1,10 @@
 "use client";
-import { TypographyH2 } from "@/components";
+import {
+  TypographyH2,
+  setup_selectable_cell_map,
+  setup_selectable_col_map,
+  setup_selectable_row_map,
+} from "@/components";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { Table } from "@/components";
 import { IBaseTable } from "@/types";
@@ -13,6 +18,9 @@ export default function Page() {
   ];
   const n_rows = tabledata.length;
   const n_cols = tabledata[0].length;
+  const row_map = setup_selectable_row_map(n_rows, n_cols);
+  const col_map = setup_selectable_col_map(n_rows, n_cols);
+  const cell_map = setup_selectable_cell_map(n_rows, n_cols);
   const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
     Array.from({ length: n_rows }, () =>
       Array.from({ length: n_cols }, () => false),
@@ -37,11 +45,7 @@ export default function Page() {
                 table: tabledata,
               } as IBaseTable,
               isSelectable: {
-                table: [
-                  [true, true, true, true],
-                  [true, true, true, true],
-                  [true, true, true, true],
-                ],
+                table: cell_map,
               },
               isSelected: {
                 table: isCellSelected,
