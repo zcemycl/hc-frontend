@@ -1,9 +1,18 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface IBaseTable {
   table: string[][];
 }
 
+export interface IBaseSelectTable {
+  table: boolean[][];
+}
+
 export interface IBaseTableNoHead {
   content: IBaseTable;
+  isSelectable?: IBaseSelectTable;
+  isSelected?: IBaseSelectTable;
+  setIsCellSelected?: Dispatch<SetStateAction<boolean[][]>>;
 }
 
 export interface IBaseTitleContent {

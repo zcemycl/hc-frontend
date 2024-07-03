@@ -109,7 +109,7 @@ export default function Home() {
   return (
     <>
       <section className="text-gray-400 bg-gray-900 body-font">
-        <div className="container px-5 py-24 mx-auto flex flex-wrap">
+        <div className="container px-5 py-24 mx-auto md:flex md:flex-between">
           <div className="flex flex-wrap -mx-4 mt-auto mb-auto lg:w-1/2 sm:w-2/3 content-start sm:pr-10">
             <div className="w-full sm:p-4 px-4 mb-6">
               <h1 className="title-font font-medium text-xl mb-2 text-white">
@@ -152,9 +152,9 @@ export default function Home() {
               <p className="leading-relaxed">Products</p>
             </div>
           </div>
-          <div className="w-[600px] h-[300px] rounded-lg mt-6 sm:mt-0">
+          <div className="w-[600px] h-[300px] rounded-lg sm:mt-6 md:mt-0">
             <Image
-              className="object-none object-center w-full h-full overflow-visible"
+              className="object-none md:object-center object-top w-full h-full overflow-visible"
               src="/images/neo4j.png"
               alt="stats"
               width={600}

@@ -1,11 +1,50 @@
 "use client";
-import { FC, ReactNode, useId } from "react";
-import { IBaseTableNoHead } from "@/types";
+import {
+  Dispatch,
+  FC,
+  Fragment,
+  ReactNode,
+  SetStateAction,
+  useId,
+} from "react";
+import { IBaseTableNoHead, IBaseTable, IBaseSelectTable } from "@/types";
 
 const TableCell: FC<{
   children: ReactNode;
-}> = ({ children }) => {
-  return <td className="border">{children}</td>;
+  rowid: number;
+  colid: number;
+  isSelectable?: boolean;
+  isSelected?: boolean[][];
+  setIsTableSelected?: Dispatch<SetStateAction<boolean[][]>>;
+}> = ({
+  children,
+  rowid,
+  colid,
+  isSelectable,
+  isSelected,
+  setIsTableSelected,
+}) => {
+  return (
+    <td className="border">
+      <div className="flex justify-between px-2">
+        {children}
+        {isSelectable && (
+          <input
+            type="checkbox"
+            key={Math.random()}
+            // checked={isSelected![rowid][colid]}
+            defaultChecked={isSelected![rowid][colid]}
+            onChange={(e) => {
+              e.preventDefault();
+              let copy = [...isSelected!];
+              copy[rowid][colid] = !copy[rowid][colid];
+              setIsTableSelected!(copy);
+            }}
+          />
+        )}
+      </div>
+    </td>
+  );
 };
 
 const TableHeadCell: FC<{
@@ -24,7 +63,16 @@ const Table = (tabledata: IBaseTableNoHead) => {
             <tr key={`${tablerow.join("-")}-${rowid}`}>
               {tablerow.map((tdata, dataid) => {
                 return (
-                  <TableCell key={`${tdata}-${dataid}`}>{tdata}</TableCell>
+                  <TableCell
+                    key={`${tdata}-${dataid}`}
+                    rowid={rowid}
+                    colid={dataid}
+                    isSelectable={tabledata.isSelectable?.table[rowid][dataid]}
+                    isSelected={tabledata.isSelected?.table}
+                    setIsTableSelected={tabledata.setIsCellSelected}
+                  >
+                    {tdata}
+                  </TableCell>
                 );
               })}
             </tr>
@@ -61,7 +109,11 @@ const TableFromCols = ({ keyvalue, data }: IData) => {
             <tr key={`${displayNames[idx]}-${idx}`}>
               {Object.keys(keyvalue).map((key, idx_key) => {
                 return (
-                  <TableCell key={`${displayNames[idx]}-${idx}-${idx_key}`}>
+                  <TableCell
+                    rowid={idx}
+                    colid={idx_key}
+                    key={`${displayNames[idx]}-${idx}-${idx_key}`}
+                  >
                     {data[key][idx]}
                   </TableCell>
                 );
