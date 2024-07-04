@@ -61,3 +61,9 @@ export interface IFdaLabelHistory {
 }
 
 export interface ICompareAETable extends IBaseTable {}
+
+export interface IUnAnnotatedAETable {
+  idx: number;
+  fdalabel: IFdaLabel;
+  adverse_effect_table: IAdverseEffectTable;
+}

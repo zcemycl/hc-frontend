@@ -70,7 +70,7 @@ export default function Admin() {
     }
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pageN]);
 
   return (
     <ProtectedRoute>
