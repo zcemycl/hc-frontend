@@ -58,7 +58,10 @@ export default function Page({ params }: PageProps) {
 
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
+      <section
+        className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
+        overflow-y-scroll overflow-x-scroll"
+      >
         <div
           className="container px-2 py-24 mx-auto grid justify-items-center
         "
@@ -80,22 +83,24 @@ export default function Page({ params }: PageProps) {
             <p className="leading-relaxed w-full">
               A.E Table {params.table_id} from label {params.id}
             </p>
-            {tableData && (
-              <Table
-                {...{
-                  content: {
-                    table: tableData.content.table,
-                  } as IBaseTable,
-                  isSelectable: {
-                    table: cell_map,
-                  },
-                  isSelected: {
-                    table: isCellSelected,
-                  },
-                  setIsCellSelected,
-                }}
-              />
-            )}
+            <div className="overflow-x-scroll flex flex-col w-full">
+              {tableData && (
+                <Table
+                  {...{
+                    content: {
+                      table: tableData.content.table,
+                    } as IBaseTable,
+                    isSelectable: {
+                      table: cell_map,
+                    },
+                    isSelected: {
+                      table: isCellSelected,
+                    },
+                    setIsCellSelected,
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
       </section>

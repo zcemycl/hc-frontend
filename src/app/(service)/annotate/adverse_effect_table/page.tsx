@@ -1,16 +1,9 @@
 "use client";
-import {
-  PaginationBar,
-  TypographyH2,
-  setup_selectable_cell_map,
-  setup_selectable_col_map,
-  setup_selectable_row_map,
-  Table,
-} from "@/components";
+import { PaginationBar, TypographyH2, Table } from "@/components";
 import { fetchUnannotatedAETableByUserId } from "@/http/backend";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { IBaseTable, IUnAnnotatedAETable } from "@/types";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { GoIcon } from "@/icons";
 
@@ -21,22 +14,6 @@ export default function Page() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
-  const tabledata = [
-    ["1", "2", "3", "a"],
-    ["2", "3", "4", "b"],
-    ["7", "7", "7", "c"],
-  ];
-  const n_rows = tabledata.length;
-  const n_cols = tabledata[0].length;
-  const row_map = setup_selectable_row_map(n_rows, n_cols);
-  const col_map = setup_selectable_col_map(n_rows, n_cols);
-
-  const cell_map = setup_selectable_cell_map(n_rows, n_cols);
-  const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
-    Array.from({ length: n_rows }, () =>
-      Array.from({ length: n_cols }, () => false),
-    ),
-  );
 
   useEffect(() => {
     async function getData(credentials: string, userId: number) {
@@ -63,20 +40,6 @@ export default function Page() {
             <div className="flex justify-between">
               <TypographyH2>Unannotated Tables</TypographyH2>
             </div>
-            {/* <Table
-              {...{
-                content: {
-                  table: tabledata,
-                } as IBaseTable,
-                isSelectable: {
-                  table: cell_map,
-                },
-                isSelected: {
-                  table: isCellSelected,
-                },
-                setIsCellSelected,
-              }}
-            /> */}
           </div>
           {tableData.map((data, idx) => {
             return (
@@ -89,6 +52,7 @@ export default function Page() {
                   className={`
                   rounded text-white border-blue-400
                   border-2 hover:border-blue-800 h-auto
+                  p-2
                   hover:bg-blue-800 transition`}
                   key={`${data.fdalabel.setid}-${data.idx}`}
                   onMouseOver={(e) => {
