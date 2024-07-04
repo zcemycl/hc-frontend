@@ -5,16 +5,20 @@ import {
   setup_selectable_cell_map,
   setup_selectable_col_map,
   setup_selectable_row_map,
+  Table,
 } from "@/components";
 import { fetchUnannotatedAETableByUserId } from "@/http/backend";
 import { ProtectedRoute, useAuth } from "@/contexts";
-import { Table } from "@/components";
 import { IBaseTable, IUnAnnotatedAETable } from "@/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { useRouter } from "next/navigation";
+import { GoIcon } from "@/icons";
 
 export default function Page() {
+  const router = useRouter();
   const { userId, credentials } = useAuth();
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const tabledata = [
@@ -26,6 +30,7 @@ export default function Page() {
   const n_cols = tabledata[0].length;
   const row_map = setup_selectable_row_map(n_rows, n_cols);
   const col_map = setup_selectable_col_map(n_rows, n_cols);
+
   const cell_map = setup_selectable_cell_map(n_rows, n_cols);
   const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
     Array.from({ length: n_rows }, () =>
@@ -56,9 +61,9 @@ export default function Page() {
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5 space-y-2">
             <div className="flex justify-between">
-              <TypographyH2>How to annotate Adverse Effect Table?</TypographyH2>
+              <TypographyH2>Unannotated Tables</TypographyH2>
             </div>
-            <Table
+            {/* <Table
               {...{
                 content: {
                   table: tabledata,
@@ -71,22 +76,65 @@ export default function Page() {
                 },
                 setIsCellSelected,
               }}
-            />
+            /> */}
           </div>
-          {tableData.map((data) => {
+          {tableData.map((data, idx) => {
             return (
-              <button
-                className="sm:w-1/2 flex flex-col 
-                  w-screen px-10 py-1 space-y-2 mb-2
-                  rounded text-white border-blue-400
-                  border-2 hover:border-blue-800
-                  hover:bg-blue-800"
+              <div
+                className="sm:w-1/2 flex flex-col inline-flex
+                  w-screen space-y-2 mb-2 h-auto overflow-hidden"
                 key={`${data.fdalabel.setid}-${data.idx}`}
               >
-                <p className="leading-relaxed">
-                  {data.fdalabel.tradename} [Table {data.idx}]
-                </p>
-              </button>
+                <button
+                  className={`
+                  rounded text-white border-blue-400
+                  border-2 hover:border-blue-800 h-auto
+                  hover:bg-blue-800 transition`}
+                  key={`${data.fdalabel.setid}-${data.idx}`}
+                  onMouseOver={(e) => {
+                    setHoverIdx(idx);
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push(
+                      `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`,
+                    );
+                  }}
+                >
+                  <div className="flex justify-between">
+                    <p className="leading-relaxed w-full">
+                      {data.fdalabel.tradename} [Table {data.idx}]
+                    </p>
+                    <div
+                      className={`transition duration-300
+                  ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                    >
+                      <GoIcon />
+                    </div>
+                  </div>
+
+                  <p
+                    className={`leading-relaxed transition origin-top
+                  ${hoverIdx == idx ? "max-h-full scale-y-100" : "max-h-0 scale-y-0"}`}
+                  >
+                    {data.fdalabel.indication
+                      ?.split(" ")
+                      .splice(0, 20)
+                      .join(" ")}{" "}
+                    ...
+                    <Table
+                      {...{
+                        content: {
+                          table: data.adverse_effect_table.content.table.slice(
+                            0,
+                            6,
+                          ),
+                        } as IBaseTable,
+                      }}
+                    />
+                  </p>
+                </button>
+              </div>
             );
           })}
           <div className="flex justify-center space-x-1 flex-wrap">
