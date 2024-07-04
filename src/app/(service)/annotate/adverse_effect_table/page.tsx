@@ -39,12 +39,19 @@ export default function Page() {
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5 space-y-2">
             <div className="flex justify-between">
               <TypographyH2>Unannotated Tables</TypographyH2>
+              <button
+                onClick={() => router.back()}
+                className="bg-purple-700 rounded p-2 
+                text-white hover:bg-purple-800"
+              >
+                Back
+              </button>
             </div>
           </div>
           {tableData.map((data, idx) => {
             return (
               <div
-                className="sm:w-1/2 flex flex-col inline-flex
+                className="sm:w-1/2 flex flex-col
                   w-screen space-y-2 mb-2 h-auto overflow-hidden"
                 key={`${data.fdalabel.setid}-${data.idx}`}
               >

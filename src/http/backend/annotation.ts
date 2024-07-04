@@ -37,3 +37,17 @@ export async function fetchAETableByIds(
   const res = await response.json();
   return res;
 }
+
+export async function fetchAETableBySetid(setid: string, token: string) {
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/fdalabel/${setid}/adverse_effect_table`;
+  const response = await fetch(API_URI, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "force-cache",
+  });
+  const res = await response.json();
+  return res;
+}

@@ -72,7 +72,7 @@ export default function Page({ params }: PageProps) {
                 Annotation
               </h2>
               <button
-                onClick={() => router.push("/annotate/adverse_effect_table")}
+                onClick={() => router.back()}
                 className="bg-purple-700 rounded p-2 
                 text-white hover:bg-purple-800"
               >
