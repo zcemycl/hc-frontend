@@ -35,10 +35,14 @@ const setup_selectable_cell_map = (n_rows: number, n_cols: number) => {
   );
 };
 
+function isEmpty(array: any[][]): boolean {
+  return Array.isArray(array) && (array.length == 0 || array.every(isEmpty));
+}
+
 const TableCell: FC<{
   children: ReactNode;
-  rowid: number;
-  colid: number;
+  rowid?: number;
+  colid?: number;
   isSelectable?: boolean;
   isSelected?: boolean[][];
   setIsTableSelected?: Dispatch<SetStateAction<boolean[][]>>;
@@ -59,11 +63,15 @@ const TableCell: FC<{
             type="checkbox"
             key={Math.random()}
             // checked={isSelected![rowid][colid]}
-            defaultChecked={isSelected![rowid][colid]}
+            defaultChecked={
+              isEmpty(isSelected as boolean[][])
+                ? false
+                : isSelected![rowid!][colid!]
+            }
             onChange={(e) => {
               e.preventDefault();
               let copy = [...isSelected!];
-              copy[rowid][colid] = !copy[rowid][colid];
+              copy[rowid!][colid!] = !copy[rowid!][colid!];
               setIsTableSelected!(copy);
             }}
           />
