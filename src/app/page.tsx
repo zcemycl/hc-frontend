@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/contexts";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { IRequestDemoForm, UserRoleEnum } from "@/types";
 
@@ -174,20 +174,29 @@ export default function Home() {
       <section className="text-gray-400 bg-gray-900 body-font relative">
         <div className="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
           <div className="lg:w-2/3 md:w-1/2 bg-gray-900 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
-            {/* https://www.maps.ie/create-google-map/ */}
-            <iframe
-              width="100%"
-              height="100%"
-              title="map"
-              className="absolute inset-0"
-              style={{
-                filter: "grayscale(0) contrast(1) opacity(0.8)",
-                border: 0,
-                overflow: "hidden",
-                margin: 0,
-              }}
-              src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=London+(RXScope)&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-            ></iframe>
+            <Suspense
+              fallback={
+                <div role="status">
+                  <Spinner />
+                </div>
+              }
+            >
+              {/* https://www.maps.ie/create-google-map/ */}
+              <iframe
+                width="100%"
+                height="100%"
+                title="map"
+                className="absolute inset-0"
+                style={{
+                  filter: "grayscale(0) contrast(1) opacity(0.8)",
+                  border: 0,
+                  overflow: "hidden",
+                  margin: 0,
+                }}
+                src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=London+(RXScope)&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+              ></iframe>
+            </Suspense>
+
             <div className="bg-gray-900 relative flex flex-wrap py-6 rounded shadow-md">
               <div className="lg:w-1/2 px-6 mt-4 lg:mt-0">
                 <h2 className="title-font font-semibold text-white tracking-widest text-xs">

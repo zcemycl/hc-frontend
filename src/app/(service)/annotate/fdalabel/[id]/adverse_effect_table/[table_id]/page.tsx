@@ -127,10 +127,12 @@ export default function Page({ params }: PageProps) {
   }, [isCellSelected]);
 
   useEffect(() => {
-    const newDefaultOption =
-      questions[questionIdx].additionalRequire![0].defaultOption;
-    console.log(newDefaultOption);
-    setSelectedOption(newDefaultOption);
+    if ("additionalRequire" in questions[questionIdx]) {
+      const newDefaultOption =
+        questions[questionIdx].additionalRequire![0].defaultOption;
+      console.log(newDefaultOption);
+      setSelectedOption(newDefaultOption);
+    }
   }, [questionIdx]);
 
   return (
@@ -156,10 +158,33 @@ export default function Page({ params }: PageProps) {
                 Back
               </button>
             </div>
-
             <p className="leading-relaxed w-full">
               A.E Table {params.table_id} from label {params.id}
             </p>
+            <div className="flex justify-between items-center">
+              <div className="flex space-x-2 items-center">
+                {questions.map((q, idx) => {
+                  return (
+                    <span
+                      className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
+                      key={q.displayName}
+                      onClick={() => {
+                        setQuestionIdx(idx);
+                      }}
+                    >
+                      <span
+                        className={`${questionIdx === idx ? "animate-ping" : ""} absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
+                      ></span>
+                      <span
+                        className={`relative inline-flex rounded-full 
+                          hover:bg-sky-50 bg-sky-500 focus:bg-sky-950
+                          ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
+                      ></span>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
 
             <p className="leading-none w-full text-white">
               {questions[questionIdx].displayName}
