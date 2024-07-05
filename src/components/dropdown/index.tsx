@@ -14,10 +14,9 @@ const DropDownBtn: FC<{
             border-2
             border-indigo-900
             p-2 w-auto h-10 mr-1 justify-center 
-            text-sm text-gray-500 rounded-lg 
-            hover:bg-gray-100 focus:outline-none 
-            focus:ring-2 focus:ring-gray-200 
-            dark:text-gray-400 dark:hover:bg-gray-700 
+            text-sm text-white rounded-lg 
+            focus:outline-none 
+            focus:ring-2 focus:ring-gray-200
             dark:focus:ring-gray-600
             ${extraClassName}
         `}
