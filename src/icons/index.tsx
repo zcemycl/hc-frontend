@@ -11,3 +11,4 @@ export { ChatbotIcon } from "./ChatbotIcon";
 export { AnnotateIcon } from "./AnnotateIcon";
 export { FeedbackIcon } from "./FeedbackIcon";
 export { GoIcon } from "./GoIcon";
+export { TickCompleteIcon } from "./TickCompleteIcon";

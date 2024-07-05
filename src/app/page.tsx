@@ -13,6 +13,7 @@ import {
   fetchUserCount,
   fetchUserInfoByName,
 } from "@/http/backend";
+import { Spinner } from "@/components";
 
 interface IData {
   success?: boolean;
@@ -114,11 +115,18 @@ export default function Home() {
             <div className="w-full sm:p-4 px-4 mb-6">
               <h1 className="title-font font-medium text-xl mb-2 text-white">
                 Hello{" "}
-                {isAuthenticated
-                  ? isLoading
-                    ? "is Loading"
-                    : `${data!.username}`
-                  : ""}
+                {isAuthenticated ? (
+                  isLoading ? (
+                    <div role="status">
+                      <Spinner />
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    `${data!.username}`
+                  )
+                ) : (
+                  ""
+                )}
               </h1>
               <div className="leading-relaxed">
                 Welcome to RXScope Platform!{" "}

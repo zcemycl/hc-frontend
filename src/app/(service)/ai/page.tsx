@@ -5,21 +5,32 @@ import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { UserRoleEnum } from "@/types/users";
-import { Modal, TypographyH2 } from "@/components";
+import { Modal, Spinner, TypographyH2 } from "@/components";
 
 export default function AI() {
   const router = useRouter();
   const { setIsAuthenticated, credentials, role } = useAuth();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const isNotAdmin = role !== UserRoleEnum.ADMIN;
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
-        <div
-          className="container px-2 py-24 mx-auto grid justify-items-center
-    "
-        >
+      <section
+        className={`text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
+        ${isLoading ? "animate-pulse" : ""}`}
+      >
+        <div className="container px-2 py-24 mx-auto grid justify-items-center">
+          {isLoading && (
+            <div
+              role="status"
+              className="absolute left-1/2 top-1/2 
+            -translate-x-1/2 -translate-y-1/2"
+            >
+              <Spinner />
+              <span className="sr-only">Loading...</span>
+            </div>
+          )}
           <Modal
             title="Jupyter Lab Link"
             isOpenModal={isOpenModal}
@@ -67,6 +78,7 @@ export default function AI() {
                 rounded text-2xl w-full`}
               onClick={async () => {
                 console.log("Open JupyterLab");
+                setIsLoading(true);
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
                   redirect("/logout");
@@ -75,6 +87,7 @@ export default function AI() {
                 const resp = await create_presigned_url(credJson.AccessToken);
                 setJupyterLink(resp.url);
                 setIsOpenModal(true);
+                setIsLoading(false);
               }}
             >
               <p>Jupyter Lab</p>
