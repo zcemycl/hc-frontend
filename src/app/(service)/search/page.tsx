@@ -17,6 +17,7 @@ import {
   FdaLabel,
   SearchBar,
   FdaLabelShort,
+  Spinner,
 } from "@/components";
 import {
   IFdaLabel,
@@ -52,6 +53,7 @@ export default function Search() {
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function search_query_by_type(
     query: string[],
@@ -180,10 +182,21 @@ export default function Search() {
   return (
     <ProtectedRoute>
       <section
-        className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll"
+        className={`text-gray-400 bg-gray-900 body-font 
+          h-[83vh] sm:h-[90vh] overflow-y-scroll ${isLoading ? "animate-pulse" : ""}`}
         ref={refSearchResGroup}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
+          {isLoading && (
+            <div
+              role="status"
+              className="absolute left-1/2 top-1/2 
+            -translate-x-1/2 -translate-y-1/2"
+            >
+              <Spinner />
+              <span className="sr-only">Loading...</span>
+            </div>
+          )}
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
             <TypographyH2>Search</TypographyH2>
             <p className="leading-relaxed mb-5">Please enter your query.</p>
@@ -231,6 +244,7 @@ export default function Search() {
                 data-testid="search-btn"
                 onClick={async (e) => {
                   e.preventDefault();
+                  setIsLoading(true);
                   setPageN(0);
                   setDisplayDataIndex(null);
                   setSetIdsToCompare(new Set());
@@ -241,6 +255,7 @@ export default function Search() {
                   }
                   const resp = await search_query_by_type(query, queryType);
                   console.log(resp);
+                  setIsLoading(false);
                   if (resp.detail?.error! === "AUTH_EXPIRED") {
                     setIsAuthenticated(false);
                     redirect("/logout");
@@ -255,6 +270,7 @@ export default function Search() {
                 <button
                   onClick={async (e) => {
                     e.preventDefault();
+                    setIsLoading(true);
                     console.log(setIdsToCompare);
                     let res, resp;
                     if (credentials.length === 0) {
@@ -268,6 +284,7 @@ export default function Search() {
                     );
                     setCompareTable(resp);
                     console.log(resp);
+                    setIsLoading(false);
                     await addHistoryByUserId(
                       userId as number,
                       UserHistoryCategoryEnum.SEARCH,

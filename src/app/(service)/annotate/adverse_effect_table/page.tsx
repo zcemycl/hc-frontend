@@ -1,5 +1,5 @@
 "use client";
-import { PaginationBar, TypographyH2, Table } from "@/components";
+import { PaginationBar, TypographyH2, Table, Spinner } from "@/components";
 import { fetchUnannotatedAETableByUserId } from "@/http/backend";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { IBaseTable, IUnAnnotatedAETable } from "@/types";
@@ -14,6 +14,7 @@ export default function Page() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getData(credentials: string, userId: number) {
@@ -28,14 +29,28 @@ export default function Page() {
       console.log(res);
     }
     if (credentials.length === 0) return;
+    setIsLoading(true);
     getData(credentials, userId as number);
+    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageN]);
 
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll">
+      <section
+        className={`text-gray-400 bg-gray-900 body-font 
+        h-[83vh] sm:h-[90vh] overflow-y-scroll
+        ${isLoading ? "animate-pulse" : ""}`}
+      >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
+          <div
+            role="status"
+            className={`absolute left-1/2 top-1/2 transition-opacity duration-700
+            -translate-x-1/2 -translate-y-1/2 ${isLoading ? "opacity-1" : "opacity-0"}`}
+          >
+            <Spinner />
+            <span className="sr-only">Loading...</span>
+          </div>
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5 space-y-2">
             <div className="flex justify-between">
               <TypographyH2>Unannotated Tables</TypographyH2>
@@ -59,7 +74,7 @@ export default function Page() {
                   className={`
                   rounded text-white border-blue-400
                   border-2 hover:border-blue-800 h-auto
-                  p-2
+                  p-2 focus:animate-pulse
                   hover:bg-blue-800 transition`}
                   key={`${data.fdalabel.setid}-${data.idx}`}
                   onMouseOver={(e) => {
@@ -67,6 +82,7 @@ export default function Page() {
                   }}
                   onClick={(e) => {
                     e.preventDefault();
+                    setIsLoading(true);
                     router.push(
                       `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`,
                     );
