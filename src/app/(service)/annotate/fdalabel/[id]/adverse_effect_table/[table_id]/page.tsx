@@ -201,7 +201,7 @@ export default function Page({ params }: PageProps) {
                       tmp,
                       credJson.AccessToken,
                     );
-                    router.push("/annotate/adverse_effect_table");
+                    router.back();
                   }}
                 >
                   Submit

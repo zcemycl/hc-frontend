@@ -59,7 +59,7 @@ export default function Page() {
             <span className="sr-only">Loading...</span>
           </div>
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5 space-y-2">
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <TypographyH2>Unannotated Tables</TypographyH2>
               <button
                 onClick={() => router.back()}
