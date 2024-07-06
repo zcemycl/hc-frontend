@@ -1,7 +1,7 @@
 "use client";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { fetchAETableByIds } from "@/http/backend";
 import { IAdverseEffectTable, IBaseTable } from "@/types";
 import {
@@ -33,11 +33,11 @@ export default function Page({ params }: PageProps) {
   const row_map = setup_selectable_row_map(n_rows, n_cols);
   const col_map = setup_selectable_col_map(n_rows, n_cols);
   const cell_map = setup_selectable_cell_map(n_rows, n_cols);
-  const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
-    Array.from({ length: n_rows }, () =>
-      Array.from({ length: n_cols }, () => false),
-    ),
+  const resetCellSelected = Array.from({ length: n_rows }, () =>
+    Array.from({ length: n_cols }, () => false),
   );
+  const [isCellSelected, setIsCellSelected] =
+    useState<boolean[][]>(resetCellSelected);
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
@@ -52,7 +52,6 @@ export default function Page({ params }: PageProps) {
         params.id,
         credJson.AccessToken,
       );
-      console.log(res);
       setTableData(res);
     }
     if (credentials.length === 0) return;
@@ -72,16 +71,19 @@ export default function Page({ params }: PageProps) {
   }, [tableData]);
 
   useEffect(() => {
-    console.log(isCellSelected);
-  }, [isCellSelected]);
+    console.log(finalResults);
+  }, [finalResults]);
 
   useEffect(() => {
+    if (questions[questionIdx].identifier in finalResults) {
+      setIsCellSelected(finalResults[questions[questionIdx].identifier]);
+    }
     if ("additionalRequire" in questions[questionIdx]) {
       const newDefaultOption =
         questions[questionIdx].additionalRequire![0].defaultOption;
-      console.log(newDefaultOption);
       setSelectedOption(newDefaultOption);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionIdx]);
 
   return (
@@ -119,12 +121,18 @@ export default function Page({ params }: PageProps) {
             </p>
             <div className="flex justify-between items-center">
               <div className="flex space-x-2 items-center">
+                {/* slidebar */}
                 {questions.map((q, idx) => {
                   return (
                     <span
                       className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
                       key={q.displayName}
                       onClick={() => {
+                        setFinalResults({
+                          ...finalResults,
+                          [questions[questionIdx].identifier]: isCellSelected,
+                        });
+                        setIsCellSelected(resetCellSelected);
                         setQuestionIdx(idx);
                       }}
                     >
@@ -139,49 +147,72 @@ export default function Page({ params }: PageProps) {
                     </span>
                   );
                 })}
+                <button
+                  className={`bg-emerald-500 text-white
+                  hover:bg-emerald-300 transition
+                  rounded p-2 origin-left
+                  ${questionIdx === questions.length - 1 ? "scale-x-100 scale-y-100" : "scale-x-0 scale-y-0"}`}
+                  onClick={() => {
+                    setFinalResults({
+                      ...finalResults,
+                      [questions[questionIdx].identifier]: isCellSelected,
+                    });
+                  }}
+                >
+                  Submit
+                </button>
               </div>
             </div>
 
             <p className="leading-none w-full text-white">
               {questions[questionIdx].displayName}
             </p>
-            {"additionalRequire" in questions[questionIdx] && (
-              <div>
-                <DropDownBtn
-                  extraClassName="justify-end w-full
+
+            <div
+              className={`transition
+                origin-top
+                ${"additionalRequire" in questions[questionIdx] ? "scale-y-100" : "scale-y-0"}`}
+            >
+              {"additionalRequire" in questions[questionIdx] && (
+                <Fragment>
+                  <DropDownBtn
+                    extraClassName="justify-end w-full
                   bg-blue-500 hover:bg-blue-700
                   text-black"
-                  onClick={() => {
-                    setIsOptionDropdownOpen(!isOptionDropdownOpen);
-                  }}
-                >
-                  {questions[questionIdx].additionalRequire![0].displayName}:{" "}
-                  {
-                    questions[questionIdx].additionalRequire![0].options.filter(
-                      (each) => each.type === selectedOption,
-                    )[0]?.displayName!
-                  }
-                </DropDownBtn>
-                <div className="flex w-full justify-end h-0">
-                  <DropDownList
-                    selected={selectedOption}
-                    displayNameKey="displayName"
-                    selectionKey="type"
-                    allOptions={
-                      questions[questionIdx].additionalRequire![0].options
+                    onClick={() => {
+                      setIsOptionDropdownOpen(!isOptionDropdownOpen);
+                    }}
+                  >
+                    {questions[questionIdx].additionalRequire![0].displayName}:{" "}
+                    {
+                      questions[
+                        questionIdx
+                      ].additionalRequire![0].options.filter(
+                        (each) => each.type === selectedOption,
+                      )[0]?.displayName!
                     }
-                    isOpen={isOptionDropdownOpen}
-                    setSelectionKey={(s) => {
-                      setSelectedOption(s);
-                    }}
-                    resetCallback={() => {
-                      setIsOptionDropdownOpen(false);
-                      // setAddUserInfo((prev) => ({...prev, role: UserRoleEnum.USER}))
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+                  </DropDownBtn>
+                  <div className="flex w-full justify-end h-0">
+                    <DropDownList
+                      selected={selectedOption}
+                      displayNameKey="displayName"
+                      selectionKey="type"
+                      allOptions={
+                        questions[questionIdx].additionalRequire![0].options
+                      }
+                      isOpen={isOptionDropdownOpen}
+                      setSelectionKey={(s) => {
+                        setSelectedOption(s);
+                      }}
+                      resetCallback={() => {
+                        setIsOptionDropdownOpen(false);
+                        // setAddUserInfo((prev) => ({...prev, role: UserRoleEnum.USER}))
+                      }}
+                    />
+                  </div>
+                </Fragment>
+              )}
+            </div>
 
             <div className="overflow-x-scroll flex flex-col w-full">
               {tableData && (
