@@ -26,7 +26,7 @@ interface PageProps {
 export default function Page({ params }: PageProps) {
   const router = useRouter();
   const { credentials } = useAuth();
-  const [questionIdx, setQuestionIdx] = useState(5);
+  const [questionIdx, setQuestionIdx] = useState(0);
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
   const n_cols = tableData?.content.table[0].length ?? 0;
