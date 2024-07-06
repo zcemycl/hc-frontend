@@ -12,7 +12,9 @@ import {
   setup_selectable_row_map,
   setup_selectable_col_map,
   switch_map,
+  Spinner,
 } from "@/components";
+import { questions } from "./questions";
 
 interface PageProps {
   params: {
@@ -20,62 +22,6 @@ interface PageProps {
     table_id: number;
   };
 }
-
-const questions = [
-  {
-    displayName:
-      "Select Cell that is an adverse effect. (DON'T select ae group)",
-    mapMode: "cell",
-    identifier: "isAdverseEffect",
-  },
-  {
-    displayName: "Select Row that has statistics of adverse effect.",
-    mapMode: "row",
-    identifier: "isAdverseEffectPair",
-  },
-  {
-    displayName: "Select Rows that are headings.",
-    mapMode: "row",
-    identifier: "isHeading",
-  },
-  {
-    displayName: "Select Rows that are appendices, like captions.",
-    mapMode: "row",
-    identifier: "isAppendix",
-  },
-  {
-    displayName: "Select Rows that are group names of adverse effect.",
-    mapMode: "row",
-    identifier: "isAdverseEffectGroupName",
-  },
-  {
-    displayName:
-      "Select Cols that contains statistics of the adverse effect, \nAND select which type of statistics (number+percent, percent, number).",
-    mapMode: "col",
-    identifier: "isAdverseEffectStatType",
-    additionalRequire: [
-      {
-        displayName: "Statistics Type",
-        type: "dropdown",
-        defaultOption: "np",
-        options: [
-          {
-            displayName: "number+percent",
-            type: "np",
-          },
-          {
-            displayName: "percent",
-            type: "p",
-          },
-          {
-            displayName: "number",
-            type: "n",
-          },
-        ],
-      },
-    ],
-  },
-];
 
 export default function Page({ params }: PageProps) {
   const router = useRouter();
@@ -95,6 +41,7 @@ export default function Page({ params }: PageProps) {
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // set table
   useEffect(() => {
@@ -109,7 +56,9 @@ export default function Page({ params }: PageProps) {
       setTableData(res);
     }
     if (credentials.length === 0) return;
+    setIsLoading(true);
     getData(credentials);
+    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -138,13 +87,20 @@ export default function Page({ params }: PageProps) {
   return (
     <ProtectedRoute>
       <section
-        className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
-        overflow-y-scroll overflow-x-scroll"
+        className={`text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
+        overflow-y-scroll overflow-x-scroll ${isLoading ? "animate-pulse" : ""}`}
       >
-        <div
-          className="container px-2 py-24 mx-auto grid justify-items-center
-        "
-        >
+        <div className="container px-2 py-24 mx-auto grid justify-items-center">
+          {isLoading && (
+            <div
+              role="status"
+              className="absolute left-1/2 top-1/2 
+            -translate-x-1/2 -translate-y-1/2"
+            >
+              <Spinner />
+              <span className="sr-only">Loading...</span>
+            </div>
+          )}
           <div className="sm:w-2/3 flex flex-col mt-8 w-screen p-10 space-y-2">
             <div className="flex justify-between">
               <h2 className="text-white text-lg mb-1 font-medium title-font">

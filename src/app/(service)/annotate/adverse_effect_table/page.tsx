@@ -3,7 +3,7 @@ import { PaginationBar, TypographyH2, Table, Spinner } from "@/components";
 import { fetchUnannotatedAETableByUserId } from "@/http/backend";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { IBaseTable, IUnAnnotatedAETable } from "@/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GoIcon } from "@/icons";
 
@@ -15,6 +15,7 @@ export default function Page() {
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
+  const refUnannotatedGroup = useRef(null);
 
   useEffect(() => {
     async function getData(credentials: string, userId: number) {
@@ -31,6 +32,11 @@ export default function Page() {
     if (credentials.length === 0) return;
     setIsLoading(true);
     getData(credentials, userId as number);
+    (refUnannotatedGroup.current as any).scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    setHoverIdx(null);
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageN]);
@@ -41,6 +47,7 @@ export default function Page() {
         className={`text-gray-400 bg-gray-900 body-font 
         h-[83vh] sm:h-[90vh] overflow-y-scroll
         ${isLoading ? "animate-pulse" : ""}`}
+        ref={refUnannotatedGroup}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div
