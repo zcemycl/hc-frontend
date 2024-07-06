@@ -21,7 +21,11 @@ export interface IBaseTitleContent {
   content: string;
 }
 
-export interface IAdverseEffectTable extends IBaseTableNoHead {}
+export interface IAdverseEffectTable extends IBaseTableNoHead {
+  id: number;
+  s3_bucket?: string;
+  s3_key?: string;
+}
 
 export interface IClinicalTrial extends IBaseTitleContent {}
 

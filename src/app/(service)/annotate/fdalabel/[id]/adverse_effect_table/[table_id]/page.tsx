@@ -2,8 +2,12 @@
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, Fragment } from "react";
-import { fetchAETableByIds } from "@/http/backend";
-import { IAdverseEffectTable, IBaseTable } from "@/types";
+import { fetchAETableByIds, addAnnotationByNameId } from "@/http/backend";
+import {
+  AnnotationCategoryEnum,
+  IAdverseEffectTable,
+  IBaseTable,
+} from "@/types";
 import {
   Table,
   setup_selectable_cell_map,
@@ -42,6 +46,23 @@ export default function Page({ params }: PageProps) {
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const storeCache = async () => {
+    let tmp = { ...finalResults };
+    tmp[questions[questionIdx].identifier] = isCellSelected;
+    let addtmp = { ...tmp?.additionalRequire! };
+    if (
+      "additionalRequire" in questions[questionIdx] &&
+      "dropdown" in questions[questionIdx].additionalRequire!
+    ) {
+      addtmp[questions[questionIdx].identifier] = {
+        [questions[questionIdx].additionalRequire!.dropdown.identifier]:
+          selectedOption,
+      };
+    }
+    tmp["additionalRequire"] = addtmp;
+    return tmp;
+  };
 
   // set table
   useEffect(() => {
@@ -114,9 +135,8 @@ export default function Page({ params }: PageProps) {
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           {isLoading && (
             <div
-              role="status"
               className="absolute left-1/2 top-1/2 
-            -translate-x-1/2 -translate-y-1/2"
+              -translate-x-1/2 -translate-y-1/2"
             >
               <Spinner />
               <span className="sr-only">Loading...</span>
@@ -146,21 +166,8 @@ export default function Page({ params }: PageProps) {
                     <span
                       className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
                       key={q.displayName}
-                      onClick={() => {
-                        let tmp = { ...finalResults };
-                        tmp[questions[questionIdx].identifier] = isCellSelected;
-                        let addtmp = { ...tmp?.additionalRequire! };
-                        if (
-                          "additionalRequire" in questions[questionIdx] &&
-                          "dropdown" in
-                            questions[questionIdx].additionalRequire!
-                        ) {
-                          addtmp[questions[questionIdx].identifier] = {
-                            [questions[questionIdx].additionalRequire!.dropdown
-                              .identifier]: selectedOption,
-                          };
-                        }
-                        tmp["additionalRequire"] = addtmp;
+                      onClick={async () => {
+                        const tmp = await storeCache();
                         setFinalResults(tmp);
                         setIsCellSelected(resetCellSelected);
                         setSelectedOption("");
@@ -183,21 +190,18 @@ export default function Page({ params }: PageProps) {
                   hover:bg-emerald-300 transition
                   rounded p-2 origin-left
                   ${questionIdx === questions.length - 1 ? "scale-x-100 scale-y-100" : "scale-x-0 scale-y-0"}`}
-                  onClick={() => {
-                    let tmp = { ...finalResults };
-                    tmp[questions[questionIdx].identifier] = isCellSelected;
-                    let addtmp = { ...tmp?.additionalRequire! };
-                    if (
-                      "additionalRequire" in questions[questionIdx] &&
-                      "dropdown" in questions[questionIdx].additionalRequire!
-                    ) {
-                      addtmp[questions[questionIdx].identifier] = {
-                        [questions[questionIdx].additionalRequire!.dropdown
-                          .identifier]: selectedOption,
-                      };
-                    }
-                    tmp["additionalRequire"] = addtmp;
+                  onClick={async () => {
+                    const tmp = await storeCache();
                     setFinalResults(tmp);
+                    if (credentials.length === 0) return;
+                    const credJson = JSON.parse(credentials);
+                    const _ = await addAnnotationByNameId(
+                      tableData?.id!,
+                      AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                      tmp,
+                      credJson.AccessToken,
+                    );
+                    router.push("/annotate/adverse_effect_table");
                   }}
                 >
                   Submit
