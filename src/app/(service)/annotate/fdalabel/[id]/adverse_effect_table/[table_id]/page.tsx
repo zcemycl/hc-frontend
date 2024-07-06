@@ -75,12 +75,31 @@ export default function Page({ params }: PageProps) {
   }, [finalResults]);
 
   useEffect(() => {
+    // get cache
+    let isCacheSelected = false;
     if (questions[questionIdx].identifier in finalResults) {
       setIsCellSelected(finalResults[questions[questionIdx].identifier]);
+      const questionIdf = questions[questionIdx].identifier;
+      isCacheSelected =
+        "additionalRequire" in finalResults &&
+        questionIdf in finalResults.additionalRequire!;
+      if (isCacheSelected) {
+        const dropdownkey =
+          questions[questionIdx].additionalRequire!.dropdown!.identifier;
+        console.log(finalResults.additionalRequire![questionIdf][dropdownkey]);
+        setSelectedOption(
+          finalResults.additionalRequire![questionIdf][dropdownkey],
+        );
+      }
     }
-    if ("additionalRequire" in questions[questionIdx]) {
+    // get default from question
+    if (
+      "additionalRequire" in questions[questionIdx] &&
+      "dropdown" in questions[questionIdx].additionalRequire! &&
+      !isCacheSelected
+    ) {
       const newDefaultOption =
-        questions[questionIdx].additionalRequire![0].defaultOption;
+        questions[questionIdx].additionalRequire!.dropdown.defaultOption;
       setSelectedOption(newDefaultOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,11 +147,23 @@ export default function Page({ params }: PageProps) {
                       className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
                       key={q.displayName}
                       onClick={() => {
-                        setFinalResults({
-                          ...finalResults,
-                          [questions[questionIdx].identifier]: isCellSelected,
-                        });
+                        let tmp = { ...finalResults };
+                        tmp[questions[questionIdx].identifier] = isCellSelected;
+                        let addtmp = { ...tmp?.additionalRequire! };
+                        if (
+                          "additionalRequire" in questions[questionIdx] &&
+                          "dropdown" in
+                            questions[questionIdx].additionalRequire!
+                        ) {
+                          addtmp[questions[questionIdx].identifier] = {
+                            [questions[questionIdx].additionalRequire!.dropdown
+                              .identifier]: selectedOption,
+                          };
+                        }
+                        tmp["additionalRequire"] = addtmp;
+                        setFinalResults(tmp);
                         setIsCellSelected(resetCellSelected);
+                        setSelectedOption("");
                         setQuestionIdx(idx);
                       }}
                     >
@@ -153,10 +184,20 @@ export default function Page({ params }: PageProps) {
                   rounded p-2 origin-left
                   ${questionIdx === questions.length - 1 ? "scale-x-100 scale-y-100" : "scale-x-0 scale-y-0"}`}
                   onClick={() => {
-                    setFinalResults({
-                      ...finalResults,
-                      [questions[questionIdx].identifier]: isCellSelected,
-                    });
+                    let tmp = { ...finalResults };
+                    tmp[questions[questionIdx].identifier] = isCellSelected;
+                    let addtmp = { ...tmp?.additionalRequire! };
+                    if (
+                      "additionalRequire" in questions[questionIdx] &&
+                      "dropdown" in questions[questionIdx].additionalRequire!
+                    ) {
+                      addtmp[questions[questionIdx].identifier] = {
+                        [questions[questionIdx].additionalRequire!.dropdown
+                          .identifier]: selectedOption,
+                      };
+                    }
+                    tmp["additionalRequire"] = addtmp;
+                    setFinalResults(tmp);
                   }}
                 >
                   Submit
@@ -183,11 +224,15 @@ export default function Page({ params }: PageProps) {
                       setIsOptionDropdownOpen(!isOptionDropdownOpen);
                     }}
                   >
-                    {questions[questionIdx].additionalRequire![0].displayName}:{" "}
+                    {
+                      questions[questionIdx].additionalRequire!.dropdown
+                        .displayName
+                    }
+                    :{" "}
                     {
                       questions[
                         questionIdx
-                      ].additionalRequire![0].options.filter(
+                      ].additionalRequire!.dropdown.options.filter(
                         (each) => each.type === selectedOption,
                       )[0]?.displayName!
                     }
@@ -198,7 +243,8 @@ export default function Page({ params }: PageProps) {
                       displayNameKey="displayName"
                       selectionKey="type"
                       allOptions={
-                        questions[questionIdx].additionalRequire![0].options
+                        questions[questionIdx].additionalRequire!.dropdown
+                          .options
                       }
                       isOpen={isOptionDropdownOpen}
                       setSelectionKey={(s) => {

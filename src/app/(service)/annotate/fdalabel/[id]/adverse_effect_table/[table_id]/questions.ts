@@ -30,9 +30,10 @@ export const questions = [
       "Select Cols that contains statistics of the adverse effect, \nAND select which type of statistics (number+percent, percent, number).",
     mapMode: "col",
     identifier: "isAdverseEffectStatType",
-    additionalRequire: [
-      {
+    additionalRequire: {
+      dropdown: {
         displayName: "Statistics Type",
+        identifier: "statstype",
         type: "dropdown",
         defaultOption: "np",
         options: [
@@ -48,8 +49,12 @@ export const questions = [
             displayName: "number",
             type: "n",
           },
+          {
+            displayName: "percent+number",
+            type: "pn",
+          },
         ],
       },
-    ],
+    },
   },
 ];
