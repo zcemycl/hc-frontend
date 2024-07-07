@@ -116,7 +116,7 @@ export default function Page({ params }: Readonly<PageProps>) {
         questionIdf in finalResults.additionalRequire!;
       if (isCacheSelected) {
         const dropdownkey =
-          questions[questionIdx].additionalRequire!.dropdown!.identifier;
+          questions[questionIdx].additionalRequire!.dropdown.identifier;
         console.log(finalResults.additionalRequire![questionIdf][dropdownkey]);
         setSelectedOption(
           finalResults.additionalRequire![questionIdf][dropdownkey],
