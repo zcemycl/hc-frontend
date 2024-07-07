@@ -74,12 +74,12 @@ export default function Page({ params }: PageProps) {
                   onClick={(e) => {
                     e.preventDefault();
                     router.push(
-                      `/annotate/fdalabel/${params.id}/adverse_effect_table/${idx}`,
+                      `/annotate/fdalabel/${params.id}/adverse_effect_table/${idx + 1}`,
                     );
                   }}
                 >
                   <div className="flex justify-between">
-                    <p className="leading-relaxed w-full">[Table {idx}]</p>
+                    <p className="leading-relaxed w-full">[Table {idx + 1}]</p>
                     <div
                       className={`transition duration-300
                     ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}

@@ -2,7 +2,11 @@
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, Fragment } from "react";
-import { fetchAETableByIds, addAnnotationByNameId } from "@/http/backend";
+import {
+  fetchAETableByIds,
+  addAnnotationByNameId,
+  fetchAnnotatedTableMapByNameIds,
+} from "@/http/backend";
 import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
@@ -74,6 +78,12 @@ export default function Page({ params }: PageProps) {
         credJson.AccessToken,
       );
       setTableData(res);
+      const res_history = await fetchAnnotatedTableMapByNameIds(
+        res.id,
+        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        credJson.AccessToken,
+      );
+      if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
     }
     if (credentials.length === 0) return;
     setIsLoading(true);
@@ -124,7 +134,7 @@ export default function Page({ params }: PageProps) {
       setSelectedOption(newDefaultOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionIdx]);
+  }, [questionIdx, finalResults]);
 
   return (
     <ProtectedRoute>

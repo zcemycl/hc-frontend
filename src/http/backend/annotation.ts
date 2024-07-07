@@ -68,3 +68,24 @@ export async function addAnnotationByNameId(
   });
   return {};
 }
+
+export async function fetchAnnotatedTableMapByNameIds(
+  id: number,
+  name: string,
+  token: string,
+) {
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/annotated/${name}/${id}`;
+  const response = await fetch(API_URI, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  try {
+    const res = await response.json();
+    return res;
+  } catch (e) {
+    return { annotated: {} };
+  }
+}
