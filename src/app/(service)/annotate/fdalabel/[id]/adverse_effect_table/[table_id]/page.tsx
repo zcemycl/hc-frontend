@@ -31,7 +31,7 @@ interface PageProps {
   };
 }
 
-export default function Page({ params }: PageProps) {
+export default function Page({ params }: Readonly<PageProps>) {
   const router = useRouter();
   const { credentials } = useAuth();
   const [questionIdx, setQuestionIdx] = useState(0);
@@ -248,7 +248,7 @@ export default function Page({ params }: PageProps) {
                         questionIdx
                       ].additionalRequire!.dropdown.options.filter(
                         (each) => each.type === selectedOption,
-                      )[0]?.displayName!
+                      )[0]?.displayName
                     }
                   </DropDownBtn>
                   <div className="flex w-full justify-end h-0">

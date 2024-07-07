@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/contexts";
 import Image from "next/image";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { IRequestDemoForm, UserRoleEnum } from "@/types";
 
@@ -117,7 +117,7 @@ export default function Home() {
                 Hello{" "}
                 {isAuthenticated ? (
                   isLoading ? (
-                    <div role="status">
+                    <div>
                       <Spinner />
                       <span className="sr-only">Loading...</span>
                     </div>
