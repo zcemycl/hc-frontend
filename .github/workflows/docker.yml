@@ -38,6 +38,8 @@ jobs:
           echo NEXT_PUBLIC_BACKEND_BASE_URL=${{ secrets.NEXT_PUBLIC_BACKEND_BASE_URL }} >> .env.local
           echo NEXT_PUBLIC_DOMAIN_NAME=${{ secrets.NEXT_PUBLIC_DOMAIN_NAME }} >> .env.local
           echo NEXT_PUBLIC_ADMIN_EMAIL=${{ secrets.NEXT_PUBLIC_ADMIN_EMAIL }} >> .env.local
+          echo NEXT_PUBLIC_AWS_SAGEMAKER_DOMAIN_ID=${{ secrets.NEXT_PUBLIC_AWS_SAGEMAKER_DOMAIN_ID }} >> .env.local
+          echo NEXT_PUBLIC_AWS_SAGEMAKER_USER_NAME=${{ secrets.NEXT_PUBLIC_AWS_SAGEMAKER_USER_NAME }} >> .env.local
 
       - name: Build and push the tagged docker image to Amazon ECR
         env:

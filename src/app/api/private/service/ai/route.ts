@@ -16,8 +16,6 @@ import {
 } from "@aws-sdk/client-sagemaker";
 
 const credentials_ = fromContainerMetadata({ timeout: 2000, maxRetries: 1 });
-const rolearn =
-  "arn:aws:iam::975050053093:role/terraform-20240619075858415000000001";
 
 export async function POST(request: Request) {
   const data = await request.json();
@@ -30,8 +28,8 @@ export async function POST(request: Request) {
   const client = new SageMakerClient(config);
   const input = {
     // CreatePresignedDomainUrlRequest
-    DomainId: "d-oa2xxqb4psru", // required
-    UserProfileName: "leo-leung-test", // required
+    DomainId: process.env.NEXT_PUBLIC_AWS_SAGEMAKER_DOMAIN_ID, // required
+    UserProfileName: process.env.NEXT_PUBLIC_AWS_SAGEMAKER_USER_NAME, // required
     ExpiresInSeconds: 30,
   };
   const command = new CreatePresignedDomainUrlCommand(input);
