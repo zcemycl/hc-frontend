@@ -70,4 +70,5 @@ export interface IUnAnnotatedAETable {
   idx: number;
   fdalabel: IFdaLabel;
   adverse_effect_table: IAdverseEffectTable;
+  created_date?: string;
 }

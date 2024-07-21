@@ -2,6 +2,10 @@ export function convert_datetime_to_date(datetime: string) {
   return new Date(datetime).toLocaleDateString();
 }
 
+export function convert_datetime_to_simple(datetime: string) {
+  return new Date(datetime).toLocaleString();
+}
+
 export async function dummy_cred(username: string) {
   const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
   const openid_conf = await (await fetch(openid_conf_uri as string)).json();

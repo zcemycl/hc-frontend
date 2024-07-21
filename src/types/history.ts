@@ -14,6 +14,7 @@ export enum AnnotationCategoryEnum {
 
 export interface IHistory {
   id: number;
+  created_date: string;
   category: UserHistoryCategoryEnum;
   detail: {
     action: string;

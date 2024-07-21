@@ -5,9 +5,10 @@ export async function fetchUnannotatedAETableByUserId(
   token: string,
   offset: number = 10,
   limit: number = 10,
+  reverse: boolean = false,
 ) {
   const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/${id}/unannotated_ae_tables`;
-  const API_URI_PAGINATION = `${API_URI}?offset=${offset}&limit=${limit}`;
+  const API_URI_PAGINATION = `${API_URI}?offset=${offset}&limit=${limit}&reverse=${reverse}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
     headers: {

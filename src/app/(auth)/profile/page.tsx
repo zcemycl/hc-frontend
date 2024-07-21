@@ -2,20 +2,27 @@
 import { TypographyH2 } from "@/components";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { useState, useEffect } from "react";
-import { fetchHistoryByUserId, fetchUserInfoById } from "@/http/backend";
+import {
+  fetchHistoryByUserId,
+  fetchUserInfoById,
+  fetchUnannotatedAETableByUserId,
+} from "@/http/backend";
 import { useRouter } from "next/navigation";
 import {
   IUser,
   SearchActionEnum,
   UserHistoryCategoryEnum,
   IHistory,
+  IUnAnnotatedAETable,
 } from "@/types";
+import { convert_datetime_to_simple } from "@/utils";
 
 export default function Profile() {
   const { userId, credentials, setIsAuthenticated } = useAuth();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [history, setHistory] = useState<IHistory[]>([]);
+  const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
 
   useEffect(() => {
     async function getProfile(id: number, token: string) {
@@ -23,6 +30,14 @@ export default function Profile() {
       setProfileInfo({ ...profileInfo, ...userInfo });
       const historyInfo = await fetchHistoryByUserId(id, token);
       setHistory(historyInfo);
+      const annotatedData = await fetchUnannotatedAETableByUserId(
+        id,
+        token,
+        0,
+        100,
+        true,
+      );
+      setTableData(annotatedData);
     }
     if (credentials.length === 0) {
       setIsAuthenticated(false);
@@ -74,6 +89,9 @@ export default function Profile() {
                         rounded px-2 hover:text-black"
                       >
                         <div className="flex justify-between">
+                          <p className="leading-relaxed">
+                            {convert_datetime_to_simple(x.created_date)}
+                          </p>
                           <p className="leading-relaxed">{x.detail.action}</p>
                           <p className="leading-relaxed">
                             {x.detail.additional_settings.queryType}
@@ -91,7 +109,38 @@ export default function Profile() {
               )}
               <hr className="mb-2" />
               <TypographyH2>Annotation</TypographyH2>
-              <p className="leading-relaxed mb-1">No Record ...</p>
+              {tableData.length === 0 ? (
+                <p className="leading-relaxed mb-1">No Record ...</p>
+              ) : (
+                tableData.map((x, idx) => {
+                  return (
+                    <button
+                      key={`history-annotation-${idx}`}
+                      className="hover:bg-green-200 
+                        text-clip overflow-clip
+                        focus:bg-blue-200 transition
+                        justify-start content-start
+                        rounded px-2 hover:text-black"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        router.push(
+                          `/annotate/fdalabel/${x.fdalabel.setid}/adverse_effect_table/${x.idx}`,
+                        );
+                      }}
+                    >
+                      <div className="flex justify-between">
+                        <p className="leading-relaxed">
+                          {convert_datetime_to_simple(x.created_date as string)}
+                        </p>
+                        <p className="leading-relaxed">
+                          {x.fdalabel.tradename}
+                        </p>
+                        <p className="leading-relaxed">Table {x.idx}</p>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
