@@ -6,12 +6,14 @@ import {
   fetchHistoryByUserId,
   fetchUserInfoById,
   fetchUnannotatedAETableByUserId,
+  fetchAnnotatedCountByUserId,
 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import {
   IUser,
   SearchActionEnum,
   UserHistoryCategoryEnum,
+  AnnotationCategoryEnum,
   IHistory,
   IUnAnnotatedAETable,
 } from "@/types";
@@ -23,6 +25,7 @@ export default function Profile() {
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [history, setHistory] = useState<IHistory[]>([]);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
+  const [countAnnotated, setCountAnnotated] = useState(0);
 
   useEffect(() => {
     async function getProfile(id: number, token: string) {
@@ -38,6 +41,12 @@ export default function Profile() {
         true,
       );
       setTableData(annotatedData);
+      const numberAnnotated = await fetchAnnotatedCountByUserId(
+        id,
+        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        token,
+      );
+      setCountAnnotated(numberAnnotated);
     }
     if (credentials.length === 0) {
       setIsAuthenticated(false);
@@ -108,7 +117,7 @@ export default function Profile() {
                   })
               )}
               <hr className="mb-2" />
-              <TypographyH2>Annotation</TypographyH2>
+              <TypographyH2>Annotation X{countAnnotated}</TypographyH2>
               {tableData.length === 0 ? (
                 <p className="leading-relaxed mb-1">No Record ...</p>
               ) : (

@@ -1,4 +1,5 @@
 "use server";
+import { AnnotationCategoryEnum } from "@/types";
 
 export async function fetchUnannotatedAETableByUserId(
   id: number,
@@ -88,5 +89,26 @@ export async function fetchAnnotatedTableMapByNameIds(
     return res;
   } catch (e) {
     return { annotated: {} };
+  }
+}
+
+export async function fetchAnnotatedCountByUserId(
+  user_id: number,
+  tablename: AnnotationCategoryEnum,
+  token: string,
+) {
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/user/${user_id}/annotated/${tablename}`;
+  const response = await fetch(API_URI, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  try {
+    const res = await response.json();
+    return res;
+  } catch (e) {
+    return 0;
   }
 }
