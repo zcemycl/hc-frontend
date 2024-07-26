@@ -1,4 +1,6 @@
 import { TypographyH2 } from "../typography";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTable } from "@fortawesome/free-solid-svg-icons";
 
 function FdaLabelShort({
   setid,
@@ -7,6 +9,7 @@ function FdaLabelShort({
   initial_us_approval_year,
   distance,
   indication,
+  ae_tables_count,
   selectMultipleCallback,
   clickExpandCallback,
 }: {
@@ -16,6 +19,7 @@ function FdaLabelShort({
   initial_us_approval_year: number;
   distance: number;
   indication: string;
+  ae_tables_count: number;
   selectMultipleCallback: (e: any) => void;
   clickExpandCallback: () => void;
 }) {
@@ -29,6 +33,13 @@ function FdaLabelShort({
           onClick={(e) => selectMultipleCallback(e)}
           readOnly={true}
         />
+      </div>
+      <div className="content-center align-middle">
+        <span className="flex space-x-1 items-center">
+          <FontAwesomeIcon size="sm" icon={faTable} />
+          <span>AE</span>
+          <span>{ae_tables_count}</span>
+        </span>
       </div>
       <TypographyH2>{setid}</TypographyH2>
       <TypographyH2>

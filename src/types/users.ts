@@ -14,4 +14,6 @@ export interface IUser {
   modified_date: string;
   created_user: string;
   modified_user: string;
+  ae_annotations_count: number;
+  activities_count: number;
 }

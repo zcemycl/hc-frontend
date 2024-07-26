@@ -22,6 +22,8 @@ import {
   EXCLUDE_EMAIL_PATCH,
   userRoleMap,
 } from "@/constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChartLine, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 interface IAddUserInfo {
   username: string;
@@ -250,9 +252,30 @@ export default function Admin() {
                     key={`${id}-user-profile-${each.id}`}
                   >
                     <div className="flex justify-between">
-                      <p className="leading-relaxed">
-                        {each.username} [{each.role}]
-                      </p>
+                      <div className="flex justify-between space-x-1">
+                        <p className="leading-relaxed flex justify-between space-x-1">
+                          <span className="bg-blue-400 rounded-sm text-black px-1">
+                            {each.username}
+                          </span>
+                          <span
+                            className={`${each.role === UserRoleEnum.ADMIN ? "bg-red-400" : "bg-sky-300"} rounded-sm text-black px-1`}
+                          >
+                            {each.role}
+                          </span>
+                        </p>
+                        <p className="flex flex-row space-x-1 justify-between">
+                          <p>
+                            <FontAwesomeIcon size="sm" icon={faChartLine} />
+                          </p>
+                          <p>{each.activities_count}</p>
+                          <span className="bg-transparent rounded-sm px-1 border-x border-cyan-200 space-x-1">
+                            <FontAwesomeIcon size="sm" icon={faPenToSquare} />
+                            <span>AE</span>
+                            <span>{each.ae_annotations_count}</span>
+                          </span>
+                        </p>
+                      </div>
+
                       {!EXCLUDE_EMAIL_DELETE.includes(each.email) && (
                         <button
                           className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0

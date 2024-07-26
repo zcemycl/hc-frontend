@@ -359,6 +359,7 @@ export default function Search() {
                       initial_us_approval_year: each.initial_us_approval_year!,
                       distance: each.distance!,
                       indication: each.indication!,
+                      ae_tables_count: each.ae_tables_count!,
                       selectMultipleCallback: (e) => {
                         const ischecked = (e.target as HTMLInputElement)
                           .checked;
