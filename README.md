@@ -74,6 +74,7 @@
 
 ```bash
 # run NEXT server
+source .env # sometimes the env variables are not loaded
 npm run dev
 # run external testing scripts
 npx ts-node scripts/xxx.ts

@@ -6,32 +6,48 @@ import { IBaseTable, IUnAnnotatedAETable } from "@/types";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GoIcon } from "@/icons";
+import { AnnotationTypeEnum } from "./types";
+import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 
 export default function Page() {
   const router = useRouter();
   const { userId, credentials } = useAuth();
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+  const [tabName, setTabName] = useState(AnnotationTypeEnum.ONGOING);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const refUnannotatedGroup = useRef(null);
 
   useEffect(() => {
-    async function getData(credentials: string, userId: number) {
+    async function getData(
+      credentials: string,
+      userId: number,
+      tabName: AnnotationTypeEnum,
+    ) {
       const credJson = JSON.parse(credentials);
-      const res = await fetchUnannotatedAETableByUserId(
-        userId,
-        credJson.AccessToken,
-        pageN * nPerPage,
-        nPerPage,
-      );
+      let res;
+      if (
+        tabName === AnnotationTypeEnum.ONGOING ||
+        tabName === AnnotationTypeEnum.COMPLETE
+      ) {
+        res = await fetchUnannotatedAETableByUserId(
+          userId,
+          credJson.AccessToken,
+          pageN * nPerPage,
+          nPerPage,
+          tabName === AnnotationTypeEnum.COMPLETE,
+        );
+      } else if (tabName === AnnotationTypeEnum.AI) {
+        res = [];
+      }
       setTableData(res);
       console.log(res);
     }
     if (credentials.length === 0) return;
     setIsLoading(true);
-    getData(credentials, userId as number);
+    getData(credentials, userId as number, tabName);
     (refUnannotatedGroup.current as any).scrollTo({
       top: 0,
       behavior: "smooth",
@@ -39,7 +55,7 @@ export default function Page() {
     setHoverIdx(null);
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageN]);
+  }, [tabName, pageN]);
 
   return (
     <ProtectedRoute>
@@ -58,9 +74,17 @@ export default function Page() {
             <Spinner />
             <span className="sr-only">Loading...</span>
           </div>
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5 space-y-2">
+          <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-1 pt-5 pb-5 space-y-2">
             <div className="flex justify-between items-center">
-              <TypographyH2>Unannotated Tables</TypographyH2>
+              <div className="flex justify-between items-center space-x-1">
+                <TypographyH2>Annotations</TypographyH2>
+                <AnnotationTypeDropdown
+                  queryType={tabName}
+                  setQueryType={(q) => setTabName(q)}
+                  additionalResetCallback={() => {}}
+                />
+              </div>
+
               <button
                 onClick={() => router.back()}
                 className="bg-purple-700 rounded p-2 
