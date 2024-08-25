@@ -166,7 +166,7 @@ export default function Page() {
                     </div>
                   </div>
 
-                  <p
+                  <div
                     className={`leading-relaxed transition origin-top
                   ${hoverIdx == idx ? "max-h-full scale-y-100" : "max-h-0 scale-y-0"}`}
                   >
@@ -185,7 +185,7 @@ export default function Page() {
                         } as IBaseTable,
                       }}
                     />
-                  </p>
+                  </div>
                 </button>
               </div>
             );
