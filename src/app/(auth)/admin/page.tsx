@@ -263,7 +263,7 @@ export default function Admin() {
                             {each.role}
                           </span>
                         </p>
-                        <p className="flex flex-row space-x-1 justify-between">
+                        <div className="flex flex-row space-x-1 justify-between">
                           <p>
                             <FontAwesomeIcon size="sm" icon={faChartLine} />
                           </p>
@@ -273,7 +273,7 @@ export default function Admin() {
                             <span>AE</span>
                             <span>{each.ae_annotations_count}</span>
                           </span>
-                        </p>
+                        </div>
                       </div>
 
                       {!EXCLUDE_EMAIL_DELETE.includes(each.email) && (
