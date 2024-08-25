@@ -95,7 +95,9 @@ export default function Page({ params }: Readonly<PageProps>) {
         }
       })
       .filter((notUndefined) => notUndefined !== undefined);
-    if (qIds.length !== 0) setQuestionIdx(qIds[0]);
+    if (qIds.length !== 0) {
+      setQuestionIdx(qIds[0] as number);
+    }
   }, [finalResults]);
 
   useEffect(() => {
