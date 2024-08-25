@@ -13,9 +13,11 @@ export default function Page() {
   const router = useRouter();
   const { userId, credentials } = useAuth();
   const {
+    aePageCache,
     tabName,
     setTabName,
     saveAETableAnnotationPageCache,
+    saveTabPage,
     pageN,
     setPageN,
   } = useAETableAnnotation();
@@ -79,13 +81,35 @@ export default function Page() {
                 <TypographyH2>Annotations</TypographyH2>
                 <AnnotationTypeDropdown
                   queryType={tabName}
-                  setQueryType={(q) => setTabName(q)}
+                  setQueryType={(q) => {
+                    setTabName(q);
+                    let tmpCache = aePageCache;
+                    if (q === AnnotationTypeEnum.AI && "aiPageN" in tmpCache) {
+                      setPageN(tmpCache["aiPageN"] as number);
+                    }
+                    if (
+                      q === AnnotationTypeEnum.COMPLETE &&
+                      "completePageN" in tmpCache
+                    ) {
+                      setPageN(tmpCache["completePageN"] as number);
+                    }
+                    if (
+                      q === AnnotationTypeEnum.ONGOING &&
+                      "ongoingPageN" in tmpCache
+                    ) {
+                      setPageN(tmpCache["ongoingPageN"] as number);
+                    }
+                    saveAETableAnnotationPageCache(q);
+                  }}
                   additionalResetCallback={() => {}}
                 />
               </div>
 
               <button
-                onClick={() => router.back()}
+                onClick={() => {
+                  saveAETableAnnotationPageCache();
+                  router.back();
+                }}
                 className="bg-purple-700 rounded p-2 
                 text-white hover:bg-purple-800"
               >
@@ -163,7 +187,9 @@ export default function Page() {
               pageN={pageN}
               nPerPage={nPerPage}
               setPageN={(i: number) => {
-                setPageN(i);
+                // setPageN(i);
+                saveTabPage(i);
+                saveAETableAnnotationPageCache(tabName, i);
               }}
             />
           </div>
