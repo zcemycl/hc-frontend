@@ -1,7 +1,9 @@
+import { AETableAnnotationProvider } from "@/contexts";
+
 export default function AnnotationAELayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <AETableAnnotationProvider>{children}</AETableAnnotationProvider>;
 }

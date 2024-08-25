@@ -1,7 +1,7 @@
 "use client";
 import { PaginationBar, TypographyH2, Table, Spinner } from "@/components";
 import { fetchUnannotatedAETableByUserId } from "@/http/backend";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute, useAuth, useAETableAnnotation } from "@/contexts";
 import { IBaseTable, IUnAnnotatedAETable } from "@/types";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -12,10 +12,15 @@ import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 export default function Page() {
   const router = useRouter();
   const { userId, credentials } = useAuth();
+  const {
+    tabName,
+    setTabName,
+    saveAETableAnnotationPageCache,
+    pageN,
+    setPageN,
+  } = useAETableAnnotation();
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
-  const [tabName, setTabName] = useState(AnnotationTypeEnum.ONGOING);
-  const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const refUnannotatedGroup = useRef(null);
@@ -25,6 +30,7 @@ export default function Page() {
       credentials: string,
       userId: number,
       tabName: AnnotationTypeEnum,
+      pageN: number,
     ) {
       const credJson = JSON.parse(credentials);
       const res = await fetchUnannotatedAETableByUserId(
@@ -39,7 +45,8 @@ export default function Page() {
     }
     if (credentials.length === 0) return;
     setIsLoading(true);
-    getData(credentials, userId as number, tabName);
+    console.log(tabName, pageN);
+    getData(credentials, userId as number, tabName, pageN);
     (refUnannotatedGroup.current as any).scrollTo({
       top: 0,
       behavior: "smooth",
@@ -106,6 +113,7 @@ export default function Page() {
                   onClick={(e) => {
                     e.preventDefault();
                     setIsLoading(true);
+                    saveAETableAnnotationPageCache();
                     let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
                     if (tabName === AnnotationTypeEnum.AI) {
                       redirectUrl = `${redirectUrl}/ai`;
