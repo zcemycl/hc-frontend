@@ -27,23 +27,15 @@ export default function Page() {
       tabName: AnnotationTypeEnum,
     ) {
       const credJson = JSON.parse(credentials);
-      let res;
-      if (
-        tabName === AnnotationTypeEnum.ONGOING ||
-        tabName === AnnotationTypeEnum.COMPLETE
-      ) {
-        res = await fetchUnannotatedAETableByUserId(
-          userId,
-          credJson.AccessToken,
-          pageN * nPerPage,
-          nPerPage,
-          tabName === AnnotationTypeEnum.COMPLETE,
-        );
-      } else if (tabName === AnnotationTypeEnum.AI) {
-        res = [];
-      }
+      const res = await fetchUnannotatedAETableByUserId(
+        userId,
+        credJson.AccessToken,
+        pageN * nPerPage,
+        nPerPage,
+        tabName === AnnotationTypeEnum.COMPLETE,
+        tabName === AnnotationTypeEnum.AI,
+      );
       setTableData(res);
-      console.log(res);
     }
     if (credentials.length === 0) return;
     setIsLoading(true);
@@ -114,9 +106,11 @@ export default function Page() {
                   onClick={(e) => {
                     e.preventDefault();
                     setIsLoading(true);
-                    router.push(
-                      `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`,
-                    );
+                    let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
+                    if (tabName === AnnotationTypeEnum.AI) {
+                      redirectUrl = `${redirectUrl}/ai`;
+                    }
+                    router.push(redirectUrl);
                   }}
                 >
                   <div className="flex justify-between">

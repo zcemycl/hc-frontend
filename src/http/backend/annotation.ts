@@ -7,9 +7,10 @@ export async function fetchUnannotatedAETableByUserId(
   offset: number = 10,
   limit: number = 10,
   reverse: boolean = false,
+  complete: boolean = false,
 ) {
   const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/${id}/unannotated_ae_tables`;
-  const API_URI_PAGINATION = `${API_URI}?offset=${offset}&limit=${limit}&reverse=${reverse}`;
+  const API_URI_PAGINATION = `${API_URI}?offset=${offset}&limit=${limit}&reverse=${reverse}&complete=${complete}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
     headers: {
@@ -75,8 +76,9 @@ export async function fetchAnnotatedTableMapByNameIds(
   id: number,
   name: string,
   token: string,
+  is_ai: boolean = false,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/annotated/${name}/${id}`;
+  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/annotated/${name}/${id}?is_ai=${is_ai}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
