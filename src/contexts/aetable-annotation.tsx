@@ -114,14 +114,11 @@ export const AETableAnnotationProvider = ({
         }
       }
 
-      // if ("pageN" in tmpCache)
-      //   setPageN(tmpCache["pageN"] as number);
       if ("ongoingPageN" in tmpCache)
         setOngoingPageN(tmpCache["ongoingPageN"] as number);
       if ("completePageN" in tmpCache)
         setCompletePageN(tmpCache["completePageN"] as number);
       if ("ongoingPageN" in tmpCache) setAIPageN(tmpCache["aiPageN"] as number);
-      console.log(tmpCache);
     }
   }, []);
 
@@ -139,7 +136,6 @@ export const AETableAnnotationProvider = ({
         let completePageN_ = completePageN;
         if (tabName_ === AnnotationTypeEnum.AI) {
           aiPageN_ = newPageN === null ? aiPageN : newPageN;
-          console.log(aiPageN_);
           pageN_ = aiPageN_;
         }
         if (tabName_ === AnnotationTypeEnum.COMPLETE) {

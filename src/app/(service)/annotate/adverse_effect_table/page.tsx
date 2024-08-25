@@ -50,7 +50,6 @@ export default function Page() {
     }
     if (credentials.length === 0) return;
     setIsLoading(true);
-    console.log(tabName, pageN);
     getData(credentials, userId as number, tabName, pageN);
     (refUnannotatedGroup.current as any).scrollTo({
       top: 0,
