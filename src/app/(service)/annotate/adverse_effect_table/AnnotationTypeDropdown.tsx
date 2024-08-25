@@ -1,6 +1,6 @@
 "use client";
 
-import { AnnotationTypeEnum, annotationTypeMap } from "./types";
+import { AnnotationTypeEnum, annotationTypeMap } from "@/constants";
 import { useState } from "react";
 import { DropDownBtn, DropDownList } from "@/components";
 

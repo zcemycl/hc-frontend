@@ -6,7 +6,7 @@ import { IBaseTable, IUnAnnotatedAETable } from "@/types";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GoIcon } from "@/icons";
-import { AnnotationTypeEnum } from "./types";
+import { AnnotationTypeEnum } from "@/constants";
 import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 
 export default function Page() {
