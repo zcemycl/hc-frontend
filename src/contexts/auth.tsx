@@ -25,6 +25,12 @@ import { redirect } from "next/navigation";
 import { signIn as login, confirmSignIn } from "aws-amplify/auth";
 import { UserRoleEnum } from "@/types/users";
 // import CognitoProvider from "next-auth/providers/cognito";
+import {
+  booleanDummySetState,
+  stringDummySetState,
+  TBooleanDummySetState,
+  TStringDummySetState,
+} from "@/types";
 
 Amplify.configure({
   Auth: {
@@ -41,9 +47,9 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  setIsAuthenticated: TBooleanDummySetState;
   credentials: string;
-  setCredentials: Dispatch<SetStateAction<string>>;
+  setCredentials: TStringDummySetState;
   role: UserRoleEnum;
   setRole: Dispatch<SetStateAction<UserRoleEnum>>;
   userId: number | null;
@@ -61,9 +67,7 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  setIsAuthenticated: function (value: React.SetStateAction<boolean>): void {
-    throw new Error("Function not implemented.");
-  },
+  setIsAuthenticated: booleanDummySetState,
   signIn: function (email: string): Promise<InitiateAuthResponse> {
     throw new Error("Function not implemented.");
   },
@@ -82,9 +86,7 @@ export const AuthContext = createContext<AuthContextType>({
     throw new Error("Function not implemented.");
   },
   credentials: "",
-  setCredentials: function (value: React.SetStateAction<string>): void {
-    throw new Error("Function not implemented.");
-  },
+  setCredentials: stringDummySetState,
   role: UserRoleEnum.USER,
   setRole: function (value: React.SetStateAction<UserRoleEnum>): void {
     throw new Error("Function not implemented.");

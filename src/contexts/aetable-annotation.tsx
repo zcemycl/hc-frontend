@@ -1,14 +1,18 @@
 "use client";
 import React, {
   useState,
-  Dispatch,
-  SetStateAction,
   createContext,
   useContext,
   useEffect,
   useMemo,
 } from "react";
 import { AnnotationTypeEnum } from "@/constants";
+import {
+  DummySetStateFactory,
+  numberDummySetState,
+  TDummySetState,
+  TNumberDummySetState,
+} from "@/types";
 
 interface IAePageCache {
   tabName?: AnnotationTypeEnum;
@@ -21,15 +25,15 @@ interface IAePageCache {
 interface AETableAnnotationContextType {
   aePageCache: IAePageCache;
   tabName: AnnotationTypeEnum;
-  setTabName: Dispatch<SetStateAction<AnnotationTypeEnum>>;
+  setTabName: TDummySetState<AnnotationTypeEnum>;
   ongoingPageN: number;
-  setOngoingPageN: Dispatch<SetStateAction<number>>;
+  setOngoingPageN: TNumberDummySetState;
   completePageN: number;
-  setCompletePageN: Dispatch<SetStateAction<number>>;
+  setCompletePageN: TNumberDummySetState;
   aiPageN: number;
-  setAIPageN: Dispatch<SetStateAction<number>>;
+  setAIPageN: TNumberDummySetState;
   pageN: number;
-  setPageN: Dispatch<SetStateAction<number>>;
+  setPageN: TNumberDummySetState;
   saveAETableAnnotationPageCache: (
     newTabName?: AnnotationTypeEnum | null,
     newPageN?: number | null,
@@ -41,27 +45,15 @@ export const AETableAnnotationContext =
   createContext<AETableAnnotationContextType>({
     aePageCache: {},
     tabName: AnnotationTypeEnum.ONGOING,
-    setTabName: function (
-      value: React.SetStateAction<AnnotationTypeEnum>,
-    ): void {
-      throw new Error("Function not implemented.");
-    },
+    setTabName: DummySetStateFactory<AnnotationTypeEnum>(),
     ongoingPageN: 0,
-    setOngoingPageN: function (value: React.SetStateAction<number>): void {
-      throw new Error("Function not implemented.");
-    },
+    setOngoingPageN: numberDummySetState,
     completePageN: 0,
-    setCompletePageN: function (value: React.SetStateAction<number>): void {
-      throw new Error("Function not implemented.");
-    },
+    setCompletePageN: numberDummySetState,
     aiPageN: 0,
-    setAIPageN: function (value: React.SetStateAction<number>): void {
-      throw new Error("Function not implemented.");
-    },
+    setAIPageN: numberDummySetState,
     pageN: 0,
-    setPageN: function (value: React.SetStateAction<number>): void {
-      throw new Error("Function not implemented.");
-    },
+    setPageN: numberDummySetState,
     saveAETableAnnotationPageCache: (
       newTabName?: AnnotationTypeEnum | null,
       newPageN?: number | null,
@@ -74,9 +66,6 @@ export const AETableAnnotationProvider = ({
 }: {
   children?: React.ReactNode;
 }) => {
-  // const cache =
-  //   JSON.parse(localStorage.getItem("aeTableAnnotationPageCache") as string) ??
-  //   {};
   const [cache, setCache] = useState({});
   const [tabName, setTabName] = useState(
     ("tabName" in cache
@@ -95,51 +84,6 @@ export const AETableAnnotationProvider = ({
   const [pageN, setPageN] = useState(
     ("pageN" in cache ? cache["pageN"] : 0) as number,
   );
-
-  const saveAETableAnnotationPageCache = (
-    newTabName: AnnotationTypeEnum | null = null,
-    newPageN: number | null = null,
-    // newOngoing
-  ) => {
-    let tabName_ = newTabName === null ? tabName : newTabName;
-    let pageN_ = newPageN === null ? pageN : newPageN;
-    let ongoingPageN_ = ongoingPageN;
-    let aiPageN_ = aiPageN;
-    let completePageN_ = completePageN;
-    if (tabName_ === AnnotationTypeEnum.AI) {
-      aiPageN_ = newPageN === null ? aiPageN : newPageN;
-    }
-    if (tabName_ === AnnotationTypeEnum.COMPLETE) {
-      completePageN_ = newPageN === null ? completePageN : newPageN;
-    }
-    if (tabName_ === AnnotationTypeEnum.ONGOING) {
-      ongoingPageN_ = newPageN === null ? ongoingPageN : newPageN;
-    }
-    const saveItems = {
-      tabName: tabName_,
-      ongoingPageN: ongoingPageN_,
-      completePageN: completePageN_,
-      aiPageN: aiPageN_,
-      pageN: pageN,
-    };
-    localStorage.setItem(
-      "aeTableAnnotationPageCache",
-      JSON.stringify(saveItems),
-    );
-  };
-
-  const saveTabPage = (i: number) => {
-    if (tabName === AnnotationTypeEnum.AI) {
-      setAIPageN(i);
-    }
-    if (tabName === AnnotationTypeEnum.COMPLETE) {
-      setCompletePageN(i);
-    }
-    if (tabName === AnnotationTypeEnum.ONGOING) {
-      setOngoingPageN(i);
-    }
-    setPageN(i);
-  };
 
   useEffect(() => {
     const tmpCache = JSON.parse(
@@ -183,6 +127,54 @@ export const AETableAnnotationProvider = ({
 
   const AETableAnnotationProviderValue =
     useMemo<AETableAnnotationContextType>(() => {
+      const saveAETableAnnotationPageCache = (
+        newTabName: AnnotationTypeEnum | null = null,
+        newPageN: number | null = null,
+        // newOngoing
+      ) => {
+        let tabName_ = newTabName === null ? tabName : newTabName;
+        let pageN_ = newPageN === null ? pageN : newPageN;
+        let ongoingPageN_ = ongoingPageN;
+        let aiPageN_ = aiPageN;
+        let completePageN_ = completePageN;
+        if (tabName_ === AnnotationTypeEnum.AI) {
+          aiPageN_ = newPageN === null ? aiPageN : newPageN;
+          console.log(aiPageN_);
+          pageN_ = aiPageN_;
+        }
+        if (tabName_ === AnnotationTypeEnum.COMPLETE) {
+          completePageN_ = newPageN === null ? completePageN : newPageN;
+          pageN_ = completePageN_;
+        }
+        if (tabName_ === AnnotationTypeEnum.ONGOING) {
+          ongoingPageN_ = newPageN === null ? ongoingPageN : newPageN;
+          pageN_ = ongoingPageN_;
+        }
+        const saveItems = {
+          tabName: tabName_,
+          ongoingPageN: ongoingPageN_,
+          completePageN: completePageN_,
+          aiPageN: aiPageN_,
+          pageN: pageN,
+        };
+        localStorage.setItem(
+          "aeTableAnnotationPageCache",
+          JSON.stringify(saveItems),
+        );
+      };
+
+      const saveTabPage = (i: number) => {
+        if (tabName === AnnotationTypeEnum.AI) {
+          setAIPageN(i);
+        }
+        if (tabName === AnnotationTypeEnum.COMPLETE) {
+          setCompletePageN(i);
+        }
+        if (tabName === AnnotationTypeEnum.ONGOING) {
+          setOngoingPageN(i);
+        }
+        setPageN(i);
+      };
       return {
         aePageCache: cache,
         tabName,
@@ -210,8 +202,6 @@ export const AETableAnnotationProvider = ({
       setAIPageN,
       pageN,
       setPageN,
-      saveAETableAnnotationPageCache,
-      saveTabPage,
     ]);
   return (
     <AETableAnnotationContext.Provider value={AETableAnnotationProviderValue}>

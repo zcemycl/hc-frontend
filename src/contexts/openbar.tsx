@@ -1,28 +1,19 @@
 "use client";
-import React, {
-  useState,
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useMemo,
-} from "react";
+import React, { useState, createContext, useContext, useMemo } from "react";
+import { booleanDummySetState, TBooleanDummySetState } from "@/types";
+
 interface OpenBarContextType {
   isDropDownOpen: boolean;
-  setIsDropDownOpen: Dispatch<SetStateAction<boolean>>;
+  setIsDropDownOpen: TBooleanDummySetState;
   isSideBarOpen: boolean;
-  setIsSideBarOpen: Dispatch<SetStateAction<boolean>>;
+  setIsSideBarOpen: TBooleanDummySetState;
 }
 
 export const OpenBarContext = createContext<OpenBarContextType>({
   isDropDownOpen: false,
-  setIsDropDownOpen: function (value: React.SetStateAction<boolean>): void {
-    throw new Error("Function not implemented.");
-  },
+  setIsDropDownOpen: booleanDummySetState,
   isSideBarOpen: false,
-  setIsSideBarOpen: function (value: React.SetStateAction<boolean>): void {
-    throw new Error("Function not implemented.");
-  },
+  setIsSideBarOpen: booleanDummySetState,
 });
 
 export const OpenBarProvider = ({
