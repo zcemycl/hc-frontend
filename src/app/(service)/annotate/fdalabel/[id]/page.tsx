@@ -1,5 +1,5 @@
 "use client";
-import { Table } from "@/components";
+import { Table, ExpandableBtn } from "@/components";
 import { ProtectedRoute, useAuth } from "@/contexts";
 import { fetchAETableBySetid } from "@/http/backend";
 import { GoIcon } from "@/icons";
@@ -57,51 +57,39 @@ export default function Page({ params }: PageProps) {
           </div>
           {tableData.map((data, idx) => {
             return (
-              <div
-                className="sm:w-1/2 flex flex-col
-                    w-screen space-y-2 mb-2 h-auto overflow-hidden"
+              <ExpandableBtn
                 key={`${params.id}-${idx}`}
+                refkey={`${params.id}-${idx}`}
+                hoverCondition={hoverIdx === idx}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(
+                    `/annotate/fdalabel/${params.id}/adverse_effect_table/${idx + 1}`,
+                  );
+                }}
+                onMouseOver={(e) => {
+                  setHoverIdx(idx);
+                }}
+                childrenLong={
+                  <Table
+                    {...{
+                      content: {
+                        table: data.content.table.slice(0, 6),
+                      } as IBaseTable,
+                    }}
+                  />
+                }
               >
-                <button
-                  className={`
-                    rounded text-white border-blue-400
-                    border-2 hover:border-blue-800 h-auto
-                    p-2
-                    hover:bg-blue-800 transition`}
-                  onMouseOver={(e) => {
-                    setHoverIdx(idx);
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    router.push(
-                      `/annotate/fdalabel/${params.id}/adverse_effect_table/${idx + 1}`,
-                    );
-                  }}
-                >
-                  <div className="flex justify-between">
-                    <p className="leading-relaxed w-full">[Table {idx + 1}]</p>
-                    <div
-                      className={`transition duration-300
-                    ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
-                    >
-                      <GoIcon />
-                    </div>
-                  </div>
-
+                <>
+                  <p className="leading-relaxed w-full">[Table {idx + 1}]</p>
                   <div
-                    className={`leading-relaxed transition origin-top
-                    ${hoverIdx == idx ? "max-h-full scale-y-100" : "max-h-0 scale-y-0"}`}
+                    className={`transition duration-300
+                    ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
                   >
-                    <Table
-                      {...{
-                        content: {
-                          table: data.content.table.slice(0, 6),
-                        } as IBaseTable,
-                      }}
-                    />
+                    <GoIcon />
                   </div>
-                </button>
-              </div>
+                </>
+              </ExpandableBtn>
             );
           })}
         </div>

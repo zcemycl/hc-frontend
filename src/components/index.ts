@@ -9,3 +9,4 @@ export { default as Modal } from "./modal";
 export * from "./fdalabel";
 export * from "./searchbar";
 export * from "./spinner";
+export * from "./expandablebtn";

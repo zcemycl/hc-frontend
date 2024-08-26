@@ -1,5 +1,11 @@
 "use client";
-import { PaginationBar, TypographyH2, Table, Spinner } from "@/components";
+import {
+  PaginationBar,
+  TypographyH2,
+  Table,
+  Spinner,
+  ExpandableBtn,
+} from "@/components";
 import { fetchUnannotatedAETableByUserId } from "@/http/backend";
 import { ProtectedRoute, useAuth, useAETableAnnotation } from "@/contexts";
 import { IBaseTable, IUnAnnotatedAETable } from "@/types";
@@ -128,48 +134,11 @@ export default function Page() {
           </div>
           {tableData.map((data, idx) => {
             return (
-              <div
-                className="sm:w-1/2 flex flex-col
-                  w-screen space-y-2 mb-2 h-auto overflow-hidden"
+              <ExpandableBtn
                 key={`${data.fdalabel.setid}-${data.idx}`}
-              >
-                <button
-                  className={`
-                  rounded text-white border-blue-400
-                  border-2 hover:border-blue-800 h-auto
-                  p-2 focus:animate-pulse
-                  hover:bg-blue-800 transition`}
-                  key={`${data.fdalabel.setid}-${data.idx}`}
-                  onMouseOver={(e) => {
-                    setHoverIdx(idx);
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsLoading(true);
-                    saveAETableAnnotationPageCache();
-                    let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
-                    if (tabName === AnnotationTypeEnum.AI) {
-                      redirectUrl = `${redirectUrl}/ai`;
-                    }
-                    router.push(redirectUrl);
-                  }}
-                >
-                  <div className="flex justify-between">
-                    <p className="leading-relaxed w-full">
-                      {data.fdalabel.tradename} [Table {data.idx}]
-                    </p>
-                    <div
-                      className={`transition duration-300
-                  ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
-                    >
-                      <GoIcon />
-                    </div>
-                  </div>
-
-                  <div
-                    className={`leading-relaxed transition origin-top
-                  ${hoverIdx == idx ? "max-h-full scale-y-100" : "max-h-0 scale-y-0"}`}
-                  >
+                refkey={`${data.fdalabel.setid}-${data.idx}`}
+                childrenLong={
+                  <>
                     {data.fdalabel.indication
                       ?.split(" ")
                       .splice(0, 20)
@@ -185,9 +154,35 @@ export default function Page() {
                         } as IBaseTable,
                       }}
                     />
+                  </>
+                }
+                hoverCondition={hoverIdx == idx}
+                onMouseOver={(e) => {
+                  setHoverIdx(idx);
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsLoading(true);
+                  saveAETableAnnotationPageCache();
+                  let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
+                  if (tabName === AnnotationTypeEnum.AI) {
+                    redirectUrl = `${redirectUrl}/ai`;
+                  }
+                  router.push(redirectUrl);
+                }}
+              >
+                <>
+                  <p className="leading-relaxed w-full">
+                    {data.fdalabel.tradename} [Table {data.idx}]
+                  </p>
+                  <div
+                    className={`transition duration-300
+                  ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                  >
+                    <GoIcon />
                   </div>
-                </button>
-              </div>
+                </>
+              </ExpandableBtn>
             );
           })}
           <div className="flex justify-center space-x-1 flex-wrap">
