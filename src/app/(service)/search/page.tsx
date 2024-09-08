@@ -189,7 +189,7 @@ export default function Search() {
   }, [historyId]);
 
   return (
-    <ProtectedRoute setIsLoading={setIsLoading}>
+    <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[83vh] sm:h-[90vh] overflow-y-scroll ${isLoading ? "animate-pulse" : ""}`}

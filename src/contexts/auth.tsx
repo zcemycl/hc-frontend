@@ -31,6 +31,8 @@ import {
   TBooleanDummySetState,
   TStringDummySetState,
 } from "@/types";
+import { fetchApiRoot } from "@/http/internal";
+import { fetchUserInfoByName } from "@/http/backend";
 
 Amplify.configure({
   Auth: {
@@ -112,19 +114,46 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
   useEffect(() => {
-    if (typeof window === "undefined") return;
     console.log("mounted window");
     const creds = JSON.parse(localStorage.getItem("credentials") as string);
     console.log(creds);
     if (!!creds) {
       setIsAuthenticated(true);
-      setCredentials(localStorage.getItem("credentials") as string);
+      setCredentials(JSON.stringify(creds));
     } else {
       setIsAuthenticated(false);
       setCredentials("");
     }
     setIsLoadingAuth(false);
   }, []);
+
+  useEffect(() => {
+    async function fetchIsAuthToken(creds: { AccessToken: string }) {
+      const resp = await fetchApiRoot(1, creds.AccessToken);
+      const res = await resp.json();
+      console.log(res);
+      if ("username" in res)
+        return { isAuthToken: true, username: res.username };
+      return { isAuthToken: false, username: "" };
+    }
+    console.log("testing window");
+    if (typeof window === "undefined") return;
+    const creds = JSON.parse(localStorage.getItem("credentials") as string);
+    console.log("testing window2", creds);
+    fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
+      console.log(isAuthToken, username);
+      if (!isAuthToken) {
+        setIsAuthenticated(false);
+        setCredentials("");
+        return;
+      }
+
+      fetchUserInfoByName(username as string, creds.AccessToken).then((x) => {
+        setRole(x.role as UserRoleEnum);
+        setUserId(x.id);
+      });
+    });
+  }, [isLoadingAuth]);
 
   useEffect(() => {
     if (localStorage.getItem("credentials")) return;
@@ -237,22 +266,10 @@ export const useAuth = () => useContext(AuthContext);
 
 export const ProtectedRoute = ({
   children,
-  isLoading,
-  setIsLoading,
 }: {
   children?: React.ReactNode;
-  isLoading?: boolean;
-  setIsLoading?: TBooleanDummySetState;
 }) => {
-  // const { isAuthenticated, isLoadingAuth } = useAuth();
-  // if (setIsLoading && isLoadingAuth) {
-  //   setIsLoading(true);
-  // }
-  // if (setIsLoading && !isLoadingAuth) {
-  //   setIsLoading(false);
-  // }
-  // console.log("protected", isLoadingAuth, isAuthenticated);
-  if (setIsLoading && typeof window === "undefined") {
+  if (typeof window === "undefined") {
     console.log("window not mounted");
     return children;
   }

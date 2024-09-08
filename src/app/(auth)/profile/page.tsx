@@ -26,6 +26,13 @@ export default function Profile() {
   const [history, setHistory] = useState<IHistory[]>([]);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [countAnnotated, setCountAnnotated] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     async function getProfile(id: number, token: string) {
@@ -48,6 +55,8 @@ export default function Profile() {
       );
       setCountAnnotated(numberAnnotated);
     }
+    if (isLoading) return;
+
     if (credentials.length === 0) {
       setIsAuthenticated(false);
       router.push(
@@ -55,9 +64,10 @@ export default function Profile() {
       );
     }
     const credJson = JSON.parse(credentials);
+    if (!!!userId) return;
     getProfile(userId as number, credJson.AccessToken);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoading, userId]);
 
   return (
     <ProtectedRoute>
@@ -67,7 +77,7 @@ export default function Profile() {
             <div className="flex flex-col">
               <div className="flex justify-between">
                 <TypographyH2>
-                  {profileInfo?.username!.toUpperCase()}
+                  {profileInfo?.username?.toUpperCase()}
                   {" 's"} History
                 </TypographyH2>
                 <p className="leading-relaxed mb-1">{profileInfo?.role!}</p>
@@ -76,11 +86,11 @@ export default function Profile() {
 
               <hr className="mb-2" />
               <TypographyH2>Search Activities</TypographyH2>
-              {history.length === 0 ? (
+              {!!history && history.length === 0 ? (
                 <p className="leading-relaxed mb-1">No Record ...</p>
               ) : (
                 history
-                  .filter((x) => x.category === UserHistoryCategoryEnum.SEARCH)
+                  ?.filter((x) => x.category === UserHistoryCategoryEnum.SEARCH)
                   .map((x, idx) => {
                     return (
                       <button
