@@ -53,7 +53,7 @@ export default function Search() {
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   async function search_query_by_type(
     query: string[],
@@ -130,11 +130,18 @@ export default function Search() {
     return resp;
   }
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoading(false);
+    }
+  }, []);
+
   // refresh drug list when page is changed
   useEffect(() => {
     async function pageCallback(pageN: number) {
       setDisplayDataIndex(null);
       setCompareTable({ table: [] });
+      console.log("ae table useeffect");
       if (credentials.length === 0) {
         setIsAuthenticated(false);
         router.push("/logout");
@@ -158,6 +165,8 @@ export default function Search() {
 
   // from profile history
   useEffect(() => {
+    console.log("profile history useEffect");
+    if (historyId === null) return;
     if (credentials.length === 0) {
       setIsAuthenticated(false);
       router.push("/logout");
@@ -180,7 +189,7 @@ export default function Search() {
   }, [historyId]);
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute setIsLoading={setIsLoading}>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[83vh] sm:h-[90vh] overflow-y-scroll ${isLoading ? "animate-pulse" : ""}`}

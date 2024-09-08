@@ -48,6 +48,8 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 interface AuthContextType {
   isAuthenticated: boolean;
   setIsAuthenticated: TBooleanDummySetState;
+  isLoadingAuth: boolean;
+  setIsLoadingAuth: TBooleanDummySetState;
   credentials: string;
   setCredentials: TStringDummySetState;
   role: UserRoleEnum;
@@ -68,6 +70,8 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   setIsAuthenticated: booleanDummySetState,
+  isLoadingAuth: true,
+  setIsLoadingAuth: booleanDummySetState,
   signIn: function (email: string): Promise<InitiateAuthResponse> {
     throw new Error("Function not implemented.");
   },
@@ -99,6 +103,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [credentials, setCredentials] = useState<string>("");
   const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
   const [userId, setUserId] = useState<number | null>(null);
@@ -106,6 +111,21 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   // const cognitoidentity = new CognitoIdentity({
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    console.log("mounted window");
+    const creds = JSON.parse(localStorage.getItem("credentials") as string);
+    console.log(creds);
+    if (!!creds) {
+      setIsAuthenticated(true);
+      setCredentials(localStorage.getItem("credentials") as string);
+    } else {
+      setIsAuthenticated(false);
+      setCredentials("");
+    }
+    setIsLoadingAuth(false);
+  }, []);
+
   useEffect(() => {
     if (localStorage.getItem("credentials")) return;
     if (localStorage.getItem("expireAt")) return;
@@ -179,6 +199,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     return {
       isAuthenticated,
       setIsAuthenticated,
+      isLoadingAuth,
+      setIsLoadingAuth,
       credentials,
       setCredentials,
       cognitoIdentity,
@@ -194,6 +216,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   }, [
     isAuthenticated,
     setIsAuthenticated,
+    isLoadingAuth,
+    setIsLoadingAuth,
     credentials,
     setCredentials,
     role,
@@ -213,11 +237,33 @@ export const useAuth = () => useContext(AuthContext);
 
 export const ProtectedRoute = ({
   children,
+  isLoading,
+  setIsLoading,
 }: {
   children?: React.ReactNode;
+  isLoading?: boolean;
+  setIsLoading?: TBooleanDummySetState;
 }) => {
-  const { isAuthenticated } = useAuth();
+  // const { isAuthenticated, isLoadingAuth } = useAuth();
+  // if (setIsLoading && isLoadingAuth) {
+  //   setIsLoading(true);
+  // }
+  // if (setIsLoading && !isLoadingAuth) {
+  //   setIsLoading(false);
+  // }
+  // console.log("protected", isLoadingAuth, isAuthenticated);
+  if (setIsLoading && typeof window === "undefined") {
+    console.log("window not mounted");
+    return children;
+  }
+  console.log("window mounted");
+  const creds = JSON.parse(localStorage.getItem("credentials") as string);
+  let isAuthenticated = false;
+  if (!!creds) {
+    isAuthenticated = true;
+  }
   if (!isAuthenticated) {
+    console.log("trigger redirect");
     redirect(process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/");
   }
   return children;
