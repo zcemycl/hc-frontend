@@ -21,7 +21,7 @@ import {
   RespondToAuthChallengeResponse,
 } from "@aws-sdk/client-cognito-identity-provider";
 // import { CognitoIdentity } from "@aws-sdk/client-cognito-identity";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { signIn as login, confirmSignIn } from "aws-amplify/auth";
 import { UserRoleEnum } from "@/types/users";
 // import CognitoProvider from "next-auth/providers/cognito";
@@ -109,11 +109,20 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [credentials, setCredentials] = useState<string>("");
   const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
   const [userId, setUserId] = useState<number | null>(null);
+  const router = useRouter();
 
   // const cognitoidentity = new CognitoIdentity({
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
+
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoadingAuth(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoadingAuth) return;
     console.log("mounted window");
     const creds = JSON.parse(localStorage.getItem("credentials") as string);
     console.log(creds);
@@ -125,11 +134,11 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       setCredentials("");
     }
     setIsLoadingAuth(false);
-  }, []);
+  }, [isLoadingAuth]);
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
-      const resp = await fetchApiRoot(1, creds.AccessToken);
+      const resp = await fetchApiRoot(1, creds!.AccessToken);
       const res = await resp.json();
       console.log(res);
       if ("username" in res)
@@ -137,14 +146,18 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       return { isAuthToken: false, username: "" };
     }
     console.log("testing window");
-    if (typeof window === "undefined") return;
+    if (!isLoadingAuth) return;
     const creds = JSON.parse(localStorage.getItem("credentials") as string);
     console.log("testing window2", creds);
+    if (!!!creds) return;
     fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
       console.log(isAuthToken, username);
       if (!isAuthToken) {
         setIsAuthenticated(false);
         setCredentials("");
+        router.push(
+          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
+        );
         return;
       }
 
@@ -153,6 +166,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
         setUserId(x.id);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
 
   useEffect(() => {

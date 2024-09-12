@@ -4,3 +4,4 @@ export {
   useAETableAnnotation,
   AETableAnnotationProvider,
 } from "./aetable-annotation";
+export { useLoader, LoaderProvider } from "./loader";

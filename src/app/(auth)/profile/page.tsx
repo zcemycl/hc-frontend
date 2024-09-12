@@ -71,7 +71,11 @@ export default function Profile() {
 
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll">
+      <section
+        className={`text-gray-400 bg-gray-900 body-font 
+          h-[83vh] sm:h-[90vh] overflow-y-scroll
+          ${isLoading ? "animate-pulse" : ""}`}
+      >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
             <div className="flex flex-col">

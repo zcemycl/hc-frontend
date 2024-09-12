@@ -1,27 +1,28 @@
 "use client";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { create_presigned_url } from "@/http/internal";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
 import { redirect, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserRoleEnum } from "@/types/users";
 import { Modal, Spinner, TypographyH2 } from "@/components";
 
 export default function AI() {
   const router = useRouter();
-  const { setIsAuthenticated, credentials, role } = useAuth();
+  const { setIsAuthenticated, credentials, role, isLoadingAuth } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const isNotAdmin = role !== UserRoleEnum.ADMIN;
+
   return (
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
-        ${isLoading ? "animate-pulse" : ""}`}
+        ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
-          {isLoading && (
+          {(isLoading || isLoadingAuth) && (
             <div
               role="status"
               className="absolute left-1/2 top-1/2 

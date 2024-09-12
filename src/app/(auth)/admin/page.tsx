@@ -48,18 +48,21 @@ export default function Admin() {
   const [delUserIndex, setDelUserIndex] = useState<number>(0);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") {
-      if (credentials.length === 0) {
-        setIsAuthenticated(false);
-        router.push("/logout");
-      }
-    } else {
-      if (credentials.length === 0) {
-        setIsAuthenticated(false);
-        router.push("/");
-      }
+    if (typeof window !== "undefined") {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (credentials.length === 0) {
+      setIsAuthenticated(false);
+      router.push(
+        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
+      );
     }
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
@@ -72,12 +75,15 @@ export default function Admin() {
     }
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageN]);
+  }, [pageN, isLoading]);
 
   return (
     <ProtectedRoute>
       <section
-        className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll"
+        className={`text-gray-400 bg-gray-900 body-font h-[83vh] 
+          sm:h-[90vh] overflow-y-scroll
+          ${isLoading ? "animate-pulse" : ""}
+          `}
         ref={refUserGroup}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
