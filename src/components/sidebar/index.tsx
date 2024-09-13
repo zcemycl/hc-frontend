@@ -27,9 +27,10 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
 
   useEffect(() => {
     const handleOutSideSideBarClick = ({ target }: Event) => {
+      if (!refSideBar) return;
       const isInsideSideBar = (
         refSideBar.current as unknown as HTMLDivElement
-      ).contains(target as Node);
+      )?.contains(target as Node);
       if (!isInsideSideBar) {
         setIsSideBarOpen(false);
       }

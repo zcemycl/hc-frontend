@@ -139,8 +139,14 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
       const resp = await fetchApiRoot(1, creds!.AccessToken);
+      console.log(resp);
       const res = await resp.json();
       console.log(res);
+      if ("success" in res && !res.success) {
+        router.push(
+          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
+        );
+      }
       if ("username" in res)
         return { isAuthToken: true, username: res.username };
       return { isAuthToken: false, username: "" };
@@ -286,6 +292,7 @@ export const ProtectedRoute = ({
 }: {
   children?: React.ReactNode;
 }) => {
+  const router = useRouter();
   if (typeof window === "undefined") {
     console.log("window not mounted");
     return children;
@@ -298,7 +305,9 @@ export const ProtectedRoute = ({
   }
   if (!isAuthenticated) {
     console.log("trigger redirect");
-    redirect(process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/");
+    router.push(
+      process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
+    );
   }
   return children;
 };

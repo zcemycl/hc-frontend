@@ -65,6 +65,11 @@ export default function Admin() {
         pageN * nPerPage,
         nPerPage,
       );
+      console.log(resp);
+      if ("detail" in resp) {
+        router.push("/logout");
+        return;
+      }
       setDisplayData(resp);
     }
     getData(credentials);

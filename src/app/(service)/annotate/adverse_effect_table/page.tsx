@@ -57,6 +57,10 @@ export default function Page() {
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
       );
+      if ("detail" in res) {
+        router.push("/logout");
+        return;
+      }
       setTableData(res);
     }
     if (isLoadingAuth) return;
