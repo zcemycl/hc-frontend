@@ -35,6 +35,7 @@ export default function Login() {
 
   useEffect(() => {
     if (isLoadingAuth) return;
+    if (typeof window === "undefined") return;
     const curMode = localStorage.getItem("mode") ?? SiteMode.LOGIN;
     setMode(curMode as SiteMode);
     const curEmail = localStorage.getItem("email") ?? "";

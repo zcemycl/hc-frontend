@@ -130,6 +130,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       setIsAuthenticated(true);
       setCredentials(JSON.stringify(creds));
     } else {
+      localStorage.clear();
       setIsAuthenticated(false);
       setCredentials("");
     }
@@ -154,6 +155,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       console.log(isAuthToken, username);
       console.log(creds);
       if (!isAuthToken) {
+        localStorage.clear();
         setIsAuthenticated(false);
         setCredentials("");
         router.push(
