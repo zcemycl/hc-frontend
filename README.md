@@ -80,6 +80,21 @@ npm run dev
 npx ts-node scripts/xxx.ts
 ```
 
+## Page Loading Design
+
+- Unprotected
+  ```mermaid
+  sequenceDiagram
+    participant Page
+  ```
+- Protected
+  ```mermaid
+  sequenceDiagram
+    participant Page
+    participant useAuth
+    participant ProtectedRoute
+  ```
+
 ### References
 
 - https://stackoverflow.com/questions/40302349/how-to-verify-jwt-from-aws-cognito-in-the-api-backend

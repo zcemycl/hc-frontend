@@ -7,7 +7,12 @@ import {
   ExpandableBtn,
 } from "@/components";
 import { fetchUnannotatedAETableByUserId } from "@/http/backend";
-import { ProtectedRoute, useAuth, useAETableAnnotation } from "@/contexts";
+import {
+  ProtectedRoute,
+  useAuth,
+  useAETableAnnotation,
+  useLoader,
+} from "@/contexts";
 import { IBaseTable, IUnAnnotatedAETable } from "@/types";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -17,7 +22,8 @@ import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 
 export default function Page() {
   const router = useRouter();
-  const { userId, credentials } = useAuth();
+  const { userId, credentials, isLoadingAuth } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const {
     aePageCache,
     tabName,
@@ -33,7 +39,6 @@ export default function Page() {
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [nPerPage, _] = useState(10);
-  const [isLoading, setIsLoading] = useState(false);
   const refUnannotatedGroup = useRef(null);
 
   useEffect(() => {
@@ -52,9 +57,17 @@ export default function Page() {
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
       );
+      if ("detail" in res) {
+        router.push("/logout");
+        return;
+      }
       setTableData(res);
     }
+    if (isLoadingAuth) return;
     if (credentials.length === 0) return;
+    if (!userId) return;
+
+    console.log(credentials, isLoadingAuth, userId);
     setIsLoading(true);
     getData(credentials, userId as number, tabName, pageN);
     (refUnannotatedGroup.current as any).scrollTo({
@@ -64,21 +77,23 @@ export default function Page() {
     setHoverIdx(null);
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabName, pageN]);
+  }, [tabName, pageN, isLoadingAuth, userId]);
+
+  // useEffect(() )
 
   return (
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
         h-[83vh] sm:h-[90vh] overflow-y-scroll
-        ${isLoading ? "animate-pulse" : ""}`}
+        ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
         ref={refUnannotatedGroup}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div
             role="status"
             className={`absolute left-1/2 top-1/2 transition-opacity duration-700
-            -translate-x-1/2 -translate-y-1/2 ${isLoading ? "opacity-1" : "opacity-0"}`}
+            -translate-x-1/2 -translate-y-1/2 ${isLoading || isLoadingAuth ? "opacity-1" : "opacity-0"}`}
           >
             <Spinner />
             <span className="sr-only">Loading...</span>

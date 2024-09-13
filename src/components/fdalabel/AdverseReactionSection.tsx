@@ -15,14 +15,14 @@ function AdverseReactionSection({
 }) {
   const id = useId();
   const router = useRouter();
-  const { role } = useAuth();
+  const { role, isLoadingAuth } = useAuth();
   return (
     <Fragment key={id}>
       {(adverse_effect_tables as IAdverseEffectTable[])?.length > 0 && (
         <Fragment key={id}>
           <div className="flex justify-between py-2">
             <TypographyH2>ADVERSE REACTIONS</TypographyH2>
-            {role === UserRoleEnum.ADMIN && (
+            {!isLoadingAuth && role === UserRoleEnum.ADMIN && (
               <button
                 className="bg-red-600 
                     hover:bg-red-700

@@ -1,7 +1,7 @@
 import { NavBar, Footer, SideBar } from "@/components";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
-import { AuthProvider, OpenBarProvider } from "@/contexts";
+import { AuthProvider, OpenBarProvider, LoaderProvider } from "@/contexts";
 
 export const metadata = {
   title: "RXScope",
@@ -30,15 +30,17 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
       </head>
       <body>
         <ThemeProvider attribute="class">
-          <OpenBarProvider>
-            <AuthProvider>
-              <SideBar>
-                <NavBar />
-                {children}
-                <Footer />
-              </SideBar>
-            </AuthProvider>
-          </OpenBarProvider>
+          <LoaderProvider>
+            <OpenBarProvider>
+              <AuthProvider>
+                <SideBar>
+                  <NavBar />
+                  {children}
+                  <Footer />
+                </SideBar>
+              </AuthProvider>
+            </OpenBarProvider>
+          </LoaderProvider>
         </ThemeProvider>
       </body>
     </html>

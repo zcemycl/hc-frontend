@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import {
   fetchFdalabelByIndication,
@@ -41,7 +41,8 @@ export default function Search() {
   );
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
-  const { setIsAuthenticated, credentials, userId } = useAuth();
+  const { setIsAuthenticated, credentials, userId, isLoadingAuth } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -53,7 +54,6 @@ export default function Search() {
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   async function search_query_by_type(
     query: string[],
@@ -135,6 +135,7 @@ export default function Search() {
     async function pageCallback(pageN: number) {
       setDisplayDataIndex(null);
       setCompareTable({ table: [] });
+      console.log("ae table useeffect");
       if (credentials.length === 0) {
         setIsAuthenticated(false);
         router.push("/logout");
@@ -158,6 +159,8 @@ export default function Search() {
 
   // from profile history
   useEffect(() => {
+    console.log("profile history useEffect");
+    if (historyId === null) return;
     if (credentials.length === 0) {
       setIsAuthenticated(false);
       router.push("/logout");
@@ -183,11 +186,11 @@ export default function Search() {
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
-          h-[83vh] sm:h-[90vh] overflow-y-scroll ${isLoading ? "animate-pulse" : ""}`}
+          h-[83vh] sm:h-[90vh] overflow-y-scroll ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
         ref={refSearchResGroup}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
-          {isLoading && (
+          {(isLoading || isLoadingAuth) && (
             <div
               role="status"
               className="absolute left-1/2 top-1/2 

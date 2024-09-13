@@ -7,13 +7,13 @@ import { UserRoleEnum } from "@/types";
 import { AdminIcon, JupyterIcon } from "@/icons";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {
-  const { role } = useAuth();
+  const { role, isLoadingAuth } = useAuth();
   const { isSideBarOpen, setIsSideBarOpen } = useOpenBar();
   const refSideBar = useRef(null);
   const sidebar_items = [
-    ...(role === UserRoleEnum.ADMIN ? [] : []),
+    ...(!isLoadingAuth && role === UserRoleEnum.ADMIN ? [] : []),
     ...sidebar_constant,
-    ...(role === UserRoleEnum.ADMIN
+    ...(!isLoadingAuth && role === UserRoleEnum.ADMIN
       ? [
           {
             name: "Admin Panel",
@@ -27,9 +27,10 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
 
   useEffect(() => {
     const handleOutSideSideBarClick = ({ target }: Event) => {
+      if (!refSideBar) return;
       const isInsideSideBar = (
         refSideBar.current as unknown as HTMLDivElement
-      ).contains(target as Node);
+      )?.contains(target as Node);
       if (!isInsideSideBar) {
         setIsSideBarOpen(false);
       }

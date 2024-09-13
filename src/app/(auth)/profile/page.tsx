@@ -1,6 +1,6 @@
 "use client";
 import { TypographyH2 } from "@/components";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
 import {
   fetchHistoryByUserId,
@@ -20,7 +20,8 @@ import {
 import { convert_datetime_to_simple } from "@/utils";
 
 export default function Profile() {
-  const { userId, credentials, setIsAuthenticated } = useAuth();
+  const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [history, setHistory] = useState<IHistory[]>([]);
@@ -48,6 +49,8 @@ export default function Profile() {
       );
       setCountAnnotated(numberAnnotated);
     }
+    if (isLoadingAuth) return;
+
     if (credentials.length === 0) {
       setIsAuthenticated(false);
       router.push(
@@ -55,19 +58,24 @@ export default function Profile() {
       );
     }
     const credJson = JSON.parse(credentials);
+    if (!userId) return;
     getProfile(userId as number, credJson.AccessToken);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoadingAuth, userId]);
 
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh] overflow-y-scroll">
+      <section
+        className={`text-gray-400 bg-gray-900 body-font 
+          h-[83vh] sm:h-[90vh] overflow-y-scroll
+          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+      >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
             <div className="flex flex-col">
               <div className="flex justify-between">
                 <TypographyH2>
-                  {profileInfo?.username!.toUpperCase()}
+                  {profileInfo?.username?.toUpperCase()}
                   {" 's"} History
                 </TypographyH2>
                 <p className="leading-relaxed mb-1">{profileInfo?.role!}</p>
@@ -76,11 +84,11 @@ export default function Profile() {
 
               <hr className="mb-2" />
               <TypographyH2>Search Activities</TypographyH2>
-              {history.length === 0 ? (
+              {!!history && history.length === 0 ? (
                 <p className="leading-relaxed mb-1">No Record ...</p>
               ) : (
                 history
-                  .filter((x) => x.category === UserHistoryCategoryEnum.SEARCH)
+                  ?.filter((x) => x.category === UserHistoryCategoryEnum.SEARCH)
                   .map((x, idx) => {
                     return (
                       <button

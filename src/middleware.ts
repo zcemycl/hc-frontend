@@ -3,6 +3,7 @@ import { jwtVerify, importSPKI } from "jose";
 import jwkToPem from "jwk-to-pem";
 
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
+console.log(openid_conf_uri);
 
 export async function middleware(request: NextRequest) {
   const authorization = request.headers.get("Authorization") as string;

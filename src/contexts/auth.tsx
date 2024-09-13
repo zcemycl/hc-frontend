@@ -21,7 +21,7 @@ import {
   RespondToAuthChallengeResponse,
 } from "@aws-sdk/client-cognito-identity-provider";
 // import { CognitoIdentity } from "@aws-sdk/client-cognito-identity";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { signIn as login, confirmSignIn } from "aws-amplify/auth";
 import { UserRoleEnum } from "@/types/users";
 // import CognitoProvider from "next-auth/providers/cognito";
@@ -31,6 +31,8 @@ import {
   TBooleanDummySetState,
   TStringDummySetState,
 } from "@/types";
+import { fetchApiRoot } from "@/http/internal";
+import { fetchUserInfoByName } from "@/http/backend";
 
 Amplify.configure({
   Auth: {
@@ -48,6 +50,8 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 interface AuthContextType {
   isAuthenticated: boolean;
   setIsAuthenticated: TBooleanDummySetState;
+  isLoadingAuth: boolean;
+  setIsLoadingAuth: TBooleanDummySetState;
   credentials: string;
   setCredentials: TStringDummySetState;
   role: UserRoleEnum;
@@ -68,6 +72,8 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   setIsAuthenticated: booleanDummySetState,
+  isLoadingAuth: true,
+  setIsLoadingAuth: booleanDummySetState,
   signIn: function (email: string): Promise<InitiateAuthResponse> {
     throw new Error("Function not implemented.");
   },
@@ -99,13 +105,79 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [credentials, setCredentials] = useState<string>("");
   const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
   const [userId, setUserId] = useState<number | null>(null);
+  const router = useRouter();
 
   // const cognitoidentity = new CognitoIdentity({
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
   // });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoadingAuth(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoadingAuth) return;
+    console.log("mounted window");
+    const creds = JSON.parse(localStorage.getItem("credentials") as string);
+    console.log(creds);
+    if (!!creds) {
+      setIsAuthenticated(true);
+      setCredentials(JSON.stringify(creds));
+    } else {
+      setIsAuthenticated(false);
+      setCredentials("");
+    }
+    setIsLoadingAuth(false);
+  }, [isLoadingAuth]);
+
+  useEffect(() => {
+    async function fetchIsAuthToken(creds: { AccessToken: string }) {
+      const resp = await fetchApiRoot(1, creds!.AccessToken);
+      console.log(resp);
+      const res = await resp.json();
+      console.log(res);
+      if ("success" in res && !res.success) {
+        router.push(
+          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
+        );
+      }
+      if ("username" in res)
+        return { isAuthToken: true, username: res.username };
+      return { isAuthToken: false, username: "" };
+    }
+    console.log("testing window");
+    if (typeof window === "undefined" || isLoadingAuth) return;
+    const creds = JSON.parse(localStorage.getItem("credentials") as string);
+    console.log("testing window2", creds);
+    if (!creds) return;
+    fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
+      console.log(isAuthToken, username);
+      console.log(creds);
+      if (!isAuthToken) {
+        localStorage.clear();
+        setIsAuthenticated(false);
+        setCredentials("");
+        router.push(
+          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
+        );
+        return;
+      }
+
+      fetchUserInfoByName(username as string, creds.AccessToken).then((x) => {
+        setRole(x.role as UserRoleEnum);
+        // console.log()
+        setUserId(x.id);
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingAuth]);
+
   useEffect(() => {
     if (localStorage.getItem("credentials")) return;
     if (localStorage.getItem("expireAt")) return;
@@ -179,6 +251,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     return {
       isAuthenticated,
       setIsAuthenticated,
+      isLoadingAuth,
+      setIsLoadingAuth,
       credentials,
       setCredentials,
       cognitoIdentity,
@@ -194,6 +268,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   }, [
     isAuthenticated,
     setIsAuthenticated,
+    isLoadingAuth,
+    setIsLoadingAuth,
     credentials,
     setCredentials,
     role,
@@ -216,9 +292,22 @@ export const ProtectedRoute = ({
 }: {
   children?: React.ReactNode;
 }) => {
-  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+  if (typeof window === "undefined") {
+    console.log("window not mounted");
+    return children;
+  }
+  console.log("window mounted");
+  const creds = JSON.parse(localStorage.getItem("credentials") as string);
+  let isAuthenticated = false;
+  if (!!creds) {
+    isAuthenticated = true;
+  }
   if (!isAuthenticated) {
-    redirect(process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/");
+    console.log("trigger redirect");
+    router.push(
+      process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
+    );
   }
   return children;
 };

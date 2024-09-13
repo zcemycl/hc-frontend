@@ -15,7 +15,7 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const router = useRouter();
-  const { credentials } = useAuth();
+  const { credentials, isLoadingAuth } = useAuth();
   const [tableData, setTableData] = useState<IAdverseEffectTable[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
@@ -25,11 +25,11 @@ export default function Page({ params }: PageProps) {
       const res = await fetchAETableBySetid(params.id, credJson.AccessToken);
       setTableData(res);
     }
-
+    if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoadingAuth]);
 
   return (
     <ProtectedRoute>
