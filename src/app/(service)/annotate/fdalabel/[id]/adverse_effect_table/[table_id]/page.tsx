@@ -1,5 +1,5 @@
 "use client";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, Fragment } from "react";
 import {
@@ -33,7 +33,8 @@ interface PageProps {
 
 export default function Page({ params }: Readonly<PageProps>) {
   const router = useRouter();
-  const { credentials } = useAuth();
+  const { credentials, isLoadingAuth } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
@@ -49,7 +50,6 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const storeCache = async () => {
     let tmp = { ...finalResults };
@@ -85,12 +85,13 @@ export default function Page({ params }: Readonly<PageProps>) {
       );
       if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
     }
+    if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     setIsLoading(true);
     getData(credentials);
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoadingAuth]);
 
   // set selected table dimension when table is ready
   useEffect(() => {
@@ -140,10 +141,10 @@ export default function Page({ params }: Readonly<PageProps>) {
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
-        overflow-y-scroll overflow-x-scroll ${isLoading ? "animate-pulse" : ""}`}
+        overflow-y-scroll overflow-x-scroll ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
-          {isLoading && (
+          {(isLoading || isLoadingAuth) && (
             <div
               className="absolute left-1/2 top-1/2 
               -translate-x-1/2 -translate-y-1/2"

@@ -18,10 +18,11 @@ function FdaLabelHistory({
   const router = useRouter();
   const [displayHistoryData, setDisplayHistoryData] =
     useState<IFdaLabelHistory>({});
-  const { credentials, setIsAuthenticated } = useAuth();
+  const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
 
   useEffect(() => {
     let resp;
+    if (isLoadingAuth) return;
     if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") {
       if (credentials.length === 0) {
         setIsAuthenticated(false);
@@ -37,7 +38,7 @@ function FdaLabelHistory({
       getData(credentials);
     } else setDisplayHistoryData({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayDataIndex]);
+  }, [displayDataIndex, isLoadingAuth]);
 
   return (
     <>

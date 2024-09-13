@@ -146,12 +146,13 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       return { isAuthToken: false, username: "" };
     }
     console.log("testing window");
-    if (!isLoadingAuth) return;
+    if (typeof window === "undefined" || isLoadingAuth) return;
     const creds = JSON.parse(localStorage.getItem("credentials") as string);
     console.log("testing window2", creds);
     if (!!!creds) return;
     fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
       console.log(isAuthToken, username);
+      console.log(creds);
       if (!isAuthToken) {
         setIsAuthenticated(false);
         setCredentials("");
@@ -163,6 +164,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
 
       fetchUserInfoByName(username as string, creds.AccessToken).then((x) => {
         setRole(x.role as UserRoleEnum);
+        // console.log()
         setUserId(x.id);
       });
     });

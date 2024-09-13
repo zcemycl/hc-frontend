@@ -1,6 +1,6 @@
 "use client";
 import { TypographyH2 } from "@/components";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
 import {
   fetchHistoryByUserId,
@@ -20,19 +20,13 @@ import {
 import { convert_datetime_to_simple } from "@/utils";
 
 export default function Profile() {
-  const { userId, credentials, setIsAuthenticated } = useAuth();
+  const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [history, setHistory] = useState<IHistory[]>([]);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [countAnnotated, setCountAnnotated] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
     async function getProfile(id: number, token: string) {
@@ -55,7 +49,7 @@ export default function Profile() {
       );
       setCountAnnotated(numberAnnotated);
     }
-    if (isLoading) return;
+    if (isLoadingAuth) return;
 
     if (credentials.length === 0) {
       setIsAuthenticated(false);
@@ -64,17 +58,17 @@ export default function Profile() {
       );
     }
     const credJson = JSON.parse(credentials);
-    if (!!!userId) return;
+    if (!userId) return;
     getProfile(userId as number, credJson.AccessToken);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, userId]);
+  }, [isLoadingAuth, userId]);
 
   return (
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[83vh] sm:h-[90vh] overflow-y-scroll
-          ${isLoading ? "animate-pulse" : ""}`}
+          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">

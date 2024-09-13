@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState, useEffect, useId } from "react";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import {
   fetchUserAll,
   createUserPostgres,
@@ -35,7 +35,8 @@ export default function Admin() {
   const id = useId();
   const refUserGroup = useRef(null);
   const router = useRouter();
-  const { credentials, setIsAuthenticated } = useAuth();
+  const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const [isOpenAddUserModal, setIsOpenAddUserModal] = useState(false);
   const [isOpenDelUserModal, setIsOpenDelUserModal] = useState(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -48,16 +49,9 @@ export default function Admin() {
   const [delUserIndex, setDelUserIndex] = useState<number>(0);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isLoading) return;
+    if (isLoadingAuth) return;
     if (credentials.length === 0) {
       setIsAuthenticated(false);
       router.push(
@@ -75,14 +69,14 @@ export default function Admin() {
     }
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageN, isLoading]);
+  }, [pageN, isLoadingAuth]);
 
   return (
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[83vh] 
           sm:h-[90vh] overflow-y-scroll
-          ${isLoading ? "animate-pulse" : ""}
+          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}
           `}
         ref={refUserGroup}
       >
