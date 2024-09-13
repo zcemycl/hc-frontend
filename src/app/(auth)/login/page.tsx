@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import { SiteMode } from "./types";
 import { UserRoleEnum } from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";

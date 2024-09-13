@@ -130,7 +130,6 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       setIsAuthenticated(true);
       setCredentials(JSON.stringify(creds));
     } else {
-      localStorage.clear();
       setIsAuthenticated(false);
       setCredentials("");
     }
