@@ -130,12 +130,6 @@ export default function Search() {
     return resp;
   }
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsLoading(false);
-    }
-  }, []);
-
   // refresh drug list when page is changed
   useEffect(() => {
     async function pageCallback(pageN: number) {
