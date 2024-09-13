@@ -18,6 +18,7 @@ export default function Login() {
     answerCustomChallenge,
     setCredentials,
     setUserId,
+    isLoadingAuth,
   } = useAuth();
   const [email, setEmail] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
@@ -33,18 +34,20 @@ export default function Login() {
   };
 
   useEffect(() => {
+    if (isLoadingAuth) return;
     const curMode = localStorage.getItem("mode") ?? SiteMode.LOGIN;
     setMode(curMode as SiteMode);
     const curEmail = localStorage.getItem("email") ?? "";
     setEmail(curEmail);
-  }, []);
+  }, [isLoadingAuth]);
 
   useEffect(() => {
+    if (isLoadingAuth) return;
     if (isAuthenticated) {
       router.push("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isLoadingAuth]);
 
   useEffect(() => {
     async function respondAuthChallege(
@@ -94,9 +97,10 @@ export default function Login() {
         setIsAuthenticated(true);
       }
     }
+    if (isLoadingAuth) return;
     respondAuthChallege(urlCode, urlEmail, isAuthenticated);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlCode, urlEmail, isAuthenticated, mode]);
+  }, [urlCode, urlEmail, isAuthenticated, mode, isLoadingAuth]);
 
   return (
     <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
