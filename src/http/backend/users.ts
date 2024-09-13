@@ -1,9 +1,10 @@
 "use server";
 
 import { UserRoleEnum } from "@/types";
+import { FASTAPI_URI } from "./constants";
 
 export async function fetchUserInfoById(id: number, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/id/${id}`;
+  const API_URI = `${FASTAPI_URI}/users/id/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -16,7 +17,7 @@ export async function fetchUserInfoById(id: number, token: string) {
 }
 
 export async function fetchUserInfoByName(name: string, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/name/${name}`;
+  const API_URI = `${FASTAPI_URI}/users/name/${name}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -29,7 +30,7 @@ export async function fetchUserInfoByName(name: string, token: string) {
 }
 
 export async function fetchUserAll(token: string, offset = 0, limit = 10) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/?offset=${offset}&limit=${limit}`;
+  const API_URI = `${FASTAPI_URI}/users/?offset=${offset}&limit=${limit}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -42,7 +43,7 @@ export async function fetchUserAll(token: string, offset = 0, limit = 10) {
 }
 
 export async function deleteUserById(id: number, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/${id}`;
+  const API_URI = `${FASTAPI_URI}/users/${id}`;
   const response = await fetch(API_URI, {
     method: "DELETE",
     headers: {
@@ -61,7 +62,7 @@ export async function createUserPostgres(
   role: UserRoleEnum,
   token: string,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/`;
+  const API_URI = `${FASTAPI_URI}/users/`;
   const response = await fetch(API_URI, {
     method: "POST",
     headers: {

@@ -1,7 +1,8 @@
 "use server";
+import { FASTAPI_URI } from "./constants";
 
 export async function fetchHistoryByUserId(id: number, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/${id}`;
+  const API_URI = `${FASTAPI_URI}/history/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -19,7 +20,7 @@ export async function addHistoryByUserId(
   detail: any,
   token: string,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/${id}`;
+  const API_URI = `${FASTAPI_URI}/history/${id}`;
   console.log(category);
   console.log(detail);
   const response = await fetch(API_URI, {
@@ -37,7 +38,7 @@ export async function addHistoryByUserId(
 }
 
 export async function fetchHistoryById(id: number, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/history_id/${id}`;
+  const API_URI = `${FASTAPI_URI}/history/history_id/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {

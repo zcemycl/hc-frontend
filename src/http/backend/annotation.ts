@@ -1,5 +1,6 @@
 "use server";
 import { AnnotationCategoryEnum } from "@/types";
+import { FASTAPI_URI } from "./constants";
 
 export async function fetchUnannotatedAETableByUserId(
   id: number,
@@ -9,7 +10,7 @@ export async function fetchUnannotatedAETableByUserId(
   reverse: boolean = false,
   complete: boolean = false,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/${id}/unannotated_ae_tables`;
+  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables`;
   const API_URI_PAGINATION = `${API_URI}?offset=${offset}&limit=${limit}&reverse=${reverse}&complete=${complete}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
@@ -27,7 +28,7 @@ export async function fetchAETableByIds(
   setid: string,
   token: string,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/fdalabel/${setid}/adverse_effect_table/${id}`;
+  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/adverse_effect_table/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -41,7 +42,7 @@ export async function fetchAETableByIds(
 }
 
 export async function fetchAETableBySetid(setid: string, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/fdalabel/${setid}/adverse_effect_table`;
+  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/adverse_effect_table`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -60,7 +61,7 @@ export async function addAnnotationByNameId(
   annotation: { [key: string]: any },
   token: string,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/fdalabel/${name}/${id}`;
+  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${name}/${id}`;
   const response = await fetch(API_URI, {
     method: "POST",
     headers: {
@@ -78,7 +79,7 @@ export async function fetchAnnotatedTableMapByNameIds(
   token: string,
   is_ai: boolean = false,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/annotated/${name}/${id}?is_ai=${is_ai}`;
+  const API_URI = `${FASTAPI_URI}/annnotation/annotated/${name}/${id}?is_ai=${is_ai}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -99,7 +100,7 @@ export async function fetchAnnotatedCountByUserId(
   tablename: AnnotationCategoryEnum,
   token: string,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/annnotation/user/${user_id}/annotated/${tablename}`;
+  const API_URI = `${FASTAPI_URI}/annnotation/user/${user_id}/annotated/${tablename}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
