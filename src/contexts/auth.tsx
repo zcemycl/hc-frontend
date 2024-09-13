@@ -149,7 +149,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     if (typeof window === "undefined" || isLoadingAuth) return;
     const creds = JSON.parse(localStorage.getItem("credentials") as string);
     console.log("testing window2", creds);
-    if (!!!creds) return;
+    if (!creds) return;
     fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
       console.log(isAuthToken, username);
       console.log(creds);
