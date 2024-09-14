@@ -31,7 +31,7 @@ function FdaLabelHistory({
     }
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      resp = await fetchFdalabelHistoryBySetid(setid, credJson.AccessToken);
+      resp = await fetchFdalabelHistoryBySetid(setid);
       setDisplayHistoryData(resp);
     }
     if (displayDataIndex != null) {

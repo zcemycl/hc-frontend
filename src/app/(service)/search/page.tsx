@@ -62,13 +62,7 @@ export default function Search() {
     const credJson = JSON.parse(credentials);
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
-      resp = await fetchFdalabelBySetid(
-        query,
-        credJson.AccessToken,
-        topN,
-        0,
-        -1,
-      );
+      resp = await fetchFdalabelBySetid(query, topN, 0, -1);
       await addHistoryByUserId(
         userId as number,
         UserHistoryCategoryEnum.SEARCH,
@@ -81,13 +75,7 @@ export default function Search() {
         },
       );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
-      resp = await fetchFdalabelByTradename(
-        query,
-        credJson.AccessToken,
-        topN,
-        0,
-        -1,
-      );
+      resp = await fetchFdalabelByTradename(query, topN, 0, -1);
       await addHistoryByUserId(
         userId as number,
         UserHistoryCategoryEnum.SEARCH,
@@ -102,7 +90,6 @@ export default function Search() {
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fetchFdalabelByIndication(
         query[0],
-        credJson.AccessToken,
         topN,
         pageN * nPerPage,
         undefined,
@@ -277,7 +264,6 @@ export default function Search() {
                     const credJson = JSON.parse(credentials);
                     resp = await fetchFdalabelCompareAdverseEffects(
                       Array.from(setIdsToCompare),
-                      credJson.AccessToken,
                     );
                     setCompareTable(resp);
                     console.log(resp);
