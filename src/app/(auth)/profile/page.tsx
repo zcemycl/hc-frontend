@@ -30,7 +30,7 @@ export default function Profile() {
 
   useEffect(() => {
     async function getProfile(id: number, token: string) {
-      const userInfo = await fetchUserInfoById(id, token);
+      const userInfo = await fetchUserInfoById(id);
       setProfileInfo({ ...profileInfo, ...userInfo });
       const historyInfo = await fetchHistoryByUserId(id, token);
       setHistory(historyInfo);

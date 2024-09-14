@@ -8,6 +8,8 @@ import { IRequestDemoForm, UserRoleEnum } from "@/types";
 import { fetchApiRoot, sendEmail } from "@/http/internal";
 
 import { dummy_cred } from "@/utils";
+// import { cookies } from 'next/headers'
+
 import {
   fetchFdalabelCount,
   fetchUserCount,
@@ -42,6 +44,7 @@ export default function Home() {
     email: "",
     message: "",
   };
+  // const cookieStore = cookies()
   const [requestForm, setRequestForm] =
     useState<IRequestDemoForm>(defaultRequestForm);
 
@@ -70,6 +73,12 @@ export default function Home() {
         setCredentials(credentials);
         setIsAuthenticated(true);
         localStorage.setItem("credentials", credentials);
+        // cookies().set({
+        //   name: "accessToken",
+        //   value: JSON.parse(credentials).AccessToken,
+        //   httpOnly: true,
+        //   path: '/',
+        // })
         fetchUserInfoByName(
           dummy_username,
           JSON.parse(credentials).AccessToken,

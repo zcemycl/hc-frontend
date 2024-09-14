@@ -2,8 +2,10 @@
 
 import { UserRoleEnum } from "@/types";
 import { FASTAPI_URI } from "./constants";
+import { get_token_cookie, validate_response_ok } from "../utils-server";
 
-export async function fetchUserInfoById(id: number, token: string) {
+export async function fetchUserInfoById(id: number) {
+  const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/id/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -12,6 +14,7 @@ export async function fetchUserInfoById(id: number, token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  validate_response_ok(response);
   const res = await response.json();
   return res;
 }
