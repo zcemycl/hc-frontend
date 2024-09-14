@@ -19,7 +19,8 @@ export async function fetchUserInfoById(id: number) {
   return res;
 }
 
-export async function fetchUserInfoByName(name: string, token: string) {
+export async function fetchUserInfoByName(name: string) {
+  const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/name/${name}`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -28,11 +29,13 @@ export async function fetchUserInfoByName(name: string, token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  validate_response_ok(response);
   const res = await response.json();
   return res;
 }
 
-export async function fetchUserAll(token: string, offset = 0, limit = 10) {
+export async function fetchUserAll(offset = 0, limit = 10) {
+  const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/?offset=${offset}&limit=${limit}`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -41,11 +44,13 @@ export async function fetchUserAll(token: string, offset = 0, limit = 10) {
       Authorization: `Bearer ${token}`,
     },
   });
+  validate_response_ok(response);
   const res = await response.json();
   return res;
 }
 
-export async function deleteUserById(id: number, token: string) {
+export async function deleteUserById(id: number) {
+  const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/${id}`;
   const response = await fetch(API_URI, {
     method: "DELETE",
@@ -54,6 +59,7 @@ export async function deleteUserById(id: number, token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  validate_response_ok(response);
   return {};
 }
 
@@ -63,8 +69,8 @@ export async function createUserPostgres(
   sub: string,
   enabled: boolean,
   role: UserRoleEnum,
-  token: string,
 ) {
+  const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/`;
   const response = await fetch(API_URI, {
     method: "POST",
@@ -80,5 +86,6 @@ export async function createUserPostgres(
       role,
     }),
   });
+  validate_response_ok(response);
   return {};
 }

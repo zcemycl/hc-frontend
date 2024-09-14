@@ -79,10 +79,7 @@ export default function Home() {
         //   httpOnly: true,
         //   path: '/',
         // })
-        fetchUserInfoByName(
-          dummy_username,
-          JSON.parse(credentials).AccessToken,
-        ).then((x) => {
+        fetchUserInfoByName(dummy_username).then((x) => {
           setRole(x.role as UserRoleEnum);
           setUserId(x.id);
         });

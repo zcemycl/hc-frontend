@@ -169,9 +169,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
         return;
       }
 
-      fetchUserInfoByName(username as string, creds.AccessToken).then((x) => {
+      fetchUserInfoByName(username as string).then((x) => {
         setRole(x.role as UserRoleEnum);
-        // console.log()
         setUserId(x.id);
       });
     });

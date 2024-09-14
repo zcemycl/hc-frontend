@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth, useLoader } from "@/contexts";
 import { SiteMode } from "./types";
 import { UserRoleEnum } from "@/types";
+import { fetchApiRoot } from "@/http/internal";
 import { fetchUserInfoByName } from "@/http/backend";
 
 export default function Login() {
@@ -80,9 +81,12 @@ export default function Login() {
         const credentials = JSON.stringify(resp.AuthenticationResult);
         localStorage.setItem("credentials", credentials);
         setCredentials(credentials);
+        const _ = await fetchApiRoot(
+          1,
+          resp.AuthenticationResult?.AccessToken!,
+        );
         const resp_user = await fetchUserInfoByName(
           cognito_user.ChallengeParameters.USERNAME,
-          resp.AuthenticationResult?.AccessToken as string,
         );
         setRole(resp_user.role as UserRoleEnum);
         setUserId(resp_user.id);

@@ -60,11 +60,7 @@ export default function Admin() {
     }
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const resp = await fetchUserAll(
-        credJson.AccessToken,
-        pageN * nPerPage,
-        nPerPage,
-      );
+      const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
       console.log(resp);
       if ("detail" in resp) {
         router.push("/logout");
@@ -104,17 +100,10 @@ export default function Admin() {
                     displayData[delUserIndex].email,
                     credJson.AccessToken,
                   );
-                  await deleteUserById(
-                    displayData[delUserIndex].id,
-                    credJson.AccessToken,
-                  );
+                  await deleteUserById(displayData[delUserIndex].id);
                   setIsOpenDelUserModal(false);
                   setDelUserIndex(0);
-                  const resp = await fetchUserAll(
-                    credJson.AccessToken,
-                    pageN * nPerPage,
-                    nPerPage,
-                  );
+                  const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
                   setDisplayData(resp);
                 }}
               >
@@ -216,15 +205,10 @@ export default function Admin() {
                       sub,
                       res.Enabled,
                       addUserInfo.role,
-                      credJson.AccessToken,
                     );
                     console.log(final_res);
                     setIsOpenAddUserModal(false);
-                    const resp = await fetchUserAll(
-                      credJson.AccessToken,
-                      pageN * nPerPage,
-                      nPerPage,
-                    );
+                    const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
                     setDisplayData(resp);
                   }}
                 >
