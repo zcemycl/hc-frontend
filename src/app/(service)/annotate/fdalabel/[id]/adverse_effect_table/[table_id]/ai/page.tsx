@@ -52,8 +52,7 @@ export default function Page({ params }: Readonly<PageProps>) {
 
   // set table
   useEffect(() => {
-    async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
+    async function getData() {
       const res = await fetchAETableByIds(params.table_id, params.id);
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
@@ -68,7 +67,7 @@ export default function Page({ params }: Readonly<PageProps>) {
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     setIsLoading(true);
-    getData(credentials);
+    getData();
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);

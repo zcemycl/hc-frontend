@@ -1,12 +1,21 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify, importSPKI } from "jose";
 import jwkToPem from "jwk-to-pem";
+import { cookies } from "next/headers";
 
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
 console.log(openid_conf_uri);
 
 export async function middleware(request: NextRequest) {
-  const authorization = request.headers.get("Authorization") as string;
+  const cookie = cookies();
+  let authorization;
+  if (cookie.has("token")) {
+    const token = cookie.get("token")?.value;
+    authorization = `Bearer ${token}`;
+  } else {
+    authorization = request.headers.get("Authorization") as string;
+  }
+
   // validate bearer
   const [token_type, token] = authorization.split(" ");
   if (token_type !== "Bearer") {

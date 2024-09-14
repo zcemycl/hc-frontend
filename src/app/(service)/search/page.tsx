@@ -59,7 +59,6 @@ export default function Search() {
     query: string[],
     queryType: SearchQueryTypeEnum,
   ) {
-    const credJson = JSON.parse(credentials);
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
       resp = await fetchFdalabelBySetid(query, topN, 0, -1);
@@ -150,7 +149,6 @@ export default function Search() {
       router.push("/logout");
     }
     if (historyId !== null) {
-      const credJson = JSON.parse(credentials);
       fetchHistoryById(parseInt(historyId)).then(async (history) => {
         if (history.category === UserHistoryCategoryEnum.SEARCH) {
           if (history.detail.action === SearchActionEnum.SEARCH) {
@@ -261,7 +259,6 @@ export default function Search() {
                       setIsAuthenticated(false);
                       router.push("/logout");
                     }
-                    const credJson = JSON.parse(credentials);
                     resp = await fetchFdalabelCompareAdverseEffects(
                       Array.from(setIdsToCompare),
                     );

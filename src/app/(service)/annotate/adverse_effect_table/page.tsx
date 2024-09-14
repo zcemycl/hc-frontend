@@ -48,7 +48,6 @@ export default function Page() {
       tabName: AnnotationTypeEnum,
       pageN: number,
     ) {
-      const credJson = JSON.parse(credentials);
       const res = await fetchUnannotatedAETableByUserId(
         userId,
         pageN * nPerPage,

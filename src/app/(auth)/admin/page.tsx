@@ -58,8 +58,7 @@ export default function Admin() {
         process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
       );
     }
-    async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
+    async function getData() {
       const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
       console.log(resp);
       if ("detail" in resp) {
@@ -68,7 +67,7 @@ export default function Admin() {
       }
       setDisplayData(resp);
     }
-    getData(credentials);
+    getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageN, isLoadingAuth]);
 
@@ -94,11 +93,9 @@ export default function Admin() {
               rounded-lg bg-red-700 hover:bg-red-900 
               text-white"
                 onClick={async () => {
-                  const credJson = JSON.parse(credentials);
                   await delete_user(
                     displayData[delUserIndex].username,
                     displayData[delUserIndex].email,
-                    credJson.AccessToken,
                   );
                   await deleteUserById(displayData[delUserIndex].id);
                   setIsOpenDelUserModal(false);
@@ -189,11 +186,9 @@ export default function Admin() {
                     px-6 py-3 rounded-lg"
                   onClick={async (e) => {
                     e.preventDefault();
-                    const credJson = JSON.parse(credentials);
                     const res = await create_user(
                       addUserInfo.username,
                       addUserInfo.email,
-                      credJson.AccessToken,
                     );
                     console.log(res);
                     const sub = res.Attributes.filter(

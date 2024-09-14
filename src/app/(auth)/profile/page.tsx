@@ -55,7 +55,6 @@ export default function Profile() {
         process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
       );
     }
-    const credJson = JSON.parse(credentials);
     if (!userId) return;
     getProfile(userId as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps

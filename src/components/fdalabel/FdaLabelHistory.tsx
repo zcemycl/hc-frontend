@@ -29,13 +29,12 @@ function FdaLabelHistory({
         router.push("/logout");
       }
     }
-    async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
+    async function getData() {
       resp = await fetchFdalabelHistoryBySetid(setid);
       setDisplayHistoryData(resp);
     }
     if (displayDataIndex != null) {
-      getData(credentials);
+      getData();
     } else setDisplayHistoryData({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayDataIndex, isLoadingAuth]);

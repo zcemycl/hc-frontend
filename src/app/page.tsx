@@ -92,7 +92,7 @@ export default function Home() {
       const resp = await fetchApiRoot(1, credJson.AccessToken);
       if (isAuthenticated && resp.status === 401) {
         setIsAuthenticated(false);
-        redirect("/logout");
+        router.push("/logout");
       }
       const res = await resp.json();
       if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
