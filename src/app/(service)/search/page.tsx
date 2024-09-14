@@ -79,7 +79,6 @@ export default function Search() {
             queryType,
           },
         },
-        credJson.AccessToken,
       );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
       resp = await fetchFdalabelByTradename(
@@ -99,7 +98,6 @@ export default function Search() {
             queryType,
           },
         },
-        credJson.AccessToken,
       );
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fetchFdalabelByIndication(
@@ -123,7 +121,6 @@ export default function Search() {
             nPerPage: `${nPerPage}`,
           },
         },
-        credJson.AccessToken,
       );
     }
     setDisplayData(resp);
@@ -167,17 +164,14 @@ export default function Search() {
     }
     if (historyId !== null) {
       const credJson = JSON.parse(credentials);
-      fetchHistoryById(parseInt(historyId), credJson.AccessToken).then(
-        async (history) => {
-          if (history.category === UserHistoryCategoryEnum.SEARCH) {
-            if (history.detail.action === SearchActionEnum.SEARCH) {
-              setQueryType(history.detail.additional_settings.queryType);
-              setQuery(history.detail.query);
-            }
+      fetchHistoryById(parseInt(historyId)).then(async (history) => {
+        if (history.category === UserHistoryCategoryEnum.SEARCH) {
+          if (history.detail.action === SearchActionEnum.SEARCH) {
+            setQueryType(history.detail.additional_settings.queryType);
+            setQuery(history.detail.query);
           }
-        },
-      );
-      // recoverHistory(parseInt(historyId as string));
+        }
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyId]);
@@ -299,7 +293,6 @@ export default function Search() {
                           queryType,
                         },
                       },
-                      credJson.AccessToken,
                     );
                   }}
                   className={`text-black bg-green-600 

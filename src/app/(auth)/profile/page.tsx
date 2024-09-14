@@ -32,7 +32,7 @@ export default function Profile() {
     async function getProfile(id: number, token: string) {
       const userInfo = await fetchUserInfoById(id);
       setProfileInfo({ ...profileInfo, ...userInfo });
-      const historyInfo = await fetchHistoryByUserId(id, token);
+      const historyInfo = await fetchHistoryByUserId(id);
       setHistory(historyInfo);
       const annotatedData = await fetchUnannotatedAETableByUserId(
         id,
