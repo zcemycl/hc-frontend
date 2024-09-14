@@ -4,12 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { IRequestDemoForm, UserRoleEnum } from "@/types";
-
 import { fetchApiRoot, sendEmail } from "@/http/internal";
-
 import { dummy_cred } from "@/utils";
-// import { cookies } from 'next/headers'
-
 import {
   fetchFdalabelCount,
   fetchUserCount,
@@ -73,12 +69,6 @@ export default function Home() {
         setCredentials(credentials);
         setIsAuthenticated(true);
         localStorage.setItem("credentials", credentials);
-        // cookies().set({
-        //   name: "accessToken",
-        //   value: JSON.parse(credentials).AccessToken,
-        //   httpOnly: true,
-        //   path: '/',
-        // })
         fetchUserInfoByName(dummy_username).then((x) => {
           setRole(x.role as UserRoleEnum);
           setUserId(x.id);
