@@ -72,16 +72,11 @@ export default function Page({ params }: Readonly<PageProps>) {
   useEffect(() => {
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const res = await fetchAETableByIds(
-        params.table_id,
-        params.id,
-        credJson.AccessToken,
-      );
+      const res = await fetchAETableByIds(params.table_id, params.id);
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        credJson.AccessToken,
       );
       if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
     }
@@ -210,7 +205,6 @@ export default function Page({ params }: Readonly<PageProps>) {
                       tableData?.id!,
                       AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
                       tmp,
-                      credJson.AccessToken,
                     );
                     router.back();
                   }}

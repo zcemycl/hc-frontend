@@ -22,7 +22,7 @@ export default function Page({ params }: PageProps) {
   useEffect(() => {
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const res = await fetchAETableBySetid(params.id, credJson.AccessToken);
+      const res = await fetchAETableBySetid(params.id);
       setTableData(res);
     }
     if (isLoadingAuth) return;

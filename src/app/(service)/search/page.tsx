@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   fetchFdalabelByIndication,
   fetchFdalabelByTradename,
@@ -235,14 +235,14 @@ export default function Search() {
                   setCompareTable({ table: [] });
                   if (credentials.length === 0) {
                     setIsAuthenticated(false);
-                    redirect("/logout");
+                    router.push("/logout");
                   }
                   const resp = await search_query_by_type(query, queryType);
                   console.log(resp);
                   setIsLoading(false);
                   if (resp.detail?.error! === "AUTH_EXPIRED") {
                     setIsAuthenticated(false);
-                    redirect("/logout");
+                    router.push("/logout");
                   }
                 }}
                 className="text-white bg-indigo-500 border-0 py-2 px-6 
@@ -259,7 +259,7 @@ export default function Search() {
                     let res, resp;
                     if (credentials.length === 0) {
                       setIsAuthenticated(false);
-                      redirect("/logout");
+                      router.push("/logout");
                     }
                     const credJson = JSON.parse(credentials);
                     resp = await fetchFdalabelCompareAdverseEffects(

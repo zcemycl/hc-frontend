@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, Fragment } from "react";
 import {
   fetchAETableByIds,
-  addAnnotationByNameId,
   fetchAnnotatedTableMapByNameIds,
 } from "@/http/backend";
 import {
@@ -55,16 +54,11 @@ export default function Page({ params }: Readonly<PageProps>) {
   useEffect(() => {
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const res = await fetchAETableByIds(
-        params.table_id,
-        params.id,
-        credJson.AccessToken,
-      );
+      const res = await fetchAETableByIds(params.table_id, params.id);
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        credJson.AccessToken,
         true,
       );
       if ("annotated" in res_history) {
