@@ -3,18 +3,24 @@ import { TypographyH2 } from "@/components";
 import { useAuth, useOpenBar } from "@/contexts";
 import Link from "next/link";
 import { useEffect } from "react";
+import { fetchApiLogout } from "@/http/internal";
 
 export default function Logout() {
-  const { setIsAuthenticated, setCredentials } = useAuth();
+  const { setIsAuthenticated, setCredentials, isLoadingAuth } = useAuth();
   const { setIsDropDownOpen, setIsSideBarOpen } = useOpenBar();
   useEffect(() => {
+    async function signOut() {
+      const _ = await fetchApiLogout();
+    }
+    if (isLoadingAuth) return;
     localStorage.clear();
     setIsAuthenticated(false);
     setCredentials("");
     setIsDropDownOpen(false);
     setIsSideBarOpen(false);
+    signOut();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoadingAuth]);
   return (
     <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
       <div

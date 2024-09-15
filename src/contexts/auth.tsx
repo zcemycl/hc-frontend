@@ -31,8 +31,8 @@ import {
   TBooleanDummySetState,
   TStringDummySetState,
 } from "@/types";
-import { fetchApiRoot } from "@/http/internal";
 import { fetchUserInfoByName } from "@/http/backend";
+import { handleFetchApiRoot } from "@/services";
 
 Amplify.configure({
   Auth: {
@@ -138,8 +138,11 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
-      const resp = await fetchApiRoot(1, creds!.AccessToken);
-      console.log(resp);
+      const resp = await handleFetchApiRoot(
+        creds!.AccessToken,
+        setIsAuthenticated,
+        router,
+      );
       const res = await resp.json();
       console.log(res);
       if ("success" in res && !res.success) {
@@ -169,9 +172,8 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
         return;
       }
 
-      fetchUserInfoByName(username as string, creds.AccessToken).then((x) => {
+      fetchUserInfoByName(username as string).then((x) => {
         setRole(x.role as UserRoleEnum);
-        // console.log()
         setUserId(x.id);
       });
     });

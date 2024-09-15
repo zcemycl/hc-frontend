@@ -70,25 +70,19 @@ export default function Page({ params }: Readonly<PageProps>) {
 
   // set table
   useEffect(() => {
-    async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
-      const res = await fetchAETableByIds(
-        params.table_id,
-        params.id,
-        credJson.AccessToken,
-      );
+    async function getData() {
+      const res = await fetchAETableByIds(params.table_id, params.id);
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        credJson.AccessToken,
       );
       if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
     }
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     setIsLoading(true);
-    getData(credentials);
+    getData();
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
@@ -205,12 +199,10 @@ export default function Page({ params }: Readonly<PageProps>) {
                     const tmp = await storeCache();
                     setFinalResults(tmp);
                     if (credentials.length === 0) return;
-                    const credJson = JSON.parse(credentials);
                     const _ = await addAnnotationByNameId(
                       tableData?.id!,
                       AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
                       tmp,
-                      credJson.AccessToken,
                     );
                     router.back();
                   }}

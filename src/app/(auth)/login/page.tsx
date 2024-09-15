@@ -6,6 +6,8 @@ import { useAuth, useLoader } from "@/contexts";
 import { SiteMode } from "./types";
 import { UserRoleEnum } from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";
+import { Spinner } from "@/components";
+import { handleFetchApiRoot } from "@/services";
 
 export default function Login() {
   const router = useRouter();
@@ -20,6 +22,7 @@ export default function Login() {
     setUserId,
     isLoadingAuth,
   } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const [email, setEmail] = useState<string>("");
   const urlCode = searchParams.get("code") ?? "";
   const urlEmail = decodeURIComponent(searchParams.get("email") ?? "");
@@ -51,6 +54,8 @@ export default function Login() {
   }, [isAuthenticated, isLoadingAuth]);
 
   useEffect(() => {
+    if (isLoadingAuth) return;
+    setIsLoading(true);
     async function respondAuthChallege(
       urlCode: string,
       urlEmail: string,
@@ -80,9 +85,13 @@ export default function Login() {
         const credentials = JSON.stringify(resp.AuthenticationResult);
         localStorage.setItem("credentials", credentials);
         setCredentials(credentials);
+        const _ = await handleFetchApiRoot(
+          resp.AuthenticationResult?.AccessToken!,
+          setIsAuthenticated,
+          router,
+        );
         const resp_user = await fetchUserInfoByName(
           cognito_user.ChallengeParameters.USERNAME,
-          resp.AuthenticationResult?.AccessToken as string,
         );
         setRole(resp_user.role as UserRoleEnum);
         setUserId(resp_user.id);
@@ -98,17 +107,30 @@ export default function Login() {
         setIsAuthenticated(true);
       }
     }
-    if (isLoadingAuth) return;
     respondAuthChallege(urlCode, urlEmail, isAuthenticated);
+    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlCode, urlEmail, isAuthenticated, mode, isLoadingAuth]);
 
   return (
-    <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
+    <section
+      className={`text-gray-400 bg-gray-900 body-font h-[83vh] 
+      sm:h-[90vh] ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+    >
       <div
         className="container px-2 py-24 mx-auto grid justify-items-center
         "
       >
+        {(isLoading || isLoadingAuth) && (
+          <div
+            role="status"
+            className="absolute left-1/2 top-1/2 
+            -translate-x-1/2 -translate-y-1/2"
+          >
+            <Spinner />
+            <span className="sr-only">Loading...</span>
+          </div>
+        )}
         <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
           <h2 className="text-white text-lg mb-1 font-medium title-font">
             Login
@@ -134,7 +156,6 @@ export default function Login() {
             data-testid="login-email-submit-btn"
             onClick={async (e) => {
               e.preventDefault();
-              console.log("submit email??");
               await submitCallback(email);
             }}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"

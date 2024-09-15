@@ -29,14 +29,13 @@ export default function Profile() {
   const [countAnnotated, setCountAnnotated] = useState(0);
 
   useEffect(() => {
-    async function getProfile(id: number, token: string) {
-      const userInfo = await fetchUserInfoById(id, token);
+    async function getProfile(id: number) {
+      const userInfo = await fetchUserInfoById(id);
       setProfileInfo({ ...profileInfo, ...userInfo });
-      const historyInfo = await fetchHistoryByUserId(id, token);
+      const historyInfo = await fetchHistoryByUserId(id);
       setHistory(historyInfo);
       const annotatedData = await fetchUnannotatedAETableByUserId(
         id,
-        token,
         0,
         100,
         true,
@@ -45,7 +44,6 @@ export default function Profile() {
       const numberAnnotated = await fetchAnnotatedCountByUserId(
         id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        token,
       );
       setCountAnnotated(numberAnnotated);
     }
@@ -57,9 +55,8 @@ export default function Profile() {
         process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
       );
     }
-    const credJson = JSON.parse(credentials);
     if (!userId) return;
-    getProfile(userId as number, credJson.AccessToken);
+    getProfile(userId as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth, userId]);
 

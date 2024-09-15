@@ -1,7 +1,10 @@
 "use server";
+import { FASTAPI_URI } from "./constants";
+import { get_token_cookie, validate_response_ok } from "../utils-server";
 
-export async function fetchHistoryByUserId(id: number, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/${id}`;
+export async function fetchHistoryByUserId(id: number) {
+  const token = get_token_cookie();
+  const API_URI = `${FASTAPI_URI}/history/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -9,6 +12,7 @@ export async function fetchHistoryByUserId(id: number, token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  validate_response_ok(response);
   const res = await response.json();
   return res;
 }
@@ -17,9 +21,9 @@ export async function addHistoryByUserId(
   id: number,
   category: string,
   detail: any,
-  token: string,
 ) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/${id}`;
+  const token = get_token_cookie();
+  const API_URI = `${FASTAPI_URI}/history/${id}`;
   console.log(category);
   console.log(detail);
   const response = await fetch(API_URI, {
@@ -33,11 +37,13 @@ export async function addHistoryByUserId(
       detail,
     }),
   });
+  validate_response_ok(response);
   return {};
 }
 
-export async function fetchHistoryById(id: number, token: string) {
-  const API_URI = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/history/history_id/${id}`;
+export async function fetchHistoryById(id: number) {
+  const token = get_token_cookie();
+  const API_URI = `${FASTAPI_URI}/history/history_id/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -45,6 +51,7 @@ export async function fetchHistoryById(id: number, token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
+  validate_response_ok(response);
   const res = await response.json();
   return res;
 }

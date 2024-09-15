@@ -20,14 +20,13 @@ export default function Page({ params }: PageProps) {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   useEffect(() => {
-    async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
-      const res = await fetchAETableBySetid(params.id, credJson.AccessToken);
+    async function getData() {
+      const res = await fetchAETableBySetid(params.id);
       setTableData(res);
     }
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
-    getData(credentials);
+    getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
 

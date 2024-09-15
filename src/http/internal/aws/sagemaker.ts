@@ -1,6 +1,5 @@
-export async function create_presigned_url(token: string) {
+export async function create_presigned_url() {
   const headers = {
-    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
   const resp = await fetch(`/api/private/service/ai`, {

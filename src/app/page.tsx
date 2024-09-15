@@ -4,9 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { IRequestDemoForm, UserRoleEnum } from "@/types";
-
-import { fetchApiRoot, sendEmail } from "@/http/internal";
-
+import { sendEmail } from "@/http/internal";
 import { dummy_cred } from "@/utils";
 import {
   fetchFdalabelCount,
@@ -14,6 +12,7 @@ import {
   fetchUserInfoByName,
 } from "@/http/backend";
 import { Spinner } from "@/components";
+import { handleFetchApiRoot } from "@/services";
 
 interface IData {
   success?: boolean;
@@ -32,6 +31,7 @@ export default function Home() {
     setCredentials,
     setRole,
     setUserId,
+    isLoadingAuth,
   } = useAuth();
   const [data, setData] = useState<IData>({});
   const [fdalabelCount, setFdalabelCount] = useState(0);
@@ -42,6 +42,7 @@ export default function Home() {
     email: "",
     message: "",
   };
+  // const cookieStore = cookies()
   const [requestForm, setRequestForm] =
     useState<IRequestDemoForm>(defaultRequestForm);
 
@@ -57,6 +58,7 @@ export default function Home() {
   }
 
   useEffect(() => {
+    if (isLoadingAuth) return;
     if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
       const dummy_username = "leo.leung.rxscope";
       dummy_cred(dummy_username).then((x) => {
@@ -70,10 +72,7 @@ export default function Home() {
         setCredentials(credentials);
         setIsAuthenticated(true);
         localStorage.setItem("credentials", credentials);
-        fetchUserInfoByName(
-          dummy_username,
-          JSON.parse(credentials).AccessToken,
-        ).then((x) => {
+        fetchUserInfoByName(dummy_username).then((x) => {
           setRole(x.role as UserRoleEnum);
           setUserId(x.id);
         });
@@ -87,17 +86,17 @@ export default function Home() {
     fetchFdalabelCount().then((x) => setFdalabelCount(x));
     fetchUserCount().then((x) => setUserCount(x));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoadingAuth]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const resp = await fetchApiRoot(1, credJson.AccessToken);
-      if (isAuthenticated && resp.status === 401) {
-        setIsAuthenticated(false);
-        redirect("/logout");
-      }
+      const resp = await handleFetchApiRoot(
+        credJson.AccessToken,
+        setIsAuthenticated,
+        router,
+      );
       const res = await resp.json();
       if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
         setRole(res.role);

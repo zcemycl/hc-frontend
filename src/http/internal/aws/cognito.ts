@@ -1,10 +1,5 @@
-export async function delete_user(
-  username: string,
-  email: string,
-  token: string,
-) {
+export async function delete_user(username: string, email: string) {
   const headers = {
-    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
 
@@ -27,13 +22,8 @@ export async function delete_user(
   return await resp.json();
 }
 
-export async function create_user(
-  username: string,
-  email: string,
-  token: string,
-) {
+export async function create_user(username: string, email: string) {
   const headers = {
-    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
 

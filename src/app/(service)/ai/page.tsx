@@ -82,10 +82,9 @@ export default function AI() {
                 setIsLoading(true);
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
-                  redirect("/logout");
+                  router.push("/logout");
                 }
-                const credJson = JSON.parse(credentials);
-                const resp = await create_presigned_url(credJson.AccessToken);
+                const resp = await create_presigned_url();
                 setJupyterLink(resp.url);
                 setIsOpenModal(true);
                 setIsLoading(false);

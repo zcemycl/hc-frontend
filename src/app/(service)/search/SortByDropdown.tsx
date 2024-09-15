@@ -1,9 +1,8 @@
 "use client";
 
 import { DropDownBtn, DropDownList } from "@/components";
-import { SortByEnum } from "./types";
 import { useState } from "react";
-import { sortByMap } from "@/constants";
+import { sortByMap, SortByEnum } from "@/constants";
 
 const SortByDropdown = ({
   sortBy,

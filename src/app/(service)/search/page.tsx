@@ -1,15 +1,8 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
-import {
-  fetchFdalabelByIndication,
-  fetchFdalabelByTradename,
-  fetchFdalabelBySetid,
-  fetchFdalabelCompareAdverseEffects,
-  addHistoryByUserId,
-  fetchHistoryById,
-} from "@/http/backend";
+import { useRouter, useSearchParams } from "next/navigation";
+import { fetchHistoryById } from "@/http/backend";
 import {
   PaginationBar,
   TypographyH2,
@@ -26,9 +19,10 @@ import {
   UserHistoryCategoryEnum,
   IHistory,
 } from "@/types";
-import { SortByEnum, SearchQueryTypeEnum } from "./types";
+import { SortByEnum, SearchQueryTypeEnum } from "@/constants";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
+import { FdalabelFetchService } from "@/services";
 
 export default function Search() {
   const searchParams = useSearchParams();
@@ -54,76 +48,32 @@ export default function Search() {
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
+  const fdaservice = useMemo(
+    () =>
+      new FdalabelFetchService(
+        userId as number,
+        topN,
+        setIsAuthenticated,
+        router,
+      ),
+    [],
+  );
 
   async function search_query_by_type(
     query: string[],
     queryType: SearchQueryTypeEnum,
   ) {
-    const credJson = JSON.parse(credentials);
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
-      resp = await fetchFdalabelBySetid(
-        query,
-        credJson.AccessToken,
-        topN,
-        0,
-        -1,
-      );
-      await addHistoryByUserId(
-        userId as number,
-        UserHistoryCategoryEnum.SEARCH,
-        {
-          action: SearchActionEnum.SEARCH,
-          query,
-          additional_settings: {
-            queryType,
-          },
-        },
-        credJson.AccessToken,
-      );
+      resp = await fdaservice.handleFdalabelBySetid(query);
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
-      resp = await fetchFdalabelByTradename(
-        query,
-        credJson.AccessToken,
-        topN,
-        0,
-        -1,
-      );
-      await addHistoryByUserId(
-        userId as number,
-        UserHistoryCategoryEnum.SEARCH,
-        {
-          action: SearchActionEnum.SEARCH,
-          query,
-          additional_settings: {
-            queryType,
-          },
-        },
-        credJson.AccessToken,
-      );
+      resp = await fdaservice.handleFdalabelByTradename(query);
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
-      resp = await fetchFdalabelByIndication(
-        query[0],
-        credJson.AccessToken,
-        topN,
-        pageN * nPerPage,
-        undefined,
+      resp = await fdaservice.handleFdalabelByIndication(
+        query,
+        pageN,
+        nPerPage,
         sortBy,
-      );
-      await addHistoryByUserId(
-        userId as number,
-        UserHistoryCategoryEnum.SEARCH,
-        {
-          action: SearchActionEnum.SEARCH,
-          query,
-          additional_settings: {
-            sortBy,
-            queryType,
-            pageN: `${pageN}`,
-            nPerPage: `${nPerPage}`,
-          },
-        },
-        credJson.AccessToken,
       );
     }
     setDisplayData(resp);
@@ -142,10 +92,6 @@ export default function Search() {
       }
       const resp = await search_query_by_type(query, queryType);
       console.log(resp);
-      if (resp.detail?.error! === "AUTH_EXPIRED") {
-        setIsAuthenticated(false);
-        router.push("/logout");
-      }
     }
     if (query[0] !== "") {
       pageCallback(pageN);
@@ -166,18 +112,14 @@ export default function Search() {
       router.push("/logout");
     }
     if (historyId !== null) {
-      const credJson = JSON.parse(credentials);
-      fetchHistoryById(parseInt(historyId), credJson.AccessToken).then(
-        async (history) => {
-          if (history.category === UserHistoryCategoryEnum.SEARCH) {
-            if (history.detail.action === SearchActionEnum.SEARCH) {
-              setQueryType(history.detail.additional_settings.queryType);
-              setQuery(history.detail.query);
-            }
+      fetchHistoryById(parseInt(historyId)).then(async (history) => {
+        if (history.category === UserHistoryCategoryEnum.SEARCH) {
+          if (history.detail.action === SearchActionEnum.SEARCH) {
+            setQueryType(history.detail.additional_settings.queryType);
+            setQuery(history.detail.query);
           }
-        },
-      );
-      // recoverHistory(parseInt(historyId as string));
+        }
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyId]);
@@ -222,7 +164,9 @@ export default function Search() {
                     value={topN}
                     className="border-2 border-indigo-500 rounded"
                     onChange={(e) => {
-                      setTopN(parseInt(e.currentTarget.value));
+                      const val = parseInt(e.currentTarget.value);
+                      fdaservice.topN = val;
+                      setTopN(val);
                     }}
                   />
                 </div>
@@ -254,15 +198,11 @@ export default function Search() {
                   setCompareTable({ table: [] });
                   if (credentials.length === 0) {
                     setIsAuthenticated(false);
-                    redirect("/logout");
+                    router.push("/logout");
                   }
                   const resp = await search_query_by_type(query, queryType);
                   console.log(resp);
                   setIsLoading(false);
-                  if (resp.detail?.error! === "AUTH_EXPIRED") {
-                    setIsAuthenticated(false);
-                    redirect("/logout");
-                  }
                 }}
                 className="text-white bg-indigo-500 border-0 py-2 px-6 
                 focus:outline-none hover:bg-indigo-600 rounded text-lg w-full"
@@ -275,32 +215,18 @@ export default function Search() {
                     e.preventDefault();
                     setIsLoading(true);
                     console.log(setIdsToCompare);
-                    let res, resp;
                     if (credentials.length === 0) {
                       setIsAuthenticated(false);
-                      redirect("/logout");
+                      router.push("/logout");
                     }
-                    const credJson = JSON.parse(credentials);
-                    resp = await fetchFdalabelCompareAdverseEffects(
-                      Array.from(setIdsToCompare),
-                      credJson.AccessToken,
+                    const resp = await fdaservice.handleAETablesComparison(
+                      setIdsToCompare,
+                      query,
+                      queryType,
                     );
                     setCompareTable(resp);
                     console.log(resp);
                     setIsLoading(false);
-                    await addHistoryByUserId(
-                      userId as number,
-                      UserHistoryCategoryEnum.SEARCH,
-                      {
-                        action: SearchActionEnum.COMPARE_AE,
-                        query: Array.from(setIdsToCompare) as string[],
-                        additional_settings: {
-                          query,
-                          queryType,
-                        },
-                      },
-                      credJson.AccessToken,
-                    );
                   }}
                   className={`text-black bg-green-600 
                   border-0
