@@ -31,7 +31,6 @@ import {
   TBooleanDummySetState,
   TStringDummySetState,
 } from "@/types";
-import { fetchApiRoot } from "@/http/internal";
 import { fetchUserInfoByName } from "@/http/backend";
 import { handleFetchApiRoot } from "@/services";
 

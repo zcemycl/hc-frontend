@@ -1,11 +1,8 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  fetchFdalabelByIndication,
-  fetchFdalabelByTradename,
-  fetchFdalabelBySetid,
   fetchFdalabelCompareAdverseEffects,
   addHistoryByUserId,
   fetchHistoryById,
@@ -26,9 +23,10 @@ import {
   UserHistoryCategoryEnum,
   IHistory,
 } from "@/types";
-import { SortByEnum, SearchQueryTypeEnum } from "./types";
+import { SortByEnum, SearchQueryTypeEnum } from "@/constants";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
+import { FdalabelFetchService } from "@/services";
 
 export default function Search() {
   const searchParams = useSearchParams();
@@ -54,6 +52,16 @@ export default function Search() {
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
+  const fdaservice = useMemo(
+    () =>
+      new FdalabelFetchService(
+        userId as number,
+        topN,
+        setIsAuthenticated,
+        router,
+      ),
+    [],
+  );
 
   async function search_query_by_type(
     query: string[],
@@ -61,52 +69,15 @@ export default function Search() {
   ) {
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
-      resp = await fetchFdalabelBySetid(query, topN, 0, -1);
-      await addHistoryByUserId(
-        userId as number,
-        UserHistoryCategoryEnum.SEARCH,
-        {
-          action: SearchActionEnum.SEARCH,
-          query,
-          additional_settings: {
-            queryType,
-          },
-        },
-      );
+      resp = await fdaservice.handleFdalabelBySetid(query);
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
-      resp = await fetchFdalabelByTradename(query, topN, 0, -1);
-      await addHistoryByUserId(
-        userId as number,
-        UserHistoryCategoryEnum.SEARCH,
-        {
-          action: SearchActionEnum.SEARCH,
-          query,
-          additional_settings: {
-            queryType,
-          },
-        },
-      );
+      resp = await fdaservice.handleFdalabelByTradename(query);
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
-      resp = await fetchFdalabelByIndication(
-        query[0],
-        topN,
-        pageN * nPerPage,
-        undefined,
+      resp = await fdaservice.handleFdalabelByIndication(
+        query,
+        pageN,
+        nPerPage,
         sortBy,
-      );
-      await addHistoryByUserId(
-        userId as number,
-        UserHistoryCategoryEnum.SEARCH,
-        {
-          action: SearchActionEnum.SEARCH,
-          query,
-          additional_settings: {
-            sortBy,
-            queryType,
-            pageN: `${pageN}`,
-            nPerPage: `${nPerPage}`,
-          },
-        },
       );
     }
     setDisplayData(resp);
@@ -125,10 +96,6 @@ export default function Search() {
       }
       const resp = await search_query_by_type(query, queryType);
       console.log(resp);
-      if (resp.detail?.error! === "AUTH_EXPIRED") {
-        setIsAuthenticated(false);
-        router.push("/logout");
-      }
     }
     if (query[0] !== "") {
       pageCallback(pageN);
@@ -201,7 +168,9 @@ export default function Search() {
                     value={topN}
                     className="border-2 border-indigo-500 rounded"
                     onChange={(e) => {
-                      setTopN(parseInt(e.currentTarget.value));
+                      const val = parseInt(e.currentTarget.value);
+                      fdaservice.topN = val;
+                      setTopN(val);
                     }}
                   />
                 </div>
@@ -238,10 +207,6 @@ export default function Search() {
                   const resp = await search_query_by_type(query, queryType);
                   console.log(resp);
                   setIsLoading(false);
-                  if (resp.detail?.error! === "AUTH_EXPIRED") {
-                    setIsAuthenticated(false);
-                    router.push("/logout");
-                  }
                 }}
                 className="text-white bg-indigo-500 border-0 py-2 px-6 
                 focus:outline-none hover:bg-indigo-600 rounded text-lg w-full"

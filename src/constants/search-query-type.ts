@@ -12,3 +12,9 @@ export const queryTypeMap = [
     queryDisplayName: "Indication",
   },
 ];
+
+export enum SearchQueryTypeEnum {
+  SETID = "setid",
+  TRADENAME = "tradename",
+  INDICATION = "indication",
+}

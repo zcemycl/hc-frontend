@@ -1,9 +1,8 @@
 "use client";
 
 import { DropDownBtn, DropDownList } from "@/components";
-import { queryTypeMap } from "@/constants";
+import { queryTypeMap, SearchQueryTypeEnum } from "@/constants";
 import { useState } from "react";
-import { SearchQueryTypeEnum } from "./types";
 
 const QueryTypeDropdown = ({
   queryType,

@@ -8,3 +8,8 @@ export const sortByMap = [
     sortDisplayName: "Initial US Approval Year",
   },
 ];
+
+export enum SortByEnum {
+  RELEVANCE = "relevance",
+  INITIAL_US_APPROVAL_YEAR = "approvalyear",
+}
