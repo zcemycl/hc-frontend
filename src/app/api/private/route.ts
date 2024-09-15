@@ -6,18 +6,22 @@ export async function GET(request: Request) {
   const identity = JSON.parse(request.headers.get("Identity") as string);
   const authorization = request.headers.get("Authorization") as string;
   const [_, token] = authorization.split(" ");
-  console.log(token);
   console.log(identity);
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-
+  // FROM ?id={id}
+  // const { searchParams } = new URL(request.url);
+  // const id = searchParams.get("id");
+  const username =
+    identity && "username" in identity ? identity.username : "fake";
+  const role = identity && "role" in identity ? identity.role : "User";
   cookie.set("token", token);
+  cookie.set("username", username);
+  cookie.set("role", role);
 
   return NextResponse.json(
     {
-      id,
-      username: identity && "username" in identity ? identity.username : "fake",
-      role: identity && "role" in identity ? identity.role : "User",
+      // id,
+      username: username,
+      role: role,
     },
     { status: 200 },
   );

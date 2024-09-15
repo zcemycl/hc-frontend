@@ -81,10 +81,7 @@ export default function Login() {
         const credentials = JSON.stringify(resp.AuthenticationResult);
         localStorage.setItem("credentials", credentials);
         setCredentials(credentials);
-        const _ = await fetchApiRoot(
-          1,
-          resp.AuthenticationResult?.AccessToken!,
-        );
+        const _ = await fetchApiRoot(resp.AuthenticationResult?.AccessToken!);
         const resp_user = await fetchUserInfoByName(
           cognito_user.ChallengeParameters.USERNAME,
         );

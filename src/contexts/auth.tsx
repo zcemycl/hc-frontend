@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
-      const resp = await fetchApiRoot(1, creds!.AccessToken);
+      const resp = await fetchApiRoot(creds!.AccessToken);
       console.log(resp);
       const res = await resp.json();
       console.log(res);

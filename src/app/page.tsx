@@ -89,7 +89,7 @@ export default function Home() {
     if (credentials.length === 0) return;
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const resp = await fetchApiRoot(1, credJson.AccessToken);
+      const resp = await fetchApiRoot(credJson.AccessToken);
       if (isAuthenticated && resp.status === 401) {
         setIsAuthenticated(false);
         router.push("/logout");
