@@ -29,37 +29,43 @@ export class FdalabelFetchService extends BaseServiceHandler {
   }
 
   async handleFdalabelBySetid(query: string[]) {
-    const resp = await fetchFdalabelBySetid(query, this.topN, 0, -1);
-    this.handle401(resp);
-    await addHistoryByUserId(
-      this.userId as number,
-      UserHistoryCategoryEnum.SEARCH,
-      {
-        action: SearchActionEnum.SEARCH,
-        query,
-        additional_settings: {
-          queryType: SearchQueryTypeEnum.SETID,
+    try {
+      const resp = await fetchFdalabelBySetid(query, this.topN, 0, -1);
+      await addHistoryByUserId(
+        this.userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.SEARCH,
+          query,
+          additional_settings: {
+            queryType: SearchQueryTypeEnum.SETID,
+          },
         },
-      },
-    );
-    return resp;
+      );
+      return resp;
+    } catch {
+      return [];
+    }
   }
 
   async handleFdalabelByTradename(query: string[]) {
-    const resp = await fetchFdalabelByTradename(query, this.topN, 0, -1);
-    this.handle401(resp);
-    await addHistoryByUserId(
-      this.userId as number,
-      UserHistoryCategoryEnum.SEARCH,
-      {
-        action: SearchActionEnum.SEARCH,
-        query,
-        additional_settings: {
-          queryType: SearchQueryTypeEnum.TRADENAME,
+    try {
+      const resp = await fetchFdalabelByTradename(query, this.topN, 0, -1);
+      await addHistoryByUserId(
+        this.userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.SEARCH,
+          query,
+          additional_settings: {
+            queryType: SearchQueryTypeEnum.TRADENAME,
+          },
         },
-      },
-    );
-    return resp;
+      );
+      return resp;
+    } catch {
+      return [];
+    }
   }
 
   async handleFdalabelByIndication(
@@ -68,29 +74,32 @@ export class FdalabelFetchService extends BaseServiceHandler {
     nPerPage: number,
     sortBy: SortByEnum,
   ) {
-    const resp = await fetchFdalabelByIndication(
-      query[0],
-      this.topN,
-      pageN * nPerPage,
-      undefined,
-      sortBy,
-    );
-    this.handle401(resp);
-    await addHistoryByUserId(
-      this.userId as number,
-      UserHistoryCategoryEnum.SEARCH,
-      {
-        action: SearchActionEnum.SEARCH,
-        query,
-        additional_settings: {
-          sortBy,
-          queryType: SearchQueryTypeEnum.INDICATION,
-          pageN: `${pageN}`,
-          nPerPage: `${nPerPage}`,
+    try {
+      const resp = await fetchFdalabelByIndication(
+        query[0],
+        this.topN,
+        pageN * nPerPage,
+        undefined,
+        sortBy,
+      );
+      await addHistoryByUserId(
+        this.userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.SEARCH,
+          query,
+          additional_settings: {
+            sortBy,
+            queryType: SearchQueryTypeEnum.INDICATION,
+            pageN: `${pageN}`,
+            nPerPage: `${nPerPage}`,
+          },
         },
-      },
-    );
-    return resp;
+      );
+      return resp;
+    } catch {
+      return [];
+    }
   }
 
   async handleAETablesComparison(
@@ -98,21 +107,24 @@ export class FdalabelFetchService extends BaseServiceHandler {
     query: string[],
     queryType: SearchQueryTypeEnum,
   ) {
-    const arrSetIdsToCompare = Array.from(setIdsToCompare);
-    const resp = await fetchFdalabelCompareAdverseEffects(arrSetIdsToCompare);
-    this.handle401(resp);
-    await addHistoryByUserId(
-      this.userId as number,
-      UserHistoryCategoryEnum.SEARCH,
-      {
-        action: SearchActionEnum.COMPARE_AE,
-        query: arrSetIdsToCompare as string[],
-        additional_settings: {
-          query,
-          queryType,
+    try {
+      const arrSetIdsToCompare = Array.from(setIdsToCompare);
+      const resp = await fetchFdalabelCompareAdverseEffects(arrSetIdsToCompare);
+      await addHistoryByUserId(
+        this.userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.COMPARE_AE,
+          query: arrSetIdsToCompare as string[],
+          additional_settings: {
+            query,
+            queryType,
+          },
         },
-      },
-    );
-    return resp;
+      );
+      return resp;
+    } catch {
+      return { table: [] };
+    }
   }
 }

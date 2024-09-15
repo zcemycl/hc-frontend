@@ -13,7 +13,9 @@ export function get_token_cookie() {
 
 export function validate_response_ok(response: any) {
   if (!response.ok) {
-    // throw new Error(`Failed to fetch data: ${response.statusText}`);
-    redirect("/logout");
+    if (response.status == 401) {
+      redirect("/logout");
+    }
+    throw new Error(`Failed to fetch data: ${response.statusText}`);
   }
 }
