@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useAuth, useLoader } from "@/contexts";
 import { SiteMode } from "./types";
 import { UserRoleEnum } from "@/types";
-import { fetchApiRoot } from "@/http/internal";
 import { fetchUserInfoByName } from "@/http/backend";
 import { Spinner } from "@/components";
+import { handleFetchApiRoot } from "@/services";
 
 export default function Login() {
   const router = useRouter();
@@ -85,7 +85,11 @@ export default function Login() {
         const credentials = JSON.stringify(resp.AuthenticationResult);
         localStorage.setItem("credentials", credentials);
         setCredentials(credentials);
-        const _ = await fetchApiRoot(resp.AuthenticationResult?.AccessToken!);
+        const _ = await handleFetchApiRoot(
+          resp.AuthenticationResult?.AccessToken!,
+          setIsAuthenticated,
+          router,
+        );
         const resp_user = await fetchUserInfoByName(
           cognito_user.ChallengeParameters.USERNAME,
         );
@@ -152,7 +156,6 @@ export default function Login() {
             data-testid="login-email-submit-btn"
             onClick={async (e) => {
               e.preventDefault();
-              console.log("submit email??");
               await submitCallback(email);
             }}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"

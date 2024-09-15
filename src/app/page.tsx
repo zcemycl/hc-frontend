@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { IRequestDemoForm, UserRoleEnum } from "@/types";
-import { fetchApiRoot, sendEmail } from "@/http/internal";
+import { sendEmail } from "@/http/internal";
 import { dummy_cred } from "@/utils";
 import {
   fetchFdalabelCount,
@@ -12,6 +12,7 @@ import {
   fetchUserInfoByName,
 } from "@/http/backend";
 import { Spinner } from "@/components";
+import { handleFetchApiRoot } from "@/services";
 
 interface IData {
   success?: boolean;
@@ -91,11 +92,11 @@ export default function Home() {
     if (credentials.length === 0) return;
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
-      const resp = await fetchApiRoot(credJson.AccessToken);
-      if (isAuthenticated && resp.status === 401) {
-        setIsAuthenticated(false);
-        router.push("/logout");
-      }
+      const resp = await handleFetchApiRoot(
+        credJson.AccessToken,
+        setIsAuthenticated,
+        router,
+      );
       const res = await resp.json();
       if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
         setRole(res.role);
