@@ -14,10 +14,10 @@
         A([Client]);
         C([Server]);
   end;
-  A <-->|1. request token| B;
-  A -->|2. request with token| C;
-  C <-->|3. authorize| B;
-  C -->|4. claim| D[AWS]
+  A <-->|1: request token| B;
+  A -->|2: request with token| C;
+  C <-->|3: authorize| B;
+  C -->|4: claim| D[AWS]
   A <-->|"request (No Auth)"| E;
   E -->|query| F[(Postgres)]
   ```
@@ -39,12 +39,12 @@
   end;
   F((User));
 
-  F -->|1. visit| C;
-  C <-->|2. login to request token| A;
-  C -->|3. request with token| D & E;
-  D & E <-->|4. authorize| A;
-  D -->|5. claim| G;
-  E -->|5. query| B;
+  F -->|1: visit| C;
+  C <-->|2: login to request token| A;
+  C -->|3: request with token| D & E;
+  D & E <-->|4: authorize| A;
+  D -->|5: claim| G;
+  E -->|5: query| B;
   ```
 
 ## Environment Variables
