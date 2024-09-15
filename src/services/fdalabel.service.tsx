@@ -92,4 +92,27 @@ export class FdalabelFetchService extends BaseServiceHandler {
     );
     return resp;
   }
+
+  async handleAETablesComparison(
+    setIdsToCompare: Set<string>,
+    query: string[],
+    queryType: SearchQueryTypeEnum,
+  ) {
+    const arrSetIdsToCompare = Array.from(setIdsToCompare);
+    const resp = await fetchFdalabelCompareAdverseEffects(arrSetIdsToCompare);
+    this.handle401(resp);
+    await addHistoryByUserId(
+      this.userId as number,
+      UserHistoryCategoryEnum.SEARCH,
+      {
+        action: SearchActionEnum.COMPARE_AE,
+        query: arrSetIdsToCompare as string[],
+        additional_settings: {
+          query,
+          queryType,
+        },
+      },
+    );
+    return resp;
+  }
 }

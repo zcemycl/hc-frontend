@@ -219,29 +219,18 @@ export default function Search() {
                     e.preventDefault();
                     setIsLoading(true);
                     console.log(setIdsToCompare);
-                    let res, resp;
                     if (credentials.length === 0) {
                       setIsAuthenticated(false);
                       router.push("/logout");
                     }
-                    resp = await fetchFdalabelCompareAdverseEffects(
-                      Array.from(setIdsToCompare),
+                    const resp = await fdaservice.handleAETablesComparison(
+                      setIdsToCompare,
+                      query,
+                      queryType,
                     );
                     setCompareTable(resp);
                     console.log(resp);
                     setIsLoading(false);
-                    await addHistoryByUserId(
-                      userId as number,
-                      UserHistoryCategoryEnum.SEARCH,
-                      {
-                        action: SearchActionEnum.COMPARE_AE,
-                        query: Array.from(setIdsToCompare) as string[],
-                        additional_settings: {
-                          query,
-                          queryType,
-                        },
-                      },
-                    );
                   }}
                   className={`text-black bg-green-600 
                   border-0
