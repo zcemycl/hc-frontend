@@ -1,4 +1,4 @@
-## Healthcare Platform RXSscope Website
+## Healthcare Platform RXScope Website
 
 ## CICD Design
 
@@ -56,7 +56,7 @@
 ## Special Variables
 
 - `NEXT_PUBLIC_ENV_NAME`
-  - Deployment: `dev`
+  - Deployment: `dev` (Disable jupyter lab presigned url)
   - Local: `local-dev` (Bypass protected route)
 - `NEXT_PUBLIC_COGNITO_OPENID_CONF_URI`
   - Deployment: `https://cognito-idp.{region}.amazonaws.com/{cognito_user_pool_id}/.well-known/openid-configuration`
@@ -79,21 +79,6 @@ npm run dev
 # run external testing scripts
 npx ts-node scripts/xxx.ts
 ```
-
-## Page Loading Design
-
-- Unprotected
-  ```mermaid
-  sequenceDiagram
-    participant Page
-  ```
-- Protected
-  ```mermaid
-  sequenceDiagram
-    participant Page
-    participant useAuth
-    participant ProtectedRoute
-  ```
 
 ### References
 
