@@ -54,7 +54,9 @@ export async function middleware(request: NextRequest) {
     });
   } catch (e) {
     console.log("error: ", e);
-    return NextResponse.redirect("/logout");
+    const url = request.nextUrl.clone();
+    url.pathname = "/logout";
+    return NextResponse.redirect(url);
     // return Response.json(
     //   {
     //     success: false,
