@@ -54,7 +54,7 @@ export async function middleware(request: NextRequest) {
     });
   } catch (e) {
     console.log("error: ", e);
-    redirect("/logout");
+    return NextResponse.redirect("/logout");
     // return Response.json(
     //   {
     //     success: false,
