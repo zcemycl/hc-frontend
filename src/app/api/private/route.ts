@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { EXP_TOKEN_TIMEOUT } from "@/constants";
 
 export async function GET(request: Request) {
   const cookie = cookies();
@@ -13,7 +14,9 @@ export async function GET(request: Request) {
   const username =
     identity && "username" in identity ? identity.username : "fake";
   const role = identity && "role" in identity ? identity.role : "User";
-  cookie.set("token", token);
+  cookie.set("token", token, {
+    maxAge: EXP_TOKEN_TIMEOUT,
+  });
   cookie.set("username", username);
   cookie.set("role", role);
 

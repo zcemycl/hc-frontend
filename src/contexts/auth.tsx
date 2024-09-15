@@ -139,7 +139,10 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
       const resp = await fetchApiRoot(creds!.AccessToken);
-      console.log(resp);
+      if (resp.status === 401) {
+        setIsAuthenticated(false);
+        router.push("/logout");
+      }
       const res = await resp.json();
       console.log(res);
       if ("success" in res && !res.success) {

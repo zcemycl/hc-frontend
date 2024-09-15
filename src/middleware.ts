@@ -54,16 +54,16 @@ export async function middleware(request: NextRequest) {
     });
   } catch (e) {
     console.log("error: ", e);
-    const url = request.nextUrl.clone();
-    url.pathname = "/logout";
-    return NextResponse.redirect(url);
-    // return Response.json(
-    //   {
-    //     success: false,
-    //     message: `authentication failed -- ${e}.`,
-    //   },
-    //   { status: 401 },
-    // );
+    // const url = request.nextUrl.clone();
+    // url.pathname = "/logout";
+    // return NextResponse.redirect(url);
+    return Response.json(
+      {
+        success: false,
+        message: `authentication failed -- ${e}.`,
+      },
+      { status: 401 },
+    );
   }
 
   // modify headers
