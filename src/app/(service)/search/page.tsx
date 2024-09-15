@@ -2,11 +2,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  fetchFdalabelCompareAdverseEffects,
-  addHistoryByUserId,
-  fetchHistoryById,
-} from "@/http/backend";
+import { fetchHistoryById } from "@/http/backend";
 import {
   PaginationBar,
   TypographyH2,

@@ -3,7 +3,7 @@ import {
   TBooleanDummySetState,
   UserHistoryCategoryEnum,
 } from "@/types";
-import { handle401, BaseServiceHandler } from "./utils";
+import { BaseServiceHandler } from "./utils";
 import {
   addHistoryByUserId,
   fetchFdalabelBySetid,
