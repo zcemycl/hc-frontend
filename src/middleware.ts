@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify, importSPKI } from "jose";
 import jwkToPem from "jwk-to-pem";
+import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
@@ -53,13 +54,14 @@ export async function middleware(request: NextRequest) {
     });
   } catch (e) {
     console.log("error: ", e);
-    return Response.json(
-      {
-        success: false,
-        message: `authentication failed -- ${e}.`,
-      },
-      { status: 401 },
-    );
+    redirect("/logout");
+    // return Response.json(
+    //   {
+    //     success: false,
+    //     message: `authentication failed -- ${e}.`,
+    //   },
+    //   { status: 401 },
+    // );
   }
 
   // modify headers
