@@ -30,6 +30,7 @@ export default function Home() {
     setCredentials,
     setRole,
     setUserId,
+    isLoadingAuth,
   } = useAuth();
   const [data, setData] = useState<IData>({});
   const [fdalabelCount, setFdalabelCount] = useState(0);
@@ -56,6 +57,7 @@ export default function Home() {
   }
 
   useEffect(() => {
+    if (isLoadingAuth) return;
     if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
       const dummy_username = "leo.leung.rxscope";
       dummy_cred(dummy_username).then((x) => {
@@ -83,7 +85,7 @@ export default function Home() {
     fetchFdalabelCount().then((x) => setFdalabelCount(x));
     fetchUserCount().then((x) => setUserCount(x));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoadingAuth]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
