@@ -40,7 +40,7 @@ export default function Profile() {
         100,
         true,
       );
-      setTableData(annotatedData);
+      if (annotatedData !== undefined) setTableData(annotatedData);
       const numberAnnotated = await fetchAnnotatedCountByUserId(
         id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,

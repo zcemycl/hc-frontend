@@ -22,6 +22,21 @@ interface IData {
   role?: UserRoleEnum;
 }
 
+const beautifulNumber = (value: number) => {
+  let newvalue, res;
+  if (value >= 100) {
+    newvalue = (value / 1000).toLocaleString("en-US", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+    res = `${newvalue}K`;
+  } else {
+    newvalue = value;
+    res = `${newvalue}`;
+  }
+  return res;
+};
+
 export default function Home() {
   const router = useRouter();
   const {
@@ -136,11 +151,7 @@ export default function Home() {
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
               <h2 className="title-font font-medium text-3xl text-white">
-                {(fdalabelCount / 1000).toLocaleString("en-US", {
-                  minimumFractionDigits: 1,
-                  maximumFractionDigits: 1,
-                })}
-                K
+                {beautifulNumber(fdalabelCount)}
               </h2>
               <p className="leading-relaxed">Drugs</p>
             </div>
