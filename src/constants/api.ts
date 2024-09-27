@@ -1,1 +1,1 @@
-export const EXP_TOKEN_TIMEOUT = 5 * 60;
+export const EXP_TOKEN_TIMEOUT = 60 * 60;
