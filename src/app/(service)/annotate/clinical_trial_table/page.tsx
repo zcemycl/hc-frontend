@@ -100,6 +100,15 @@ export default function Page() {
               <div className="flex justify-between items-center space-x-1">
                 <TypographyH2>Annotations</TypographyH2>
               </div>
+              <button
+                onClick={() => {
+                  router.back();
+                }}
+                className="bg-purple-700 rounded p-2 
+                text-white hover:bg-purple-800"
+              >
+                Back
+              </button>
             </div>
           </div>
           {tableData.map((data, idx) => {

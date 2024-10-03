@@ -71,7 +71,11 @@ export default function Page({ params }: Readonly<PageProps>) {
   // set table
   useEffect(() => {
     async function getData() {
-      const res = await fetchAETableByIds(params.table_id, params.id);
+      const res = await fetchAETableByIds(
+        params.table_id,
+        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        params.id,
+      );
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,

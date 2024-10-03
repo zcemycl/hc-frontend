@@ -38,9 +38,8 @@ export default function Annotate() {
               </button>
               <button
                 // disabled={true}
-                className={`text-white 
-                ${true ? "bg-indigo-500 hover:bg-indigo-600" : "bg-slate-500"}
-                border-0 py-3 px-6 rounded text-left
+                className={`text-white
+                bg-indigo-500 border-0 py-3 px-6 rounded text-left
                 focus:outline-none text-xl w-full`}
                 onClick={() => {
                   router.push("/annotate/clinical_trial_table");

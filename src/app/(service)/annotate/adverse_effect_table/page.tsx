@@ -46,7 +46,7 @@ export default function Page() {
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [nPerPage, _] = useState(10);
-  const [topN, setTopN] = useState(100);
+  const [topN, setTopN] = useState(0);
   const refUnannotatedGroup = useRef(null);
 
   useEffect(() => {

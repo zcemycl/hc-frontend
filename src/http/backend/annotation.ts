@@ -47,9 +47,13 @@ export async function fetchUnannotatedAETableByUserIdCount(
   return res;
 }
 
-export async function fetchAETableByIds(id: number, setid: string) {
+export async function fetchAETableByIds(
+  id: number,
+  tablename: AnnotationCategoryEnum,
+  setid: string,
+) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/adverse_effect_table/${id}`;
+  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/${tablename}/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
