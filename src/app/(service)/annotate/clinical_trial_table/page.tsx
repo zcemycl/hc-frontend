@@ -1,53 +1,39 @@
 "use client";
+
 import {
-  PaginationBar,
+  Spinner,
   TypographyH2,
   Table,
-  Spinner,
   ExpandableBtn,
+  PaginationBar,
 } from "@/components";
+import { AnnotationTypeEnum } from "@/constants";
+import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import {
   fetchUnannotatedAETableByUserId,
   fetchUnannotatedAETableByUserIdCount,
 } from "@/http/backend";
-import {
-  ProtectedRoute,
-  useAuth,
-  useAETableAnnotation,
-  useLoader,
-} from "@/contexts";
+import { GoIcon } from "@/icons";
 import {
   AnnotationCategoryEnum,
   IBaseTable,
   IUnAnnotatedAETable,
 } from "@/types";
-import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { GoIcon } from "@/icons";
-import { AnnotationTypeEnum } from "@/constants";
-import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
+import { useState, useEffect, useRef } from "react";
 
 export default function Page() {
   const router = useRouter();
   const { userId, credentials, isLoadingAuth } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
-  const {
-    aePageCache,
-    tabName,
-    setTabName,
-    saveAETableAnnotationPageCache,
-    saveTabPage,
-    pageN,
-    setPageN,
-    aiPageN,
-    ongoingPageN,
-    completePageN,
-  } = useAETableAnnotation();
+  const refUnannotatedGroup = useRef(null);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
+
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [nPerPage, _] = useState(10);
   const [topN, setTopN] = useState(100);
-  const refUnannotatedGroup = useRef(null);
+  const [pageN, setPageN] = useState(0);
+  const [tabName, setTabName] = useState(AnnotationTypeEnum.ONGOING);
 
   useEffect(() => {
     async function getData(
@@ -57,7 +43,7 @@ export default function Page() {
     ) {
       const res = await fetchUnannotatedAETableByUserId(
         userId,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
         pageN * nPerPage,
         nPerPage,
         tabName === AnnotationTypeEnum.COMPLETE,
@@ -65,7 +51,7 @@ export default function Page() {
       );
       const count = await fetchUnannotatedAETableByUserIdCount(
         userId,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
       );
@@ -76,11 +62,10 @@ export default function Page() {
       setTopN(count);
       setTableData(res);
     }
+
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     if (!userId) return;
-
-    console.log(credentials, isLoadingAuth, userId);
     setIsLoading(true);
     getData(userId as number, tabName, pageN);
     (refUnannotatedGroup.current as any).scrollTo({
@@ -91,8 +76,6 @@ export default function Page() {
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId]);
-
-  // useEffect(() )
 
   return (
     <ProtectedRoute>
@@ -111,53 +94,12 @@ export default function Page() {
             <Spinner />
             <span className="sr-only">Loading...</span>
           </div>
+
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-1 pt-5 pb-5 space-y-2">
             <div className="flex justify-between items-center">
               <div className="flex justify-between items-center space-x-1">
                 <TypographyH2>Annotations</TypographyH2>
-                <AnnotationTypeDropdown
-                  queryType={tabName}
-                  setQueryType={(q) => {
-                    setTabName(q);
-                    let tmpCache = aePageCache;
-                    let pageN_ = pageN;
-                    if (q === AnnotationTypeEnum.AI && "aiPageN" in tmpCache) {
-                      // setPageN(tmpCache["aiPageN"] as number);
-                      setPageN(aiPageN);
-                      // pageN_ = tmpCache["aiPageN"] as number;
-                    }
-                    if (
-                      q === AnnotationTypeEnum.COMPLETE &&
-                      "completePageN" in tmpCache
-                    ) {
-                      // setPageN(tmpCache["completePageN"] as number);
-                      setPageN(completePageN);
-                      // pageN_ = tmpCache["completePageN"] as number;
-                    }
-                    if (
-                      q === AnnotationTypeEnum.ONGOING &&
-                      "ongoingPageN" in tmpCache
-                    ) {
-                      // setPageN(tmpCache["ongoingPageN"] as number);
-                      setPageN(ongoingPageN);
-                      // pageN_ = tmpCache["ongoingPageN"] as number;
-                    }
-                    saveAETableAnnotationPageCache(q);
-                  }}
-                  additionalResetCallback={() => {}}
-                />
               </div>
-
-              <button
-                onClick={() => {
-                  saveAETableAnnotationPageCache();
-                  router.back();
-                }}
-                className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-              >
-                Back
-              </button>
             </div>
           </div>
           {tableData.map((data, idx) => {
@@ -175,7 +117,7 @@ export default function Page() {
                     <Table
                       {...{
                         content: {
-                          table: data.adverse_effect_table!.content.table.slice(
+                          table: data.clinical_trial_table!.content.table.slice(
                             0,
                             6,
                           ),
@@ -191,8 +133,7 @@ export default function Page() {
                 onClick={(e) => {
                   e.preventDefault();
                   setIsLoading(true);
-                  saveAETableAnnotationPageCache();
-                  let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
+                  let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/clinical_trial_table/${data.idx}`;
                   if (tabName === AnnotationTypeEnum.AI) {
                     redirectUrl = `${redirectUrl}/ai`;
                   }
@@ -219,9 +160,7 @@ export default function Page() {
               pageN={pageN}
               nPerPage={nPerPage}
               setPageN={(i: number) => {
-                // setPageN(i);
-                saveAETableAnnotationPageCache(tabName, i);
-                saveTabPage(i);
+                setPageN(i);
               }}
             />
           </div>

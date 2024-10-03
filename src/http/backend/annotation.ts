@@ -5,13 +5,14 @@ import { get_token_cookie, validate_response_ok } from "../utils-server";
 
 export async function fetchUnannotatedAETableByUserId(
   id: number,
+  tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
   offset: number = 10,
   limit: number = 10,
   reverse: boolean = false,
   complete: boolean = false,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables`;
+  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables/${tablename}`;
   const API_URI_PAGINATION = `${API_URI}?offset=${offset}&limit=${limit}&reverse=${reverse}&complete=${complete}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
@@ -27,11 +28,12 @@ export async function fetchUnannotatedAETableByUserId(
 
 export async function fetchUnannotatedAETableByUserIdCount(
   id: number,
+  tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
   reverse: boolean = false,
   complete: boolean = false,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables_count`;
+  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables_count/${tablename}`;
   const API_URI_PAGINATION = `${API_URI}?reverse=${reverse}&complete=${complete}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
