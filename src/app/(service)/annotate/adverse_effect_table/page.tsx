@@ -6,7 +6,10 @@ import {
   Spinner,
   ExpandableBtn,
 } from "@/components";
-import { fetchUnannotatedAETableByUserId } from "@/http/backend";
+import {
+  fetchUnannotatedAETableByUserId,
+  fetchUnannotatedAETableByUserIdCount,
+} from "@/http/backend";
 import {
   ProtectedRoute,
   useAuth,
@@ -39,6 +42,7 @@ export default function Page() {
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [nPerPage, _] = useState(10);
+  const [topN, setTopN] = useState(100);
   const refUnannotatedGroup = useRef(null);
 
   useEffect(() => {
@@ -55,10 +59,17 @@ export default function Page() {
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
       );
+      const count = await fetchUnannotatedAETableByUserIdCount(
+        userId,
+        tabName === AnnotationTypeEnum.COMPLETE,
+        tabName === AnnotationTypeEnum.AI,
+      );
       if ("detail" in res) {
         router.push("/logout");
         return;
       }
+      console.log(count);
+      setTopN(count);
       setTableData(res);
     }
     if (isLoadingAuth) return;
@@ -200,7 +211,7 @@ export default function Page() {
           })}
           <div className="flex justify-center space-x-1 flex-wrap">
             <PaginationBar
-              topN={tableData.length * 100}
+              topN={topN}
               pageN={pageN}
               nPerPage={nPerPage}
               setPageN={(i: number) => {

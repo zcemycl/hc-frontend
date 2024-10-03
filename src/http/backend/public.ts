@@ -8,7 +8,6 @@ export async function fetchFdalabelCount() {
     headers: {
       "Content-Type": "application/json",
     },
-    cache: "force-cache",
   });
   const res = await response.json();
   return res;

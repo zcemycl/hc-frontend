@@ -5,6 +5,7 @@ import {
   fetchUserAll,
   createUserPostgres,
   deleteUserById,
+  fetchUserCount,
 } from "@/http/backend";
 import { IUser, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
@@ -48,7 +49,12 @@ export default function Admin() {
   const [displayData, setDisplayData] = useState<IUser[]>([]);
   const [delUserIndex, setDelUserIndex] = useState<number>(0);
   const [pageN, setPageN] = useState(0);
+  const [topN, setTopN] = useState(0);
   const [nPerPage, _] = useState(10);
+
+  useEffect(() => {
+    fetchUserCount().then((x) => setTopN(x));
+  }, []);
 
   useEffect(() => {
     if (isLoadingAuth) return;
@@ -294,7 +300,7 @@ export default function Admin() {
               })}
               <div className="flex justify-center space-x-1">
                 <PaginationBar
-                  topN={displayData.length}
+                  topN={topN}
                   pageN={pageN}
                   nPerPage={nPerPage}
                   setPageN={(i: number) => {
