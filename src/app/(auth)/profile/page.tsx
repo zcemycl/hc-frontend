@@ -1,12 +1,13 @@
 "use client";
-import { TypographyH2 } from "@/components";
+import { TypographyH2, PaginationBar } from "@/components";
 import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
 import {
   fetchHistoryByUserId,
+  fetchHistoryByUserIdCount,
   fetchUserInfoById,
   fetchUnannotatedAETableByUserId,
-  fetchAnnotatedCountByUserId,
+  fetchUnannotatedAETableByUserIdCount,
 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import {
@@ -27,23 +28,53 @@ export default function Profile() {
   const [history, setHistory] = useState<IHistory[]>([]);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [countAnnotated, setCountAnnotated] = useState(0);
+  const [countHistory, setCountHistory] = useState(0);
+  const [nPerPage, _] = useState(10);
+  const [pageNHistory, setPageNHistory] = useState(0);
+  const [pageNAnnotate, setPageNAnnotate] = useState(0);
+
+  async function setHistoryData(id: number) {
+    const historyInfo = await fetchHistoryByUserId(
+      id,
+      nPerPage * pageNHistory,
+      nPerPage,
+    );
+    setHistory(historyInfo);
+  }
+
+  async function setAnnotationRecord(id: number) {
+    const annotatedData = await fetchUnannotatedAETableByUserId(
+      id,
+      nPerPage * pageNAnnotate,
+      nPerPage,
+      true,
+    );
+    if (annotatedData !== undefined) setTableData(annotatedData);
+  }
+
+  useEffect(() => {
+    if (isLoadingAuth) return;
+    if (!userId) return;
+    setHistoryData(userId as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingAuth, userId, pageNHistory]);
+
+  useEffect(() => {
+    if (isLoadingAuth) return;
+    if (!userId) return;
+    setAnnotationRecord(userId as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingAuth, userId, pageNAnnotate]);
 
   useEffect(() => {
     async function getProfile(id: number) {
       const userInfo = await fetchUserInfoById(id);
       setProfileInfo({ ...profileInfo, ...userInfo });
-      const historyInfo = await fetchHistoryByUserId(id);
-      setHistory(historyInfo);
-      const annotatedData = await fetchUnannotatedAETableByUserId(
+      const historyCount = await fetchHistoryByUserIdCount(id);
+      setCountHistory(historyCount);
+      const numberAnnotated = await fetchUnannotatedAETableByUserIdCount(
         id,
-        0,
-        100,
         true,
-      );
-      if (annotatedData !== undefined) setTableData(annotatedData);
-      const numberAnnotated = await fetchAnnotatedCountByUserId(
-        id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
       );
       setCountAnnotated(numberAnnotated);
     }
@@ -80,7 +111,7 @@ export default function Profile() {
               <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
 
               <hr className="mb-2" />
-              <TypographyH2>Search Activities</TypographyH2>
+              <TypographyH2>Search Activities X{countHistory}</TypographyH2>
               {!!history && history.length === 0 ? (
                 <p className="leading-relaxed mb-1">No Record ...</p>
               ) : (
@@ -121,6 +152,16 @@ export default function Profile() {
                     );
                   })
               )}
+              <div className="flex justify-center space-x-1 flex-wrap">
+                <PaginationBar
+                  topN={countHistory}
+                  pageN={pageNHistory}
+                  nPerPage={nPerPage}
+                  setPageN={(i: number) => {
+                    setPageNHistory(i);
+                  }}
+                />
+              </div>
               <hr className="mb-2" />
               <TypographyH2>Annotation X{countAnnotated}</TypographyH2>
               {tableData.length === 0 ? (
@@ -155,6 +196,16 @@ export default function Profile() {
                   );
                 })
               )}
+              <div className="flex justify-center space-x-1 flex-wrap">
+                <PaginationBar
+                  topN={countAnnotated}
+                  pageN={pageNAnnotate}
+                  nPerPage={nPerPage}
+                  setPageN={(i: number) => {
+                    setPageNAnnotate(i);
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
