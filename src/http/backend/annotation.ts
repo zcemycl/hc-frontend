@@ -67,9 +67,12 @@ export async function fetchAETableByIds(
   return res;
 }
 
-export async function fetchAETableBySetid(setid: string) {
+export async function fetchAETableBySetid(
+  setid: string,
+  tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/adverse_effect_table`;
+  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/${tablename}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
