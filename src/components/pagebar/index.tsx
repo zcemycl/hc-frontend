@@ -7,6 +7,33 @@ interface PaginationProps {
   setPageN: (i: number) => void;
 }
 
+const availablePageNs = (pageN: number, maxNPages: number) => {
+  const availableNs = [];
+  if (maxNPages < 10) {
+    return Array.from(Array(maxNPages).keys());
+  }
+  if (pageN >= 5 && pageN <= maxNPages - 4) {
+    availableNs.push(0);
+    for (let i = pageN - 3; i < pageN + 5; i++) {
+      availableNs.push(i);
+    }
+    availableNs.push(maxNPages - 1);
+  } else if (pageN < 5) {
+    for (let i = 0; i < 8; i++) {
+      availableNs.push(i);
+    }
+    availableNs.push(maxNPages - 2);
+    availableNs.push(maxNPages - 1);
+  } else if (pageN > maxNPages - 4) {
+    availableNs.push(0);
+    availableNs.push(1);
+    for (let i = maxNPages - 8; i < maxNPages; i++) {
+      availableNs.push(i);
+    }
+  }
+  return availableNs;
+};
+
 const PaginationBar: FC<PaginationProps> = ({
   topN,
   pageN,
@@ -14,7 +41,9 @@ const PaginationBar: FC<PaginationProps> = ({
   setPageN,
 }) => {
   const buttons = [];
-  for (let i = 0; i < Math.ceil(topN / nPerPage); i++) {
+  const maxNPages = Math.ceil(topN / nPerPage);
+  const availableNs = availablePageNs(pageN, maxNPages);
+  for (const i of availableNs) {
     buttons.push(
       <button
         key={i}

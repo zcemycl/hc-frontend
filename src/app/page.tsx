@@ -24,7 +24,7 @@ interface IData {
 
 const beautifulNumber = (value: number) => {
   let newvalue, res;
-  if (value >= 100) {
+  if (value >= 1000) {
     newvalue = (value / 1000).toLocaleString("en-US", {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,

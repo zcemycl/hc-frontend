@@ -25,6 +25,26 @@ export async function fetchUnannotatedAETableByUserId(
   return res;
 }
 
+export async function fetchUnannotatedAETableByUserIdCount(
+  id: number,
+  reverse: boolean = false,
+  complete: boolean = false,
+) {
+  const token = get_token_cookie();
+  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables_count`;
+  const API_URI_PAGINATION = `${API_URI}?reverse=${reverse}&complete=${complete}`;
+  const response = await fetch(API_URI_PAGINATION, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  validate_response_ok(response);
+  const res = await response.json();
+  return res;
+}
+
 export async function fetchAETableByIds(id: number, setid: string) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/adverse_effect_table/${id}`;
