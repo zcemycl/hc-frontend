@@ -114,7 +114,7 @@ export default function Page() {
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-1 pt-5 pb-5 space-y-2">
             <div className="flex justify-between items-center">
               <div className="flex justify-between items-center space-x-1">
-                <TypographyH2>Annotations</TypographyH2>
+                <TypographyH2>AE Table Annotations</TypographyH2>
                 <AnnotationTypeDropdown
                   queryType={tabName}
                   setQueryType={(q) => {
