@@ -56,6 +56,7 @@ export interface IFdaLabel {
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
   ae_tables_count?: number;
+  ct_tables_count?: number;
 }
 
 export interface IFdaLabelHistory {
@@ -70,6 +71,7 @@ export interface ICompareAETable extends IBaseTable {}
 export interface IUnAnnotatedAETable {
   idx: number;
   fdalabel: IFdaLabel;
-  adverse_effect_table: IAdverseEffectTable;
+  adverse_effect_table?: IAdverseEffectTable;
+  clinical_trial_table?: IClinicalTrialTable;
   created_date?: string;
 }

@@ -45,6 +45,7 @@ export default function Profile() {
   async function setAnnotationRecord(id: number) {
     const annotatedData = await fetchUnannotatedAETableByUserId(
       id,
+      AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
       nPerPage * pageNAnnotate,
       nPerPage,
       true,
@@ -74,6 +75,7 @@ export default function Profile() {
       setCountHistory(historyCount);
       const numberAnnotated = await fetchUnannotatedAETableByUserIdCount(
         id,
+        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         true,
       );
       setCountAnnotated(numberAnnotated);

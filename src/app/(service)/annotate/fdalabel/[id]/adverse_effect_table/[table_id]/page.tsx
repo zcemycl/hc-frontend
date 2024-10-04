@@ -71,7 +71,11 @@ export default function Page({ params }: Readonly<PageProps>) {
   // set table
   useEffect(() => {
     async function getData() {
-      const res = await fetchAETableByIds(params.table_id, params.id);
+      const res = await fetchAETableByIds(
+        params.table_id,
+        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        params.id,
+      );
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,
@@ -150,7 +154,7 @@ export default function Page({ params }: Readonly<PageProps>) {
           <div className="sm:w-2/3 flex flex-col mt-8 w-screen p-10 space-y-2">
             <div className="flex justify-between">
               <h2 className="text-white text-lg mb-1 font-medium title-font">
-                Annotation
+                AE Table Annotation
               </h2>
               <button
                 onClick={() => router.back()}
