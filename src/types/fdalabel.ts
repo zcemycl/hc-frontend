@@ -56,6 +56,7 @@ export interface IFdaLabel {
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
   ae_tables_count?: number;
+  ct_tables_count?: number;
 }
 
 export interface IFdaLabelHistory {

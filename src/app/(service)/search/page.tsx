@@ -289,6 +289,7 @@ export default function Search() {
                       distance: each.distance!,
                       indication: each.indication!,
                       ae_tables_count: each.ae_tables_count!,
+                      ct_tables_count: each.ct_tables_count!,
                       selectMultipleCallback: (e) => {
                         const ischecked = (e.target as HTMLInputElement)
                           .checked;

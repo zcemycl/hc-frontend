@@ -10,6 +10,7 @@ function FdaLabelShort({
   distance,
   indication,
   ae_tables_count,
+  ct_tables_count,
   selectMultipleCallback,
   clickExpandCallback,
 }: {
@@ -20,6 +21,8 @@ function FdaLabelShort({
   distance: number;
   indication: string;
   ae_tables_count: number;
+  ct_tables_count: number;
+
   selectMultipleCallback: (e: any) => void;
   clickExpandCallback: () => void;
 }) {
@@ -39,6 +42,8 @@ function FdaLabelShort({
           <FontAwesomeIcon size="sm" icon={faTable} />
           <span>AE</span>
           <span>{ae_tables_count}</span>
+          <span>CT</span>
+          <span>{ct_tables_count}</span>
         </span>
       </div>
       <TypographyH2>{setid}</TypographyH2>
