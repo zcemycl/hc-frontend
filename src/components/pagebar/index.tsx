@@ -9,6 +9,9 @@ interface PaginationProps {
 
 const availablePageNs = (pageN: number, maxNPages: number) => {
   const availableNs = [];
+  if (maxNPages === 1) {
+    return [];
+  }
   if (maxNPages < 10) {
     return Array.from(Array(maxNPages).keys());
   }

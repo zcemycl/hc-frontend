@@ -222,14 +222,28 @@ export default function Admin() {
             <div className="flex justify-between">
               <TypographyH2>Admin Panel</TypographyH2>
               <button
-                className="w-[1rem] h-1/2 p-1 leading-[0px] m-0
+                className="p-2 aspect-square
             bg-green-300 rounded-full text-black hover:bg-green-500"
                 onClick={async () => {
                   console.log("adding user");
                   setIsOpenAddUserModal(true);
                 }}
               >
-                +
+                <svg
+                  className="w-4 h-4"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 12h14m-7 7V5"
+                  />
+                </svg>
               </button>
             </div>
           </div>
@@ -268,7 +282,7 @@ export default function Admin() {
 
                       {!EXCLUDE_EMAIL_DELETE.includes(each.email) && (
                         <button
-                          className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
+                          className="p-2 aspect-square
                         bg-red-600 rounded-full text-white hover:bg-red-700"
                           onClick={async () => {
                             console.log("deleting user");
@@ -276,7 +290,21 @@ export default function Admin() {
                             setDelUserIndex(idx);
                           }}
                         >
-                          x
+                          <svg
+                            className="w-2 h-2"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 14 14"
+                          >
+                            <path
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                            />
+                          </svg>
                         </button>
                       )}
                     </div>
