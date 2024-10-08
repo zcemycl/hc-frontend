@@ -95,7 +95,7 @@ const DropDownList: FC<{
     <div
       className={`items-center 
                 z-10 justify-between w-auto 
-                transition-transform 
+                transition-transform origin-top
                 ${isOpen ? "scale-y-100" : "scale-y-0"}`}
       id="navbar-dropdown"
     >
