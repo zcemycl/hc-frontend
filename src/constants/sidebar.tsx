@@ -8,10 +8,10 @@ export const sidebar_constant = [
     testid: "profile-link",
   },
   {
-    name: "Feedback",
-    path: "/feedback",
+    name: "Forum",
+    path: "/forum",
     icon: <FeedbackIcon />,
-    testid: "feedback-link",
+    testid: "forum-link",
   },
   {
     name: "Logout",
