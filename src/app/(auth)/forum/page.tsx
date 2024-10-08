@@ -39,7 +39,7 @@ export default function Forum() {
                   align-middle items-center 
                   px-6 focus:outline-none hover:bg-indigo-600
                   rounded text-2xl w-full"
-              onClick={() => router.push("/feedback")}
+              onClick={() => router.push("/forum/feedback")}
             >
               <p>Feedback</p>
             </button>
@@ -54,7 +54,7 @@ export default function Forum() {
                   align-middle items-center 
                   px-6 focus:outline-none hover:bg-indigo-600
                   rounded text-2xl w-full"
-              onClick={() => router.push("/quality")}
+              onClick={() => router.push("/forum/quality")}
             >
               <p>Quality Assurance</p>
             </button>
