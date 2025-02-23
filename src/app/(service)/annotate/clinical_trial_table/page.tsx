@@ -21,6 +21,7 @@ import {
 } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { transformData } from "@/utils";
 
 export default function Page() {
   const router = useRouter();
@@ -34,6 +35,10 @@ export default function Page() {
   const [topN, setTopN] = useState(100);
   const [pageN, setPageN] = useState(0);
   const [tabName, setTabName] = useState(AnnotationTypeEnum.ONGOING);
+
+  useEffect(() => {
+    setTimeout(() => {}, 500);
+  }, [hoverIdx]);
 
   useEffect(() => {
     async function getData(
@@ -85,7 +90,10 @@ export default function Page() {
         ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
         ref={refUnannotatedGroup}
       >
-        <div className="container px-2 py-24 mx-auto grid justify-items-center">
+        <div
+          className="px-2 py-24 flex flex-col justify-center 
+          items-center align-center w-full"
+        >
           <div
             role="status"
             className={`absolute left-1/2 top-1/2 transition-opacity duration-700
@@ -95,7 +103,7 @@ export default function Page() {
             <span className="sr-only">Loading...</span>
           </div>
 
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-1 pt-5 pb-5 space-y-2">
+          <div className="sm:w-1/2 flex flex-col mt-8 w-full px-1 pt-5 pb-5 space-y-2">
             <div className="flex justify-between items-center">
               <div className="flex justify-between items-center space-x-1">
                 <TypographyH2>CT Table Annotations</TypographyH2>
@@ -111,58 +119,72 @@ export default function Page() {
               </button>
             </div>
           </div>
-          {tableData.map((data, idx) => {
-            return (
-              <ExpandableBtn
-                key={`${data.fdalabel.setid}-${data.idx}`}
-                refkey={`${data.fdalabel.setid}-${data.idx}`}
-                childrenLong={
-                  <>
-                    {data.fdalabel.indication
-                      ?.split(" ")
-                      .splice(0, 20)
-                      .join(" ")}{" "}
-                    ...
-                    <Table
-                      {...{
-                        content: {
-                          table: data.clinical_trial_table!.content.table.slice(
-                            0,
-                            6,
-                          ),
-                        } as IBaseTable,
-                      }}
-                    />
-                  </>
-                }
-                hoverCondition={hoverIdx == idx}
-                onMouseOver={(e) => {
-                  setHoverIdx(idx);
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsLoading(true);
-                  let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/clinical_trial_table/${data.idx}`;
-                  if (tabName === AnnotationTypeEnum.AI) {
-                    redirectUrl = `${redirectUrl}/ai`;
-                  }
-                  router.push(redirectUrl);
-                }}
-              >
-                <>
-                  <p className="leading-relaxed w-full">
-                    {data.fdalabel.tradename} [Table {data.idx}]
-                  </p>
-                  <div
-                    className={`transition duration-300
-                  ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
-                  >
-                    <GoIcon />
-                  </div>
-                </>
-              </ExpandableBtn>
-            );
-          })}
+          <div className="sm:w-1/2 flex flex-col w-full px-1 pt-5 pb-5 space-y-2">
+            {Object.keys(transformData(tableData)).map((keyName, kid) => {
+              return (
+                <div
+                  key={keyName}
+                  className="w-full overflow-x-hidden
+                flex flex-col justify-center"
+                >
+                  <h1 key={keyName}>{keyName}</h1>
+                  {transformData(tableData)[keyName].map((data, idx) => {
+                    return (
+                      <ExpandableBtn
+                        key={`${data.fdalabel.setid}-${data.idx}`}
+                        refkey={`${data.fdalabel.setid}-${data.idx}`}
+                        childrenLong={
+                          <>
+                            {data.fdalabel.indication
+                              ?.split(" ")
+                              .splice(0, 20)
+                              .join(" ")}{" "}
+                            ...
+                            <Table
+                              {...{
+                                content: {
+                                  table:
+                                    data.clinical_trial_table!.content.table.slice(
+                                      0,
+                                      6,
+                                    ),
+                                } as IBaseTable,
+                              }}
+                            />
+                          </>
+                        }
+                        hoverCondition={hoverIdx == data.relative_idx}
+                        onMouseOver={(e) => {
+                          setHoverIdx(data.relative_idx as number);
+                        }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIsLoading(true);
+                          let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/clinical_trial_table/${data.idx}`;
+                          if (tabName === AnnotationTypeEnum.AI) {
+                            redirectUrl = `${redirectUrl}/ai`;
+                          }
+                          router.push(redirectUrl);
+                        }}
+                      >
+                        <>
+                          <p className="leading-relaxed w-full">
+                            {data.fdalabel.tradename} [Table {data.idx}]
+                          </p>
+                          <div
+                            className={`transition duration-300
+                  ${hoverIdx == data.relative_idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                          >
+                            <GoIcon />
+                          </div>
+                        </>
+                      </ExpandableBtn>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
           <div className="flex justify-center space-x-1 flex-wrap">
             <PaginationBar
               topN={topN}

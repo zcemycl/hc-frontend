@@ -43,7 +43,7 @@ export default function Page({ params }: PageProps) {
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
-        overflow-y-scroll overflow-x-scroll ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        overflow-y-scroll overflow-x-hidden ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           {(isLoading || isLoadingAuth) && (

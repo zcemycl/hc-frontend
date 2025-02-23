@@ -1,3 +1,5 @@
+import { ITherapeuticAreaGroupTables, IUnAnnotatedAETable } from "@/types";
+
 export function convert_datetime_to_date(datetime: string) {
   return new Date(datetime).toLocaleDateString();
 }
@@ -42,3 +44,22 @@ export function export_aws_credentials(data: any, credentials_: any) {
 
   return credentials;
 }
+
+export const transformData = (list: IUnAnnotatedAETable[]) => {
+  return list.reduce(
+    (
+      acc: ITherapeuticAreaGroupTables,
+      item: IUnAnnotatedAETable,
+      curIdx: number,
+    ) => {
+      const key = String(item.therapeutic_area!.name) as string;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      item.relative_idx = curIdx;
+      acc[key].push(item);
+      return acc;
+    },
+    {},
+  );
+};

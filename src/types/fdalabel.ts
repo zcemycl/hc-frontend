@@ -68,10 +68,21 @@ export interface IFdaLabelHistory {
 
 export interface ICompareAETable extends IBaseTable {}
 
+export interface ITherapeuticArea {
+  name: string;
+  path: string;
+}
+
 export interface IUnAnnotatedAETable {
   idx: number;
   fdalabel: IFdaLabel;
   adverse_effect_table?: IAdverseEffectTable;
   clinical_trial_table?: IClinicalTrialTable;
+  therapeutic_area?: ITherapeuticArea;
   created_date?: string;
+  relative_idx?: number;
+}
+
+export interface ITherapeuticAreaGroupTables {
+  [key: string]: IUnAnnotatedAETable[];
 }

@@ -11,8 +11,8 @@ const ExpandableBtn: FC<{
 }> = ({ children, childrenLong, hoverCondition, refkey, ...props }) => {
   return (
     <div
-      className="sm:w-1/2 flex flex-col
-            w-screen space-y-2 mb-2 h-auto overflow-hidden"
+      className="flex flex-col w-full 
+        space-y-2 mb-2 h-auto overflow-hidden"
       key={refkey}
     >
       <button

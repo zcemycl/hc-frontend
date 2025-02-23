@@ -28,7 +28,7 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
           crossOrigin="anonymous"
         ></link>
       </head>
-      <body>
+      <body className="overflow-hidden">
         <ThemeProvider attribute="class">
           <LoaderProvider>
             <OpenBarProvider>
