@@ -80,6 +80,7 @@ export interface IUnAnnotatedAETable {
   clinical_trial_table?: IClinicalTrialTable;
   therapeutic_area?: ITherapeuticArea;
   created_date?: string;
+  modified_date?: string;
   relative_idx?: number;
 }
 

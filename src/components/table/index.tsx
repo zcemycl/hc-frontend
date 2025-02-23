@@ -35,10 +35,17 @@ const setup_selectable_cell_map = (n_rows: number, n_cols: number) => {
   );
 };
 
+const setup_selectable_none_map = (n_rows: number, n_cols: number) => {
+  return Array.from({ length: n_rows }, () =>
+    Array.from({ length: n_cols }, () => false),
+  );
+};
+
 const switch_map = (
   row_map: boolean[][],
   cell_map: boolean[][],
   col_map: boolean[][],
+  none_map: boolean[][],
   type: string,
 ) => {
   switch (type) {
@@ -48,6 +55,8 @@ const switch_map = (
       return row_map;
     case "col":
       return col_map;
+    case "none":
+      return none_map;
     default:
       return cell_map;
   }
@@ -186,5 +195,6 @@ export {
   setup_selectable_row_map,
   setup_selectable_col_map,
   setup_selectable_cell_map,
+  setup_selectable_none_map,
   switch_map,
 };

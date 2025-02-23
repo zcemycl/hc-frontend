@@ -18,6 +18,7 @@ import {
   DropDownList,
   setup_selectable_row_map,
   setup_selectable_col_map,
+  setup_selectable_none_map,
   switch_map,
   Spinner,
 } from "@/components";
@@ -41,6 +42,7 @@ export default function Page({ params }: Readonly<PageProps>) {
   const row_map = setup_selectable_row_map(n_rows, n_cols);
   const col_map = setup_selectable_col_map(n_rows, n_cols);
   const cell_map = setup_selectable_cell_map(n_rows, n_cols);
+  const none_map = setup_selectable_none_map(n_rows, n_cols);
   const resetCellSelected = Array.from({ length: n_rows }, () =>
     Array.from({ length: n_cols }, () => false),
   );
@@ -257,6 +259,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                         row_map,
                         cell_map,
                         col_map,
+                        none_map,
                         questions[questionIdx].mapMode,
                       ),
                     },

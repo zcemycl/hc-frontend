@@ -57,4 +57,27 @@ export const questions = [
       },
     },
   },
+  {
+    displayName: "Choose table type.",
+    mapMode: "none",
+    identifier: "tableType",
+    additionalRequire: {
+      dropdown: {
+        displayName: "Table Type",
+        identifier: "tabletype",
+        type: "dropdown",
+        defaultOption: "ae",
+        options: [
+          {
+            displayName: "Adverse Effect Table",
+            type: "ae",
+          },
+          {
+            displayName: "Laboratory Test Table",
+            type: "lt",
+          },
+        ],
+      },
+    },
+  },
 ];
