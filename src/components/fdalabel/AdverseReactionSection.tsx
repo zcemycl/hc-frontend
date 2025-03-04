@@ -20,7 +20,10 @@ function AdverseReactionSection({
     <Fragment key={id}>
       {(adverse_effect_tables as IAdverseEffectTable[])?.length > 0 && (
         <Fragment key={id}>
-          <div className="flex justify-between py-2">
+          <div
+            className="flex justify-between py-2
+            content-center align-middle"
+          >
             <TypographyH2>ADVERSE REACTIONS</TypographyH2>
             {!isLoadingAuth && role === UserRoleEnum.ADMIN && (
               <button
@@ -41,10 +44,13 @@ function AdverseReactionSection({
 
           {adverse_effect_tables!.map((tabledata, tableid) => {
             return (
-              <Fragment key={`${id}-${tableid}`}>
+              <div key={`${id}-${tableid}`} className="flex flex-col">
+                <caption className="flex justify-start text-left">
+                  {tabledata.caption}
+                </caption>
                 <Table {...tabledata} />
                 <hr />
-              </Fragment>
+              </div>
             );
           })}
         </Fragment>

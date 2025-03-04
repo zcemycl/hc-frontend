@@ -5,7 +5,12 @@ const TypographyH2: FC<{
   children: ReactNode;
 }> = ({ children }) => {
   return (
-    <h2 className="text-white text-lg mb-1 font-medium title-font">
+    <h2
+      className="text-white 
+      text-lg mb-1 font-medium
+      align-middle content-center
+      title-font"
+    >
       {children}
     </h2>
   );
