@@ -1,5 +1,6 @@
 "use server";
 import { AnnotationCategoryEnum } from "@/types";
+import { AETableVerEnum, aeTableVersionMap } from "@/constants";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 
@@ -10,10 +11,17 @@ export async function fetchUnannotatedAETableByUserId(
   limit: number = 10,
   reverse: boolean = false,
   complete: boolean = false,
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables/${tablename}`;
-  const API_URI_PAGINATION = `${API_URI}?offset=${offset}&limit=${limit}&reverse=${reverse}&complete=${complete}`;
+  const params = new URLSearchParams();
+  params.append("offset", offset.toString());
+  params.append("limit", limit.toString());
+  params.append("reverse", reverse.toString());
+  params.append("complete", complete.toString());
+  params.append("version", version);
+  const API_URI_PAGINATION = `${API_URI}?${params}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
     headers: {
@@ -31,10 +39,15 @@ export async function fetchUnannotatedAETableByUserIdCount(
   tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
   reverse: boolean = false,
   complete: boolean = false,
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables_count/${tablename}`;
-  const API_URI_PAGINATION = `${API_URI}?reverse=${reverse}&complete=${complete}`;
+  const params = new URLSearchParams();
+  params.append("reverse", reverse.toString());
+  params.append("complete", complete.toString());
+  params.append("version", version);
+  const API_URI_PAGINATION = `${API_URI}?${params}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
     headers: {
@@ -60,7 +73,7 @@ export async function fetchAETableByIds(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    cache: "force-cache",
+    // cache: "force-cache",
   });
   validate_response_ok(response);
   const res = await response.json();
@@ -79,7 +92,7 @@ export async function fetchAETableBySetid(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    cache: "force-cache",
+    // cache: "force-cache",
   });
   validate_response_ok(response);
   const res = await response.json();

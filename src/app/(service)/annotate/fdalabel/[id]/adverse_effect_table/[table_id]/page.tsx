@@ -1,6 +1,6 @@
 "use client";
 import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Fragment } from "react";
 import {
   fetchAETableByIds,
@@ -24,6 +24,7 @@ import {
   Spinner,
 } from "@/components";
 import { questions } from "./questions";
+import { AETableVerEnum, aeTableVersionMap } from "@/constants";
 
 interface PageProps {
   params: {
@@ -34,6 +35,10 @@ interface PageProps {
 
 export default function Page({ params }: Readonly<PageProps>) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const defaultVersion = searchParams.has("version")
+    ? searchParams.get("version")
+    : AETableVerEnum.v0_0_1;
   const { credentials, isLoadingAuth } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
@@ -52,6 +57,7 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
+  const [version, setVersion] = useState(defaultVersion);
 
   const storeCache = async () => {
     let tmp = { ...finalResults };

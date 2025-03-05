@@ -5,6 +5,7 @@ import {
   Table,
   Spinner,
   ExpandableBtn,
+  AETableVerDropdown,
 } from "@/components";
 import {
   fetchUnannotatedAETableByUserId,
@@ -24,7 +25,11 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GoIcon } from "@/icons";
-import { AnnotationTypeEnum } from "@/constants";
+import {
+  AnnotationTypeEnum,
+  AETableVerEnum,
+  aeTableVersionMap,
+} from "@/constants";
 import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 import { transformData } from "@/utils";
 
@@ -44,6 +49,7 @@ export default function Page() {
     ongoingPageN,
     completePageN,
   } = useAETableAnnotation();
+  const [version, setVersion] = useState(AETableVerEnum.v0_0_1);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [nPerPage, _] = useState(10);
@@ -63,12 +69,14 @@ export default function Page() {
         nPerPage,
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
+        version,
       );
       const count = await fetchUnannotatedAETableByUserIdCount(
         userId,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
+        version,
       );
       if ("detail" in res) {
         router.push("/logout");
@@ -91,7 +99,7 @@ export default function Page() {
     setHoverIdx(null);
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabName, pageN, isLoadingAuth, userId]);
+  }, [tabName, pageN, isLoadingAuth, userId, version]);
 
   // useEffect(() )
 
@@ -150,6 +158,14 @@ export default function Page() {
                   }}
                   additionalResetCallback={() => {}}
                 />
+                <AETableVerDropdown
+                  verType={version}
+                  setVerType={(q) => {
+                    console.log(q);
+                    setVersion(q);
+                  }}
+                  additionalResetCallback={() => {}}
+                />
               </div>
 
               <button
@@ -205,7 +221,7 @@ export default function Page() {
                         onClick={(e) => {
                           e.preventDefault();
                           setIsLoading(true);
-                          let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
+                          let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}?version=${version}`;
                           if (tabName === AnnotationTypeEnum.AI) {
                             redirectUrl = `${redirectUrl}/ai`;
                           }
