@@ -22,6 +22,7 @@ import {
   setup_selectable_none_map,
   switch_map,
   Spinner,
+  AETableVerDropdown,
 } from "@/components";
 import { questions } from "./questions";
 import { AETableVerEnum, aeTableVersionMap } from "@/constants";
@@ -83,11 +84,14 @@ export default function Page({ params }: Readonly<PageProps>) {
         params.table_id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         params.id,
+        version as AETableVerEnum,
       );
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        false,
+        version as AETableVerEnum,
       );
       if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
     }

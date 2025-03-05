@@ -221,10 +221,13 @@ export default function Page() {
                         onClick={(e) => {
                           e.preventDefault();
                           setIsLoading(true);
-                          let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}?version=${version}`;
+                          const params = new URLSearchParams();
+                          params.append("version", version);
+                          let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
                           if (tabName === AnnotationTypeEnum.AI) {
                             redirectUrl = `${redirectUrl}/ai`;
                           }
+                          redirectUrl = `${redirectUrl}?${params}`;
                           router.push(redirectUrl);
                         }}
                       >

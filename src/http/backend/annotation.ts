@@ -64,9 +64,12 @@ export async function fetchAETableByIds(
   id: number,
   tablename: AnnotationCategoryEnum,
   setid: string,
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/${tablename}/${id}`;
+  const params = new URLSearchParams();
+  params.append("version", version);
+  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/${tablename}/${id}?${params}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -122,9 +125,14 @@ export async function fetchAnnotatedTableMapByNameIds(
   id: number,
   name: string,
   is_ai: boolean = false,
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/annotated/${name}/${id}?is_ai=${is_ai}`;
+  const params = new URLSearchParams();
+  params.append("is_ai", is_ai.toString());
+  params.append("version", version);
+  const API_URI = `${FASTAPI_URI}/annnotation/annotated/${name}/${id}?${params}`;
+
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
