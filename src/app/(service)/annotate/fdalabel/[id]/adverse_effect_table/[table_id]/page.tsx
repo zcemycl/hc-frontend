@@ -22,7 +22,6 @@ import {
   setup_selectable_none_map,
   switch_map,
   Spinner,
-  AETableVerDropdown,
 } from "@/components";
 import { questions } from "./questions";
 import { AETableVerEnum, aeTableVersionMap } from "@/constants";

@@ -30,9 +30,9 @@ function AdverseReactionSection({
             <div className="flex justify-start space-x-1">
               <TypographyH2>ADVERSE REACTIONS</TypographyH2>
               <AETableVerDropdown
-                verType={version}
+                verType={version!}
                 setVerType={(q) => {
-                  setVersion(q);
+                  setVersion!(q);
                 }}
                 additionalResetCallback={() => {}}
               />

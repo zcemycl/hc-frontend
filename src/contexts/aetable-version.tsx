@@ -7,6 +7,6 @@ interface IAeVersion {
   setVersion?: (q: AETableVerEnum) => void;
 }
 
-const AEVersionContext = createContext<IAeVersion | null>(null);
+const AEVersionContext = createContext<IAeVersion>({});
 
 export { AEVersionContext, type IAeVersion };
