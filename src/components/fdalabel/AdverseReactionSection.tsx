@@ -1,10 +1,12 @@
 "use client";
 import { IAdverseEffectTable, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
-import { Fragment, useId } from "react";
+import { Fragment, useId, useContext } from "react";
 import { TypographyH2 } from "../typography";
 import { Table } from "../table";
 import { useAuth } from "@/contexts";
+import { AEVersionContext } from "@/contexts/aetable-version";
+import { AETableVerDropdown } from "../dropdown";
 
 function AdverseReactionSection({
   setid,
@@ -16,6 +18,7 @@ function AdverseReactionSection({
   const id = useId();
   const router = useRouter();
   const { role, isLoadingAuth } = useAuth();
+  const { version, setVersion } = useContext(AEVersionContext);
   return (
     <Fragment key={id}>
       {(adverse_effect_tables as IAdverseEffectTable[])?.length > 0 && (
@@ -24,7 +27,17 @@ function AdverseReactionSection({
             className="flex justify-between py-2
             content-center align-middle"
           >
-            <TypographyH2>ADVERSE REACTIONS</TypographyH2>
+            <div className="flex justify-start space-x-1">
+              <TypographyH2>ADVERSE REACTIONS</TypographyH2>
+              <AETableVerDropdown
+                verType={version}
+                setVerType={(q) => {
+                  setVersion(q);
+                }}
+                additionalResetCallback={() => {}}
+              />
+            </div>
+
             {!isLoadingAuth && role === UserRoleEnum.ADMIN && (
               <button
                 className="bg-red-600 
