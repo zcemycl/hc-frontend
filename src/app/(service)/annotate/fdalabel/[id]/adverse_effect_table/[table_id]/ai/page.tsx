@@ -199,7 +199,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                 })}
               </div>
             </div>
-
+            <caption className="text-left">{tableData?.caption}</caption>
             <p className="leading-none w-full text-white">
               {questions[questionIdx].displayName}
             </p>
