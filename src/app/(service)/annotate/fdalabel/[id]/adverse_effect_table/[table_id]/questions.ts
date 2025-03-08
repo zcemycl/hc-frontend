@@ -76,6 +76,14 @@ export const questions = [
             displayName: "Laboratory Test Table",
             type: "lt",
           },
+          {
+            displayName: "Adverse Effect List No Number",
+            type: "aenonum",
+          },
+          {
+            displayName: "Unclassified",
+            type: "unclassified",
+          },
         ],
       },
     },

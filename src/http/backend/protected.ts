@@ -1,17 +1,27 @@
 "use server";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
+import { AETableVerEnum } from "@/constants";
 
 export async function fetchFdalabelBySetid(
   setid: string[],
   maxn: number = 30,
   offset: number = 0,
   limit: number | null = 10,
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_id`;
   let setids_param = setid.join("&id=");
-  let API_URI_PAGINATION = `${API_URI}?id=${setids_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`;
+  const params = new URLSearchParams();
+  params.append("maxn", maxn.toString());
+  params.append("offset", offset.toString());
+  params.append("version", version);
+  if (limit !== null) {
+    params.append("limit", limit!.toString());
+  }
+
+  let API_URI_PAGINATION = `${API_URI}?id=${setids_param}&${params}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
     headers: {
@@ -30,11 +40,21 @@ export async function fetchFdalabelByTradename(
   maxn: number = 30,
   offset: number = 0,
   limit: number | null = 10,
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_tradename`;
   let tradenames_param = tradename.join("&tradename=");
-  let API_URI_PAGINATION = `${API_URI}?tradename=${tradenames_param}&maxn=${maxn}&offset=${offset}&limit=${limit}`;
+  const params = new URLSearchParams();
+  params.append("maxn", maxn.toString());
+  params.append("offset", offset.toString());
+  params.append("version", version);
+  if (limit !== null) {
+    params.append("limit", limit!.toString());
+  }
+
+  let API_URI_PAGINATION = `${API_URI}?tradename=${tradenames_param}&${params}`;
+
   const response = await fetch(API_URI_PAGINATION, {
     method: "GET",
     headers: {
@@ -54,11 +74,20 @@ export async function fetchFdalabelByIndication(
   offset: number = 0,
   limit: number = 10,
   sort_by: string = "relevance",
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
 ) {
   const token = get_token_cookie();
+  const params = new URLSearchParams();
+  params.append("maxn", maxn.toString());
+  params.append("offset", offset.toString());
+  params.append("sort_by", sort_by);
+  params.append("version", version);
+  if (limit !== null) {
+    params.append("limit", limit!.toString());
+  }
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_indication`;
   const response = await fetch(
-    `${API_URI}?indication=${indication}&maxn=${maxn}&offset=${offset}&limit=${limit}&sort_by=${sort_by}`,
+    `${API_URI}?indication=${indication}&${params}`,
     {
       method: "GET",
       headers: {

@@ -10,6 +10,8 @@ export interface IBaseSelectTable {
 
 export interface IBaseTableNoHead {
   content: IBaseTable;
+  version?: string;
+  caption?: string;
   isSelectable?: IBaseSelectTable;
   isSelected?: IBaseSelectTable;
   setIsCellSelected?: Dispatch<SetStateAction<boolean[][]>>;

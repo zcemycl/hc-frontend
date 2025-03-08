@@ -5,3 +5,4 @@ export {
   AETableAnnotationProvider,
 } from "./aetable-annotation";
 export { useLoader, LoaderProvider } from "./loader";
+export { AEVersionContext, type IAeVersion } from "./aetable-version";
