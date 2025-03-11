@@ -17,7 +17,7 @@ function FdaLabel({
   back_btn_callback: (s: any) => void;
 }) {
   return (
-    <>
+    <div className="flex flex-col w-full">
       <IntroSection
         {...{
           setid: each.setid!,
@@ -44,7 +44,7 @@ function FdaLabel({
         setid={each.setid!}
         displayDataIndex={displayDataIndex}
       />
-    </>
+    </div>
   );
 }
 

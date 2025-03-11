@@ -17,6 +17,7 @@ const QueryTypeDropdown = ({
   return (
     <div className="transition-all">
       <DropDownBtn
+        extraClassName="justify-end w-full"
         onClick={() => setIsQueryTypeDropdownOpen(!isQueryTypeDropdownOpen)}
       >
         Query Type:{" "}

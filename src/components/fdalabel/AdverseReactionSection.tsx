@@ -61,7 +61,10 @@ function AdverseReactionSection({
                 <caption className="flex justify-start text-left">
                   {tabledata.caption}
                 </caption>
-                <Table {...tabledata} />
+                <div className="overflow-x-scroll">
+                  <Table {...tabledata} />
+                </div>
+
                 <hr />
               </div>
             );
