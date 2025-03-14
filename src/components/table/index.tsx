@@ -70,6 +70,7 @@ const TableCell: FC<{
   children: ReactNode;
   rowid?: number;
   colid?: number;
+  colspan?: number;
   isSelectable?: boolean;
   isSelected?: boolean[][];
   setIsTableSelected?: Dispatch<SetStateAction<boolean[][]>>;
@@ -77,12 +78,13 @@ const TableCell: FC<{
   children,
   rowid,
   colid,
+  colspan,
   isSelectable,
   isSelected,
   setIsTableSelected,
 }) => {
   return (
-    <td className="border">
+    <td className="border" colSpan={colspan === undefined ? 1 : colspan}>
       <div className="flex justify-between px-2">
         {children}
         {isSelectable && (
@@ -116,19 +118,60 @@ const TableHeadCell: FC<{
 
 const Table = (tabledata: IBaseTableNoHead) => {
   const id = useId();
+  const isDisplayMode =
+    tabledata.isSelectable === undefined
+      ? true
+      : !tabledata.isSelectable?.table.flat().includes(true);
+  console.log(isDisplayMode);
   return (
     <table key={id}>
       <tbody key={id}>
         {tabledata!.content.table!.map((tablerow, rowid) => {
+          let group_rowcell: string[] = [];
+          let group_colspan_rowcell: number[] = [];
+          let group_selectable_rowcell: boolean[] | undefined = [];
+
+          if (isDisplayMode) {
+            for (let i = 0; i < tablerow.length; i++) {
+              if (i === 0) {
+                group_rowcell = [...group_rowcell, tablerow[i]];
+                group_colspan_rowcell = [...group_colspan_rowcell, 1];
+              } else {
+                if (group_rowcell[group_rowcell.length - 1] === tablerow[i]) {
+                  group_colspan_rowcell[group_colspan_rowcell.length - 1]++;
+                } else {
+                  group_rowcell = [...group_rowcell, tablerow[i]];
+                  group_colspan_rowcell = [...group_colspan_rowcell, 1];
+                }
+              }
+            }
+            group_selectable_rowcell = Array.from(
+              { length: group_rowcell.length },
+              () => false,
+            );
+          } else {
+            group_rowcell = tablerow;
+            group_colspan_rowcell = Array.from(
+              { length: tablerow.length },
+              () => 1,
+            );
+            group_selectable_rowcell = tabledata.isSelectable?.table[rowid];
+          }
+          console.log(group_rowcell);
+          console.log(group_colspan_rowcell);
+
           return (
             <tr key={`${tablerow.join("-")}-${rowid}`}>
-              {tablerow.map((tdata, dataid) => {
+              {group_rowcell.map((tdata, dataid) => {
                 return (
                   <TableCell
                     key={`${tdata}-${dataid}`}
                     rowid={rowid}
                     colid={dataid}
-                    isSelectable={tabledata.isSelectable?.table[rowid][dataid]}
+                    colspan={group_colspan_rowcell[dataid]}
+                    isSelectable={
+                      (group_selectable_rowcell as boolean[])[dataid]
+                    }
                     isSelected={tabledata.isSelected?.table}
                     setIsTableSelected={tabledata.setIsCellSelected}
                   >

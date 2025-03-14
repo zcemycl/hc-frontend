@@ -72,7 +72,7 @@ export default function Page({ params }: PageProps) {
               C.T Table {params.table_id} from label {params.id}
             </p>
 
-            <div className="overflow-x-scroll flex flex-col w-full">
+            <div className="overflow-x-auto flex flex-col w-full">
               {tableData && (
                 <Table
                   {...{

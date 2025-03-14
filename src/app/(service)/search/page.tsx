@@ -313,7 +313,7 @@ export default function Search() {
               </div>
             </div>
             {compareTable.table?.length !== 0 && (
-              <div className="w-1/2 overflow-x-scroll">
+              <div className="sm:w-8/12 w-full overflow-x-auto">
                 <Table {...{ content: compareTable }} />
               </div>
             )}
