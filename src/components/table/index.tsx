@@ -71,6 +71,7 @@ const TableCell: FC<{
   rowid?: number;
   colid?: number;
   colspan?: number;
+  isLeftBorderBold?: boolean;
   isSelectable?: boolean;
   isSelected?: boolean[][];
   setIsTableSelected?: Dispatch<SetStateAction<boolean[][]>>;
@@ -79,12 +80,17 @@ const TableCell: FC<{
   rowid,
   colid,
   colspan,
+  isLeftBorderBold,
   isSelectable,
   isSelected,
   setIsTableSelected,
 }) => {
   return (
-    <td className="border" colSpan={colspan === undefined ? 1 : colspan}>
+    <td
+      className={`border 
+      ${isLeftBorderBold ? "border-l-4" : ""}`}
+      colSpan={colspan === undefined ? 1 : colspan}
+    >
       <div className="flex justify-between px-2">
         {children}
         {isSelectable && (
@@ -123,6 +129,31 @@ const Table = (tabledata: IBaseTableNoHead) => {
       ? true
       : !tabledata.isSelectable?.table.flat().includes(true);
   console.log(isDisplayMode);
+  let drugHeading: string[] = [];
+  let head_colspan: number[] = [];
+  if (tabledata!.content.table!.length !== 0) {
+    drugHeading = tabledata!.content.table[0];
+  }
+  if (tabledata!.content.table!.length !== 0) {
+    for (let j = 0; j < tabledata!.content.table[0].length; j++) {
+      if (j === 0) {
+        head_colspan = [...head_colspan, 1];
+      } else {
+        if (
+          tabledata!.content.table[0][j - 1] === tabledata!.content.table[0][j]
+        ) {
+          head_colspan[head_colspan.length - 1]++;
+        } else {
+          head_colspan = [...head_colspan, 1];
+        }
+      }
+    }
+  }
+  const head_edge_idx = head_colspan.reduce((acc: number[], curr, i) => {
+    acc.push((i === 0 ? 0 : acc[i - 1]) + curr);
+    return acc;
+  }, []);
+
   return (
     <table key={id}>
       <tbody key={id}>
@@ -159,16 +190,32 @@ const Table = (tabledata: IBaseTableNoHead) => {
           }
           console.log(group_rowcell);
           console.log(group_colspan_rowcell);
+          let copyDrugHeading = [...drugHeading];
+          let prevEle = "";
+          let curPopIdx = 0;
 
           return (
             <tr key={`${tablerow.join("-")}-${rowid}`}>
               {group_rowcell.map((tdata, dataid) => {
+                let curEle;
+                let isInitAlignNewHead = head_edge_idx.includes(curPopIdx);
+                for (let k = 0; k < group_colspan_rowcell[dataid]; k++) {
+                  curEle = copyDrugHeading.shift();
+                  curPopIdx++;
+                }
+                let isBoldLeft = prevEle !== curEle && isInitAlignNewHead;
+                console.log(tdata);
+                console.log(prevEle);
+                console.log(curEle);
+                prevEle = curEle as string;
+
                 return (
                   <TableCell
                     key={`${tdata}-${dataid}`}
                     rowid={rowid}
                     colid={dataid}
                     colspan={group_colspan_rowcell[dataid]}
+                    isLeftBorderBold={isBoldLeft}
                     isSelectable={
                       (group_selectable_rowcell as boolean[])[dataid]
                     }
