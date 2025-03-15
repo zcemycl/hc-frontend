@@ -128,7 +128,6 @@ const Table = (tabledata: IBaseTableNoHead) => {
     tabledata.isSelectable === undefined
       ? true
       : !tabledata.isSelectable?.table.flat().includes(true);
-  console.log(isDisplayMode);
   let drugHeading: string[] = [];
   let head_colspan: number[] = [];
   if (tabledata!.content.table!.length !== 0) {
@@ -188,8 +187,6 @@ const Table = (tabledata: IBaseTableNoHead) => {
             );
             group_selectable_rowcell = tabledata.isSelectable?.table[rowid];
           }
-          console.log(group_rowcell);
-          console.log(group_colspan_rowcell);
           let copyDrugHeading = [...drugHeading];
           let prevEle = "";
           let curPopIdx = 0;
@@ -204,9 +201,6 @@ const Table = (tabledata: IBaseTableNoHead) => {
                   curPopIdx++;
                 }
                 let isBoldLeft = prevEle !== curEle && isInitAlignNewHead;
-                console.log(tdata);
-                console.log(prevEle);
-                console.log(curEle);
                 prevEle = curEle as string;
 
                 return (
