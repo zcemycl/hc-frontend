@@ -83,6 +83,14 @@ export default function Search() {
         sortBy,
         version,
       );
+    } else if (queryType === SearchQueryTypeEnum.TA) {
+      resp = await fdaservice.handleFdalabelByTherapeuticArea(
+        query,
+        pageN,
+        nPerPage,
+        sortBy,
+        version,
+      );
     }
     setDisplayData(resp);
     return resp;
@@ -187,7 +195,8 @@ export default function Search() {
                 query={query}
                 setQuery={(s) => setQuery(s)}
                 conditionForMultiBars={
-                  queryType !== SearchQueryTypeEnum.INDICATION
+                  queryType !== SearchQueryTypeEnum.INDICATION &&
+                  queryType !== SearchQueryTypeEnum.TA
                 }
               />
               <div

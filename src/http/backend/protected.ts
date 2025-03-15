@@ -68,6 +68,40 @@ export async function fetchFdalabelByTradename(
   return res;
 }
 
+export async function fetchFdalabelByTherapeuticArea(
+  ta_description: string,
+  maxn: number = 30,
+  offset: number = 0,
+  limit: number = 10,
+  sort_by: string = "relevance",
+  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+) {
+  const token = get_token_cookie();
+  const params = new URLSearchParams();
+  params.append("maxn", maxn.toString());
+  params.append("offset", offset.toString());
+  params.append("sort_by", sort_by);
+  params.append("version", version);
+  if (limit !== null) {
+    params.append("limit", limit!.toString());
+  }
+  const API_URI = `${FASTAPI_URI}/fdalabels/search_by_therapeutic_area`;
+  const response = await fetch(
+    `${API_URI}?ta_description=${ta_description}&${params}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "force-cache",
+    },
+  );
+  validate_response_ok(response);
+  const res = await response.json();
+  return res;
+}
+
 export async function fetchFdalabelByIndication(
   indication: string,
   maxn: number = 30,
