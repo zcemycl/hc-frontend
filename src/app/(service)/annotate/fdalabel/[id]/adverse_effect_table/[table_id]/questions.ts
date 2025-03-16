@@ -60,7 +60,7 @@ export const questions = [
   {
     displayName: "Choose table type.",
     mapMode: "none",
-    identifier: "tableType",
+    identifier: "tableType", // reqire to include identifier for showing question in ai
     additionalRequire: {
       dropdown: {
         displayName: "Table Type",
