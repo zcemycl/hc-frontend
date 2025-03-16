@@ -71,6 +71,7 @@ const TableCell: FC<{
   rowid?: number;
   colid?: number;
   colspan?: number;
+  fontText?: boolean;
   isLeftBorderBold?: boolean;
   isSelectable?: boolean;
   isSelected?: boolean[][];
@@ -80,6 +81,7 @@ const TableCell: FC<{
   rowid,
   colid,
   colspan,
+  fontText,
   isLeftBorderBold,
   isSelectable,
   isSelected,
@@ -91,7 +93,10 @@ const TableCell: FC<{
       ${isLeftBorderBold ? "border-l-4" : ""}`}
       colSpan={colspan === undefined ? 1 : colspan}
     >
-      <div className="flex justify-between px-2">
+      <div
+        className={`flex justify-between px-2
+        ${fontText! ? "font-bold" : ""}`}
+      >
         {children}
         {isSelectable && (
           <input
@@ -190,6 +195,7 @@ const Table = (tabledata: IBaseTableNoHead) => {
           let copyDrugHeading = [...drugHeading];
           let prevEle = "";
           let curPopIdx = 0;
+          const isBoldRow = group_rowcell.length === 1;
 
           return (
             <tr key={`${tablerow.join("-")}-${rowid}`}>
@@ -209,6 +215,7 @@ const Table = (tabledata: IBaseTableNoHead) => {
                     rowid={rowid}
                     colid={dataid}
                     colspan={group_colspan_rowcell[dataid]}
+                    fontText={isBoldRow}
                     isLeftBorderBold={isBoldLeft}
                     isSelectable={
                       (group_selectable_rowcell as boolean[])[dataid]
