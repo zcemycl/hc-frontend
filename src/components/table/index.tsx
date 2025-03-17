@@ -6,6 +6,7 @@ import {
   ReactNode,
   SetStateAction,
   useId,
+  useRef,
 } from "react";
 import { IBaseTableNoHead, IBaseTable, IBaseSelectTable } from "@/types";
 
@@ -129,6 +130,7 @@ const TableHeadCell: FC<{
 
 const Table = (tabledata: IBaseTableNoHead) => {
   const id = useId();
+  const tableRef = useRef<HTMLTableElement>(null);
   const isDisplayMode =
     tabledata.isSelectable === undefined
       ? true
@@ -159,79 +161,111 @@ const Table = (tabledata: IBaseTableNoHead) => {
   }, []);
 
   return (
-    <table key={id}>
-      <tbody key={id}>
-        {tabledata!.content.table!.map((tablerow, rowid) => {
-          let group_rowcell: string[] = [];
-          let group_colspan_rowcell: number[] = [];
-          let group_selectable_rowcell: boolean[] | undefined = [];
+    <>
+      <button
+        className="p-3 rounded-lg 
+      bg-sky-300 hover:bg-sky-600
+      font-bold text-black"
+        onClick={(e) => {
+          e.preventDefault();
+          const table = document.querySelector("table"); // Get table
+          let text = "";
 
-          if (isDisplayMode) {
-            for (let i = 0; i < tablerow.length; i++) {
-              if (i === 0) {
-                group_rowcell = [...group_rowcell, tablerow[i]];
-                group_colspan_rowcell = [...group_colspan_rowcell, 1];
-              } else {
-                if (group_rowcell[group_rowcell.length - 1] === tablerow[i]) {
-                  group_colspan_rowcell[group_colspan_rowcell.length - 1]++;
-                } else {
-                  group_rowcell = [...group_rowcell, tablerow[i]];
-                  group_colspan_rowcell = [...group_colspan_rowcell, 1];
-                }
+          for (let row of Array.from(table!.rows)) {
+            let rowData = [];
+
+            for (let cell of Array.from(row!.cells)) {
+              const colspan = cell.colSpan; // Get colspan value
+              const cellText = cell.innerText.trim(); // Clean text
+
+              // Add the cell text and repeat for colspan
+              rowData.push(cellText);
+              for (let i = 1; i < colspan; i++) {
+                rowData.push(""); // Insert empty columns for correct structure
               }
             }
-            group_selectable_rowcell = Array.from(
-              { length: group_rowcell.length },
-              () => false,
-            );
-          } else {
-            group_rowcell = tablerow;
-            group_colspan_rowcell = Array.from(
-              { length: tablerow.length },
-              () => 1,
-            );
-            group_selectable_rowcell = tabledata.isSelectable?.table[rowid];
+
+            text += rowData.join("\t") + "\n"; // Use tab delimiter for Excel/Sheets
           }
-          let copyDrugHeading = [...drugHeading];
-          let prevEle = "";
-          let curPopIdx = 0;
-          const isBoldRow = group_rowcell.length === 1;
+          navigator.clipboard.writeText(text);
+        }}
+      >
+        COPY
+      </button>
+      <table key={id} ref={tableRef}>
+        <tbody key={id}>
+          {tabledata!.content.table!.map((tablerow, rowid) => {
+            let group_rowcell: string[] = [];
+            let group_colspan_rowcell: number[] = [];
+            let group_selectable_rowcell: boolean[] | undefined = [];
 
-          return (
-            <tr key={`${tablerow.join("-")}-${rowid}`}>
-              {group_rowcell.map((tdata, dataid) => {
-                let curEle;
-                let isInitAlignNewHead = head_edge_idx.includes(curPopIdx);
-                for (let k = 0; k < group_colspan_rowcell[dataid]; k++) {
-                  curEle = copyDrugHeading.shift();
-                  curPopIdx++;
+            if (isDisplayMode) {
+              for (let i = 0; i < tablerow.length; i++) {
+                if (i === 0) {
+                  group_rowcell = [...group_rowcell, tablerow[i]];
+                  group_colspan_rowcell = [...group_colspan_rowcell, 1];
+                } else {
+                  if (group_rowcell[group_rowcell.length - 1] === tablerow[i]) {
+                    group_colspan_rowcell[group_colspan_rowcell.length - 1]++;
+                  } else {
+                    group_rowcell = [...group_rowcell, tablerow[i]];
+                    group_colspan_rowcell = [...group_colspan_rowcell, 1];
+                  }
                 }
-                let isBoldLeft = prevEle !== curEle && isInitAlignNewHead;
-                prevEle = curEle as string;
+              }
+              group_selectable_rowcell = Array.from(
+                { length: group_rowcell.length },
+                () => false,
+              );
+            } else {
+              group_rowcell = tablerow;
+              group_colspan_rowcell = Array.from(
+                { length: tablerow.length },
+                () => 1,
+              );
+              group_selectable_rowcell = tabledata.isSelectable?.table[rowid];
+            }
+            let copyDrugHeading = [...drugHeading];
+            let prevEle = "";
+            let curPopIdx = 0;
+            const isBoldRow = group_rowcell.length === 1;
 
-                return (
-                  <TableCell
-                    key={`${tdata}-${dataid}`}
-                    rowid={rowid}
-                    colid={dataid}
-                    colspan={group_colspan_rowcell[dataid]}
-                    fontText={isBoldRow}
-                    isLeftBorderBold={isBoldLeft}
-                    isSelectable={
-                      (group_selectable_rowcell as boolean[])[dataid]
-                    }
-                    isSelected={tabledata.isSelected?.table}
-                    setIsTableSelected={tabledata.setIsCellSelected}
-                  >
-                    {tdata}
-                  </TableCell>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+            return (
+              <tr key={`${tablerow.join("-")}-${rowid}`}>
+                {group_rowcell.map((tdata, dataid) => {
+                  let curEle;
+                  let isInitAlignNewHead = head_edge_idx.includes(curPopIdx);
+                  for (let k = 0; k < group_colspan_rowcell[dataid]; k++) {
+                    curEle = copyDrugHeading.shift();
+                    curPopIdx++;
+                  }
+                  let isBoldLeft = prevEle !== curEle && isInitAlignNewHead;
+                  prevEle = curEle as string;
+
+                  return (
+                    <TableCell
+                      key={`${tdata}-${dataid}`}
+                      rowid={rowid}
+                      colid={dataid}
+                      colspan={group_colspan_rowcell[dataid]}
+                      fontText={isBoldRow}
+                      isLeftBorderBold={isBoldLeft}
+                      isSelectable={
+                        (group_selectable_rowcell as boolean[])[dataid]
+                      }
+                      isSelected={tabledata.isSelected?.table}
+                      setIsTableSelected={tabledata.setIsCellSelected}
+                    >
+                      {tdata}
+                    </TableCell>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
   );
 };
 
