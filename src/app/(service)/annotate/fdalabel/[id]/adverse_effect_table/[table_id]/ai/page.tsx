@@ -262,6 +262,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                     content: {
                       table: tableData.content.table,
                     } as IBaseTable,
+                    keyname: "table",
                     isSelectable: {
                       table: switch_map(
                         row_map,

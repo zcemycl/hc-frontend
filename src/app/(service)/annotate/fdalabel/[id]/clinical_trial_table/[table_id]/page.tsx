@@ -79,6 +79,7 @@ export default function Page({ params }: PageProps) {
                     content: {
                       table: tableData.content.table,
                     } as IBaseTable,
+                    keyname: "table",
                   }}
                 />
               )}

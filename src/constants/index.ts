@@ -6,3 +6,4 @@ export * from "./sidebar";
 export * from "./annotation-dropdown";
 export * from "./api";
 export * from "./fdalabel";
+export * from "./ae-compare";

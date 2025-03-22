@@ -130,6 +130,10 @@ const TableHeadCell: FC<{
 
 const Table = (tabledata: IBaseTableNoHead) => {
   const id = useId();
+  if (tabledata.keyname === undefined) {
+    return <></>;
+  }
+  console.log(tabledata.keyname ?? "table");
   const tableRef = useRef<HTMLTableElement>(null);
   const isDisplayMode =
     tabledata.isSelectable === undefined
@@ -137,16 +141,21 @@ const Table = (tabledata: IBaseTableNoHead) => {
       : !tabledata.isSelectable?.table.flat().includes(true);
   let drugHeading: string[] = [];
   let head_colspan: number[] = [];
-  if (tabledata!.content.table!.length !== 0) {
-    drugHeading = tabledata!.content.table[0];
+  if (tabledata!.content[tabledata.keyname ?? "table"]!.length !== 0) {
+    drugHeading = tabledata!.content[tabledata.keyname ?? "table"][0];
   }
-  if (tabledata!.content.table!.length !== 0) {
-    for (let j = 0; j < tabledata!.content.table[0].length; j++) {
+  if (tabledata!.content[tabledata.keyname ?? "table"]!.length !== 0) {
+    for (
+      let j = 0;
+      j < tabledata!.content[tabledata.keyname ?? "table"][0].length;
+      j++
+    ) {
       if (j === 0) {
         head_colspan = [...head_colspan, 1];
       } else {
         if (
-          tabledata!.content.table[0][j - 1] === tabledata!.content.table[0][j]
+          tabledata!.content[tabledata.keyname ?? "table"][0][j - 1] ===
+          tabledata!.content[tabledata.keyname ?? "table"][0][j]
         ) {
           head_colspan[head_colspan.length - 1]++;
         } else {
@@ -194,75 +203,79 @@ const Table = (tabledata: IBaseTableNoHead) => {
       </button>
       <table key={id} ref={tableRef}>
         <tbody key={id}>
-          {tabledata!.content.table!.map((tablerow, rowid) => {
-            let group_rowcell: string[] = [];
-            let group_colspan_rowcell: number[] = [];
-            let group_selectable_rowcell: boolean[] | undefined = [];
+          {tabledata!.content[tabledata.keyname ?? "table"]!.map(
+            (tablerow, rowid) => {
+              let group_rowcell: string[] = [];
+              let group_colspan_rowcell: number[] = [];
+              let group_selectable_rowcell: boolean[] | undefined = [];
 
-            if (isDisplayMode) {
-              for (let i = 0; i < tablerow.length; i++) {
-                if (i === 0) {
-                  group_rowcell = [...group_rowcell, tablerow[i]];
-                  group_colspan_rowcell = [...group_colspan_rowcell, 1];
-                } else {
-                  if (group_rowcell[group_rowcell.length - 1] === tablerow[i]) {
-                    group_colspan_rowcell[group_colspan_rowcell.length - 1]++;
-                  } else {
+              if (isDisplayMode) {
+                for (let i = 0; i < tablerow.length; i++) {
+                  if (i === 0) {
                     group_rowcell = [...group_rowcell, tablerow[i]];
                     group_colspan_rowcell = [...group_colspan_rowcell, 1];
+                  } else {
+                    if (
+                      group_rowcell[group_rowcell.length - 1] === tablerow[i]
+                    ) {
+                      group_colspan_rowcell[group_colspan_rowcell.length - 1]++;
+                    } else {
+                      group_rowcell = [...group_rowcell, tablerow[i]];
+                      group_colspan_rowcell = [...group_colspan_rowcell, 1];
+                    }
                   }
                 }
+                group_selectable_rowcell = Array.from(
+                  { length: group_rowcell.length },
+                  () => false,
+                );
+              } else {
+                group_rowcell = tablerow;
+                group_colspan_rowcell = Array.from(
+                  { length: tablerow.length },
+                  () => 1,
+                );
+                group_selectable_rowcell = tabledata.isSelectable?.table[rowid];
               }
-              group_selectable_rowcell = Array.from(
-                { length: group_rowcell.length },
-                () => false,
-              );
-            } else {
-              group_rowcell = tablerow;
-              group_colspan_rowcell = Array.from(
-                { length: tablerow.length },
-                () => 1,
-              );
-              group_selectable_rowcell = tabledata.isSelectable?.table[rowid];
-            }
-            let copyDrugHeading = [...drugHeading];
-            let prevEle = "";
-            let curPopIdx = 0;
-            const isBoldRow = group_rowcell.length === 1;
+              let copyDrugHeading = [...drugHeading];
+              let prevEle = "";
+              let curPopIdx = 0;
+              const isBoldRow = group_rowcell.length === 1;
 
-            return (
-              <tr key={`${tablerow.join("-")}-${rowid}`}>
-                {group_rowcell.map((tdata, dataid) => {
-                  let curEle;
-                  let isInitAlignNewHead = head_edge_idx.includes(curPopIdx);
-                  for (let k = 0; k < group_colspan_rowcell[dataid]; k++) {
-                    curEle = copyDrugHeading.shift();
-                    curPopIdx++;
-                  }
-                  let isBoldLeft = prevEle !== curEle && isInitAlignNewHead;
-                  prevEle = curEle as string;
+              return (
+                <tr key={`${tablerow.join("-")}-${rowid}`}>
+                  {group_rowcell.map((tdata, dataid) => {
+                    let curEle;
+                    let isInitAlignNewHead = head_edge_idx.includes(curPopIdx);
+                    for (let k = 0; k < group_colspan_rowcell[dataid]; k++) {
+                      curEle = copyDrugHeading.shift();
+                      curPopIdx++;
+                    }
+                    let isBoldLeft = prevEle !== curEle && isInitAlignNewHead;
+                    prevEle = curEle as string;
 
-                  return (
-                    <TableCell
-                      key={`${tdata}-${dataid}`}
-                      rowid={rowid}
-                      colid={dataid}
-                      colspan={group_colspan_rowcell[dataid]}
-                      fontText={isBoldRow}
-                      isLeftBorderBold={isBoldLeft}
-                      isSelectable={
-                        (group_selectable_rowcell as boolean[])[dataid]
-                      }
-                      isSelected={tabledata.isSelected?.table}
-                      setIsTableSelected={tabledata.setIsCellSelected}
-                    >
-                      {tdata}
-                    </TableCell>
-                  );
-                })}
-              </tr>
-            );
-          })}
+                    return (
+                      <TableCell
+                        key={`${tdata}-${dataid}`}
+                        rowid={rowid}
+                        colid={dataid}
+                        colspan={group_colspan_rowcell[dataid]}
+                        fontText={isBoldRow}
+                        isLeftBorderBold={isBoldLeft}
+                        isSelectable={
+                          (group_selectable_rowcell as boolean[])[dataid]
+                        }
+                        isSelected={tabledata.isSelected?.table}
+                        setIsTableSelected={tabledata.setIsCellSelected}
+                      >
+                        {tdata}
+                      </TableCell>
+                    );
+                  })}
+                </tr>
+              );
+            },
+          )}
         </tbody>
       </table>
     </>

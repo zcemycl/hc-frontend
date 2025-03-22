@@ -24,7 +24,13 @@ import {
   UserHistoryCategoryEnum,
   IHistory,
 } from "@/types";
-import { SortByEnum, SearchQueryTypeEnum, AETableVerEnum } from "@/constants";
+import {
+  SortByEnum,
+  SearchQueryTypeEnum,
+  AETableVerEnum,
+  tabletype_compare_caption,
+  AETableTypeEnum,
+} from "@/constants";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
 import { FdalabelFetchService } from "@/services";
@@ -45,6 +51,8 @@ export default function Search() {
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
+  const [openCollapseCompSection, setOpenCollapseCompSection] =
+    useState<AETableTypeEnum>(AETableTypeEnum.empty);
   const [sortBy, setSortBy] = useState<SortByEnum>(SortByEnum.RELEVANCE);
   const [compareTable, setCompareTable] = useState<ICompareAETable>({
     table: [],
@@ -321,11 +329,42 @@ export default function Search() {
                 </div>
               </div>
             </div>
-            {compareTable.table?.length !== 0 && (
-              <div className="sm:w-8/12 w-full overflow-x-auto">
-                <Table {...{ content: compareTable }} />
-              </div>
-            )}
+            <div
+              className="sm:w-8/12 w-full overflow-x-auto 
+              flex flex-col space-y-2"
+            >
+              {Object.keys(compareTable).map((tabletype) => {
+                if (compareTable[tabletype].length === 0) return <></>;
+                return (
+                  <div className="justify-start flex flex-col">
+                    <button
+                      className="p-2 bg-sky-300 hover:bg-sky-700 rounded-lg text-black"
+                      onClick={() => {
+                        if (openCollapseCompSection === tabletype) {
+                          setOpenCollapseCompSection("" as AETableTypeEnum);
+                          return;
+                        }
+                        setOpenCollapseCompSection(
+                          tabletype as AETableTypeEnum,
+                        );
+                      }}
+                    >
+                      {tabletype_compare_caption[tabletype as AETableTypeEnum]}
+                    </button>
+                    <div
+                      key={`${tabletype}-comp`}
+                      className={`
+                        ${openCollapseCompSection === tabletype ? "" : "hidden"}
+                      `}
+                    >
+                      <Table
+                        {...{ content: compareTable, keyname: tabletype }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
             {displayData.length > 0 && displayDataIndex != null && (
               <div className="sm:w-1/2 flex flex-col w-screen">

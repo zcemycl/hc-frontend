@@ -62,7 +62,7 @@ function AdverseReactionSection({
                   {tabledata.caption}
                 </caption>
                 <div className="overflow-x-auto">
-                  <Table {...tabledata} />
+                  <Table {...{ ...tabledata, keyname: "table" }} />
                 </div>
 
                 <hr />

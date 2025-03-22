@@ -30,7 +30,7 @@ function ClinicalTrialSection({
           {clinical_trial_tables!.map((tabledata, tableid) => {
             return (
               <Fragment key={`${id}-${tableid}`}>
-                <Table {...tabledata} />
+                <Table {...{ ...tabledata, keyname: "table" }} />
                 <hr />
               </Fragment>
             );

@@ -93,6 +93,7 @@ export default function Page({ params }: PageProps) {
                       content: {
                         table: data.content.table.slice(0, 6),
                       } as IBaseTable,
+                      keyname: "table",
                     }}
                   />
                 }
@@ -135,6 +136,7 @@ export default function Page({ params }: PageProps) {
                       content: {
                         table: data.content.table.slice(0, 6),
                       } as IBaseTable,
+                      keyname: "table",
                     }}
                   />
                 }
