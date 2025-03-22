@@ -149,6 +149,7 @@ export default function Page() {
                                       6,
                                     ),
                                 } as IBaseTable,
+                                keyname: "table",
                               }}
                             />
                           </>

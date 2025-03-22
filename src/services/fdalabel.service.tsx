@@ -10,6 +10,7 @@ import {
   fetchFdalabelByIndication,
   fetchFdalabelByTradename,
   fetchFdalabelCompareAdverseEffects,
+  fetchFdalabelByTherapeuticArea,
 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import { SearchQueryTypeEnum, SortByEnum, AETableVerEnum } from "@/constants";
@@ -107,6 +108,43 @@ export class FdalabelFetchService extends BaseServiceHandler {
           additional_settings: {
             sortBy,
             queryType: SearchQueryTypeEnum.INDICATION,
+            pageN: `${pageN}`,
+            nPerPage: `${nPerPage}`,
+            aeVersion: version,
+          },
+        },
+      );
+      return resp;
+    } catch {
+      return [];
+    }
+  }
+
+  async handleFdalabelByTherapeuticArea(
+    query: string[],
+    pageN: number,
+    nPerPage: number,
+    sortBy: SortByEnum,
+    version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  ) {
+    try {
+      const resp = await fetchFdalabelByTherapeuticArea(
+        query[0],
+        this.topN,
+        pageN * nPerPage,
+        undefined,
+        sortBy,
+        version,
+      );
+      await addHistoryByUserId(
+        this.userId as number,
+        UserHistoryCategoryEnum.SEARCH,
+        {
+          action: SearchActionEnum.SEARCH,
+          query,
+          additional_settings: {
+            sortBy,
+            queryType: SearchQueryTypeEnum.TA,
             pageN: `${pageN}`,
             nPerPage: `${nPerPage}`,
             aeVersion: version,

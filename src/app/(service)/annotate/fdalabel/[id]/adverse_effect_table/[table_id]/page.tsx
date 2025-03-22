@@ -282,13 +282,14 @@ export default function Page({ params }: Readonly<PageProps>) {
               )}
             </div>
 
-            <div className="overflow-x-scroll flex flex-col w-full">
+            <div className="overflow-x-auto flex flex-col w-full">
               {tableData && (
                 <Table
                   {...{
                     content: {
                       table: tableData.content.table,
                     } as IBaseTable,
+                    keyname: "table",
                     isSelectable: {
                       table: switch_map(
                         row_map,

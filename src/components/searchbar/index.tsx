@@ -18,7 +18,7 @@ function SearchBar({
   }, [query]);
 
   return (
-    <div className="flex flex-col flex-nowrap space-y-2 mb-2">
+    <div className="flex flex-col flex-nowrap space-y-2 mb-2 w-full">
       {Array.from(
         {
           length: conditionForMultiBars ? nSearch : 1,
@@ -26,8 +26,8 @@ function SearchBar({
         (_, i) => (
           <div
             key={`${id}-${i}`}
-            className="flex flex-row 
-                    space-x-1 items-center h-[2rem]"
+            className="flex flex-row w-full
+              space-x-1 items-center h-[2rem]"
           >
             <input
               type="search"

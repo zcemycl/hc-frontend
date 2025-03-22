@@ -143,7 +143,7 @@ export default function Page({ params }: Readonly<PageProps>) {
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
-        overflow-y-scroll overflow-x-scroll ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        overflow-y-scroll overflow-x-auto ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           {(isLoading || isLoadingAuth) && (
@@ -255,13 +255,14 @@ export default function Page({ params }: Readonly<PageProps>) {
               )}
             </div>
 
-            <div className="overflow-x-scroll flex flex-col w-full">
+            <div className="overflow-x-auto flex flex-col w-full">
               {tableData && (
                 <Table
                   {...{
                     content: {
                       table: tableData.content.table,
                     } as IBaseTable,
+                    keyname: "table",
                     isSelectable: {
                       table: switch_map(
                         row_map,

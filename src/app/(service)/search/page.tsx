@@ -24,7 +24,13 @@ import {
   UserHistoryCategoryEnum,
   IHistory,
 } from "@/types";
-import { SortByEnum, SearchQueryTypeEnum, AETableVerEnum } from "@/constants";
+import {
+  SortByEnum,
+  SearchQueryTypeEnum,
+  AETableVerEnum,
+  tabletype_compare_caption,
+  AETableTypeEnum,
+} from "@/constants";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
 import { FdalabelFetchService } from "@/services";
@@ -45,6 +51,8 @@ export default function Search() {
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
+  const [openCollapseCompSection, setOpenCollapseCompSection] =
+    useState<AETableTypeEnum>(AETableTypeEnum.empty);
   const [sortBy, setSortBy] = useState<SortByEnum>(SortByEnum.RELEVANCE);
   const [compareTable, setCompareTable] = useState<ICompareAETable>({
     table: [],
@@ -77,6 +85,14 @@ export default function Search() {
       resp = await fdaservice.handleFdalabelByTradename(query, version);
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fdaservice.handleFdalabelByIndication(
+        query,
+        pageN,
+        nPerPage,
+        sortBy,
+        version,
+      );
+    } else if (queryType === SearchQueryTypeEnum.TA) {
+      resp = await fdaservice.handleFdalabelByTherapeuticArea(
         query,
         pageN,
         nPerPage,
@@ -156,10 +172,16 @@ export default function Search() {
       >
         <section
           className={`text-gray-400 bg-gray-900 body-font 
-          h-[83vh] sm:h-[90vh] overflow-y-scroll ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+          h-[83vh] sm:h-[90vh] overflow-y-scroll
+          overflow-x-hidden
+          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
           ref={refSearchResGroup}
         >
-          <div className="container px-2 py-24 mx-auto grid justify-items-center">
+          {/* <div className="container px-2 py-24 mx-auto grid justify-items-center"> */}
+          <div
+            className="flex flex-col px-10 sm:px-5 py-24
+            items-center align-middle"
+          >
             {(isLoading || isLoadingAuth) && (
               <div
                 role="status"
@@ -170,17 +192,29 @@ export default function Search() {
                 <span className="sr-only">Loading...</span>
               </div>
             )}
-            <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
+            <div
+              className="flex flex-col
+              w-screen sm:w-11/12 md:w-8/12
+              py-10 px-6 sm:px-10"
+            >
               <TypographyH2>Search</TypographyH2>
               <p className="leading-relaxed mb-5">Please enter your query.</p>
               <SearchBar
                 query={query}
                 setQuery={(s) => setQuery(s)}
                 conditionForMultiBars={
-                  queryType !== SearchQueryTypeEnum.INDICATION
+                  queryType !== SearchQueryTypeEnum.INDICATION &&
+                  queryType !== SearchQueryTypeEnum.TA
                 }
               />
-              <div className="py-1 flex justify-end items-center text-base space-x-1">
+              <div
+                className="py-1 flex justify-end
+                flex-col sm:flex-row
+                space-y-2 sm:space-y-0
+                space-x-0 sm:space-x-1
+                sm:items-center
+                 text-base"
+              >
                 {queryType === SearchQueryTypeEnum.INDICATION && (
                   <div className="flex justify-start space-x-3">
                     <label htmlFor="">Top N: </label>
@@ -199,7 +233,13 @@ export default function Search() {
                     />
                   </div>
                 )}
-                <div className="flex flex-row justify-end space-x-1">
+                <div
+                  className="flex 
+                  flex-col sm:flex-row
+                  space-y-2 sm:space-y-0
+                  space-x-0 sm:space-x-2
+                  justify-end"
+                >
                   {queryType === SearchQueryTypeEnum.INDICATION && (
                     <SortByDropdown
                       sortBy={sortBy}
@@ -289,9 +329,44 @@ export default function Search() {
                 </div>
               </div>
             </div>
-            {compareTable.table?.length !== 0 && (
-              <Table {...{ content: compareTable }} />
-            )}
+            <div
+              className="sm:w-8/12 w-full overflow-x-auto 
+              flex flex-col space-y-2"
+            >
+              {Object.keys(compareTable).map((tabletype) => {
+                if (compareTable[tabletype].length === 0) return <></>;
+                return (
+                  <div
+                    className="justify-start flex flex-col"
+                    key={`${tabletype}-comp`}
+                  >
+                    <button
+                      className="p-2 bg-sky-300 hover:bg-sky-700 rounded-lg text-black"
+                      onClick={() => {
+                        if (openCollapseCompSection === tabletype) {
+                          setOpenCollapseCompSection("" as AETableTypeEnum);
+                          return;
+                        }
+                        setOpenCollapseCompSection(
+                          tabletype as AETableTypeEnum,
+                        );
+                      }}
+                    >
+                      {tabletype_compare_caption[tabletype as AETableTypeEnum]}
+                    </button>
+                    <div
+                      className={`
+                        ${openCollapseCompSection === tabletype ? "" : "hidden"}
+                      `}
+                    >
+                      <Table
+                        {...{ content: compareTable, keyname: tabletype }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
             {displayData.length > 0 && displayDataIndex != null && (
               <div className="sm:w-1/2 flex flex-col w-screen">
@@ -305,7 +380,10 @@ export default function Search() {
 
             {/* list of drugs */}
             {displayData.length > 0 && displayDataIndex === null && (
-              <>
+              <div
+                className="flex flex-col justify-center
+                content-center items-center"
+              >
                 {(queryType === SearchQueryTypeEnum.INDICATION
                   ? displayData
                   : displayData.slice(pageN * nPerPage, (pageN + 1) * nPerPage)
@@ -360,7 +438,7 @@ export default function Search() {
                     }}
                   />
                 </div>
-              </>
+              </div>
             )}
           </div>
         </section>

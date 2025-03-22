@@ -11,10 +11,15 @@ export const queryTypeMap = [
     queryType: "indication",
     queryDisplayName: "Indication",
   },
+  {
+    queryType: "therapeuticarea",
+    queryDisplayName: "Therapeutic Area",
+  },
 ];
 
 export enum SearchQueryTypeEnum {
   SETID = "setid",
   TRADENAME = "tradename",
   INDICATION = "indication",
+  TA = "therapeuticarea",
 }

@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface IBaseTable {
-  table: string[][];
+  [key: string]: string[][];
 }
 
 export interface IBaseSelectTable {
@@ -10,6 +10,7 @@ export interface IBaseSelectTable {
 
 export interface IBaseTableNoHead {
   content: IBaseTable;
+  keyname: string;
   version?: string;
   caption?: string;
   isSelectable?: IBaseSelectTable;

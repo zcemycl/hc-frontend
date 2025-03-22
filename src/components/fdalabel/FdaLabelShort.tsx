@@ -27,7 +27,11 @@ function FdaLabelShort({
   clickExpandCallback: () => void;
 }) {
   return (
-    <div className="sm:w-1/2 flex flex-col w-screen p-10" key={setid}>
+    <div
+      className="flex flex-col p-10
+      w-screen sm:w-11/12 md:w-8/12"
+      key={setid}
+    >
       <div className="flex justify-between">
         <TypographyH2>{tradename}</TypographyH2>
         <input
