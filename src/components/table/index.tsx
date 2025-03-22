@@ -130,9 +130,6 @@ const TableHeadCell: FC<{
 
 const Table = (tabledata: IBaseTableNoHead) => {
   const id = useId();
-  if (tabledata.keyname === undefined) {
-    return <></>;
-  }
   const tableRef = useRef<HTMLTableElement>(null);
   const isDisplayMode =
     tabledata.isSelectable === undefined
@@ -140,6 +137,9 @@ const Table = (tabledata: IBaseTableNoHead) => {
       : !tabledata.isSelectable?.table.flat().includes(true);
   let drugHeading: string[] = [];
   let head_colspan: number[] = [];
+  if (tabledata.keyname === undefined) {
+    return <></>;
+  }
   if (tabledata!.content[tabledata.keyname ?? "table"]!.length !== 0) {
     drugHeading = tabledata!.content[tabledata.keyname ?? "table"][0];
   }
