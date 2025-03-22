@@ -336,7 +336,10 @@ export default function Search() {
               {Object.keys(compareTable).map((tabletype) => {
                 if (compareTable[tabletype].length === 0) return <></>;
                 return (
-                  <div className="justify-start flex flex-col">
+                  <div
+                    className="justify-start flex flex-col"
+                    key={`${tabletype}-comp`}
+                  >
                     <button
                       className="p-2 bg-sky-300 hover:bg-sky-700 rounded-lg text-black"
                       onClick={() => {
@@ -352,7 +355,6 @@ export default function Search() {
                       {tabletype_compare_caption[tabletype as AETableTypeEnum]}
                     </button>
                     <div
-                      key={`${tabletype}-comp`}
                       className={`
                         ${openCollapseCompSection === tabletype ? "" : "hidden"}
                       `}

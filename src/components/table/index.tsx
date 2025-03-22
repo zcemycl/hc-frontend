@@ -133,7 +133,6 @@ const Table = (tabledata: IBaseTableNoHead) => {
   if (tabledata.keyname === undefined) {
     return <></>;
   }
-  console.log(tabledata.keyname ?? "table");
   const tableRef = useRef<HTMLTableElement>(null);
   const isDisplayMode =
     tabledata.isSelectable === undefined
