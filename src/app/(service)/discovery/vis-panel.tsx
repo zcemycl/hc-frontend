@@ -1,25 +1,56 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Network } from "vis-network";
+import { FASTAPI_URI } from "@/http/backend/constants";
+import { useAuth } from "@/contexts";
+
+interface INode {
+  label: string;
+  id: number;
+}
+
+interface IEdge {
+  from: number;
+  to: number;
+}
 
 export default function VisPanel() {
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
   const visJsRef = useRef<HTMLDivElement>(null);
-  const nodes = [
-    { id: 1, label: "Node 1" },
-    { id: 2, label: "Node 2" },
-    { id: 3, label: "Node 3" },
-    { id: 4, label: "Node 4" },
-    { id: 5, label: "Node 5" },
-  ];
+  const { credentials } = useAuth();
+  const [nodes, setNodes] = useState<INode[]>([]);
+  const [edges, setEdges] = useState<IEdge[]>([]);
 
-  const edges = [
-    { from: 1, to: 3 },
-    { from: 1, to: 2 },
-    { from: 2, to: 4 },
-    { from: 2, to: 5 },
-    { from: 3, to: 3 },
-  ];
+  useEffect(() => {
+    if (credentials.length === 0) return;
+    async function getData(credentials: string) {
+      const credJson = JSON.parse(credentials);
+      const API_URI = `http://localhost:4001/graph/`;
+      console.log(API_URI);
+      const response = await fetch(API_URI, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${credJson.AccessToken}`,
+        },
+      });
+      const res = await response.json();
+      setNodes([
+        ...res["ta"].map((v: INode) => ({
+          ...v,
+          group: "ta",
+        })),
+        ...res["p"].map((v: INode) => ({
+          ...v,
+          group: "p",
+        })),
+      ]);
+      setEdges([...res["links"]]);
+      console.log(res);
+    }
+    getData(credentials);
+  }, [credentials]);
+
   useEffect(() => {
     console.log(visJsRef);
     if (visJsRef.current) {
@@ -33,11 +64,57 @@ export default function VisPanel() {
             edges: {
               color: "#FFFFFF",
             },
+            nodes: { borderWidth: 2 },
+            interaction: { hover: true },
+            groups: {
+              ta: {
+                color: "rgb(201,144,191)",
+                font: {
+                  color: "white",
+                },
+                shape: "image",
+                image:
+                  "https://icons.getbootstrap.com/assets/icons/journal-bookmark-fill.svg",
+                mass: 8,
+                level: 3,
+                imagePadding: {
+                  top: 1,
+                  right: 1,
+                  bottom: 1,
+                  left: 1,
+                },
+                shadow: {
+                  enabled: true,
+                  color: "white",
+                },
+                shapeProperties: {
+                  borderRadius: 6,
+                  interpolation: true,
+                  useBorderWithImage: true,
+                  useImageSize: false,
+                },
+              },
+              p: {
+                font: {
+                  color: "white",
+                },
+                level: 10,
+                shape: "circularImage",
+                image:
+                  "https://icons.getbootstrap.com/assets/icons/capsule.svg",
+                imagePadding: {
+                  top: 1,
+                  right: 1,
+                  bottom: 1,
+                  left: 1,
+                },
+              },
+            },
           },
         );
       network?.fit();
     }
-  }, []);
+  }, [visJsRef, nodes, edges]);
   return (
     <div id="vis-panel" className="relative rounded-lg">
       <div
