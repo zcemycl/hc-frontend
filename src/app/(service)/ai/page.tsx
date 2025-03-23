@@ -1,7 +1,7 @@
 "use client";
 import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
 import { create_presigned_url } from "@/http/internal";
-import { JupyterIcon, ChatbotIcon, AnnotateIcon } from "@/icons";
+import { JupyterIcon, ChatbotIcon, AnnotateIcon, DiscoveryIcon } from "@/icons";
 import { redirect, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { UserRoleEnum } from "@/types/users";
@@ -66,6 +66,22 @@ export default function AI() {
             </button>
             <p className="px-6 mb-1 text-xs text-right">
               Create benchmark dataset to train and evaluate.
+            </p>
+
+            <button
+              type="button"
+              className="text-white bg-orange-500 border-0 py-3
+                flex justify-between content-center text-center
+                align-middle items-center 
+                px-6 focus:outline-none hover:bg-orange-600 
+                rounded text-2xl w-full"
+              onClick={() => router.push("/discovery")}
+            >
+              <p className="text-center align-middle">Discovery</p>
+              <DiscoveryIcon />
+            </button>
+            <p className="px-6 mb-1 text-xs text-right">
+              Discovery Drug with graphs.
             </p>
 
             <button
