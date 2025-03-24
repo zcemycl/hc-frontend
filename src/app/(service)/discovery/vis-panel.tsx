@@ -6,6 +6,8 @@ import { useAuth } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import {
   drug_product_group_graph_style,
+  global_graph_edge_style,
+  global_graph_node_style,
   therapeutic_area_group_graph_style,
 } from "@/constants";
 
@@ -65,10 +67,8 @@ export default function VisPanel() {
           { nodes, edges },
           {
             autoResize: true,
-            edges: {
-              color: "#FFFFFF",
-            },
-            nodes: { borderWidth: 2 },
+            edges: global_graph_edge_style,
+            nodes: global_graph_node_style,
             interaction: { hover: true },
             groups: {
               ta: therapeutic_area_group_graph_style,

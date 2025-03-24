@@ -40,3 +40,11 @@ export const drug_product_group_graph_style = {
     left: 1,
   },
 };
+
+export const global_graph_node_style = {
+  borderWidth: 2,
+};
+
+export const global_graph_edge_style = {
+  color: "#FFFFFF",
+};
