@@ -1,8 +1,13 @@
 "use client";
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Network } from "vis-network";
 import { FASTAPI_URI } from "@/http/backend/constants";
 import { useAuth } from "@/contexts";
+import VisToolbar from "./vis-toolbar";
+import {
+  drug_product_group_graph_style,
+  therapeutic_area_group_graph_style,
+} from "@/constants";
 
 interface INode {
   label: string;
@@ -15,7 +20,6 @@ interface IEdge {
 }
 
 export default function VisPanel() {
-  const [openToolBar, setOpenToolBar] = useState<boolean>(false);
   const visJsRef = useRef<HTMLDivElement>(null);
   const { credentials } = useAuth();
   const [nodes, setNodes] = useState<INode[]>([]);
@@ -67,48 +71,8 @@ export default function VisPanel() {
             nodes: { borderWidth: 2 },
             interaction: { hover: true },
             groups: {
-              ta: {
-                color: "rgb(201,144,191)",
-                font: {
-                  color: "white",
-                },
-                shape: "image",
-                image:
-                  "https://icons.getbootstrap.com/assets/icons/journal-bookmark-fill.svg",
-                mass: 8,
-                level: 3,
-                imagePadding: {
-                  top: 1,
-                  right: 1,
-                  bottom: 1,
-                  left: 1,
-                },
-                shadow: {
-                  enabled: true,
-                  color: "white",
-                },
-                shapeProperties: {
-                  borderRadius: 6,
-                  interpolation: true,
-                  useBorderWithImage: true,
-                  useImageSize: false,
-                },
-              },
-              p: {
-                font: {
-                  color: "white",
-                },
-                level: 10,
-                shape: "circularImage",
-                image:
-                  "https://icons.getbootstrap.com/assets/icons/capsule.svg",
-                imagePadding: {
-                  top: 1,
-                  right: 1,
-                  bottom: 1,
-                  left: 1,
-                },
-              },
+              ta: therapeutic_area_group_graph_style,
+              p: drug_product_group_graph_style,
             },
           },
         );
@@ -134,29 +98,7 @@ export default function VisPanel() {
                     z-10
                     space-y-2"
       >
-        <button
-          className="rounded-lg
-                    p-3
-                    self-end
-                    w-fit
-                    text-black leading-5 font-semibold
-                    bg-emerald-400 hover:bg-emerald-600"
-          onClick={(e) => {
-            e.preventDefault();
-            setOpenToolBar(!openToolBar);
-          }}
-        >
-          Toolbar
-        </button>
-        <div
-          className={`origin-top-right transition
-                    bg-sky-800 rounded-lg
-                    self-end
-                    w-[20vw]
-                    ${
-                      openToolBar ? "p-5 h-[60vh] scale-100" : "p-0 h-0 scale-0"
-                    }`}
-        ></div>
+        <VisToolbar />
       </div>
     </div>
   );
