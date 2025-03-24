@@ -10,16 +10,7 @@ import {
   global_graph_node_style,
   therapeutic_area_group_graph_style,
 } from "@/constants";
-
-interface INode {
-  label: string;
-  id: number;
-}
-
-interface IEdge {
-  from: number;
-  to: number;
-}
+import { IEdge, INode } from "@/types";
 
 export default function VisPanel() {
   const visJsRef = useRef<HTMLDivElement>(null);
