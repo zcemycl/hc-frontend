@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Network } from "vis-network";
-import { FASTAPI_URI } from "@/http/backend/constants";
 import { useAuth } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import {
@@ -11,27 +10,26 @@ import {
   therapeutic_area_group_graph_style,
 } from "@/constants";
 import { IEdge, INode } from "@/types";
+import { useRouter, useSearchParams } from "next/navigation";
+import { fetchGraphDummy } from "@/http/backend";
+import { Spinner } from "@/components";
 
 export default function VisPanel() {
   const visJsRef = useRef<HTMLDivElement>(null);
-  const { credentials } = useAuth();
+  const { credentials, setIsAuthenticated } = useAuth();
+  const [name, setName] = useState("Neoplasms");
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (credentials.length === 0) return;
     async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
-      const API_URI = `http://localhost:4001/graph/`;
-      console.log(API_URI);
-      const response = await fetch(API_URI, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${credJson.AccessToken}`,
-        },
-      });
-      const res = await response.json();
+      if (credentials.length === 0) {
+        setIsAuthenticated(false);
+        router.push("/logout");
+      }
+      const res = await fetchGraphDummy(name);
       setNodes([
         ...res["ta"].map((v: INode) => ({
           ...v,
@@ -43,7 +41,6 @@ export default function VisPanel() {
         })),
       ]);
       setEdges([...res["links"]]);
-      console.log(res);
     }
     getData(credentials);
   }, [credentials]);
@@ -72,6 +69,15 @@ export default function VisPanel() {
   }, [visJsRef, nodes, edges]);
   return (
     <div id="vis-panel" className="relative rounded-lg">
+      <div
+        className="absolute h-[78vh]
+        z-20
+        flex flex-col justify-center align-middle content-center
+        top-1/2 left-1/2 transform -translate-x-1/2"
+      >
+        <Spinner />
+        <span className="sr-only">Loading...</span>
+      </div>
       <div
         ref={visJsRef}
         style={{ height: "78vh", width: "100%" }}
