@@ -1,4 +1,6 @@
 export interface INode {
+  level?: number;
+  group?: string;
   label: string;
   id: number;
 }

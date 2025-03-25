@@ -1,5 +1,7 @@
+import { graph_node_bg_color_enum } from "./color";
+
 export const therapeutic_area_group_graph_style = {
-  color: "rgb(201,144,191)",
+  color: graph_node_bg_color_enum.ta,
   font: {
     color: "white",
   },
@@ -30,6 +32,7 @@ export const drug_product_group_graph_style = {
   font: {
     color: "white",
   },
+  color: graph_node_bg_color_enum.p,
   level: 10,
   shape: "circularImage",
   image: "https://icons.getbootstrap.com/assets/icons/capsule.svg",
@@ -47,4 +50,9 @@ export const global_graph_node_style = {
 
 export const global_graph_edge_style = {
   color: "#FFFFFF",
+  // smooth: {
+  //   type: "cubicBezier",
+  //   forceDirection:"vertical",
+  //   roundness: 0.4,
+  // },
 };

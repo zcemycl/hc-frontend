@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Network } from "vis-network";
-import { useAuth } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import {
   drug_product_group_graph_style,
@@ -17,20 +17,24 @@ import { Spinner } from "@/components";
 export default function VisPanel() {
   const visJsRef = useRef<HTMLDivElement>(null);
   const { credentials, setIsAuthenticated } = useAuth();
+  const { isLoading, setIsLoading } = useLoader();
   const [name, setName] = useState("Neoplasms");
   const [nodes, setNodes] = useState<INode[]>([]);
+  const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const router = useRouter();
 
   useEffect(() => {
     if (credentials.length === 0) return;
+    setIsLoading(true);
     async function getData(credentials: string) {
       if (credentials.length === 0) {
         setIsAuthenticated(false);
         router.push("/logout");
       }
       const res = await fetchGraphDummy(name);
-      setNodes([
+      console.log(res);
+      let all_nodes = [
         ...res["ta"].map((v: INode) => ({
           ...v,
           group: "ta",
@@ -39,14 +43,19 @@ export default function VisPanel() {
           ...v,
           group: "p",
         })),
-      ]);
+      ];
+      const final_all_nodes = all_nodes.map((obj) =>
+        obj.label == name ? { ...obj, fixed: true } : obj,
+      );
+      setNodes(final_all_nodes);
       setEdges([...res["links"]]);
     }
     getData(credentials);
+    setIsLoading(false);
   }, [credentials]);
 
   useEffect(() => {
-    console.log(visJsRef);
+    setIsLoading(true);
     if (visJsRef.current) {
       const network =
         visJsRef.current &&
@@ -55,29 +64,53 @@ export default function VisPanel() {
           { nodes, edges },
           {
             autoResize: true,
+            layout: {
+              hierarchical: {
+                direction: "LR",
+                sortMethod: "directed",
+              },
+            },
             edges: global_graph_edge_style,
             nodes: global_graph_node_style,
             interaction: { hover: true },
+            physics: {
+              enabled: true,
+              // wind:{
+              //   x: 0, y: 1
+              // },
+              wind: {
+                x: 1,
+                y: 0,
+              },
+            },
             groups: {
               ta: therapeutic_area_group_graph_style,
               p: drug_product_group_graph_style,
             },
           },
         );
+      network?.on("click", (e) => {
+        if (e.nodes.length >= 1) {
+          setSelectedNodes(nodes.filter((v) => e.nodes.includes(v.id)));
+        }
+      });
       network?.fit();
     }
+    setIsLoading(false);
   }, [visJsRef, nodes, edges]);
   return (
     <div id="vis-panel" className="relative rounded-lg">
-      <div
-        className="absolute h-[78vh]
-        z-20
-        flex flex-col justify-center align-middle content-center
-        top-1/2 left-1/2 transform -translate-x-1/2"
-      >
-        <Spinner />
-        <span className="sr-only">Loading...</span>
-      </div>
+      {isLoading && (
+        <div
+          className="absolute h-[78vh]
+          z-20
+          flex flex-col justify-center align-middle content-center
+          top-1/2 left-1/2 transform -translate-x-1/2"
+        >
+          <Spinner />
+          <span className="sr-only">Loading...</span>
+        </div>
+      )}
       <div
         ref={visJsRef}
         style={{ height: "78vh", width: "100%" }}
@@ -95,7 +128,7 @@ export default function VisPanel() {
                     z-10
                     space-y-2"
       >
-        <VisToolbar />
+        <VisToolbar {...{ selectedNodes }} />
       </div>
     </div>
   );
