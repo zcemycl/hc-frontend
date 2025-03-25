@@ -8,4 +8,5 @@ export interface INode {
 export interface IEdge {
   from: number;
   to: number;
+  id?: string;
 }

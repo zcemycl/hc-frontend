@@ -74,14 +74,25 @@ export default function VisPanel() {
             nodes: global_graph_node_style,
             interaction: { hover: true },
             physics: {
-              enabled: true,
+              // stabilization: false,
+              // stabilization: true,
+              // barnesHut: {
+              //   gravitationalConstant: -80000,
+              //   springConstant: 0.001,
+              //   springLength: 200,
+              // },
+              // enabled: true,
               // wind:{
               //   x: 0, y: 1
               // },
+              enabled: false,
               wind: {
                 x: 1,
                 y: 0,
               },
+              // hierarchicalRepulsion: {
+              //   avoidOverlap: 2,
+              // },
             },
             groups: {
               ta: therapeutic_area_group_graph_style,
@@ -89,15 +100,57 @@ export default function VisPanel() {
             },
           },
         );
+      network?.once("beforeDrawing", function () {
+        network?.moveTo({
+          position: { x: 0, y: 0 },
+          animation: true,
+        });
+      });
+      console.log(typeof network);
       network?.on("click", (e) => {
+        console.log(e);
         if (e.nodes.length >= 1) {
+          const nodeId = e.nodes[0];
           setSelectedNodes(nodes.filter((v) => e.nodes.includes(v.id)));
+          const { x, y } = network.getPositions([nodeId])[nodeId];
+          network?.moveTo({
+            position: { x, y },
+            animation: true, // default duration is 1000ms and default easingFunction is easeInOutQuad.
+          });
+
+          let pathEdges = [];
+          let currentNode = nodeId;
+
+          while (true) {
+            // let parentEdge = edges.get({ filter: e => e.to === currentNode })[0];
+            let parentEdge = edges.filter((v) => v.to === currentNode)[0];
+            if (!parentEdge) break;
+
+            pathEdges.push(parentEdge.id);
+            currentNode = parentEdge.from;
+            console.log(currentNode);
+          }
+          console.log(pathEdges);
+          // network.getConnectedEdges()
+          // let tmpEdges = edges.map(
+          //   tmpedge => ({...tmpedge, color: "white"})
+          // )
+          // tmpEdges = tmpEdges.map(
+          //   tmpedge => ({...tmpedge, color: "green"})
+          // )
+          // setEdges(tmpEdges)
+          // network.setData({nodes: nodes, edges: tmpEdges})
+          // network.redraw()
+          pathEdges.forEach((v) =>
+            network.updateEdge(v as string, { color: "green", width: 5 }),
+          );
         }
       });
       network?.fit();
     }
     setIsLoading(false);
   }, [visJsRef, nodes, edges]);
+
   return (
     <div id="vis-panel" className="relative rounded-lg">
       {isLoading && (

@@ -7,7 +7,7 @@ import { useState } from "react";
 const switch_color_node = (group: string) => {
   switch (group) {
     case "ta":
-      return `bg-[${graph_node_bg_color_enum.ta}]`;
+      return `bg-purple-300`;
     case "p":
       return "bg-sky-500";
     default:

@@ -50,6 +50,7 @@ export const global_graph_node_style = {
 
 export const global_graph_edge_style = {
   color: "#FFFFFF",
+  width: 1,
   // smooth: {
   //   type: "cubicBezier",
   //   forceDirection:"vertical",
