@@ -13,6 +13,7 @@ import { IEdge, INode } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchGraphDummy } from "@/http/backend";
 import { Spinner } from "@/components";
+import path from "path";
 
 export default function VisPanel() {
   const visJsRef = useRef<HTMLDivElement>(null);
@@ -20,9 +21,11 @@ export default function VisPanel() {
   const { isLoading, setIsLoading } = useLoader();
   const [name, setName] = useState("Neoplasms");
   const [nodes, setNodes] = useState<INode[]>([]);
+  const [traceEdges, setTraceEdges] = useState<string[]>([]);
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const router = useRouter();
+  const [net, setNet] = useState<Network | null>(null);
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -111,6 +114,7 @@ export default function VisPanel() {
         console.log(e);
         if (e.nodes.length >= 1) {
           const nodeId = e.nodes[0];
+
           setSelectedNodes(nodes.filter((v) => e.nodes.includes(v.id)));
           const { x, y } = network.getPositions([nodeId])[nodeId];
           network?.moveTo({
@@ -130,7 +134,18 @@ export default function VisPanel() {
             currentNode = parentEdge.from;
             console.log(currentNode);
           }
+          // console.log(network.)
           console.log(pathEdges);
+          console.log(selectedNodes);
+          console.log(traceEdges);
+          (network as any).body.data.edges
+            .get()
+            .forEach((v: IEdge) =>
+              network.updateEdge(v.id as string, {
+                color: "white",
+                width: 0.5,
+              }),
+            );
           // network.getConnectedEdges()
           // let tmpEdges = edges.map(
           //   tmpedge => ({...tmpedge, color: "white"})
@@ -141,15 +156,23 @@ export default function VisPanel() {
           // setEdges(tmpEdges)
           // network.setData({nodes: nodes, edges: tmpEdges})
           // network.redraw()
+          const newTraces = [...pathEdges];
+          console.log(newTraces);
+          // setTraceEdges(newTraces);
           pathEdges.forEach((v) =>
             network.updateEdge(v as string, { color: "green", width: 5 }),
           );
         }
       });
       network?.fit();
+      setNet(network);
     }
     setIsLoading(false);
   }, [visJsRef, nodes, edges]);
+
+  // useEffect(() => {
+
+  // }, [traceEdges])
 
   return (
     <div id="vis-panel" className="relative rounded-lg">
