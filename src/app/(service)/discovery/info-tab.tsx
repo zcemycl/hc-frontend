@@ -25,23 +25,23 @@ const switch_hover_color_node = (group: string) => {
 };
 
 export default function InfoTab() {
-  const { selectedNodes, tab, visJsRef } = useContext(DiscoveryContext);
+  const { selectedNodes, tab, visJsRef, net } = useContext(DiscoveryContext);
   return (
     <div
       className={`absolute
-                left-0 right-0 top-0 bottom-0
-                self-end
-                space-y-1
-                overflow-y-auto
-                w-full h-full
-                transition
-                p-5
-                ${
-                  tab === "info"
-                    ? "opacity-100 z-10 delay-200"
-                    : "opacity-0 z-0 duration-200"
-                }
-                `}
+        left-0 right-0 top-0 bottom-0
+        self-end
+        space-y-1
+        overflow-y-auto
+        w-full h-full
+        transition
+        p-5
+        ${
+          tab === "info"
+            ? "opacity-100 z-10 delay-200"
+            : "opacity-0 z-0 duration-200"
+        }
+        `}
     >
       <h2 className="leading text-slate-300 font-bold">Inspect Path</h2>
       {selectedNodes.length !== 0 ? (
@@ -57,9 +57,14 @@ export default function InfoTab() {
                 e.preventDefault();
                 if (visJsRef.current) {
                   console.log(visJsRef.current);
-                  const pos = (visJsRef.current as any).getPositions(
-                    selectedNodes,
-                  );
+                  console.log(selectedNodes);
+                  const pos = net.getPositions(selectedNodes[0].id);
+                  net.moveTo({
+                    position: pos[selectedNodes[0].id],
+                    animation: true,
+                  });
+                  // net.animate
+                  console.log(net);
                   console.log(pos);
                 }
               }}
