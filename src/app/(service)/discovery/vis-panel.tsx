@@ -3,13 +3,7 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import { Network } from "vis-network";
 import { useAuth, useLoader } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
-import {
-  drug_product_group_graph_style,
-  generateGraphOption,
-  global_graph_edge_style,
-  global_graph_node_style,
-  therapeutic_area_group_graph_style,
-} from "@/constants";
+import { generateGraphOption } from "@/constants";
 import { IEdge, INode } from "@/types";
 import { useRouter } from "next/navigation";
 import { fetchGraphDummy } from "@/http/backend";
@@ -75,43 +69,6 @@ export default function VisPanel() {
           visJsRef.current,
           { nodes, edges },
           generateGraphOption(settings),
-          // {
-          //   autoResize: true,
-          //   layout: {
-          //     hierarchical: {
-          //       direction: "UD",
-          //       sortMethod: "directed",
-          //     },
-          //   },
-          //   edges: global_graph_edge_style,
-          //   nodes: global_graph_node_style,
-          //   interaction: { hover: true },
-          //   physics: {
-          //     // stabilization: false,
-          //     stabilization: true,
-          //     // barnesHut: {
-          //     //   gravitationalConstant: -80000,
-          //     //   springConstant: 0.001,
-          //     //   springLength: 200,
-          //     // },
-          //     enabled: true,
-          //     // wind:{
-          //     //   x: 0, y: 1
-          //     // },
-          //     // enabled: false,
-          //     // wind: {
-          //     //   x: 1,
-          //     //   y: 0,
-          //     // },
-          //     // hierarchicalRepulsion: {
-          //     //   avoidOverlap: 2,
-          //     // },
-          //   },
-          //   groups: {
-          //     ta: therapeutic_area_group_graph_style,
-          //     p: drug_product_group_graph_style,
-          //   },
-          // },
         );
       network?.once("beforeDrawing", function () {
         network?.moveTo({
@@ -165,10 +122,6 @@ export default function VisPanel() {
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visJsRef, nodes, edges, settings]);
-
-  // useEffect(() => {
-
-  // }, [traceEdges])
 
   return (
     <div id="vis-panel" className="relative rounded-lg">
