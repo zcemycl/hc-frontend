@@ -6,13 +6,21 @@ import { DiscoveryContext } from "./context";
 import { useState } from "react";
 import { IEdge, INode } from "@/types";
 
+interface IFlagAttrs {
+  name?: string;
+  numNodes?: number;
+}
+
 export default function Discovery() {
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
   const [tab, setTab] = useState("info");
-  const [name, setName] = useState("Neoplasms");
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
+  const [flagAttrs, setFlagAttrs] = useState<IFlagAttrs>({
+    name: "Neoplasms",
+    numNodes: 50,
+  });
   return (
     <ProtectedRoute>
       <DiscoveryContext.Provider
@@ -23,12 +31,12 @@ export default function Discovery() {
           setOpenToolBar,
           selectedNodes,
           setSelectedNodes,
-          name,
-          setName,
           nodes,
           setNodes,
           edges,
           setEdges,
+          flagAttrs,
+          setFlagAttrs,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">

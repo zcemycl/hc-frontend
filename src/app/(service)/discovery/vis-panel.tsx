@@ -20,7 +20,7 @@ export default function VisPanel() {
   const { credentials, setIsAuthenticated } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
-  const { setSelectedNodes, name, nodes, setNodes, edges, setEdges } =
+  const { setSelectedNodes, nodes, setNodes, edges, setEdges, flagAttrs } =
     useContext(DiscoveryContext);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function VisPanel() {
         setIsAuthenticated(false);
         router.push("/logout");
       }
-      const res = await fetchGraphDummy(name);
+      const res = await fetchGraphDummy(flagAttrs.name, flagAttrs.numNodes);
       console.log(res);
       let all_nodes = [
         ...res["ta"].map((v: INode) => ({
@@ -51,7 +51,7 @@ export default function VisPanel() {
     }
     getData(credentials);
     setIsLoading(false);
-  }, [credentials, name]);
+  }, [credentials, flagAttrs]);
 
   useEffect(() => {
     setIsLoading(true);
