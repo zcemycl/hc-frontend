@@ -76,6 +76,7 @@ export default function VisPanel() {
       network?.once("beforeDrawing", function () {
         network?.moveTo({
           position: { x: 0, y: 0 },
+          scale: 0.5,
           animation: true,
         });
       });
@@ -124,7 +125,19 @@ export default function VisPanel() {
           pathEdges.forEach((v) =>
             network.updateEdge(v as string, { color: "lightgreen", width: 6 }),
           );
+        } else {
+          net.releaseNode();
+          net.redraw();
         }
+      });
+      network?.on("initRedraw", (e: any) => {
+        setIsLoading(true);
+      });
+      // network?.on("beforeDrawing", (e: any) => {
+      //   setIsLoading(true);
+      // })
+      network?.on("afterDrawing", (e: any) => {
+        setIsLoading(false);
       });
       setNet(network);
       network?.fit();

@@ -56,16 +56,27 @@ export default function InfoTab() {
               onClick={(e) => {
                 e.preventDefault();
                 if (visJsRef.current) {
-                  console.log(visJsRef.current);
-                  console.log(selectedNodes);
-                  const pos = net.getPositions(selectedNodes[0].id);
+                  net.releaseNode();
+                  const targetNodeId = selectedNodes.filter(
+                    (x: INode) => x.id === v.id,
+                  )[0].id;
+                  const pos = net.getViewPosition();
+                  // const pos = net.getPositions(targetNodeId);
                   net.moveTo({
-                    position: pos[selectedNodes[0].id],
-                    animation: true,
+                    position: pos,
+                    scale: 0.2,
+                    animation: {
+                      duration: 800,
+                    },
                   });
-                  // net.animate
-                  console.log(net);
-                  console.log(pos);
+                  setTimeout(() => {
+                    net.focus(targetNodeId, {
+                      scale: 0.5,
+                      animation: {
+                        duration: 800,
+                      },
+                    });
+                  }, 1500);
                 }
               }}
             >
