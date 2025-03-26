@@ -10,3 +10,9 @@ export interface IEdge {
   to: number;
   id?: string;
 }
+
+export interface IFlagAttrs {
+  name?: string;
+  numNodes?: number;
+  offset?: number;
+}

@@ -1,5 +1,17 @@
 import { graph_node_bg_color_enum } from "./color";
 
+export enum GraphDirectionEnum {
+  updown = "UD",
+  downup = "DU",
+  leftright = "LR",
+  rightleft = "RL",
+}
+
+export enum GraphTypeEnum {
+  hierarchical = "hierarchical",
+  radial = "radial",
+}
+
 export const therapeutic_area_group_graph_style = {
   color: graph_node_bg_color_enum.ta,
   font: {
@@ -57,3 +69,75 @@ export const global_graph_edge_style = {
   //   roundness: 0.4,
   // },
 };
+
+const defaultOptions = {
+  autoResize: true,
+  // layout: {
+  //   hierarchical: {
+  //     direction: "UD",
+  //     sortMethod: "directed",
+  //   },
+  // },
+  edges: global_graph_edge_style,
+  nodes: global_graph_node_style,
+  interaction: { hover: true },
+  physics: {
+    // stabilization: false,
+    // stabilization: true,
+    // barnesHut: {
+    //   gravitationalConstant: -80000,
+    //   springConstant: 0.001,
+    //   springLength: 200,
+    // },
+    // enabled: true,
+    // wind:{
+    //   x: 0, y: 1
+    // },
+    enabled: false,
+    wind: {
+      x: 1,
+      y: 0,
+    },
+    // hierarchicalRepulsion: {
+    //   avoidOverlap: 2,
+    // },
+  },
+  groups: {
+    ta: therapeutic_area_group_graph_style,
+    p: drug_product_group_graph_style,
+  },
+};
+
+export function generateGraphOption({
+  graph_type,
+  graph_direction = GraphDirectionEnum.leftright,
+  enable_physics = true,
+}: {
+  graph_type: GraphTypeEnum;
+  graph_direction: GraphDirectionEnum;
+  enable_physics: boolean;
+}) {
+  let options: any = { ...defaultOptions };
+  if (graph_type === GraphTypeEnum.hierarchical) {
+    options = {
+      ...options,
+      layout: {
+        hierarchical: {
+          direction: graph_direction,
+          sortMethod: "directed",
+        },
+      },
+    };
+  }
+
+  if (graph_type === GraphTypeEnum.radial) {
+    options = {
+      ...options,
+      physics: {
+        stabilization: true,
+        enabled: enable_physics,
+      },
+    };
+  }
+  return options;
+}

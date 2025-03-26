@@ -1,52 +1,21 @@
-import {
-  drug_product_group_graph_style,
-  global_graph_edge_style,
-  global_graph_node_style,
-  therapeutic_area_group_graph_style,
-} from "@/constants";
-import { useContext } from "react";
+/* eslint-disable @next/next/no-img-element */
+import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
+import { useContext, useState } from "react";
 import { DiscoveryContext } from "./context";
-
-const defaultOptions = {
-  autoResize: true,
-  layout: {
-    hierarchical: {
-      direction: "LR",
-      sortMethod: "directed",
-    },
-  },
-  edges: global_graph_edge_style,
-  nodes: global_graph_node_style,
-  interaction: { hover: true },
-  physics: {
-    // stabilization: false,
-    // stabilization: true,
-    // barnesHut: {
-    //   gravitationalConstant: -80000,
-    //   springConstant: 0.001,
-    //   springLength: 200,
-    // },
-    // enabled: true,
-    // wind:{
-    //   x: 0, y: 1
-    // },
-    enabled: false,
-    wind: {
-      x: 1,
-      y: 0,
-    },
-    // hierarchicalRepulsion: {
-    //   avoidOverlap: 2,
-    // },
-  },
-  groups: {
-    ta: therapeutic_area_group_graph_style,
-    p: drug_product_group_graph_style,
-  },
-};
 
 export default function SettingsTab() {
   const { tab } = useContext(DiscoveryContext);
+  const { settings, defineSettings } = useContext(DiscoveryContext);
+  const [graphType, setGraphType] = useState<GraphTypeEnum>(
+    settings.graph_type,
+  );
+  const [graphDirection, setGraphDirection] = useState<GraphDirectionEnum>(
+    settings.graph_direction,
+  );
+  const [enabledPhysics, setEnabledPhysics] = useState<boolean>(
+    settings.enabled_physics,
+  );
+
   return (
     <div
       className={`absolute
@@ -65,8 +34,50 @@ export default function SettingsTab() {
             }
             `}
     >
-      <div className="basis-11/12 space-y-1">
+      <div className="basis-11/12 space-y-2">
         <h2 className="leading text-slate-300 font-bold">Settings</h2>
+        <div
+          className="flex flex-row space-x-2
+          justify-between
+          p-2 rounded-lg
+          content-center align-middle items-center
+          bg-amber-500
+        "
+        >
+          <span className="text-black">Graph Type</span>
+          <div className="flex flex-row space-x-1">
+            <button
+              className={`aspect-square hover:bg-amber-600 
+              ${graphType === GraphTypeEnum.hierarchical ? "bg-amber-600" : "bg-amber-200"}
+              rounded-lg h-fit p-2`}
+              onClick={(e) => {
+                e.preventDefault();
+                setGraphType(GraphTypeEnum.hierarchical);
+              }}
+            >
+              <img
+                className="aspect-square"
+                src="https://icons.getbootstrap.com/assets/icons/diagram-3.svg"
+                alt="hierarchical"
+              />
+            </button>
+            <button
+              className={`aspect-square hover:bg-amber-600 
+              ${graphType === GraphTypeEnum.radial ? "bg-amber-600" : "bg-amber-200"}
+              rounded-lg h-fit p-2`}
+              onClick={(e) => {
+                e.preventDefault();
+                setGraphType(GraphTypeEnum.radial);
+              }}
+            >
+              <img
+                className="aspect-square"
+                src="https://icons.getbootstrap.com/assets/icons/broadcast.svg"
+                alt="radial"
+              />
+            </button>
+          </div>
+        </div>
       </div>
       <div className="basis-1/12 flex flex-row justify-end">
         <button
@@ -77,6 +88,11 @@ export default function SettingsTab() {
                     content-center"
           onClick={(e) => {
             e.preventDefault();
+            defineSettings({
+              graph_type: graphType,
+              graph_direction: graphDirection,
+              enabled_physics: enabledPhysics,
+            });
           }}
         >
           <img

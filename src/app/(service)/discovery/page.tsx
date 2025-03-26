@@ -4,13 +4,8 @@ import { ProtectedRoute } from "@/contexts";
 import VisPanel from "./vis-panel";
 import { DiscoveryContext } from "./context";
 import { useState } from "react";
-import { IEdge, INode } from "@/types";
-
-interface IFlagAttrs {
-  name?: string;
-  numNodes?: number;
-  offset?: number;
-}
+import { IEdge, INode, IFlagAttrs } from "@/types";
+import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
 
 export default function Discovery() {
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
@@ -23,7 +18,11 @@ export default function Discovery() {
     numNodes: 50,
     offset: 0,
   });
-  const [settings, defineSettings] = useState<any>({});
+  const [settings, defineSettings] = useState<any>({
+    graph_type: GraphTypeEnum.hierarchical,
+    graph_direction: GraphDirectionEnum.leftright,
+    enabled_physics: true,
+  });
   return (
     <ProtectedRoute>
       <DiscoveryContext.Provider
