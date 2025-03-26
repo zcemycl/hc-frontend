@@ -5,10 +5,10 @@ import { DiscoveryContext } from "./context";
 import InfoTab from "./info-tab";
 import FlagTab from "./flag-tab";
 import TabBar from "./tab-bar";
+import SettingsTab from "./settings-tab";
 
 export default function VisToolbar() {
-  const { tab, setTab, openToolBar, setOpenToolBar } =
-    useContext(DiscoveryContext);
+  const { openToolBar, setOpenToolBar } = useContext(DiscoveryContext);
   return (
     <>
       <button
@@ -43,6 +43,7 @@ export default function VisToolbar() {
         >
           <InfoTab />
           <FlagTab />
+          <SettingsTab />
         </div>
 
         <TabBar />

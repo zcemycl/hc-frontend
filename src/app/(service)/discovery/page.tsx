@@ -21,6 +21,7 @@ export default function Discovery() {
     name: "Neoplasms",
     numNodes: 50,
   });
+  const [settings, defineSettings] = useState<any>({});
   return (
     <ProtectedRoute>
       <DiscoveryContext.Provider
@@ -37,6 +38,8 @@ export default function Discovery() {
           setEdges,
           flagAttrs,
           setFlagAttrs,
+          settings,
+          defineSettings,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
