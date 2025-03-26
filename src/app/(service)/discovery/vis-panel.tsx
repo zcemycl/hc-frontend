@@ -106,14 +106,16 @@ export default function VisPanel() {
             nodes.filter((v: INode) => pathNodes.includes(v.id)),
           );
           setPath((prev) => {
-            prev
-              .filter((v) => !pathEdges.includes(v))
-              .forEach((v) =>
-                network.updateEdge(v, {
-                  color: "white",
-                  width: 0.5,
-                }),
-              );
+            try {
+              prev
+                .filter((v) => !pathEdges.includes(v))
+                .forEach((v) =>
+                  network.updateEdge(v, {
+                    color: "white",
+                    width: 0.5,
+                  }),
+                );
+            } catch {}
             return pathEdges;
           });
 

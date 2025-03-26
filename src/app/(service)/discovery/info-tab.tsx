@@ -13,6 +13,17 @@ const switch_color_node = (group: string) => {
   }
 };
 
+const switch_hover_color_node = (group: string) => {
+  switch (group) {
+    case "ta":
+      return `hover:bg-purple-400`;
+    case "p":
+      return "hover:bg-sky-700";
+    default:
+      return "hover:bg-white";
+  }
+};
+
 export default function InfoTab() {
   const { selectedNodes, tab } = useContext(DiscoveryContext);
   return (
@@ -42,8 +53,28 @@ export default function InfoTab() {
                             ${switch_color_node(v.group!)}`}
               key={v.id}
             >
-              <p className="font-bold">
-                Level {v.level}: {v.label}
+              <p
+                className="font-bold
+                items-center content-center align-middle"
+              >
+                Level {v.level}: <span id={`label-${v.id}`}>{v.label} </span>
+                <button
+                  className={`content-center items-center align-middle
+                  rounded-md ${switch_color_node(v.group!)}
+                  h-full p-1 ${switch_hover_color_node(v.group!)}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const spanEle = document.getElementById(
+                      `label-${v.id}`,
+                    )?.innerHTML;
+                    navigator.clipboard.writeText(spanEle?.trim() as string);
+                  }}
+                >
+                  <img
+                    src="https://icons.getbootstrap.com/assets/icons/copy.svg"
+                    alt="copy"
+                  />
+                </button>
               </p>
             </div>
           );
