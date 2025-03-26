@@ -46,38 +46,72 @@ export default function SettingsTab() {
         >
           <span className="text-black">Graph Type</span>
           <div className="flex flex-row space-x-1">
-            <button
-              className={`aspect-square hover:bg-amber-600 
-              ${graphType === GraphTypeEnum.hierarchical ? "bg-amber-600" : "bg-amber-200"}
-              rounded-lg h-fit p-2`}
-              onClick={(e) => {
-                e.preventDefault();
-                setGraphType(GraphTypeEnum.hierarchical);
-              }}
-            >
-              <img
-                className="aspect-square"
-                src="https://icons.getbootstrap.com/assets/icons/diagram-3.svg"
-                alt="hierarchical"
-              />
-            </button>
-            <button
-              className={`aspect-square hover:bg-amber-600 
-              ${graphType === GraphTypeEnum.radial ? "bg-amber-600" : "bg-amber-200"}
-              rounded-lg h-fit p-2`}
-              onClick={(e) => {
-                e.preventDefault();
-                setGraphType(GraphTypeEnum.radial);
-              }}
-            >
-              <img
-                className="aspect-square"
-                src="https://icons.getbootstrap.com/assets/icons/broadcast.svg"
-                alt="radial"
-              />
-            </button>
+            {[
+              [
+                GraphTypeEnum.hierarchical,
+                "https://icons.getbootstrap.com/assets/icons/diagram-3.svg",
+              ],
+              [
+                GraphTypeEnum.radial,
+                "https://icons.getbootstrap.com/assets/icons/broadcast.svg",
+              ],
+            ].map((v) => {
+              return (
+                <button
+                  key={v[0]}
+                  className={`aspect-square hover:bg-amber-600 
+                  ${graphType === v[0] ? "bg-amber-600" : "bg-amber-200"}
+                  rounded-lg h-fit p-2`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setGraphType(v[0] as GraphTypeEnum);
+                  }}
+                >
+                  <img className="aspect-square" src={v[1]} alt={v[0]} />
+                </button>
+              );
+            })}
           </div>
         </div>
+        {graphType === GraphTypeEnum.hierarchical && (
+          <div
+            className="flex flex-row space-x-2
+          justify-between
+          p-2 rounded-lg
+          content-center align-middle items-center
+          bg-amber-500
+        "
+          >
+            <span className="text-black">Graph Direction</span>
+            <div className="flex flex-row space-x-1">
+              {[
+                [GraphDirectionEnum.leftright, "-rotate-90"],
+                [GraphDirectionEnum.rightleft, "rotate-90"],
+                [GraphDirectionEnum.updown, ""],
+                [GraphDirectionEnum.downup, "rotate-180"],
+              ].map((v) => {
+                return (
+                  <button
+                    key={v[0]}
+                    className={`aspect-square hover:bg-amber-600 
+                  ${graphDirection === v[0] ? "bg-amber-600" : "bg-amber-200"}
+                  rounded-lg h-fit p-2`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setGraphDirection(v[0] as GraphDirectionEnum);
+                    }}
+                  >
+                    <img
+                      className={`aspect-square ${v[1]}`}
+                      src="https://icons.getbootstrap.com/assets/icons/diagram-2.svg"
+                      alt={`hierarchical-${v[0]}`}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
       <div className="basis-1/12 flex flex-row justify-end">
         <button
