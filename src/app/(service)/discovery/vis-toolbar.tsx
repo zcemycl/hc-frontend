@@ -13,11 +13,11 @@ export default function VisToolbar() {
     <>
       <button
         className="rounded-lg
-                    p-3
-                    self-end
-                    w-fit
-                    text-black leading-5 font-semibold
-                    bg-emerald-400 hover:bg-emerald-600"
+          p-3
+          self-end
+          w-fit
+          text-black leading-5 font-semibold
+          bg-emerald-400 hover:bg-emerald-600"
         onClick={(e) => {
           e.preventDefault();
           setOpenToolBar(!openToolBar);
@@ -32,7 +32,11 @@ export default function VisToolbar() {
         className={`origin-top-right transition
           self-end
           flex flex-col
-          ${openToolBar ? "h-[60vh] scale-100" : "h-0 scale-0"}
+          ${
+            openToolBar
+              ? "h-[60vh] scale-100 opacity-100"
+              : "h-0 scale-0 opacity-0"
+          }
           w-[80vw] sm:w-[45vw] md:w-[30vw]`}
       >
         <div

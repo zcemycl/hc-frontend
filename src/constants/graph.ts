@@ -76,18 +76,14 @@ const defaultOptions = {
   nodes: global_graph_node_style,
   interaction: { hover: true },
   physics: {
-    // stabilization: false,
-    // stabilization: true,
     // barnesHut: {
     //   gravitationalConstant: -80000,
     //   springConstant: 0.001,
     //   springLength: 200,
     // },
-    // enabled: true,
     // wind:{
     //   x: 0, y: 1
     // },
-    enabled: false,
     wind: {
       x: 1,
       y: 0,
@@ -105,11 +101,13 @@ const defaultOptions = {
 export function generateGraphOption({
   graph_type,
   graph_direction = GraphDirectionEnum.leftright,
-  enable_physics = true,
+  enabled_physics = true,
+  physics_stabilisation = true,
 }: {
   graph_type: GraphTypeEnum;
   graph_direction: GraphDirectionEnum;
-  enable_physics: boolean;
+  enabled_physics: boolean;
+  physics_stabilisation: boolean;
 }) {
   let options: any = { ...defaultOptions };
   if (graph_type === GraphTypeEnum.hierarchical) {
@@ -125,14 +123,16 @@ export function generateGraphOption({
     };
   }
 
+  let physics_settings: any = {
+    enabled: enabled_physics,
+    stabilization: physics_stabilisation,
+  };
+
   if (graph_type === GraphTypeEnum.radial) {
-    options = {
-      ...options,
-      physics: {
-        stabilization: true,
-        enabled: enable_physics,
-      },
-    };
   }
+  options = {
+    ...options,
+    physics: physics_settings,
+  };
   return options;
 }

@@ -2,6 +2,7 @@
 import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
 import { useContext, useState } from "react";
 import { DiscoveryContext } from "./context";
+import { ToggleButton } from "@/components";
 
 export default function SettingsTab() {
   const { tab } = useContext(DiscoveryContext);
@@ -14,6 +15,9 @@ export default function SettingsTab() {
   );
   const [enabledPhysics, setEnabledPhysics] = useState<boolean>(
     settings.enabled_physics,
+  );
+  const [physicsStabilisation, setPhysicsStabilisation] = useState<boolean>(
+    settings.physics_stabilisation,
   );
 
   return (
@@ -112,6 +116,68 @@ export default function SettingsTab() {
             </div>
           </div>
         )}
+        <div
+          className="flex flex-row space-x-2
+          justify-between
+          p-2 rounded-lg
+          content-center align-middle items-center
+          bg-amber-500
+        "
+        >
+          <span className="text-black">Physics Simulation</span>
+          <div className="flex flex-row space-x-1 items-center align-middle content-center">
+            <span
+              className={`transition duration-150
+                origin-right text-black
+                ${enabledPhysics ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}
+                `}
+            >
+              <img
+                src="https://icons.getbootstrap.com/assets/icons/x-circle-fill.svg"
+                alt="cross-physics-sim"
+              />
+            </span>
+            <ToggleButton
+              {...{
+                defaultValue: enabledPhysics,
+                handleCallback: (x: boolean) => {
+                  setEnabledPhysics(x);
+                },
+              }}
+            />
+          </div>
+        </div>
+        <div
+          className="flex flex-row space-x-2
+          justify-between
+          p-2 rounded-lg
+          content-center align-middle items-center
+          bg-amber-500
+        "
+        >
+          <span className="text-black">Physics Stabilisation</span>
+          <div className="flex flex-row space-x-1 items-center align-middle content-center">
+            <span
+              className={`transition duration-150
+                origin-right text-black
+                ${physicsStabilisation ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}
+                `}
+            >
+              <img
+                src="https://icons.getbootstrap.com/assets/icons/x-circle-fill.svg"
+                alt="cross-physics-sim"
+              />
+            </span>
+            <ToggleButton
+              {...{
+                defaultValue: physicsStabilisation,
+                handleCallback: (x: boolean) => {
+                  setPhysicsStabilisation(x);
+                },
+              }}
+            />
+          </div>
+        </div>
       </div>
       <div className="basis-1/12 flex flex-row justify-end">
         <button
@@ -126,6 +192,7 @@ export default function SettingsTab() {
               graph_type: graphType,
               graph_direction: graphDirection,
               enabled_physics: enabledPhysics,
+              physics_stabilisation: physicsStabilisation,
             });
           }}
         >

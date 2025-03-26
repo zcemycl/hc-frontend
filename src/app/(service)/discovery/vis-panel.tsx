@@ -105,7 +105,6 @@ export default function VisPanel() {
           setSelectedNodes(
             nodes.filter((v: INode) => pathNodes.includes(v.id)),
           );
-          console.log(pathEdges);
           setPath((prev) => {
             prev
               .filter((v) => !pathEdges.includes(v))

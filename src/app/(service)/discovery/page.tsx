@@ -19,9 +19,10 @@ export default function Discovery() {
     offset: 0,
   });
   const [settings, defineSettings] = useState<any>({
-    graph_type: GraphTypeEnum.hierarchical,
+    graph_type: GraphTypeEnum.radial,
     graph_direction: GraphDirectionEnum.leftright,
     enabled_physics: true,
+    physics_stabilisation: true,
   });
   return (
     <ProtectedRoute>
