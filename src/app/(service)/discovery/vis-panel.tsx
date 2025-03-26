@@ -24,6 +24,7 @@ export default function VisPanel() {
     flagAttrs,
     settings,
   } = useContext(DiscoveryContext);
+  const [path, setPath] = useState<string[]>([]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -101,17 +102,22 @@ export default function VisPanel() {
             currentNode = parentEdge.from;
             pathNodes.push(currentNode);
           }
-          // console.log()
           setSelectedNodes(
             nodes.filter((v: INode) => pathNodes.includes(v.id)),
           );
           console.log(pathEdges);
-          (network as any).body.data.edges.get().forEach((v: IEdge) =>
-            network.updateEdge(v.id as string, {
-              color: "white",
-              width: 0.5,
-            }),
-          );
+          setPath((prev) => {
+            prev
+              .filter((v) => !pathEdges.includes(v))
+              .forEach((v) =>
+                network.updateEdge(v, {
+                  color: "white",
+                  width: 0.5,
+                }),
+              );
+            return pathEdges;
+          });
+
           pathEdges.forEach((v) =>
             network.updateEdge(v as string, { color: "lightgreen", width: 6 }),
           );

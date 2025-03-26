@@ -72,12 +72,6 @@ export const global_graph_edge_style = {
 
 const defaultOptions = {
   autoResize: true,
-  // layout: {
-  //   hierarchical: {
-  //     direction: "UD",
-  //     sortMethod: "directed",
-  //   },
-  // },
   edges: global_graph_edge_style,
   nodes: global_graph_node_style,
   interaction: { hover: true },
@@ -125,6 +119,7 @@ export function generateGraphOption({
         hierarchical: {
           direction: graph_direction,
           sortMethod: "directed",
+          // sortMethod: 'hubsize',
         },
       },
     };
