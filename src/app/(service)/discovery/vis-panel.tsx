@@ -11,7 +11,7 @@ import { Spinner } from "@/components";
 import { DiscoveryContext } from "./context";
 
 export default function VisPanel() {
-  const visJsRef = useRef<HTMLDivElement>(null);
+  // const visJsRef = useRef<HTMLDivElement>(null);
   const { credentials, setIsAuthenticated } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
@@ -23,6 +23,7 @@ export default function VisPanel() {
     setEdges,
     flagAttrs,
     settings,
+    visJsRef,
   } = useContext(DiscoveryContext);
   const [path, setPath] = useState<string[]>([]);
 
@@ -77,7 +78,7 @@ export default function VisPanel() {
           animation: true,
         });
       });
-      network?.on("click", (e) => {
+      network?.on("click", (e: any) => {
         console.log(e);
         if (e.nodes.length >= 1) {
           const nodeId = e.nodes[0];

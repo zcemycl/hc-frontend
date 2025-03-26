@@ -25,7 +25,7 @@ const switch_hover_color_node = (group: string) => {
 };
 
 export default function InfoTab() {
-  const { selectedNodes, tab } = useContext(DiscoveryContext);
+  const { selectedNodes, tab, visJsRef } = useContext(DiscoveryContext);
   return (
     <div
       className={`absolute
@@ -48,10 +48,21 @@ export default function InfoTab() {
         selectedNodes.map((v: INode) => {
           return (
             <div
-              className={`text-black 
-                            rounded-lg p-2
-                            ${switch_color_node(v.group!)}`}
+              className={`text-black
+                rounded-lg p-2 cursor-pointer
+                ${switch_hover_color_node(v.group!)}
+                ${switch_color_node(v.group!)}`}
               key={v.id}
+              onClick={(e) => {
+                e.preventDefault();
+                if (visJsRef.current) {
+                  console.log(visJsRef.current);
+                  const pos = (visJsRef.current as any).getPositions(
+                    selectedNodes,
+                  );
+                  console.log(pos);
+                }
+              }}
             >
               <p
                 className="font-bold
