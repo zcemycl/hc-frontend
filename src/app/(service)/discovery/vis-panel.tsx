@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { Network } from "vis-network";
 import { useAuth, useLoader } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
@@ -10,22 +10,18 @@ import {
   therapeutic_area_group_graph_style,
 } from "@/constants";
 import { IEdge, INode } from "@/types";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { fetchGraphDummy } from "@/http/backend";
 import { Spinner } from "@/components";
-import path from "path";
+import { DiscoveryContext } from "./context";
 
 export default function VisPanel() {
   const visJsRef = useRef<HTMLDivElement>(null);
   const { credentials, setIsAuthenticated } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
-  const [name, setName] = useState("Neoplasms");
-  const [nodes, setNodes] = useState<INode[]>([]);
-  const [traceEdges, setTraceEdges] = useState<string[]>([]);
-  const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
-  const [edges, setEdges] = useState<IEdge[]>([]);
   const router = useRouter();
-  const [net, setNet] = useState<Network | null>(null);
+  const { setSelectedNodes, name, nodes, setNodes, edges, setEdges } =
+    useContext(DiscoveryContext);
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -55,7 +51,7 @@ export default function VisPanel() {
     }
     getData(credentials);
     setIsLoading(false);
-  }, [credentials]);
+  }, [credentials, name]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -109,13 +105,11 @@ export default function VisPanel() {
           animation: true,
         });
       });
-      console.log(typeof network);
       network?.on("click", (e) => {
         console.log(e);
         if (e.nodes.length >= 1) {
           const nodeId = e.nodes[0];
 
-          setSelectedNodes(nodes.filter((v) => e.nodes.includes(v.id)));
           const { x, y } = network.getPositions([nodeId])[nodeId];
           network?.moveTo({
             position: { x, y },
@@ -123,49 +117,36 @@ export default function VisPanel() {
           });
 
           let pathEdges = [];
+          let pathNodes = [nodeId];
           let currentNode = nodeId;
 
           while (true) {
-            // let parentEdge = edges.get({ filter: e => e.to === currentNode })[0];
-            let parentEdge = edges.filter((v) => v.to === currentNode)[0];
+            let parentEdge = edges.filter(
+              (v: IEdge) => v.to === currentNode,
+            )[0];
             if (!parentEdge) break;
 
             pathEdges.push(parentEdge.id);
             currentNode = parentEdge.from;
-            console.log(currentNode);
+            pathNodes.push(currentNode);
           }
-          // console.log(network.)
+          // console.log()
+          setSelectedNodes(
+            nodes.filter((v: INode) => pathNodes.includes(v.id)),
+          );
           console.log(pathEdges);
-          console.log(selectedNodes);
-          console.log(traceEdges);
-          (network as any).body.data.edges
-            .get()
-            .forEach((v: IEdge) =>
-              network.updateEdge(v.id as string, {
-                color: "white",
-                width: 0.5,
-              }),
-            );
-          // network.getConnectedEdges()
-          // let tmpEdges = edges.map(
-          //   tmpedge => ({...tmpedge, color: "white"})
-          // )
-          // tmpEdges = tmpEdges.map(
-          //   tmpedge => ({...tmpedge, color: "green"})
-          // )
-          // setEdges(tmpEdges)
-          // network.setData({nodes: nodes, edges: tmpEdges})
-          // network.redraw()
-          const newTraces = [...pathEdges];
-          console.log(newTraces);
-          // setTraceEdges(newTraces);
+          (network as any).body.data.edges.get().forEach((v: IEdge) =>
+            network.updateEdge(v.id as string, {
+              color: "white",
+              width: 0.5,
+            }),
+          );
           pathEdges.forEach((v) =>
-            network.updateEdge(v as string, { color: "green", width: 5 }),
+            network.updateEdge(v as string, { color: "lightgreen", width: 6 }),
           );
         }
       });
       network?.fit();
-      setNet(network);
     }
     setIsLoading(false);
   }, [visJsRef, nodes, edges]);
@@ -204,7 +185,7 @@ export default function VisPanel() {
                     z-10
                     space-y-2"
       >
-        <VisToolbar {...{ selectedNodes }} />
+        <VisToolbar />
       </div>
     </div>
   );
