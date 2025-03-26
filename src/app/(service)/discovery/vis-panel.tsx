@@ -31,7 +31,11 @@ export default function VisPanel() {
         setIsAuthenticated(false);
         router.push("/logout");
       }
-      const res = await fetchGraphDummy(flagAttrs.name, flagAttrs.numNodes);
+      const res = await fetchGraphDummy(
+        flagAttrs.name,
+        flagAttrs.numNodes,
+        flagAttrs.offset,
+      );
       console.log(res);
       let all_nodes = [
         ...res["ta"].map((v: INode) => ({
@@ -51,6 +55,7 @@ export default function VisPanel() {
     }
     getData(credentials);
     setIsLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [credentials, flagAttrs]);
 
   useEffect(() => {

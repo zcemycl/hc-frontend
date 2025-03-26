@@ -5,6 +5,7 @@ export default function FlagTab() {
   const { tab, flagAttrs, setFlagAttrs } = useContext(DiscoveryContext);
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
+  const [skip, setSkip] = useState(flagAttrs.offset);
   return (
     <div
       className={`absolute
@@ -40,6 +41,16 @@ export default function FlagTab() {
             setLimit(e.target.value);
           }}
         />
+        <h2 className="leading text-slate-300 font-bold">Skip</h2>
+        <input
+          type="number"
+          value={skip}
+          className="bg-white text-black rounded-lg h-10 p-2"
+          onChange={(e) => {
+            e.preventDefault();
+            setSkip(e.target.value);
+          }}
+        />
       </div>
       <div className="basis-1/12 flex flex-row justify-end">
         <button
@@ -53,8 +64,9 @@ export default function FlagTab() {
             setFlagAttrs({
               name: tmpName,
               numNodes: limit,
+              offset: skip,
             });
-            console.log(`${limit} ${tmpName}`);
+            console.log(`${limit} ${skip} ${tmpName}`);
           }}
         >
           <img

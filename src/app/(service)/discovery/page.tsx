@@ -9,6 +9,7 @@ import { IEdge, INode } from "@/types";
 interface IFlagAttrs {
   name?: string;
   numNodes?: number;
+  offset?: number;
 }
 
 export default function Discovery() {
@@ -20,6 +21,7 @@ export default function Discovery() {
   const [flagAttrs, setFlagAttrs] = useState<IFlagAttrs>({
     name: "Neoplasms",
     numNodes: 50,
+    offset: 0,
   });
   const [settings, defineSettings] = useState<any>({});
   return (
