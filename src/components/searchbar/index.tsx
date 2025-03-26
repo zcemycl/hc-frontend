@@ -37,6 +37,7 @@ function SearchBar({
               value={query[i]}
               key={i}
               onChange={(e) => {
+                e.preventDefault();
                 let qs = Array.from(query);
                 qs[i] = e.currentTarget.value;
                 setQuery(qs);
