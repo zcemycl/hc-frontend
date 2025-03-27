@@ -171,10 +171,11 @@ export default function VisPanel() {
       />
       <div
         id="vis-toolbar"
-        className="absolute right-0 top-0 
-                    flex flex-col
-                    z-10
-                    space-y-2"
+        className="absolute right-0 top-0
+          pointer-events-none
+          flex flex-col
+          z-10
+          space-y-2"
       >
         <VisToolbar />
       </div>

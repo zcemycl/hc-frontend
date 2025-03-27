@@ -16,6 +16,7 @@ export default function VisToolbar() {
           p-3
           self-end
           w-fit
+          pointer-events-auto
           text-black leading-5 font-semibold
           bg-emerald-400 hover:bg-emerald-600"
         onClick={(e) => {
@@ -32,6 +33,8 @@ export default function VisToolbar() {
         className={`origin-top-right transition
           self-end
           flex flex-col
+          pointer-events-none
+          h-0
           ${
             openToolBar
               ? "h-[60vh] scale-100 opacity-100"
@@ -43,6 +46,7 @@ export default function VisToolbar() {
           className={`
           relative w-full h-full
           bg-sky-800 rounded-lg
+          pointer-events-auto
           ${openToolBar ? "p-5" : "p-0"}`}
         >
           <InfoTab />
