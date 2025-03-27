@@ -28,7 +28,7 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
           crossOrigin="anonymous"
         ></link>
       </head>
-      <body className="overflow-hidden">
+      <body className="overflow-x-hidden overflow-y-auto">
         <ThemeProvider attribute="class">
           <LoaderProvider>
             <OpenBarProvider>

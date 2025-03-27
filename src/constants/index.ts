@@ -7,3 +7,5 @@ export * from "./annotation-dropdown";
 export * from "./api";
 export * from "./fdalabel";
 export * from "./ae-compare";
+export * from "./graph";
+export * from "./color";
