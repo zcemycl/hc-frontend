@@ -30,12 +30,12 @@ export default function VisPanel() {
 
   useEffect(() => {
     if (credentials.length === 0) return;
-    setIsLoading(true);
     async function getData(credentials: string) {
       if (credentials.length === 0) {
         setIsAuthenticated(false);
         router.push("/logout");
       }
+      setIsLoading(true);
       const res = await fetchGraphDummy(
         flagAttrs.name,
         flagAttrs.numNodes,
@@ -57,9 +57,9 @@ export default function VisPanel() {
       );
       setNodes(final_all_nodes);
       setEdges([...res["links"]]);
+      setIsLoading(false);
     }
     getData(credentials);
-    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [credentials, flagAttrs]);
 
