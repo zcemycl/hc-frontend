@@ -62,6 +62,7 @@ export const global_graph_node_style = {
 
 export const global_graph_edge_style = {
   color: "#FFFFFF",
+  arrows: "to",
   width: 1,
   // smooth: {
   //   type: "cubicBezier",
