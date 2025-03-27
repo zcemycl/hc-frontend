@@ -88,9 +88,11 @@ export default function InfoTab() {
                 <button
                   className={`content-center items-center align-middle
                   rounded-md ${switch_color_node(v.group!)}
+                  z-10
                   h-full p-1 ${switch_hover_color_node(v.group!)}`}
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     const spanEle = document.getElementById(
                       `label-${v.id}`,
                     )?.innerHTML;
