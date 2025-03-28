@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { IRequestDemoForm, UserRoleEnum } from "@/types";
+import { IData, IRequestDemoForm, UserRoleEnum } from "@/types";
 import { sendEmail } from "@/http/internal";
 import { dummy_cred } from "@/utils";
 import {
@@ -14,29 +14,7 @@ import {
 import { Spinner } from "@/components";
 import { handleFetchApiRoot } from "@/services";
 import { useDbsHealth } from "@/hooks";
-
-interface IData {
-  success?: boolean;
-  message?: string;
-  id?: number;
-  username?: string;
-  role?: UserRoleEnum;
-}
-
-const beautifulNumber = (value: number) => {
-  let newvalue, res;
-  if (value >= 1000) {
-    newvalue = (value / 1000).toLocaleString("en-US", {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    });
-    res = `${newvalue}K`;
-  } else {
-    newvalue = value;
-    res = `${newvalue}`;
-  }
-  return res;
-};
+import { beautifulNumber } from "@/http/utils";
 
 export default function Home() {
   const router = useRouter();
@@ -50,10 +28,11 @@ export default function Home() {
     isLoadingAuth,
   } = useAuth();
   const [data, setData] = useState<IData>({});
+  const [prevSignal, setPrevSignal] = useState<string>("False");
   const [fdalabelCount, setFdalabelCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { isPGHealthy } = useDbsHealth();
+  const { pgHealthMsg, isPGHealthy } = useDbsHealth();
   const defaultRequestForm = {
     name: "",
     email: "",
@@ -122,6 +101,15 @@ export default function Home() {
     }
     getData(credentials);
   }, [credentials]);
+
+  useEffect(() => {
+    if (prevSignal === pgHealthMsg?.data) return;
+    if (pgHealthMsg?.data != "False") {
+      router.refresh();
+    }
+    setPrevSignal(pgHealthMsg?.data);
+  }, [pgHealthMsg]);
+
   return (
     <>
       <section className="text-gray-400 bg-gray-900 body-font">
