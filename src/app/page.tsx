@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
+import useWebSocket from "react-use-websocket";
 import { IRequestDemoForm, UserRoleEnum } from "@/types";
 import { sendEmail } from "@/http/internal";
 import { dummy_cred } from "@/utils";
@@ -13,6 +14,7 @@ import {
 } from "@/http/backend";
 import { Spinner } from "@/components";
 import { handleFetchApiRoot } from "@/services";
+import { FASTAPI_URI } from "@/http/backend/constants";
 
 interface IData {
   success?: boolean;
@@ -52,6 +54,15 @@ export default function Home() {
   const [fdalabelCount, setFdalabelCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const WS_URI =
+    process.env.NEXT_PUBLIC_ENV_NAME === "dev"
+      ? FASTAPI_URI!.replace("http", "ws")
+      : "ws://localhost:4001";
+  const { lastMessage } = useWebSocket(`${WS_URI}/postgres-status`, {
+    share: false,
+    shouldReconnect: () => true,
+  });
+  const [isHealthy, setIsHealthy] = useState(false);
   const defaultRequestForm = {
     name: "",
     email: "",
@@ -71,6 +82,13 @@ export default function Home() {
     localStorage.setItem("requestForm", JSON.stringify(tmpRequestForm));
     router.push("/requestaccount");
   }
+
+  useEffect(() => {
+    console.log(lastMessage);
+    if (lastMessage !== null) {
+      setIsHealthy(lastMessage.data === "True");
+    }
+  }, [lastMessage]);
 
   useEffect(() => {
     if (isLoadingAuth) return;
@@ -126,7 +144,7 @@ export default function Home() {
       <section className="text-gray-400 bg-gray-900 body-font">
         <div className="container px-5 py-24 mx-auto md:flex md:flex-between">
           <div className="flex flex-wrap -mx-4 mt-auto mb-auto lg:w-1/2 sm:w-2/3 content-start sm:pr-10">
-            <div className="w-full sm:p-4 px-4 mb-6">
+            <div className="w-full sm:p-4 px-4 mb-6 space-y-1">
               <h1 className="title-font font-medium text-xl mb-2 text-white">
                 Hello{" "}
                 {isAuthenticated ? (
@@ -147,6 +165,23 @@ export default function Home() {
                 {isAuthenticated
                   ? ""
                   : "Please Login to start using our Tools."}
+              </div>
+              <div>
+                {isHealthy ? (
+                  <div className="bg-emerald-400 text-black font-bold w-fit p-2 rounded-xl">
+                    <img
+                      src="https://icons.getbootstrap.com/assets/icons/database-check.svg"
+                      alt="connected"
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-red-400 text-black font-bold w-fit p-2 rounded-xl">
+                    <img
+                      src="https://icons.getbootstrap.com/assets/icons/database-x.svg"
+                      alt="connecting"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
