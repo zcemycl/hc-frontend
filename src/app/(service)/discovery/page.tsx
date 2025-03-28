@@ -2,14 +2,14 @@
 
 import { ProtectedRoute, DiscoveryContext } from "@/contexts";
 import VisPanel from "./vis-panel";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { IEdge, INode, IFlagAttrs } from "@/types";
 import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
 import { Network } from "vis-network";
-import useWebSocket from "react-use-websocket";
-import { FASTAPI_URI } from "@/http/backend/constants";
+import { useDbsHealth } from "@/hooks";
 
 export default function Discovery() {
+  const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
   const visJsRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
@@ -23,28 +23,12 @@ export default function Discovery() {
     numNodes: 50,
     offset: 0,
   });
-  const WS_URI =
-    process.env.NEXT_PUBLIC_ENV_NAME === "dev"
-      ? FASTAPI_URI!.replace("http", "ws")
-      : "ws://localhost:4001";
   const [settings, defineSettings] = useState<any>({
     graph_type: GraphTypeEnum.radial,
     graph_direction: GraphDirectionEnum.leftright,
     enabled_physics: true,
     physics_stabilisation: true,
   });
-  const { lastMessage } = useWebSocket(`${WS_URI}/neo4j-status`, {
-    share: false,
-    shouldReconnect: () => true,
-  });
-  const [isHealthy, setIsHealthy] = useState(false);
-
-  useEffect(() => {
-    console.log(lastMessage);
-    if (lastMessage !== null) {
-      setIsHealthy(lastMessage.data === "True");
-    }
-  }, [lastMessage]);
 
   return (
     <ProtectedRoute>
@@ -67,7 +51,7 @@ export default function Discovery() {
           visJsRef,
           net,
           setNet,
-          lastMessage,
+          neo4jHealthMsg,
           prevSignal,
           setPrevSignal,
         }}
@@ -78,7 +62,7 @@ export default function Discovery() {
               <h2 className="text-white text-lg mb-1 font-medium title-font space-x-1 flex flex-row">
                 <span>Discovery</span>
                 <div>
-                  {isHealthy ? (
+                  {isNeo4JHealthy ? (
                     <div className="bg-emerald-400 text-black font-bold w-fit p-2 rounded-xl">
                       <img
                         src="https://icons.getbootstrap.com/assets/icons/node-plus.svg"

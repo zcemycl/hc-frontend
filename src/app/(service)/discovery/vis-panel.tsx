@@ -12,7 +12,7 @@ export default function VisPanel() {
   const { credentials, setIsAuthenticated } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
-  const { setNodes, setEdges, flagAttrs, visJsRef, lastMessage } =
+  const { setNodes, setEdges, flagAttrs, visJsRef, neo4jHealthMsg } =
     useContext(DiscoveryContext);
   const [path, setPath] = useState<string[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
@@ -54,15 +54,15 @@ export default function VisPanel() {
   }, [credentials, flagAttrs]);
 
   useEffect(() => {
-    if (prevSignal === lastMessage?.data) return;
+    if (prevSignal === neo4jHealthMsg?.data) return;
     setIsLoading(true);
-    if (visJsRef.current && lastMessage?.data !== "False") {
+    if (visJsRef.current && neo4jHealthMsg?.data !== "False") {
       setUpNetwork();
     }
     setIsLoading(false);
-    setPrevSignal(lastMessage?.data);
+    setPrevSignal(neo4jHealthMsg?.data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastMessage]);
+  }, [neo4jHealthMsg]);
 
   return (
     <div id="vis-panel" className="relative rounded-lg">
