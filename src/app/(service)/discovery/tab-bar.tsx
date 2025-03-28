@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { DiscoveryContext } from "./context";
+import { DiscoveryContext } from "@/contexts";
 
 export default function TabBar() {
   const { tab, setTab } = useContext(DiscoveryContext);

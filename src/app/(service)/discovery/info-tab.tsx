@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { DiscoveryContext } from "./context";
+import { DiscoveryContext } from "@/contexts";
 import { INode } from "@/types";
 
 const switch_color_node = (group: string) => {

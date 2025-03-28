@@ -8,7 +8,7 @@ import { IEdge, INode } from "@/types";
 import { useRouter } from "next/navigation";
 import { fetchGraphDummy } from "@/http/backend";
 import { Spinner } from "@/components";
-import { DiscoveryContext } from "./context";
+import { DiscoveryContext } from "@/contexts";
 
 export default function VisPanel() {
   const { credentials, setIsAuthenticated } = useAuth();
