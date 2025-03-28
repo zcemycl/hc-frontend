@@ -3,7 +3,6 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import useWebSocket from "react-use-websocket";
 import { IRequestDemoForm, UserRoleEnum } from "@/types";
 import { sendEmail } from "@/http/internal";
 import { dummy_cred } from "@/utils";
@@ -14,7 +13,7 @@ import {
 } from "@/http/backend";
 import { Spinner } from "@/components";
 import { handleFetchApiRoot } from "@/services";
-import { FASTAPI_URI } from "@/http/backend/constants";
+import { useDbsHealth } from "@/hooks";
 
 interface IData {
   success?: boolean;
@@ -54,21 +53,12 @@ export default function Home() {
   const [fdalabelCount, setFdalabelCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const WS_URI =
-    process.env.NEXT_PUBLIC_ENV_NAME === "dev"
-      ? FASTAPI_URI!.replace("http", "ws")
-      : "ws://localhost:4001";
-  const { lastMessage } = useWebSocket(`${WS_URI}/postgres-status`, {
-    share: false,
-    shouldReconnect: () => true,
-  });
-  const [isHealthy, setIsHealthy] = useState(false);
+  const { isPGHealthy } = useDbsHealth();
   const defaultRequestForm = {
     name: "",
     email: "",
     message: "",
   };
-  // const cookieStore = cookies()
   const [requestForm, setRequestForm] =
     useState<IRequestDemoForm>(defaultRequestForm);
 
@@ -82,13 +72,6 @@ export default function Home() {
     localStorage.setItem("requestForm", JSON.stringify(tmpRequestForm));
     router.push("/requestaccount");
   }
-
-  useEffect(() => {
-    console.log(lastMessage);
-    if (lastMessage !== null) {
-      setIsHealthy(lastMessage.data === "True");
-    }
-  }, [lastMessage]);
 
   useEffect(() => {
     if (isLoadingAuth) return;
@@ -167,7 +150,7 @@ export default function Home() {
                   : "Please Login to start using our Tools."}
               </div>
               <div>
-                {isHealthy ? (
+                {isPGHealthy ? (
                   <div className="bg-emerald-400 text-black font-bold w-fit p-2 rounded-xl">
                     <img
                       src="https://icons.getbootstrap.com/assets/icons/database-check.svg"
