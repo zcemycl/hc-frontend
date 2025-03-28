@@ -86,7 +86,7 @@ export default function Discovery() {
                       />
                     </div>
                   ) : (
-                    <div className="bg-red-400 text-black font-bold w-fit p-2 rounded-xl">
+                    <div className="bg-red-400 text-black font-bold w-fit p-2 rounded-xl animate-pulse">
                       <img
                         src="https://icons.getbootstrap.com/assets/icons/node-minus.svg"
                         alt="connecting"
