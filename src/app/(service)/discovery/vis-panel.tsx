@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { fetchGraphDummy } from "@/http/backend";
 import { Spinner } from "@/components";
 import { useDiscoveryGraph } from "@/hooks";
+import { network } from "vis-network";
 
 export default function VisPanel() {
   const { credentials, setIsAuthenticated } = useAuth();

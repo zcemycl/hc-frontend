@@ -1,7 +1,7 @@
 "use client";
 import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { DiscoveryContext, useLoader } from "@/contexts";
-import { Network } from "vis-network";
+import { network, Network } from "vis-network";
 import { generateGraphOption } from "@/constants";
 import { IEdge, INode } from "@/types";
 
@@ -11,8 +11,16 @@ const useDiscoveryGraph = ({
   setPath: Dispatch<SetStateAction<string[]>>;
 }) => {
   const { isLoading, setIsLoading } = useLoader();
-  const { setSelectedNodes, nodes, edges, settings, visJsRef, net, setNet } =
-    useContext(DiscoveryContext);
+  const {
+    setSelectedNodes,
+    nodes,
+    edges,
+    settings,
+    visJsRef,
+    net,
+    setNet,
+    neo4jHealthMsg,
+  } = useContext(DiscoveryContext);
   const setUpNetwork = () => {
     const network =
       visJsRef.current &&
@@ -85,10 +93,12 @@ const useDiscoveryGraph = ({
     });
     setNet(network);
     network?.fit();
+
+    return network;
   };
 
   useEffect(() => {
-    if (visJsRef.current) {
+    if (visJsRef.current && neo4jHealthMsg?.data === "True") {
       setUpNetwork();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -12,3 +12,4 @@ export async function fetchApiRoot(token: string) {
 
 export * from "./logout";
 export * from "./aws";
+export * from "./db";
