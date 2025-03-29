@@ -11,3 +11,4 @@ export * from "./searchbar";
 export * from "./spinner";
 export * from "./expandablebtn";
 export * from "./toggle";
+export * from "./statsbar";

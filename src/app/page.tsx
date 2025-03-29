@@ -11,7 +11,7 @@ import {
   fetchUserCount,
   fetchUserInfoByName,
 } from "@/http/backend";
-import { Spinner } from "@/components";
+import { HomeStats, Spinner } from "@/components";
 import { handleFetchApiRoot } from "@/services";
 import { useDbsHealth } from "@/hooks";
 import { beautifulNumber } from "@/http/utils";
@@ -54,7 +54,6 @@ export default function Home() {
 
   useEffect(() => {
     if (isLoadingAuth) return;
-    if (prevSignal === pgHealthMsg?.data) return;
     if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
       const dummy_username = "leo.leung.rxscope";
       dummy_cred(dummy_username).then((x) => {
@@ -69,11 +68,13 @@ export default function Home() {
         setIsAuthenticated(true);
         localStorage.setItem("credentials", credentials);
         fetchUserInfoByName(dummy_username).then((x) => {
+          console.log(x);
           setRole(x.role as UserRoleEnum);
           setUserId(x.id);
         });
       });
     }
+
     const requestFormJson =
       JSON.parse(localStorage.getItem("requestForm") as string) ??
       defaultRequestForm;
@@ -82,7 +83,7 @@ export default function Home() {
     fetchUserCount().then((x) => setUserCount(x));
     setPrevSignal(pgHealthMsg?.data as string);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth, pgHealthMsg]);
+  }, [isLoadingAuth]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -150,26 +151,7 @@ export default function Home() {
                 )}
               </div>
             </div>
-            <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">
-                {beautifulNumber(fdalabelCount)}
-              </h2>
-              <p className="leading-relaxed">Drugs</p>
-            </div>
-            <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">
-                {userCount}
-              </h2>
-              <p className="leading-relaxed">Users</p>
-            </div>
-            <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">1</h2>
-              <p className="leading-relaxed">Data Sources</p>
-            </div>
-            <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">
-              <h2 className="title-font font-medium text-3xl text-white">1</h2>
-              <p className="leading-relaxed">Products</p>
-            </div>
+            <HomeStats {...{ fdalabelCount, userCount }} />
           </div>
           <div className="w-[600px] h-[300px] rounded-lg sm:mt-6 md:mt-0">
             <Image

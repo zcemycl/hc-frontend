@@ -31,7 +31,7 @@ export async function fetchUserInfoByName(name: string) {
       Authorization: `Bearer ${token}`,
     },
   });
-  validate_response_ok(response);
+  // validate_response_ok(response);
   const res = await response.json();
   cookie.set("role", res.role);
   cookie.set("userId", res.id);
