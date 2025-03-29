@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useContext } from "react";
-import { DiscoveryContext } from "./context";
+import { DiscoveryContext } from "@/contexts";
 import InfoTab from "./info-tab";
 import FlagTab from "./flag-tab";
 import TabBar from "./tab-bar";

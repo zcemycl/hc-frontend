@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { IRequestDemoForm, UserRoleEnum } from "@/types";
+import { IData, IRequestDemoForm, UserRoleEnum } from "@/types";
 import { sendEmail } from "@/http/internal";
 import { dummy_cred } from "@/utils";
 import {
@@ -13,29 +13,8 @@ import {
 } from "@/http/backend";
 import { Spinner } from "@/components";
 import { handleFetchApiRoot } from "@/services";
-
-interface IData {
-  success?: boolean;
-  message?: string;
-  id?: number;
-  username?: string;
-  role?: UserRoleEnum;
-}
-
-const beautifulNumber = (value: number) => {
-  let newvalue, res;
-  if (value >= 1000) {
-    newvalue = (value / 1000).toLocaleString("en-US", {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    });
-    res = `${newvalue}K`;
-  } else {
-    newvalue = value;
-    res = `${newvalue}`;
-  }
-  return res;
-};
+import { useDbsHealth } from "@/hooks";
+import { beautifulNumber } from "@/http/utils";
 
 export default function Home() {
   const router = useRouter();
@@ -49,15 +28,16 @@ export default function Home() {
     isLoadingAuth,
   } = useAuth();
   const [data, setData] = useState<IData>({});
+  const [prevSignal, setPrevSignal] = useState<string>("False");
   const [fdalabelCount, setFdalabelCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { pgHealthMsg, isPGHealthy } = useDbsHealth();
   const defaultRequestForm = {
     name: "",
     email: "",
     message: "",
   };
-  // const cookieStore = cookies()
   const [requestForm, setRequestForm] =
     useState<IRequestDemoForm>(defaultRequestForm);
 
@@ -74,6 +54,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isLoadingAuth) return;
+    if (prevSignal === pgHealthMsg?.data) return;
     if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
       const dummy_username = "leo.leung.rxscope";
       dummy_cred(dummy_username).then((x) => {
@@ -93,18 +74,19 @@ export default function Home() {
         });
       });
     }
-
     const requestFormJson =
       JSON.parse(localStorage.getItem("requestForm") as string) ??
       defaultRequestForm;
     setRequestForm(requestFormJson);
     fetchFdalabelCount().then((x) => setFdalabelCount(x));
     fetchUserCount().then((x) => setUserCount(x));
+    setPrevSignal(pgHealthMsg?.data as string);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth]);
+  }, [isLoadingAuth, pgHealthMsg]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
+    if (prevSignal === pgHealthMsg?.data) return;
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
       const resp = await handleFetchApiRoot(
@@ -120,13 +102,15 @@ export default function Home() {
       setIsLoading(false);
     }
     getData(credentials);
-  }, [credentials]);
+    setPrevSignal(pgHealthMsg?.data as string);
+  }, [credentials, pgHealthMsg]);
+
   return (
     <>
       <section className="text-gray-400 bg-gray-900 body-font">
         <div className="container px-5 py-24 mx-auto md:flex md:flex-between">
           <div className="flex flex-wrap -mx-4 mt-auto mb-auto lg:w-1/2 sm:w-2/3 content-start sm:pr-10">
-            <div className="w-full sm:p-4 px-4 mb-6">
+            <div className="w-full sm:p-4 px-4 mb-6 space-y-1">
               <h1 className="title-font font-medium text-xl mb-2 text-white">
                 Hello{" "}
                 {isAuthenticated ? (
@@ -147,6 +131,23 @@ export default function Home() {
                 {isAuthenticated
                   ? ""
                   : "Please Login to start using our Tools."}
+              </div>
+              <div>
+                {isPGHealthy ? (
+                  <div className="bg-emerald-400 text-black font-bold w-fit p-2 rounded-xl">
+                    <img
+                      src="https://icons.getbootstrap.com/assets/icons/database-check.svg"
+                      alt="connected"
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-red-400 text-black font-bold w-fit p-2 rounded-xl animate-pulse">
+                    <img
+                      src="https://icons.getbootstrap.com/assets/icons/database-x.svg"
+                      alt="connecting"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="p-4 sm:w-1/2 lg:w-1/4 w-1/2">

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
 import { useContext, useState } from "react";
-import { DiscoveryContext } from "./context";
+import { DiscoveryContext } from "@/contexts";
 import { ToggleButton } from "@/components";
 
 export default function SettingsTab() {

@@ -1,5 +1,5 @@
+import { DiscoveryContext } from "@/contexts";
 import { useContext, useState } from "react";
-import { DiscoveryContext } from "./context";
 
 export default function FlagTab() {
   const { tab, flagAttrs, setFlagAttrs } = useContext(DiscoveryContext);

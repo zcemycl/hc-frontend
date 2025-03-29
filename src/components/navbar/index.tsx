@@ -91,7 +91,14 @@ export default function NavBar() {
                   router.push("/login");
                 }
               }}
-              className={`inline-flex items-center p-0 w-10 h-10 justify-center text-sm border-white text-gray-500 rounded-full focus:ring-2 hover:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 ${isSideBarOpen ? "pointer-events-none" : ""} cursor-pointer`}
+              className={`inline-flex items-center 
+                p-0 w-10 h-10 justify-center 
+                text-sm border-white text-gray-500 
+                rounded-full focus:ring-2 hover:ring-2 
+                focus:ring-gray-200 dark:text-gray-400 
+                dark:hover:bg-gray-700 
+                dark:focus:ring-gray-600 
+                ${isSideBarOpen ? "pointer-events-none" : ""} cursor-pointer`}
             >
               <ProfileIcon />
             </button>
@@ -99,7 +106,11 @@ export default function NavBar() {
         </div>
         <div className="flex w-full justify-end h-0" ref={refDropDown}>
           <div
-            className={`items-center z-10 justify-between w-1/3 sm:w-1/4 md:hidden transition-transform ${isDropDownOpen ? "scale-y-100" : "scale-y-0"}`}
+            className={`items-center justify-between 
+              w-1/3 sm:w-1/4 
+              md:hidden transition-transform
+              z-30
+              ${isDropDownOpen ? "scale-y-100" : "scale-y-0"}`}
             id="navbar-dropdown"
           >
             <ul className="flex flex-col p-2 md:p-0 mt-1 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse dark:bg-gray-800  dark:border-gray-700">
@@ -109,7 +120,10 @@ export default function NavBar() {
                     <Link
                       href={keyValue.path}
                       key={keyValue.name}
-                      className="block py-1 px-3 text-right text-gray-900 rounded hover:bg-blue-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white  dark:border-gray-700"
+                      className="block py-1 px-3 text-right 
+                        text-gray-900 rounded hover:bg-blue-700 
+                        dark:text-white dark:hover:bg-gray-700 
+                        dark:hover:text-white  dark:border-gray-700"
                       aria-current="page"
                     >
                       {keyValue.name}

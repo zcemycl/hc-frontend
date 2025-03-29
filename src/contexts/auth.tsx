@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     if (!isLoadingAuth) return;
     console.log("mounted window");
     const creds = JSON.parse(localStorage.getItem("credentials") as string);
-    console.log(creds);
+    // console.log(creds);
     if (!!creds) {
       setIsAuthenticated(true);
       setCredentials(JSON.stringify(creds));
@@ -299,7 +299,7 @@ export const ProtectedRoute = ({
     console.log("window not mounted");
     return children;
   }
-  console.log("window mounted");
+  // console.log("window mounted");
   const creds = JSON.parse(localStorage.getItem("credentials") as string);
   let isAuthenticated = false;
   if (!!creds) {

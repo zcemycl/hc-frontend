@@ -55,10 +55,11 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
         <div className="container relative items-center mx-auto">
           <div
             id="default-sidebar"
-            className={`flex absolute z-0 w-64 right-0 transition-transform ${isSideBarOpen ? "" : "translate-y-full"}`}
+            className={`flex absolute z-30 w-64 right-0 
+              transition-transform ${isSideBarOpen ? "" : "translate-y-full"}`}
             aria-label="Sidebar"
           >
-            <div className="min-h-screen z-0 px-3 py-4 w-64 bg-gray-50 dark:bg-gray-800">
+            <div className="min-h-screen z-30 px-3 py-4 w-64 bg-gray-50 dark:bg-gray-800">
               <ul className="space-y-2 font-medium">
                 {sidebar_items.map((keyValue) => {
                   return (

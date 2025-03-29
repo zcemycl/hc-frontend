@@ -1,32 +1,23 @@
 "use client";
-import React, { useEffect, useRef, useState, useContext } from "react";
-import { Network } from "vis-network";
-import { useAuth, useLoader } from "@/contexts";
+import React, { useEffect, useState, useContext } from "react";
+import { useAuth, useLoader, DiscoveryContext } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
-import { generateGraphOption } from "@/constants";
-import { IEdge, INode } from "@/types";
+import { INode } from "@/types";
 import { useRouter } from "next/navigation";
 import { fetchGraphDummy } from "@/http/backend";
 import { Spinner } from "@/components";
-import { DiscoveryContext } from "./context";
+import { useDiscoveryGraph } from "@/hooks";
+import { network } from "vis-network";
 
 export default function VisPanel() {
   const { credentials, setIsAuthenticated } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
-  const {
-    setSelectedNodes,
-    nodes,
-    setNodes,
-    edges,
-    setEdges,
-    flagAttrs,
-    settings,
-    visJsRef,
-    net,
-    setNet,
-  } = useContext(DiscoveryContext);
+  const { setNodes, setEdges, flagAttrs, visJsRef, neo4jHealthMsg } =
+    useContext(DiscoveryContext);
   const [path, setPath] = useState<string[]>([]);
+  const [prevSignal, setPrevSignal] = useState<string>("False");
+  const { setUpNetwork } = useDiscoveryGraph({ setPath });
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -64,87 +55,15 @@ export default function VisPanel() {
   }, [credentials, flagAttrs]);
 
   useEffect(() => {
+    if (prevSignal === neo4jHealthMsg?.data) return;
     setIsLoading(true);
-    if (visJsRef.current) {
-      const network =
-        visJsRef.current &&
-        new Network(
-          visJsRef.current,
-          { nodes, edges },
-          generateGraphOption(settings),
-        );
-      network?.once("beforeDrawing", function () {
-        network?.moveTo({
-          position: { x: 0, y: 0 },
-          scale: 0.5,
-          animation: true,
-        });
-      });
-      network?.on("click", (e: any) => {
-        console.log(e);
-        if (e.nodes.length >= 1) {
-          const nodeId = e.nodes[0];
-
-          const { x, y } = network.getPositions([nodeId])[nodeId];
-          network?.moveTo({
-            position: { x, y },
-            animation: true, // default duration is 1000ms and default easingFunction is easeInOutQuad.
-          });
-
-          let pathEdges = [];
-          let pathNodes = [nodeId];
-          let currentNode = nodeId;
-
-          while (true) {
-            let parentEdge = edges.filter(
-              (v: IEdge) => v.to === currentNode,
-            )[0];
-            if (!parentEdge) break;
-
-            pathEdges.push(parentEdge.id);
-            currentNode = parentEdge.from;
-            pathNodes.push(currentNode);
-          }
-          setSelectedNodes(
-            nodes.filter((v: INode) => pathNodes.includes(v.id)),
-          );
-          setPath((prev) => {
-            try {
-              prev
-                .filter((v) => !pathEdges.includes(v))
-                .forEach((v) =>
-                  network.updateEdge(v, {
-                    color: "white",
-                    width: 0.5,
-                  }),
-                );
-            } catch {}
-            return pathEdges;
-          });
-
-          pathEdges.forEach((v) =>
-            network.updateEdge(v as string, { color: "lightgreen", width: 6 }),
-          );
-        } else {
-          net.releaseNode();
-          net.redraw();
-        }
-      });
-      network?.on("initRedraw", (e: any) => {
-        setIsLoading(true);
-      });
-      // network?.on("beforeDrawing", (e: any) => {
-      //   setIsLoading(true);
-      // })
-      network?.on("afterDrawing", (e: any) => {
-        setIsLoading(false);
-      });
-      setNet(network);
-      network?.fit();
+    if (visJsRef.current && neo4jHealthMsg?.data !== "False") {
+      setUpNetwork();
     }
     setIsLoading(false);
+    setPrevSignal(neo4jHealthMsg?.data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visJsRef, nodes, edges, settings]);
+  }, [neo4jHealthMsg]);
 
   return (
     <div id="vis-panel" className="relative rounded-lg">
