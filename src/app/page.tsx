@@ -54,6 +54,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isLoadingAuth) return;
+    if (prevSignal === pgHealthMsg?.data) return;
     if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
       const dummy_username = "leo.leung.rxscope";
       dummy_cred(dummy_username).then((x) => {
@@ -73,18 +74,19 @@ export default function Home() {
         });
       });
     }
-
     const requestFormJson =
       JSON.parse(localStorage.getItem("requestForm") as string) ??
       defaultRequestForm;
     setRequestForm(requestFormJson);
     fetchFdalabelCount().then((x) => setFdalabelCount(x));
     fetchUserCount().then((x) => setUserCount(x));
+    setPrevSignal(pgHealthMsg?.data as string);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth]);
+  }, [isLoadingAuth, pgHealthMsg]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
+    if (prevSignal === pgHealthMsg?.data) return;
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
       const resp = await handleFetchApiRoot(
@@ -100,15 +102,8 @@ export default function Home() {
       setIsLoading(false);
     }
     getData(credentials);
-  }, [credentials]);
-
-  useEffect(() => {
-    if (prevSignal === pgHealthMsg?.data) return;
-    if (pgHealthMsg?.data != "False") {
-      router.refresh();
-    }
     setPrevSignal(pgHealthMsg?.data as string);
-  }, [pgHealthMsg]);
+  }, [credentials, pgHealthMsg]);
 
   return (
     <>

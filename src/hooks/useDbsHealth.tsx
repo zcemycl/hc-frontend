@@ -25,7 +25,7 @@ const useDbsHealth = () => {
       }
     };
 
-    const interval = setInterval(fetchPgHealth, 10000);
+    const interval = setInterval(fetchPgHealth, 5000);
 
     return () => {
       isMounted = false;
