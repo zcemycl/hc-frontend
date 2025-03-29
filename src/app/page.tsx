@@ -107,7 +107,7 @@ export default function Home() {
     if (pgHealthMsg?.data != "False") {
       router.refresh();
     }
-    setPrevSignal(pgHealthMsg?.data);
+    setPrevSignal(pgHealthMsg?.data as string);
   }, [pgHealthMsg]);
 
   return (
