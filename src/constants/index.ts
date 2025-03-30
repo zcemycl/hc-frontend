@@ -9,3 +9,4 @@ export * from "./fdalabel";
 export * from "./ae-compare";
 export * from "./graph";
 export * from "./color";
+export * from "./healthcheck";

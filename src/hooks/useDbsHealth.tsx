@@ -2,6 +2,10 @@
 
 import { check_neo4j_health, check_pg_health } from "@/http/internal";
 import { useEffect, useState } from "react";
+import {
+  pg_healthcheck_interval,
+  neo4j_healthcheck_interval,
+} from "@/constants";
 
 interface IMsg {
   data?: string;
@@ -25,7 +29,7 @@ const useDbsHealth = () => {
       }
     };
 
-    const interval = setInterval(fetchPgHealth, 5000);
+    const interval = setInterval(fetchPgHealth, pg_healthcheck_interval);
 
     return () => {
       isMounted = false;
@@ -46,7 +50,7 @@ const useDbsHealth = () => {
     };
 
     // Fetch every 5 seconds using setInterval
-    const interval = setInterval(fetchNeo4jHealth, 5000);
+    const interval = setInterval(fetchNeo4jHealth, neo4j_healthcheck_interval);
 
     // Cleanup function to stop interval when component unmounts
     return () => {

@@ -75,7 +75,7 @@ const defaultOptions = {
   autoResize: true,
   edges: global_graph_edge_style,
   nodes: global_graph_node_style,
-  interaction: { hover: true },
+  interaction: { hover: true, multiselect: true },
   physics: {
     // barnesHut: {
     //   gravitationalConstant: -80000,
