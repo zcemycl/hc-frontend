@@ -9,28 +9,15 @@ import React, {
 import { Amplify } from "aws-amplify";
 import { defaultStorage } from "aws-amplify/utils";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
-import {
-  CognitoIdentityProviderClient,
-  InitiateAuthCommand,
-  InitiateAuthRequest,
-  InitiateAuthResponse,
-  RespondToAuthChallengeCommand,
-  RespondToAuthChallengeRequest,
-  RespondToAuthChallengeResponse,
-} from "@aws-sdk/client-cognito-identity-provider";
 // import { CognitoIdentity } from "@aws-sdk/client-cognito-identity";
 import { redirect, useRouter } from "next/navigation";
 
-import { UserRoleEnum } from "@/types/users";
 // import CognitoProvider from "next-auth/providers/cognito";
-import {
-  booleanDummySetState,
-  stringDummySetState,
-  AuthContextType,
-} from "@/types";
+import { AuthContextType, UserRoleEnum, defaultAuthContext } from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";
 import { handleFetchApiRoot } from "@/services";
 import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
+import { useCognitoAuth } from "@/hooks";
 
 Amplify.configure({
   Auth: {
@@ -45,39 +32,7 @@ Amplify.configure({
 
 cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 
-export const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  setIsAuthenticated: booleanDummySetState,
-  isLoadingAuth: true,
-  setIsLoadingAuth: booleanDummySetState,
-  signIn: function (email: string): Promise<InitiateAuthResponse> {
-    throw new Error("Function not implemented.");
-  },
-  cognitoIdentity: new CognitoIdentityProviderClient(),
-  answerCustomChallenge: function (
-    sessionId: string,
-    code: string,
-    email: string,
-  ): Promise<RespondToAuthChallengeResponse> {
-    throw new Error("Function not implemented.");
-  },
-  amplifySignIn: function (email: string): {} {
-    throw new Error("Function not implemented.");
-  },
-  amplifyConfirmSignIn: function (email: string, code: string) {
-    throw new Error("Function not implemented.");
-  },
-  credentials: "",
-  setCredentials: stringDummySetState,
-  role: UserRoleEnum.USER,
-  setRole: function (value: React.SetStateAction<UserRoleEnum>): void {
-    throw new Error("Function not implemented.");
-  },
-  userId: null,
-  setUserId: function (value: React.SetStateAction<number | null>): void {
-    throw new Error("Function not implemented.");
-  },
-});
+export const AuthContext = createContext<AuthContextType>(defaultAuthContext);
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -86,6 +41,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
   const [userId, setUserId] = useState<number | null>(null);
   const router = useRouter();
+  const { cognitoIdentity, signIn, answerCustomChallenge } = useCognitoAuth();
 
   // const cognitoidentity = new CognitoIdentity({
   //   region: process.env.NEXT_PUBLIC_AWS_REGION,
@@ -168,50 +124,6 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   }, []);
 
   const AuthProviderValue = useMemo<AuthContextType>(() => {
-    const cognitoIdentity = new CognitoIdentityProviderClient({
-      region: process.env.NEXT_PUBLIC_AWS_REGION,
-    });
-    async function signIn(email: string) {
-      const params: InitiateAuthRequest = {
-        AuthFlow: "CUSTOM_AUTH",
-        ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
-        AuthParameters: {
-          USERNAME: email,
-        },
-      };
-      const command = new InitiateAuthCommand(params);
-      try {
-        const response: InitiateAuthResponse =
-          await cognitoIdentity.send(command);
-        return response;
-      } catch (err) {
-        console.log(err);
-        return {};
-      }
-    }
-
-    async function answerCustomChallenge(
-      sessionId: string,
-      code: string,
-      email: string,
-    ) {
-      const params: RespondToAuthChallengeRequest = {
-        ClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USERPOOL_CLIENT_ID,
-        ChallengeName: "CUSTOM_CHALLENGE",
-        Session: sessionId,
-        ChallengeResponses: { USERNAME: email, ANSWER: code },
-      };
-      const command = new RespondToAuthChallengeCommand(params);
-      try {
-        const response: RespondToAuthChallengeResponse =
-          await cognitoIdentity.send(command);
-        return response;
-      } catch (err) {
-        console.log(err);
-        return {};
-      }
-    }
-
     return {
       isAuthenticated,
       setIsAuthenticated,
