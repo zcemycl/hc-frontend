@@ -20,7 +20,7 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 // import { CognitoIdentity } from "@aws-sdk/client-cognito-identity";
 import { redirect, useRouter } from "next/navigation";
-import { signIn as login, confirmSignIn } from "aws-amplify/auth";
+
 import { UserRoleEnum } from "@/types/users";
 // import CognitoProvider from "next-auth/providers/cognito";
 import {
@@ -30,6 +30,7 @@ import {
 } from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";
 import { handleFetchApiRoot } from "@/services";
+import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 
 Amplify.configure({
   Auth: {
@@ -211,20 +212,6 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       }
     }
 
-    async function amplifySignIn(email: string) {
-      const resp = await login({
-        username: email,
-        options: { authFlowType: "CUSTOM_WITHOUT_SRP" },
-      });
-      return resp;
-    }
-
-    async function amplifyConfirmSignIn(code: string) {
-      const resp = await confirmSignIn({
-        challengeResponse: code,
-      });
-      return resp;
-    }
     return {
       isAuthenticated,
       setIsAuthenticated,

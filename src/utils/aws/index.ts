@@ -14,3 +14,5 @@ export function export_aws_credentials(data: any, credentials_: any) {
 
   return credentials;
 }
+
+export * from "./amplify";

@@ -1,5 +1,12 @@
 "use client";
-import { useState, useEffect, useRef, useMemo, createContext } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  createContext,
+  Fragment,
+} from "react";
 import {
   AEVersionContext,
   ProtectedRoute,
@@ -334,7 +341,8 @@ export default function Search() {
               flex flex-col space-y-2"
             >
               {Object.keys(compareTable).map((tabletype) => {
-                if (compareTable[tabletype].length === 0) return <></>;
+                if (compareTable[tabletype].length === 0)
+                  return <Fragment key={`${tabletype}-comp`}></Fragment>;
                 return (
                   <div
                     className="justify-start flex flex-col"
