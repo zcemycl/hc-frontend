@@ -1,7 +1,5 @@
 "use client";
 import React, {
-  Dispatch,
-  SetStateAction,
   createContext,
   useContext,
   useState,
@@ -28,8 +26,7 @@ import { UserRoleEnum } from "@/types/users";
 import {
   booleanDummySetState,
   stringDummySetState,
-  TBooleanDummySetState,
-  TStringDummySetState,
+  AuthContextType,
 } from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";
 import { handleFetchApiRoot } from "@/services";
@@ -46,28 +43,6 @@ Amplify.configure({
 });
 
 cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  setIsAuthenticated: TBooleanDummySetState;
-  isLoadingAuth: boolean;
-  setIsLoadingAuth: TBooleanDummySetState;
-  credentials: string;
-  setCredentials: TStringDummySetState;
-  role: UserRoleEnum;
-  setRole: Dispatch<SetStateAction<UserRoleEnum>>;
-  userId: number | null;
-  setUserId: Dispatch<SetStateAction<number | null>>;
-  signIn: (email: string) => Promise<InitiateAuthResponse>;
-  cognitoIdentity: CognitoIdentityProviderClient;
-  answerCustomChallenge: (
-    sessionId: string,
-    code: string,
-    email: string,
-  ) => Promise<RespondToAuthChallengeResponse>;
-  amplifySignIn: (email: string) => {};
-  amplifyConfirmSignIn: (email: string, code: string) => {};
-}
 
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
@@ -269,15 +244,15 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
     };
   }, [
     isAuthenticated,
-    setIsAuthenticated,
+    // setIsAuthenticated,
     isLoadingAuth,
-    setIsLoadingAuth,
+    // setIsLoadingAuth,
     credentials,
-    setCredentials,
+    // setCredentials,
     role,
-    setRole,
+    // setRole,
     userId,
-    setUserId,
+    // setUserId,
   ]);
 
   return (

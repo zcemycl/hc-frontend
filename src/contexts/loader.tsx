@@ -1,19 +1,6 @@
 "use client";
-import React, {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-} from "react";
-import {
-  booleanDummySetState,
-  stringDummySetState,
-  TBooleanDummySetState,
-  TStringDummySetState,
-} from "@/types";
+import React, { createContext, useContext, useState, useMemo } from "react";
+import { booleanDummySetState, TBooleanDummySetState } from "@/types";
 
 interface LoaderContextType {
   isLoading: boolean;
