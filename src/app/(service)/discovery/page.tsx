@@ -18,6 +18,7 @@ export default function Discovery() {
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
+  const [oncePlusSignal, setOncePlusSignal] = useState<number>(0);
   const [flagAttrs, setFlagAttrs] = useState<IFlagAttrs>({
     name: "Neoplasms",
     numNodes: 50,
@@ -54,6 +55,8 @@ export default function Discovery() {
           neo4jHealthMsg,
           prevSignal,
           setPrevSignal,
+          oncePlusSignal,
+          setOncePlusSignal,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
