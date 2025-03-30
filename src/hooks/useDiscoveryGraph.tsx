@@ -94,13 +94,16 @@ const useDiscoveryGraph = ({
     });
     setNet(network);
     network?.fit();
+    return network;
   };
 
   useEffect(() => {
+    let network_ = null;
     if (visJsRef.current && neo4jHealthMsg?.data === "True") {
-      setUpNetwork();
+      network_ = setUpNetwork();
       setPrevSignal(neo4jHealthMsg?.data);
     }
+    return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visJsRef, nodes, edges, settings]);
 

@@ -76,7 +76,6 @@ export default function Page({ params }: Readonly<PageProps>) {
     tmp["additionalRequire"] = addtmp;
     return tmp;
   };
-
   // set table
   useEffect(() => {
     async function getData() {

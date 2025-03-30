@@ -7,7 +7,7 @@ import {
   deleteUserById,
   fetchUserCount,
 } from "@/http/backend";
-import { IUser, UserRoleEnum } from "@/types";
+import { IAddUserInfo, IUser, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   PaginationBar,
@@ -26,12 +26,6 @@ import {
 } from "@/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-
-interface IAddUserInfo {
-  username: string;
-  email: string;
-  role: UserRoleEnum;
-}
 
 export default function Admin() {
   const id = useId();

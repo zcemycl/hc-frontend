@@ -1,6 +1,13 @@
 "use client";
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+} from "react";
 import { booleanDummySetState, TBooleanDummySetState } from "@/types";
+import { usePathname } from "next/navigation";
 
 interface LoaderContextType {
   isLoading: boolean;
@@ -18,6 +25,17 @@ export const LoaderProvider = ({
   children?: React.ReactNode;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Adjust this based on real API calls
+
+    return () => clearTimeout(timeout);
+  }, [pathname]);
 
   const LoaderProviderValue = useMemo<LoaderContextType>(() => {
     return {

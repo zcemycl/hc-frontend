@@ -97,8 +97,6 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId, version]);
 
-  // useEffect(() )
-
   return (
     <ProtectedRoute>
       <section

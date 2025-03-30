@@ -56,11 +56,13 @@ export default function VisPanel() {
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;
     setIsLoading(true);
+    let network_ = null;
     if (visJsRef.current && neo4jHealthMsg?.data === "True") {
-      setUpNetwork();
+      network_ = setUpNetwork();
     }
     setIsLoading(false);
     setPrevSignal(neo4jHealthMsg?.data);
+    // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [neo4jHealthMsg]);
 
