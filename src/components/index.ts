@@ -13,3 +13,5 @@ export * from "./expandablebtn";
 export * from "./toggle";
 export * from "./statsbar";
 export * from "./form";
+export * from "./map";
+export * from "./contact";
