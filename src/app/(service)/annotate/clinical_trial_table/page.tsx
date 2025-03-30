@@ -151,6 +151,7 @@ export default function Page() {
                                     ),
                                 } as IBaseTable,
                                 keyname: "table",
+                                hasCopyBtn: false,
                               }}
                             />
                           </>
