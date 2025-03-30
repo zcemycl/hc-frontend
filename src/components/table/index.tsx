@@ -135,6 +135,8 @@ const Table = (tabledata: IBaseTableNoHead) => {
     tabledata.isSelectable === undefined
       ? true
       : !tabledata.isSelectable?.table.flat().includes(true);
+  const hasCopyBtn =
+    tabledata.hasCopyBtn === undefined ? true : tabledata.hasCopyBtn;
   let drugHeading: string[] = [];
   let head_colspan: number[] = [];
   if (tabledata.keyname === undefined) {
@@ -170,36 +172,38 @@ const Table = (tabledata: IBaseTableNoHead) => {
 
   return (
     <>
-      <button
-        className="p-3 rounded-lg 
+      {hasCopyBtn && (
+        <button
+          className="p-3 rounded-lg 
       bg-sky-300 hover:bg-sky-600
       font-bold text-black"
-        onClick={(e) => {
-          e.preventDefault();
-          const table = document.querySelector("table"); // Get table
-          let text = "";
+          onClick={(e) => {
+            e.preventDefault();
+            const table = document.querySelector("table"); // Get table
+            let text = "";
 
-          for (let row of Array.from(table!.rows)) {
-            let rowData = [];
+            for (let row of Array.from(table!.rows)) {
+              let rowData = [];
 
-            for (let cell of Array.from(row!.cells)) {
-              const colspan = cell.colSpan; // Get colspan value
-              const cellText = cell.innerText.trim(); // Clean text
+              for (let cell of Array.from(row!.cells)) {
+                const colspan = cell.colSpan; // Get colspan value
+                const cellText = cell.innerText.trim(); // Clean text
 
-              // Add the cell text and repeat for colspan
-              rowData.push(cellText);
-              for (let i = 1; i < colspan; i++) {
-                rowData.push(""); // Insert empty columns for correct structure
+                // Add the cell text and repeat for colspan
+                rowData.push(cellText);
+                for (let i = 1; i < colspan; i++) {
+                  rowData.push(""); // Insert empty columns for correct structure
+                }
               }
-            }
 
-            text += rowData.join("\t") + "\n"; // Use tab delimiter for Excel/Sheets
-          }
-          navigator.clipboard.writeText(text);
-        }}
-      >
-        COPY
-      </button>
+              text += rowData.join("\t") + "\n"; // Use tab delimiter for Excel/Sheets
+            }
+            navigator.clipboard.writeText(text);
+          }}
+        >
+          COPY
+        </button>
+      )}
       <table key={id} ref={tableRef}>
         <tbody key={id}>
           {tabledata!.content[tabledata.keyname ?? "table"]!.map(
