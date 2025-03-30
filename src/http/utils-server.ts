@@ -5,7 +5,9 @@ export function get_token_cookie() {
   const cookie = cookies();
   if (!cookie.has("token")) {
     // throw new Error("Missing token cookie");
-    redirect("/logout");
+    // avoiding loop from home to logout in local test
+    if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") redirect("/logout");
+    return "";
   }
   const token = cookie.get("token")?.value;
   return token;

@@ -3,14 +3,9 @@ import { useAuth } from "@/contexts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { IData, IRequestDemoForm, UserRoleEnum } from "@/types";
-import { sendEmail } from "@/http/internal";
+import { IData, UserRoleEnum } from "@/types";
 import { dummy_cred } from "@/utils";
-import {
-  fetchFdalabelCount,
-  fetchUserCount,
-  fetchUserInfoByName,
-} from "@/http/backend";
+import { fetchUserInfoByName } from "@/http/backend";
 import { HomeStats, Spinner, RequestDemoForm } from "@/components";
 import { handleFetchApiRoot } from "@/services";
 import { useDbsHealth } from "@/hooks";
@@ -28,18 +23,19 @@ export default function Home() {
   } = useAuth();
   const [data, setData] = useState<IData>({});
   const [prevSignal, setPrevSignal] = useState<string>("False");
-  const [fdalabelCount, setFdalabelCount] = useState(0);
-  const [userCount, setUserCount] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { pgHealthMsg, isPGHealthy } = useDbsHealth();
 
   useEffect(() => {
     if (isLoadingAuth) return;
+    if (prevSignal === pgHealthMsg?.data) return;
     if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
+      console.log("1. Dummy creds for testing without cognito");
       const dummy_username = "leo.leung.rxscope";
-      dummy_cred(dummy_username).then((x) => {
+      const getDummyInfo = async () => {
+        const act = await dummy_cred(dummy_username);
         const credentials = JSON.stringify({
-          AccessToken: x,
+          AccessToken: act,
           ExpiresIn: 3600,
           IdToken: "",
           RefreshToken: "",
@@ -48,23 +44,20 @@ export default function Home() {
         setCredentials(credentials);
         setIsAuthenticated(true);
         localStorage.setItem("credentials", credentials);
-        fetchUserInfoByName(dummy_username).then((x) => {
-          console.log(x);
-          setRole(x.role as UserRoleEnum);
-          setUserId(x.id);
-        });
-      });
+        const dummyUserInfo = await fetchUserInfoByName(dummy_username);
+        setRole(dummyUserInfo?.role as UserRoleEnum);
+        setUserId(dummyUserInfo?.id);
+      };
+      getDummyInfo();
     }
-
-    fetchFdalabelCount().then((x) => setFdalabelCount(x));
-    fetchUserCount().then((x) => setUserCount(x));
     setPrevSignal(pgHealthMsg?.data as string);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth]);
+  }, [isLoadingAuth, pgHealthMsg]);
 
   useEffect(() => {
     if (credentials.length === 0) return;
     if (prevSignal === pgHealthMsg?.data) return;
+    console.log("2 Set cookie creds");
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
       const resp = await handleFetchApiRoot(
@@ -128,7 +121,7 @@ export default function Home() {
                 )}
               </div>
             </div>
-            <HomeStats {...{ fdalabelCount, userCount }} />
+            <HomeStats />
           </div>
           <div className="w-[600px] h-[300px] rounded-lg sm:mt-6 md:mt-0">
             <Image

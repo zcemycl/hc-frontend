@@ -138,13 +138,13 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
+      // set credential to cookie for next backend server
       const resp = await handleFetchApiRoot(
         creds!.AccessToken,
         setIsAuthenticated,
         router,
       );
       const res = await resp.json();
-      console.log(res);
       if ("success" in res && !res.success) {
         router.push(
           process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
@@ -154,11 +154,11 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
         return { isAuthToken: true, username: res.username };
       return { isAuthToken: false, username: "" };
     }
-    console.log("testing window");
     if (typeof window === "undefined" || isLoadingAuth) return;
     const creds = JSON.parse(localStorage.getItem("credentials") as string);
-    console.log("testing window2", creds);
+    // If credential exists, quit
     if (!creds) return;
+    console.log("3. Avoid credential injection");
     fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
       console.log(isAuthToken, username);
       console.log(creds);
