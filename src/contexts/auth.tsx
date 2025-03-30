@@ -105,7 +105,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true); // is Window mounted?
   const [credentials, setCredentials] = useState<string>("");
   const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
   const [userId, setUserId] = useState<number | null>(null);
