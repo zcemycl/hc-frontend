@@ -1,9 +1,10 @@
 "use client";
 
-import { ProtectedRoute, DiscoveryContext } from "@/contexts";
+import { DiscoveryContext } from "@/contexts";
 import VisPanel from "./vis-panel";
 import { useRef, useState } from "react";
 import { IEdge, INode, IFlagAttrs } from "@/types";
+import { ProtectedRoute } from "@/components";
 import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
 import { Network } from "vis-network";
 import { useDbsHealth } from "@/hooks";

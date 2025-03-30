@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState, useEffect, useId } from "react";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import {
   fetchUserAll,
   createUserPostgres,
@@ -15,6 +15,7 @@ import {
   DropDownBtn,
   DropDownList,
   TypographyH2,
+  ProtectedRoute,
 } from "@/components";
 import { convert_datetime_to_date } from "@/utils";
 import { create_user, delete_user } from "@/http/internal";

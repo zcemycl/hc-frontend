@@ -6,17 +6,13 @@ import {
   Spinner,
   ExpandableBtn,
   AETableVerDropdown,
+  ProtectedRoute,
 } from "@/components";
 import {
   fetchUnannotatedAETableByUserId,
   fetchUnannotatedAETableByUserIdCount,
 } from "@/http/backend";
-import {
-  ProtectedRoute,
-  useAuth,
-  useAETableAnnotation,
-  useLoader,
-} from "@/contexts";
+import { useAuth, useAETableAnnotation, useLoader } from "@/contexts";
 import {
   AnnotationCategoryEnum,
   IBaseTable,

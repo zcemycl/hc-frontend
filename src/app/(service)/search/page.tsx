@@ -7,12 +7,7 @@ import {
   createContext,
   Fragment,
 } from "react";
-import {
-  AEVersionContext,
-  ProtectedRoute,
-  useAuth,
-  useLoader,
-} from "@/contexts";
+import { AEVersionContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchHistoryById } from "@/http/backend";
 import {
@@ -23,6 +18,7 @@ import {
   SearchBar,
   FdaLabelShort,
   Spinner,
+  ProtectedRoute,
 } from "@/components";
 import {
   IFdaLabel,

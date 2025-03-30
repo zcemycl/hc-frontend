@@ -1,4 +1,4 @@
-export { useAuth, AuthProvider, ProtectedRoute } from "./auth";
+export { useAuth, AuthProvider } from "./auth";
 export { useOpenBar, OpenBarProvider } from "./openbar";
 export {
   useAETableAnnotation,

@@ -1,6 +1,6 @@
 "use client";
-import { Spinner, Table } from "@/components";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { Spinner, Table, ProtectedRoute } from "@/components";
+import { useAuth, useLoader } from "@/contexts";
 import { fetchAETableByIds } from "@/http/backend";
 import {
   AnnotationCategoryEnum,

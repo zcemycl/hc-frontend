@@ -1,6 +1,11 @@
 "use client";
-import { Table, ExpandableBtn, TypographyH2 } from "@/components";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import {
+  Table,
+  ExpandableBtn,
+  TypographyH2,
+  ProtectedRoute,
+} from "@/components";
+import { useAuth } from "@/contexts";
 import { fetchAETableBySetid } from "@/http/backend";
 import { GoIcon } from "@/icons";
 import {

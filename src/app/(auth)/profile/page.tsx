@@ -1,6 +1,6 @@
 "use client";
-import { TypographyH2, PaginationBar } from "@/components";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { TypographyH2, PaginationBar, ProtectedRoute } from "@/components";
+import { useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
 import {
   fetchHistoryByUserId,

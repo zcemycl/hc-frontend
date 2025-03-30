@@ -1,5 +1,5 @@
 "use client";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Fragment } from "react";
 import {
@@ -22,6 +22,7 @@ import {
   setup_selectable_none_map,
   switch_map,
   Spinner,
+  ProtectedRoute,
 } from "@/components";
 import { questions } from "./questions";
 import { AETableVerEnum, aeTableVersionMap } from "@/constants";
