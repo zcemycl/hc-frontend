@@ -29,7 +29,14 @@ const useTickableTableCell = ({
     () => setup_selectable_none_map(n_rows, n_cols),
     [n_rows, n_cols],
   );
-  return { row_map, col_map, cell_map, none_map };
+  const resetCellSelected = useMemo(
+    () =>
+      Array.from({ length: n_rows }, () =>
+        Array.from({ length: n_cols }, () => false),
+      ),
+    [n_rows, n_cols],
+  );
+  return { row_map, col_map, cell_map, none_map, resetCellSelected };
 };
 
 export { useTickableTableCell };

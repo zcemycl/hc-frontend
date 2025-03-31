@@ -43,15 +43,14 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
   const n_cols = tableData?.content.table[0].length ?? 0;
-  const { row_map, col_map, cell_map, none_map } = useTickableTableCell({
-    n_rows,
-    n_cols,
-  });
-  const resetCellSelected = Array.from({ length: n_rows }, () =>
-    Array.from({ length: n_cols }, () => false),
+  const { row_map, col_map, cell_map, none_map, resetCellSelected } =
+    useTickableTableCell({
+      n_rows,
+      n_cols,
+    });
+  const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
+    structuredClone(resetCellSelected),
   );
-  const [isCellSelected, setIsCellSelected] =
-    useState<boolean[][]>(resetCellSelected);
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
@@ -186,7 +185,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                       onClick={async () => {
                         const tmp = await storeCache();
                         setFinalResults(tmp);
-                        setIsCellSelected(resetCellSelected);
+                        setIsCellSelected(structuredClone(resetCellSelected));
                         setSelectedOption("");
                         setQuestionIdx(idx);
                       }}
