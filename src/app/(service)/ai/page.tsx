@@ -1,11 +1,12 @@
 "use client";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import { create_presigned_url } from "@/http/internal";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon, DiscoveryIcon } from "@/icons";
 import { redirect, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { UserRoleEnum } from "@/types/users";
-import { Modal, Spinner, TypographyH2 } from "@/components";
+import { Modal, Spinner, TypographyH2, ProtectedRoute } from "@/components";
+import { useStopLoadingEarly } from "@/hooks";
 
 export default function AI() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function AI() {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
   const isNotAdmin = role !== UserRoleEnum.ADMIN;
+  useStopLoadingEarly();
 
   return (
     <ProtectedRoute>

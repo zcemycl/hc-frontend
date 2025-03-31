@@ -1,13 +1,13 @@
 "use client";
 import { useRef, useState, useEffect, useId } from "react";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import {
   fetchUserAll,
   createUserPostgres,
   deleteUserById,
   fetchUserCount,
 } from "@/http/backend";
-import { IUser, UserRoleEnum } from "@/types";
+import { IAddUserInfo, IUser, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   PaginationBar,
@@ -15,6 +15,7 @@ import {
   DropDownBtn,
   DropDownList,
   TypographyH2,
+  ProtectedRoute,
 } from "@/components";
 import { convert_datetime_to_date } from "@/utils";
 import { create_user, delete_user } from "@/http/internal";
@@ -25,12 +26,6 @@ import {
 } from "@/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-
-interface IAddUserInfo {
-  username: string;
-  email: string;
-  role: UserRoleEnum;
-}
 
 export default function Admin() {
   const id = useId();

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { fetchGraphDummy } from "@/http/backend";
 import { Spinner } from "@/components";
 import { useDiscoveryGraph } from "@/hooks";
-import { network } from "vis-network";
 
 export default function VisPanel() {
   const { credentials, setIsAuthenticated } = useAuth();
@@ -57,11 +56,13 @@ export default function VisPanel() {
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;
     setIsLoading(true);
-    if (visJsRef.current && neo4jHealthMsg?.data !== "False") {
-      setUpNetwork();
+    let network_ = null;
+    if (visJsRef.current && neo4jHealthMsg?.data === "True") {
+      network_ = setUpNetwork();
     }
     setIsLoading(false);
     setPrevSignal(neo4jHealthMsg?.data);
+    // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [neo4jHealthMsg]);
 

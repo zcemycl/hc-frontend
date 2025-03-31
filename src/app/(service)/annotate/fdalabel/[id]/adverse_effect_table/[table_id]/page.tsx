@@ -1,5 +1,5 @@
 "use client";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Fragment } from "react";
 import {
@@ -14,17 +14,15 @@ import {
 } from "@/types";
 import {
   Table,
-  setup_selectable_cell_map,
   DropDownBtn,
   DropDownList,
-  setup_selectable_row_map,
-  setup_selectable_col_map,
-  setup_selectable_none_map,
-  switch_map,
   Spinner,
+  ProtectedRoute,
 } from "@/components";
+import { switch_map } from "@/utils";
 import { questions } from "./questions";
 import { AETableVerEnum, aeTableVersionMap } from "@/constants";
+import { useTickableTableCell } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -45,15 +43,14 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
   const n_cols = tableData?.content.table[0].length ?? 0;
-  const row_map = setup_selectable_row_map(n_rows, n_cols);
-  const col_map = setup_selectable_col_map(n_rows, n_cols);
-  const cell_map = setup_selectable_cell_map(n_rows, n_cols);
-  const none_map = setup_selectable_none_map(n_rows, n_cols);
-  const resetCellSelected = Array.from({ length: n_rows }, () =>
-    Array.from({ length: n_cols }, () => false),
+  const { row_map, col_map, cell_map, none_map, resetCellSelected } =
+    useTickableTableCell({
+      n_rows,
+      n_cols,
+    });
+  const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
+    structuredClone(resetCellSelected),
   );
-  const [isCellSelected, setIsCellSelected] =
-    useState<boolean[][]>(resetCellSelected);
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
@@ -75,7 +72,6 @@ export default function Page({ params }: Readonly<PageProps>) {
     tmp["additionalRequire"] = addtmp;
     return tmp;
   };
-
   // set table
   useEffect(() => {
     async function getData() {
@@ -189,7 +185,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                       onClick={async () => {
                         const tmp = await storeCache();
                         setFinalResults(tmp);
-                        setIsCellSelected(resetCellSelected);
+                        setIsCellSelected(structuredClone(resetCellSelected));
                         setSelectedOption("");
                         setQuestionIdx(idx);
                       }}

@@ -6,17 +6,13 @@ import {
   Spinner,
   ExpandableBtn,
   AETableVerDropdown,
+  ProtectedRoute,
 } from "@/components";
 import {
   fetchUnannotatedAETableByUserId,
   fetchUnannotatedAETableByUserIdCount,
 } from "@/http/backend";
-import {
-  ProtectedRoute,
-  useAuth,
-  useAETableAnnotation,
-  useLoader,
-} from "@/contexts";
+import { useAuth, useAETableAnnotation, useLoader } from "@/contexts";
 import {
   AnnotationCategoryEnum,
   IBaseTable,
@@ -100,8 +96,6 @@ export default function Page() {
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId, version]);
-
-  // useEffect(() )
 
   return (
     <ProtectedRoute>
@@ -211,6 +205,7 @@ export default function Page() {
                                     ),
                                 } as IBaseTable,
                                 keyname: "table",
+                                hasCopyBtn: false,
                               }}
                             />
                           </>

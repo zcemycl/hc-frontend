@@ -1,4 +1,4 @@
-import { ProtectedRoute } from "@/contexts";
+import { ProtectedRoute } from "@/components";
 
 export default function APIs() {
   return (

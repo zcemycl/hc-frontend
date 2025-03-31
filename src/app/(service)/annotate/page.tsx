@@ -1,6 +1,5 @@
 "use client";
-import { TypographyH2 } from "@/components";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { TypographyH2, ProtectedRoute } from "@/components";
 import { useRouter } from "next/navigation";
 
 export default function Annotate() {

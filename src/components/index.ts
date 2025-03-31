@@ -11,3 +11,8 @@ export * from "./searchbar";
 export * from "./spinner";
 export * from "./expandablebtn";
 export * from "./toggle";
+export * from "./statsbar";
+export * from "./form";
+export * from "./map";
+export * from "./contact";
+export * from "./routewrapper";

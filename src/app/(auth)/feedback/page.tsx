@@ -1,7 +1,6 @@
 "use client";
 
-import { TypographyH2 } from "@/components";
-import { ProtectedRoute } from "@/contexts";
+import { TypographyH2, ProtectedRoute } from "@/components";
 
 export default function Feedback() {
   return (

@@ -6,9 +6,10 @@ import {
   Table,
   ExpandableBtn,
   PaginationBar,
+  ProtectedRoute,
 } from "@/components";
 import { AnnotationTypeEnum } from "@/constants";
-import { ProtectedRoute, useAuth, useLoader } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import {
   fetchUnannotatedAETableByUserId,
   fetchUnannotatedAETableByUserIdCount,
@@ -150,6 +151,7 @@ export default function Page() {
                                     ),
                                 } as IBaseTable,
                                 keyname: "table",
+                                hasCopyBtn: false,
                               }}
                             />
                           </>

@@ -1,11 +1,13 @@
 "use client";
-import { useState, useEffect, useRef, useMemo, createContext } from "react";
 import {
-  AEVersionContext,
-  ProtectedRoute,
-  useAuth,
-  useLoader,
-} from "@/contexts";
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  createContext,
+  Fragment,
+} from "react";
+import { AEVersionContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchHistoryById } from "@/http/backend";
 import {
@@ -16,6 +18,7 @@ import {
   SearchBar,
   FdaLabelShort,
   Spinner,
+  ProtectedRoute,
 } from "@/components";
 import {
   IFdaLabel,
@@ -334,7 +337,8 @@ export default function Search() {
               flex flex-col space-y-2"
             >
               {Object.keys(compareTable).map((tabletype) => {
-                if (compareTable[tabletype].length === 0) return <></>;
+                if (compareTable[tabletype].length === 0)
+                  return <Fragment key={`${tabletype}-comp`}></Fragment>;
                 return (
                   <div
                     className="justify-start flex flex-col"

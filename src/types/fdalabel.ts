@@ -15,6 +15,7 @@ export interface IBaseTableNoHead {
   caption?: string;
   isSelectable?: IBaseSelectTable;
   isSelected?: IBaseSelectTable;
+  hasCopyBtn?: boolean;
   setIsCellSelected?: Dispatch<SetStateAction<boolean[][]>>;
 }
 

@@ -1,71 +1,7 @@
 "use client";
-import {
-  Dispatch,
-  FC,
-  Fragment,
-  ReactNode,
-  SetStateAction,
-  useId,
-  useRef,
-} from "react";
-import { IBaseTableNoHead, IBaseTable, IBaseSelectTable } from "@/types";
-
-const setup_selectable_row_map = (n_rows: number, n_cols: number) => {
-  let tmp = Array.from({ length: n_rows }, () =>
-    Array.from({ length: n_cols }, () => false),
-  );
-  for (let i = 0; i < n_rows; i++) {
-    tmp[i][0] = true;
-  }
-  return tmp;
-};
-
-const setup_selectable_col_map = (n_rows: number, n_cols: number) => {
-  let tmp = Array.from({ length: n_rows }, () =>
-    Array.from({ length: n_cols }, () => false),
-  );
-  for (let i = 0; i < n_cols; i++) {
-    tmp[0][i] = true;
-  }
-  return tmp;
-};
-
-const setup_selectable_cell_map = (n_rows: number, n_cols: number) => {
-  return Array.from({ length: n_rows }, () =>
-    Array.from({ length: n_cols }, () => true),
-  );
-};
-
-const setup_selectable_none_map = (n_rows: number, n_cols: number) => {
-  return Array.from({ length: n_rows }, () =>
-    Array.from({ length: n_cols }, () => false),
-  );
-};
-
-const switch_map = (
-  row_map: boolean[][],
-  cell_map: boolean[][],
-  col_map: boolean[][],
-  none_map: boolean[][],
-  type: string,
-) => {
-  switch (type) {
-    case "cell":
-      return cell_map;
-    case "row":
-      return row_map;
-    case "col":
-      return col_map;
-    case "none":
-      return none_map;
-    default:
-      return cell_map;
-  }
-};
-
-function isEmpty(array: any[][]): boolean {
-  return Array.isArray(array) && (array.length == 0 || array.every(isEmpty));
-}
+import { Dispatch, FC, ReactNode, SetStateAction, useId, useRef } from "react";
+import { IBaseTableNoHead } from "@/types";
+import { isEmpty } from "@/utils";
 
 const TableCell: FC<{
   children: ReactNode;
@@ -135,6 +71,8 @@ const Table = (tabledata: IBaseTableNoHead) => {
     tabledata.isSelectable === undefined
       ? true
       : !tabledata.isSelectable?.table.flat().includes(true);
+  const hasCopyBtn =
+    tabledata.hasCopyBtn === undefined ? true : tabledata.hasCopyBtn;
   let drugHeading: string[] = [];
   let head_colspan: number[] = [];
   if (tabledata.keyname === undefined) {
@@ -170,36 +108,38 @@ const Table = (tabledata: IBaseTableNoHead) => {
 
   return (
     <>
-      <button
-        className="p-3 rounded-lg 
+      {hasCopyBtn && (
+        <button
+          className="p-3 rounded-lg 
       bg-sky-300 hover:bg-sky-600
       font-bold text-black"
-        onClick={(e) => {
-          e.preventDefault();
-          const table = document.querySelector("table"); // Get table
-          let text = "";
+          onClick={(e) => {
+            e.preventDefault();
+            const table = document.querySelector("table"); // Get table
+            let text = "";
 
-          for (let row of Array.from(table!.rows)) {
-            let rowData = [];
+            for (let row of Array.from(table!.rows)) {
+              let rowData = [];
 
-            for (let cell of Array.from(row!.cells)) {
-              const colspan = cell.colSpan; // Get colspan value
-              const cellText = cell.innerText.trim(); // Clean text
+              for (let cell of Array.from(row!.cells)) {
+                const colspan = cell.colSpan; // Get colspan value
+                const cellText = cell.innerText.trim(); // Clean text
 
-              // Add the cell text and repeat for colspan
-              rowData.push(cellText);
-              for (let i = 1; i < colspan; i++) {
-                rowData.push(""); // Insert empty columns for correct structure
+                // Add the cell text and repeat for colspan
+                rowData.push(cellText);
+                for (let i = 1; i < colspan; i++) {
+                  rowData.push(""); // Insert empty columns for correct structure
+                }
               }
-            }
 
-            text += rowData.join("\t") + "\n"; // Use tab delimiter for Excel/Sheets
-          }
-          navigator.clipboard.writeText(text);
-        }}
-      >
-        COPY
-      </button>
+              text += rowData.join("\t") + "\n"; // Use tab delimiter for Excel/Sheets
+            }
+            navigator.clipboard.writeText(text);
+          }}
+        >
+          COPY
+        </button>
+      )}
       <table key={id} ref={tableRef}>
         <tbody key={id}>
           {tabledata!.content[tabledata.keyname ?? "table"]!.map(
@@ -324,14 +264,4 @@ const TableFromCols = ({ keyvalue, data }: IData) => {
   );
 };
 
-export {
-  TableCell,
-  TableHeadCell,
-  Table,
-  TableFromCols,
-  setup_selectable_row_map,
-  setup_selectable_col_map,
-  setup_selectable_cell_map,
-  setup_selectable_none_map,
-  switch_map,
-};
+export { TableCell, TableHeadCell, Table, TableFromCols };

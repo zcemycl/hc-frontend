@@ -1,5 +1,5 @@
 "use client";
-import { ProtectedRoute, useAuth } from "@/contexts";
+import { ProtectedRoute } from "@/components";
 
 export default function Chatbot() {
   return (
