@@ -14,18 +14,15 @@ import {
 } from "@/types";
 import {
   Table,
-  setup_selectable_cell_map,
   DropDownBtn,
   DropDownList,
-  setup_selectable_row_map,
-  setup_selectable_col_map,
-  setup_selectable_none_map,
-  switch_map,
   Spinner,
   ProtectedRoute,
 } from "@/components";
+import { switch_map } from "@/utils";
 import { questions } from "./questions";
 import { AETableVerEnum, aeTableVersionMap } from "@/constants";
+import { useTickableTableCell } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -46,10 +43,10 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
   const n_cols = tableData?.content.table[0].length ?? 0;
-  const row_map = setup_selectable_row_map(n_rows, n_cols);
-  const col_map = setup_selectable_col_map(n_rows, n_cols);
-  const cell_map = setup_selectable_cell_map(n_rows, n_cols);
-  const none_map = setup_selectable_none_map(n_rows, n_cols);
+  const { row_map, col_map, cell_map, none_map } = useTickableTableCell({
+    n_rows,
+    n_cols,
+  });
   const resetCellSelected = Array.from({ length: n_rows }, () =>
     Array.from({ length: n_cols }, () => false),
   );
