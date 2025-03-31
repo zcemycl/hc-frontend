@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { booleanDummySetState, TBooleanDummySetState } from "@/types";
 import { usePathname } from "next/navigation";
+import { max_loading_period } from "@/constants";
 
 interface LoaderContextType {
   isLoading: boolean;
@@ -32,7 +33,7 @@ export const LoaderProvider = ({
 
     const timeout = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Adjust this based on real API calls
+    }, max_loading_period); // Adjust this based on real API calls
 
     return () => clearTimeout(timeout);
   }, [pathname]);
