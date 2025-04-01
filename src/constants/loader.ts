@@ -1,1 +1,1 @@
-export const max_loading_period = 2000;
+export const max_loading_period = 1500;
