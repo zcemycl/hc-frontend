@@ -13,7 +13,7 @@
     "prepare": "node .husky/install.mjs"
   },
   "dependencies": {
-    "@aws-amplify/adapter-nextjs": "^1.0.21",
+    "@aws-amplify/adapter-nextjs": "^1.5.8",
     "@aws-sdk/client-cognito-identity": "^3.540.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.600.0",
     "@aws-sdk/client-sagemaker": "^3.600.0",
@@ -29,7 +29,7 @@
     "jose": "^5.2.3",
     "jwk-to-pem": "^2.0.5",
     "next": "14.2.26",
-    "next-auth": "^4.24.7",
+    "next-auth": "^4.24.11",
     "next-themes": "^0.3.0",
     "postcss": "^8.4.38",
     "react": "^18",
