@@ -18,6 +18,21 @@ export enum GraphTabEnum {
   settings = "settings",
 }
 
+export const ToolBarTabCouples = [
+  [
+    GraphTabEnum.information,
+    "https://icons.getbootstrap.com/assets/icons/info-circle-fill.svg",
+  ],
+  [
+    GraphTabEnum.initialisation,
+    "https://icons.getbootstrap.com/assets/icons/flag.svg",
+  ],
+  [
+    GraphTabEnum.settings,
+    "https://icons.getbootstrap.com/assets/icons/sliders.svg",
+  ],
+];
+
 export const therapeutic_area_group_graph_style = {
   color: graph_node_bg_color_enum.ta,
   font: {
