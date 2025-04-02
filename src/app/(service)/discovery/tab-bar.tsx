@@ -1,25 +1,12 @@
 import { useContext } from "react";
 import { DiscoveryContext } from "@/contexts";
-import { GraphTabEnum } from "@/constants";
+import { ToolBarTabCouples } from "@/constants";
 
 export default function TabBar() {
   const { tab, setTab } = useContext(DiscoveryContext);
   return (
     <div className="flex flex-row space-x-2 pl-3 w-fit object-fit pointer-events-auto">
-      {[
-        [
-          GraphTabEnum.information,
-          "https://icons.getbootstrap.com/assets/icons/info-circle-fill.svg",
-        ],
-        [
-          GraphTabEnum.initialisation,
-          "https://icons.getbootstrap.com/assets/icons/flag.svg",
-        ],
-        [
-          GraphTabEnum.settings,
-          "https://icons.getbootstrap.com/assets/icons/sliders.svg",
-        ],
-      ].map((v) => {
+      {ToolBarTabCouples.map((v) => {
         return (
           <button
             key={`tab-${v[0]}`}
