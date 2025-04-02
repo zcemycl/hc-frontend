@@ -12,6 +12,12 @@ export enum GraphTypeEnum {
   radial = "radial",
 }
 
+export enum GraphTabEnum {
+  initialisation = "init",
+  information = "info",
+  setttings = "settings",
+}
+
 export const therapeutic_area_group_graph_style = {
   color: graph_node_bg_color_enum.ta,
   font: {
