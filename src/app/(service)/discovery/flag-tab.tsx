@@ -1,3 +1,4 @@
+import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
 import { useContext, useState } from "react";
 
@@ -17,7 +18,7 @@ export default function FlagTab() {
                 transition
                 p-5
                 flex flex-col
-                ${tab === "init" ? "opacity-100 z-10 delay-200" : "opacity-0 z-0 duration-200"}
+                ${tab === GraphTabEnum.initialisation ? "opacity-100 z-10 delay-200" : "opacity-0 z-0 duration-200"}
                 `}
     >
       <div className="basis-11/12 space-y-1">
