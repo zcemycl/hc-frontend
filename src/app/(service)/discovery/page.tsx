@@ -5,7 +5,7 @@ import VisPanel from "./vis-panel";
 import { useRef, useState } from "react";
 import { IEdge, INode, IFlagAttrs } from "@/types";
 import { ProtectedRoute } from "@/components";
-import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
+import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
 import { Network } from "vis-network";
 import { useDbsHealth } from "@/hooks";
 
@@ -14,7 +14,7 @@ export default function Discovery() {
   const visJsRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
-  const [tab, setTab] = useState("info");
+  const [tab, setTab] = useState<GraphTabEnum>(GraphTabEnum.information);
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
