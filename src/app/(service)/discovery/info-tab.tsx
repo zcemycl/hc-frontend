@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { DiscoveryContext } from "@/contexts";
 import { INode } from "@/types";
+import { GraphTabEnum } from "@/constants";
 
 const switch_color_node = (group: string) => {
   switch (group) {
@@ -37,7 +38,7 @@ export default function InfoTab() {
         transition
         p-5
         ${
-          tab === "info"
+          tab === GraphTabEnum.information
             ? "opacity-100 z-10 delay-200"
             : "opacity-0 z-0 duration-200"
         }
