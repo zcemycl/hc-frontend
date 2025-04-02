@@ -16,7 +16,7 @@ export default function TabBar() {
           "https://icons.getbootstrap.com/assets/icons/flag.svg",
         ],
         [
-          GraphTabEnum.setttings,
+          GraphTabEnum.settings,
           "https://icons.getbootstrap.com/assets/icons/sliders.svg",
         ],
       ].map((v) => {

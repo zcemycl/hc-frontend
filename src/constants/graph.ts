@@ -15,7 +15,7 @@ export enum GraphTypeEnum {
 export enum GraphTabEnum {
   initialisation = "init",
   information = "info",
-  setttings = "settings",
+  settings = "settings",
 }
 
 export const therapeutic_area_group_graph_style = {

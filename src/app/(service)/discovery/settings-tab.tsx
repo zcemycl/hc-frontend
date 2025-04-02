@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { GraphDirectionEnum, GraphTypeEnum } from "@/constants";
+import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
 import { useContext, useState } from "react";
 import { DiscoveryContext } from "@/contexts";
 import { ToggleButton } from "@/components";
@@ -32,7 +32,7 @@ export default function SettingsTab() {
             p-5
             flex flex-col
             ${
-              tab === "settings"
+              tab === GraphTabEnum.settings
                 ? "opacity-100 z-10 delay-200"
                 : "opacity-0 z-0 duration-200"
             }
