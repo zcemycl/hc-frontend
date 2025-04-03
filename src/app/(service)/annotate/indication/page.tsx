@@ -84,19 +84,33 @@ export default function Page() {
                   />
                 </div>
                 <div
-                  className="flex bg-sky-800 rounded-lg sm:h-[60vh]
+                  className="flex flex-col 
+                    bg-sky-800 rounded-lg sm:h-[60vh]
                     basis-1/3
-                    overflow-y-auto p-4 flex-wrap gap-2 content-start"
+                    space-y-2
+                    overflow-y-auto p-4"
                 >
-                  {selectedWords.map((word, index) => {
-                    const isHovered = hoveredIndex === index;
-                    return (
-                      <PhraseBubble
-                        key={index}
-                        {...{ word, index, isHovered }}
-                      />
-                    );
-                  })}
+                  <h3 className="font-bold text-slate-300">Phrase</h3>
+                  <div className="flex flex-wrap gap-2 content-start">
+                    {selectedWords.length > 0 ? (
+                      selectedWords.map((word, index) => {
+                        const isHovered = hoveredIndex === index;
+                        return (
+                          <PhraseBubble
+                            key={index}
+                            {...{ word, index, isHovered }}
+                          />
+                        );
+                      })
+                    ) : (
+                      <span
+                        className="font-bold bg-amber-500 
+                    text-black rounded-lg p-2"
+                      >
+                        No phrases selected...
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
