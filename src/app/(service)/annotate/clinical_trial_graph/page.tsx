@@ -9,6 +9,7 @@ import {
   addEdge,
   useReactFlow,
   ReactFlowProvider,
+  BackgroundVariant,
 } from "@xyflow/react";
 import { useRef } from "react";
 
@@ -89,6 +90,7 @@ function Component() {
               </button>
             </div>
             <ReactFlow
+              colorMode="dark"
               className="w-full h-full inset-0 absolute z-0 rounded-2xl"
               style={{ backgroundColor: "#F7F9FB" }}
               nodes={nodes}
