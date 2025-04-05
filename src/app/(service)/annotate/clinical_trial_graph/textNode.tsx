@@ -1,4 +1,17 @@
 "use client";
-// import {type IsValidConnection} from "@xyflow/react";
 
-export default function TextUpdateNode({ data, isConnectable }) {}
+import { useCallback } from "react";
+
+export default function TextUpdateNode({
+  data,
+  isConnectable,
+}: {
+  data: any;
+  isConnectable: boolean;
+}) {
+  const onChange = useCallback((evt: any) => {
+    console.log(evt.target.value);
+  }, []);
+
+  return <></>;
+}
