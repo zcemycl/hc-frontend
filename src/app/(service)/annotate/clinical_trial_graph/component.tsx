@@ -12,6 +12,7 @@ import {
   type Node,
   type Edge,
   MarkerType,
+  MiniMap,
 } from "@xyflow/react";
 import { createContext, useCallback, useEffect, useRef } from "react";
 
@@ -33,8 +34,6 @@ const nodeTypes = {
 const edgeTypes = {
   directionEdge: CustomEdge,
 };
-
-// const NodeEdgeGraphContext = createContext<any>({})
 
 export default function Component() {
   const reactFlowWrapper = useRef(null);
@@ -58,14 +57,14 @@ export default function Component() {
         style: {
           width: "20px",
           height: "20px",
-          stroke: "#FF0072",
+          stroke: "#90EE90",
           strokeWidth: 3,
         },
         markerEnd: {
           type: MarkerType.ArrowClosed,
           width: 10,
           height: 10,
-          color: "#FF0072",
+          color: "#90EE90",
         },
       };
       setEdges((eds) => addEdge(params_, eds));
@@ -74,6 +73,7 @@ export default function Component() {
   );
 
   useEffect(() => {
+    console.log(nodes);
     console.log(edges);
   }, [edges]);
 
@@ -160,9 +160,10 @@ export default function Component() {
                 fitViewOptions={{ padding: 2 }}
                 connectionMode={ConnectionMode.Loose}
                 nodeOrigin={nodeOrigin as [number, number]}
-                minZoom={1}
+                minZoom={0.5}
               >
                 <Background />
+                <MiniMap nodeStrokeWidth={3} />
               </ReactFlow>
             </div>
           </div>

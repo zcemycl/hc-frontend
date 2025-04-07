@@ -1,18 +1,12 @@
 "use client";
-
-import styled from "styled-components";
 import {
   Handle,
   Position,
   useNodeId,
   useNodesData,
-  useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { NodeEdgeGraphContext } from "./context";
-
-const handleStyle = { left: 10 };
+import { useEffect, useState } from "react";
 const sizeHandle = "15px";
 
 export default function TextNode({
@@ -52,6 +46,7 @@ export default function TextNode({
         className="bg-inherit nodrag 
           w-full h-full
           text-black font-bold
+          align-middle text-center
         "
         value={nodeName}
         onChange={(e) => {
@@ -79,6 +74,9 @@ export default function TextNode({
           position={v[1] as Position}
           id={v[0]}
           isConnectable={isConnectable}
+          isValidConnection={(connection) =>
+            connection.source !== connection.target
+          }
         />
       ))}
     </div>
