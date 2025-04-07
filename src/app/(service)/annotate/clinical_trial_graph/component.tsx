@@ -27,6 +27,8 @@ let id = 0;
 const getId = () => `${id++}`;
 const nodeOrigin = [0.5, 0];
 
+const proOptions = { hideAttribution: true };
+
 const nodeTypes = {
   textNode: TextNode,
 };
@@ -70,6 +72,52 @@ export default function Component() {
       setEdges((eds) => addEdge(params_, eds));
     },
     [edges],
+  );
+
+  const onConnectEnd = useCallback(
+    (event: any, connectionState: any) => {
+      // when a connection is dropped on the pane it's not valid
+      if (!connectionState.isValid) {
+        // we need to remove the wrapper bounds, in order to get the correct position
+        const id = getId();
+        const { clientX, clientY } =
+          "changedTouches" in event ? event.changedTouches[0] : event;
+        const newNode = {
+          id,
+          position: screenToFlowPosition({
+            x: clientX,
+            y: clientY,
+          }),
+          data: { label: `Node ${id}` },
+          origin: [0.5, 0.0],
+          type: "textNode",
+        } as Node;
+
+        setNodes((nds) => nds.concat(newNode));
+        setEdges((eds) => {
+          let ed_ = {
+            id,
+            source: connectionState.fromNode.id,
+            target: id,
+            type: "directionEdge",
+            style: {
+              width: "20px",
+              height: "20px",
+              stroke: "#90EE90",
+              strokeWidth: 3,
+            },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              width: 10,
+              height: 10,
+              color: "#90EE90",
+            },
+          };
+          return eds.concat(ed_);
+        });
+      }
+    },
+    [screenToFlowPosition],
   );
 
   useEffect(() => {
@@ -155,6 +203,8 @@ export default function Component() {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                onConnectEnd={onConnectEnd}
+                proOptions={proOptions}
                 fitView
                 fitViewOptions={{ padding: 2 }}
                 connectionMode={ConnectionMode.Loose}
