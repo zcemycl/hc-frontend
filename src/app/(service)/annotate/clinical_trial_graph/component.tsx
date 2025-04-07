@@ -121,7 +121,6 @@ export default function Component() {
                   onClick={(e) => {
                     e.preventDefault();
                     const id = getId();
-                    console.log(e);
                     const { clientX, clientY } = e;
                     // 'changedTouches' in e ? e.changedTouches[0] : e;
                     const newNode = {

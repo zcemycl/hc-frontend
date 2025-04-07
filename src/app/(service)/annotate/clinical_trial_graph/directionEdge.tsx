@@ -58,12 +58,20 @@ export default function CustomEdge({
 
   return (
     <>
-      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <BaseEdge
+        path={edgePath}
+        markerEnd={markerEnd}
+        style={style}
+        onDoubleClick={(e) => {
+          console.log("double click");
+        }}
+      />
       <EdgeLabelRenderer>
         <div
           className="
+            flex flex-row
             absolute pointer-events-auto
-            flex items-center content-center
+            items-center content-center
             origin-center nodrag nopan"
           style={{
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
@@ -83,6 +91,22 @@ export default function CustomEdge({
             <img
               src="https://icons.getbootstrap.com/assets/icons/x.svg"
               alt="crossEdge"
+            />
+          </button>
+          <button
+            className="
+            bg-sky-400 text-black
+            cursor-pointer
+            rounded-full
+            flex items-center content-center
+            hover:bg-sky-500
+            hover:text-slate-300
+            "
+            onClick={(e) => {}}
+          >
+            <img
+              src="https://icons.getbootstrap.com/assets/icons/vector-pen.svg"
+              alt="penEdge"
             />
           </button>
         </div>
