@@ -7,7 +7,7 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { useEffect, useState } from "react";
-const sizeHandle = "15px";
+import { sizeFlowHandle } from "@/constants";
 
 export default function TextNode({
   data,
@@ -63,8 +63,8 @@ export default function TextNode({
           type="source"
           key={`handle-${v[0]}`}
           style={{
-            width: sizeHandle,
-            height: sizeHandle,
+            width: sizeFlowHandle,
+            height: sizeFlowHandle,
             backgroundColor: "#00d062",
             backgroundPosition: "center",
             backgroundSize: "cover",

@@ -10,24 +10,24 @@ import {
   useNodesState,
   useReactFlow,
   type Node,
-  type Edge,
-  MarkerType,
   MiniMap,
 } from "@xyflow/react";
-import { createContext, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import {
+  defaultFlowEdgeStyle,
+  flowProOptions,
+  flowNodeOrigin,
+  initialFlowEdges,
+  initialFlowNodes,
+} from "@/constants";
 
 import "@xyflow/react/dist/style.css";
 import TextNode from "./textNode";
 import { NodeEdgeGraphContext } from "./context";
 import CustomEdge from "./directionEdge";
 
-const initialNodes: Node[] = [];
-const initialEdges: Edge[] = [];
 let id = 0;
 const getId = () => `${id++}`;
-const nodeOrigin = [0.5, 0];
-
-const proOptions = { hideAttribution: true };
 
 const nodeTypes = {
   textNode: TextNode,
@@ -40,8 +40,8 @@ const edgeTypes = {
 export default function Component() {
   const reactFlowWrapper = useRef(null);
   const router = useRouter();
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialFlowNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialFlowEdges);
   const { screenToFlowPosition } = useReactFlow();
 
   const onConnect: OnConnect = useCallback(
@@ -55,19 +55,7 @@ export default function Component() {
       if (isEdgeSrcTargetExist) return;
       let params_ = {
         ...params,
-        type: "directionEdge",
-        style: {
-          width: "20px",
-          height: "20px",
-          stroke: "#90EE90",
-          strokeWidth: 3,
-        },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 10,
-          height: 10,
-          color: "#90EE90",
-        },
+        ...defaultFlowEdgeStyle,
       };
       setEdges((eds) => addEdge(params_, eds));
     },
@@ -99,19 +87,7 @@ export default function Component() {
             id,
             source: connectionState.fromNode.id,
             target: id,
-            type: "directionEdge",
-            style: {
-              width: "20px",
-              height: "20px",
-              stroke: "#90EE90",
-              strokeWidth: 3,
-            },
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              width: 10,
-              height: 10,
-              color: "#90EE90",
-            },
+            ...defaultFlowEdgeStyle,
           };
           return eds.concat(ed_);
         });
@@ -204,11 +180,11 @@ export default function Component() {
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 onConnectEnd={onConnectEnd}
-                proOptions={proOptions}
+                proOptions={flowProOptions}
                 fitView
                 fitViewOptions={{ padding: 2 }}
                 connectionMode={ConnectionMode.Loose}
-                nodeOrigin={nodeOrigin as [number, number]}
+                nodeOrigin={flowNodeOrigin as [number, number]}
                 minZoom={0.5}
               >
                 <Background />
