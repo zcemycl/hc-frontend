@@ -116,7 +116,7 @@ export default function Component() {
           >
             <div className="flex justify-between items-center">
               <div className="flex justify-between items-center space-x-1">
-                <TypographyH2>Clinical Trials Annotations</TypographyH2>
+                <TypographyH2>Clinical Trials Graph Annotations</TypographyH2>
               </div>
               <button
                 onClick={() => {
