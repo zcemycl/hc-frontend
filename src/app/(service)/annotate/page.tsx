@@ -1,5 +1,6 @@
 "use client";
 import { TypographyH2, ProtectedRoute } from "@/components";
+import { AnnotatePageNameLinkPairs } from "@/constants";
 import { useRouter } from "next/navigation";
 
 export default function Annotate() {
@@ -24,37 +25,23 @@ export default function Annotate() {
             </p>
             <TypographyH2>Tasks</TypographyH2>
             <div className="flex flex-col space-y-4">
-              <button
-                className="text-white 
-                bg-indigo-500 hover:bg-indigo-600
-                border-0 py-3 px-6 rounded text-left
-                focus:outline-none text-xl w-full"
-                onClick={() => {
-                  router.push("/annotate/adverse_effect_table");
-                }}
-              >
-                Adverse Effects Table
-              </button>
-              <button
-                // disabled={true}
-                className={`text-white
-                bg-indigo-500 border-0 py-3 px-6 rounded text-left
-                focus:outline-none text-xl w-full`}
-                onClick={() => {
-                  router.push("/annotate/clinical_trial_table");
-                }}
-              >
-                Clinical Trials Table
-              </button>
-              <button
-                disabled={true}
-                className={`text-white 
-                ${false ? "bg-indigo-500 hover:bg-indigo-600" : "bg-slate-500"}
-                border-0 py-3 px-6 rounded text-left
-                focus:outline-none text-xl w-full`}
-              >
-                Dosage Form
-              </button>
+              {AnnotatePageNameLinkPairs.map((v) => {
+                return (
+                  <button
+                    key={`link-${v.href}`}
+                    className={`text-white
+                  ${v.disabled ? "bg-slate-500" : "bg-indigo-500 hover:bg-indigo-600"}
+                  border-0 py-3 px-6 rounded text-left
+                  focus:outline-none text-xl w-full`}
+                    disabled={v.disabled}
+                    onClick={() => {
+                      router.push(v.href);
+                    }}
+                  >
+                    {v.name}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
