@@ -8,6 +8,7 @@ const flowNodeOrigin = [0.5, 0];
 
 const defaultFlowEdgeStyle = {
   type: "directionEdge",
+  data: { label: "" },
   style: {
     width: "20px",
     height: "20px",

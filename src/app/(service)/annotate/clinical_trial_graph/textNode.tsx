@@ -6,7 +6,7 @@ import {
   useNodesData,
   useReactFlow,
 } from "@xyflow/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { sizeFlowHandle } from "@/constants";
 
 export default function TextNode({
@@ -21,18 +21,6 @@ export default function TextNode({
   const nodeId = useNodeId();
   const nodeData = useNodesData(nodeId as string);
   const [nodeName, setNodeName] = useState(nodeData?.data.label as string);
-
-  useEffect(() => {
-    setNodes((prev) => {
-      const copy = prev.map((v) => {
-        if (v.id !== nodeId) return v;
-        let v_ = { ...v };
-        v.data.label = nodeName;
-        return v_;
-      });
-      return prev;
-    });
-  }, [nodeName]);
 
   return (
     <div
@@ -51,6 +39,17 @@ export default function TextNode({
         value={nodeName}
         onChange={(e) => {
           setNodeName(e.target.value);
+        }}
+        onBlur={(e) => {
+          setNodes((prev) => {
+            const copy = prev.map((v) => {
+              if (v.id !== nodeId) return v;
+              let v_ = { ...v };
+              v_.data.label = e.target.value;
+              return v_;
+            });
+            return copy;
+          });
         }}
       />
       {[

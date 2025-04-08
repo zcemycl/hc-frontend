@@ -55,7 +55,7 @@ export default function Component() {
       if (isEdgeSrcTargetExist) return;
       let params_ = {
         ...params,
-        ...defaultFlowEdgeStyle,
+        ...structuredClone(defaultFlowEdgeStyle),
       };
       setEdges((eds) => addEdge(params_, eds));
     },
@@ -87,7 +87,7 @@ export default function Component() {
             id,
             source: connectionState.fromNode.id,
             target: id,
-            ...defaultFlowEdgeStyle,
+            ...structuredClone(defaultFlowEdgeStyle),
           };
           return eds.concat(ed_);
         });
