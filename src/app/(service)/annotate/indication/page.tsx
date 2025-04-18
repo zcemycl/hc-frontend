@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ProtectedRoute, TypographyH2 } from "@/components";
+import { BackBtn, ProtectedRoute, TypographyH2 } from "@/components";
 import { useRouter } from "next/navigation";
 import Highlighter from "react-highlight-words";
 import { SelectedWordsContext } from "@/contexts";
@@ -45,18 +45,7 @@ export default function Page() {
                 <div className="flex justify-between items-center space-x-1">
                   <TypographyH2>Indication Annotations</TypographyH2>
                 </div>
-                <button
-                  onClick={() => {
-                    router.back();
-                  }}
-                  className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-                >
-                  <img
-                    src="https://icons.getbootstrap.com/assets/icons/arrow-return-left.svg"
-                    alt="back"
-                  />
-                </button>
+                <BackBtn />
               </div>
               <div className="flex flex-col sm:flex-row">
                 <div

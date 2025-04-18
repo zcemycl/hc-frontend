@@ -1,4 +1,4 @@
-import { TypographyH2 } from "@/components";
+import { TypographyH2, BackBtn } from "@/components";
 import { useRouter } from "next/navigation";
 import {
   addEdge,
@@ -118,18 +118,7 @@ export default function Component() {
               <div className="flex justify-between items-center space-x-1">
                 <TypographyH2>Clinical Trials Graph Annotations</TypographyH2>
               </div>
-              <button
-                onClick={() => {
-                  router.back();
-                }}
-                className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-              >
-                <img
-                  src="https://icons.getbootstrap.com/assets/icons/arrow-return-left.svg"
-                  alt="back"
-                />
-              </button>
+              <BackBtn />
             </div>
             <div
               className="h-[60vh] relative 
