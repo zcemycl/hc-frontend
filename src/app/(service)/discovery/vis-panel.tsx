@@ -73,7 +73,7 @@ export default function VisPanel() {
   }, [neo4jHealthMsg]);
 
   return (
-    <div id="vis-panel" className="relative rounded-lg">
+    <div id="vis-panel" className="relative rounded-lg h-[78vh]">
       {isLoading && (
         <div
           className="absolute h-[78vh]

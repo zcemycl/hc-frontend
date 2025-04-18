@@ -1,21 +1,16 @@
 "use client";
 
-import { useState, useContext, useEffect } from "react";
+import { useContext } from "react";
 import { DiscoveryContext } from "@/contexts";
 import InfoTab from "./info-tab";
 import FlagTab from "./flag-tab";
 import TabBar from "./tab-bar";
 import SettingsTab from "./settings-tab";
+import FilterTab from "./filter-tab";
 
 export default function VisToolbar() {
-  const { openToolBar, setOpenToolBar, visToolBarRef } =
-    useContext(DiscoveryContext);
+  const { openToolBar, setOpenToolBar } = useContext(DiscoveryContext);
 
-  useEffect(() => {
-    if (visToolBarRef.current) {
-      console.log((visToolBarRef.current as any).getBoundingClientRect());
-    }
-  }, [openToolBar]);
   return (
     <>
       <button
@@ -59,6 +54,7 @@ export default function VisToolbar() {
           <InfoTab />
           <FlagTab />
           <SettingsTab />
+          <FilterTab />
         </div>
 
         <TabBar />

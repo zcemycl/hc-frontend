@@ -2,31 +2,11 @@ import { useContext } from "react";
 import { DiscoveryContext } from "@/contexts";
 import { INode } from "@/types";
 import { GraphTabEnum } from "@/constants";
-
-const switch_color_node = (group: string) => {
-  switch (group) {
-    case "ta":
-      return `bg-purple-300`;
-    case "p":
-      return "bg-sky-500";
-    default:
-      return "bg-white";
-  }
-};
-
-const switch_hover_color_node = (group: string) => {
-  switch (group) {
-    case "ta":
-      return `hover:bg-purple-400`;
-    case "p":
-      return "hover:bg-sky-700";
-    default:
-      return "hover:bg-white";
-  }
-};
+import { switch_color_node, switch_hover_color_node } from "./utils";
 
 export default function InfoTab() {
-  const { selectedNodes, tab, visJsRef, net } = useContext(DiscoveryContext);
+  const { selectedNodes, tab, visJsRef, net, visToolBarRef } =
+    useContext(DiscoveryContext);
   return (
     <div
       className={`absolute
@@ -61,11 +41,16 @@ export default function InfoTab() {
                   const targetNodeId = selectedNodes.filter(
                     (x: INode) => x.id === v.id,
                   )[0].id;
-                  const pos = net.getViewPosition();
-                  // const pos = net.getPositions(targetNodeId);
+                  // const pos = net.getViewPosition();
+                  const pos = net.getPositions([targetNodeId])[targetNodeId];
+                  const { width: offsetx, height: offsety } = (
+                    visToolBarRef.current as any
+                  ).getBoundingClientRect();
+                  const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
                   net.moveTo({
                     position: pos,
                     scale: 0.2,
+                    offset: offset,
                     animation: {
                       duration: 800,
                     },
@@ -73,6 +58,7 @@ export default function InfoTab() {
                   setTimeout(() => {
                     net.focus(targetNodeId, {
                       scale: 0.5,
+                      offset,
                       animation: {
                         duration: 800,
                       },

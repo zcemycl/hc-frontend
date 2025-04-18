@@ -15,6 +15,7 @@ export default function Discovery() {
   const visToolBarRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
+  const [openSearchCanvas, setOpenSearchCanvas] = useState<boolean>(false);
   const [tab, setTab] = useState<GraphTabEnum>(GraphTabEnum.information);
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
@@ -41,6 +42,8 @@ export default function Discovery() {
           setTab,
           openToolBar,
           setOpenToolBar,
+          openSearchCanvas,
+          setOpenSearchCanvas,
           selectedNodes,
           setSelectedNodes,
           nodes,
