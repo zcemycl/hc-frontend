@@ -10,6 +10,7 @@ import { AnnotationCategoryEnum, IUnAnnotatedAETable, IUser } from "@/types";
 import { convert_datetime_to_simple } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import ProfileBar from "../profile-bar";
 
 export default function Page() {
   const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
@@ -75,18 +76,13 @@ export default function Page() {
            content-center items-center
         "
         >
-          <div className="w-7/12 flex flex-col space-y-3">
-            <div className="flex flex-col space-y-1">
-              <div className="flex justify-between">
-                <TypographyH2>
-                  {profileInfo?.username?.toUpperCase()}
-                </TypographyH2>
-                <span className="leading-relaxed mb-1">
-                  {profileInfo?.role!}
-                </span>
-              </div>
-              <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
-            </div>
+          <div className="w-11/12 sm:w-7/12 flex flex-col space-y-3">
+            <ProfileBar
+              {...{
+                username: profileInfo?.username! as string,
+                role: profileInfo?.role!,
+              }}
+            />
             <hr className="mb-2" />
             <TypographyH2>Annotation X{countAnnotated}</TypographyH2>
             <div className="flex flex-col space-y-1">

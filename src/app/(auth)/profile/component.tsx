@@ -1,10 +1,11 @@
 "use client";
-import { TypographyH2, ProtectedRoute } from "@/components";
+import { ProtectedRoute } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
 import { fetchUserInfoById } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import { IUser } from "@/types";
+import ProfileBar from "./profile-bar";
 
 export default function Profile() {
   const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
@@ -42,18 +43,15 @@ export default function Profile() {
            content-center items-center
         "
         >
-          <div className="w-7/12 flex flex-col space-y-10">
-            <div className="flex flex-col space-y-1">
-              <div className="flex justify-between">
-                <TypographyH2>
-                  {profileInfo?.username?.toUpperCase()}
-                </TypographyH2>
-                <span className="leading-relaxed mb-1">
-                  {profileInfo?.role!}
-                </span>
-              </div>
+          <div className="w-11/12 sm:w-7/12 flex flex-col space-y-10">
+            <ProfileBar
+              {...{
+                username: profileInfo?.username! as string,
+                role: profileInfo?.role!,
+              }}
+            >
               <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
-            </div>
+            </ProfileBar>
 
             <div
               className="
