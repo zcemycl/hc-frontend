@@ -47,11 +47,10 @@ const useDiscoveryGraph = ({
         const { width: offsetx, height: offsety } = (
           visToolBarRef.current as any
         ).getBoundingClientRect();
-        console.log({ x, y });
-        console.log({ x: offsety > 60 ? -offsetx / 2 : 0, y: 0 });
+        const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
         network?.moveTo({
           position: { x, y },
-          offset: { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 },
+          offset,
           animation: true, // default duration is 1000ms and default easingFunction is easeInOutQuad.
         });
 
