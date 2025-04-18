@@ -87,7 +87,7 @@ export default function Page() {
             </div>
             <hr className="mb-2" />
             <TypographyH2>Search Activities X{countHistory}</TypographyH2>
-            <div className="flex flex-col space-x-2">
+            <div className="flex flex-col space-y-1">
               {!!history && history.length === 0 ? (
                 <p className="leading-relaxed mb-1">No Record ...</p>
               ) : (
