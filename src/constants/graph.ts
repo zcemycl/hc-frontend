@@ -17,6 +17,7 @@ export enum GraphTabEnum {
   information = "info",
   settings = "settings",
   filters = "filters",
+  bundle = "bundle",
 }
 
 export const ToolBarTabCouples = [
@@ -26,7 +27,7 @@ export const ToolBarTabCouples = [
   ],
   [
     GraphTabEnum.initialisation,
-    "https://icons.getbootstrap.com/assets/icons/flag.svg",
+    "https://icons.getbootstrap.com/assets/icons/flag-fill.svg",
   ],
   [
     GraphTabEnum.settings,
@@ -34,7 +35,11 @@ export const ToolBarTabCouples = [
   ],
   [
     GraphTabEnum.filters,
-    "https://icons.getbootstrap.com/assets/icons/funnel.svg",
+    "https://icons.getbootstrap.com/assets/icons/funnel-fill.svg",
+  ],
+  [
+    GraphTabEnum.bundle,
+    "https://icons.getbootstrap.com/assets/icons/collection-fill.svg",
   ],
 ];
 
