@@ -7,6 +7,7 @@ import FlagTab from "./flag-tab";
 import TabBar from "./tab-bar";
 import SettingsTab from "./settings-tab";
 import FilterTab from "./filter-tab";
+import BundleTab from "./bundle-tab";
 
 export default function VisToolbar() {
   const { openToolBar, setOpenToolBar } = useContext(DiscoveryContext);
@@ -55,6 +56,7 @@ export default function VisToolbar() {
           <FlagTab />
           <SettingsTab />
           <FilterTab />
+          <BundleTab />
         </div>
 
         <TabBar />
