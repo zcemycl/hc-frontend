@@ -28,8 +28,6 @@ export default function Page({ params }: PageProps) {
   const { credentials, isLoadingAuth } = useAuth();
   const [tableData, setTableData] = useState<IAdverseEffectTable[]>([]);
   const [ctTableData, setCtTableData] = useState<IClinicalTrialTable[]>([]);
-  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
-  const [ctHoverIdx, setCtHoverIdx] = useState<number | null>(null);
 
   useEffect(() => {
     async function getData() {
@@ -82,15 +80,11 @@ export default function Page({ params }: PageProps) {
               <ExpandableBtn
                 key={`${params.id}-${idx}`}
                 refkey={`${params.id}-${idx}`}
-                hoverCondition={hoverIdx === idx}
                 onClick={(e) => {
                   e.preventDefault();
                   router.push(
                     `/annotate/fdalabel/${params.id}/adverse_effect_table/${idx + 1}`,
                   );
-                }}
-                onMouseOver={(e) => {
-                  setHoverIdx(idx);
                 }}
                 childrenLong={
                   <Table
@@ -106,8 +100,11 @@ export default function Page({ params }: PageProps) {
                 <>
                   <p className="leading-relaxed w-full">[Table {idx + 1}]</p>
                   <div
-                    className={`transition duration-300
-                    ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                    className={`transition-all duration-300
+                      overflow-hidden
+                      max-w-0
+                      group-hover:max-w-full
+                      `}
                   >
                     <GoIcon />
                   </div>
@@ -125,15 +122,11 @@ export default function Page({ params }: PageProps) {
               <ExpandableBtn
                 key={`${params.id}-${idx}`}
                 refkey={`${params.id}-${idx}`}
-                hoverCondition={ctHoverIdx === idx}
                 onClick={(e) => {
                   e.preventDefault();
                   router.push(
                     `/annotate/fdalabel/${params.id}/clinical_trial_table/${idx + 1}`,
                   );
-                }}
-                onMouseOver={(e) => {
-                  setCtHoverIdx(idx);
                 }}
                 childrenLong={
                   <Table
@@ -149,8 +142,11 @@ export default function Page({ params }: PageProps) {
                 <>
                   <p className="leading-relaxed w-full">[Table {idx + 1}]</p>
                   <div
-                    className={`transition duration-300
-                    ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                    className={`transition-all duration-300
+                      overflow-hidden
+                      max-w-0
+                      group-hover:max-w-full
+                      `}
                   >
                     <GoIcon />
                   </div>
