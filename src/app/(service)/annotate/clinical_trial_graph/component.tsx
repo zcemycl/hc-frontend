@@ -77,7 +77,7 @@ export default function Component() {
             y: clientY,
           }),
           data: { label: `Node ${id}` },
-          origin: [0.5, 0.0],
+          origin: flowNodeOrigin,
           type: "textNode",
         } as Node;
 
@@ -145,7 +145,7 @@ export default function Component() {
                       // type: 'output',
                       type: "textNode",
                       data: { label: `Node ${id}` },
-                      origin: [0.5, 0.0] as [number, number],
+                      origin: flowNodeOrigin,
                     };
 
                     setNodes((nds) => nds.concat(newNode as any));

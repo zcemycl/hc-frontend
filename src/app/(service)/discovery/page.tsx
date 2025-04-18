@@ -12,6 +12,7 @@ import { useDbsHealth } from "@/hooks";
 export default function Discovery() {
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
   const visJsRef = useRef<HTMLDivElement>(null);
+  const visToolBarRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
   const [tab, setTab] = useState<GraphTabEnum>(GraphTabEnum.information);
@@ -51,6 +52,7 @@ export default function Discovery() {
           settings,
           defineSettings,
           visJsRef,
+          visToolBarRef,
           net,
           setNet,
           neo4jHealthMsg,

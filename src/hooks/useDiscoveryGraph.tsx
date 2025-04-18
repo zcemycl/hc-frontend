@@ -17,6 +17,7 @@ const useDiscoveryGraph = ({
     edges,
     settings,
     visJsRef,
+    visToolBarRef,
     net,
     setNet,
     neo4jHealthMsg,
@@ -43,8 +44,12 @@ const useDiscoveryGraph = ({
         const nodeId = e.nodes[0];
 
         const { x, y } = network.getPositions([nodeId])[nodeId];
+        const { width: offsetx, height: offsety } = (
+          visToolBarRef.current as any
+        ).getBoundingClientRect();
         network?.moveTo({
           position: { x, y },
+          offset: { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 },
           animation: true, // default duration is 1000ms and default easingFunction is easeInOutQuad.
         });
 
