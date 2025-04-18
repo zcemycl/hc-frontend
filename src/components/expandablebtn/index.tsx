@@ -4,11 +4,11 @@ import { FC, ReactNode } from "react";
 const ExpandableBtn: FC<{
   children: ReactNode;
   childrenLong: ReactNode;
-  hoverCondition: boolean;
+  // hoverCondition: boolean;
   refkey: string;
-  onMouseOver?: (e: React.MouseEvent<HTMLElement>) => void;
+  // onMouseOver?: (e: React.MouseEvent<HTMLElement>) => void;
   onClick?: (e: React.MouseEvent<HTMLElement>) => void;
-}> = ({ children, childrenLong, hoverCondition, refkey, ...props }) => {
+}> = ({ children, childrenLong, refkey, ...props }) => {
   return (
     <div
       className="flex flex-col w-full 
@@ -16,7 +16,7 @@ const ExpandableBtn: FC<{
       key={refkey}
     >
       <button
-        className={`
+        className={`group
             rounded text-white border-blue-400
             border-2 hover:border-blue-800 h-auto
             p-2 focus:animate-pulse
@@ -25,8 +25,12 @@ const ExpandableBtn: FC<{
       >
         <div className="flex justify-between">{children}</div>
         <div
-          className={`leading-relaxed transition origin-top
-                ${hoverCondition ? "max-h-full scale-y-100" : "max-h-0 scale-y-0"}`}
+          className={`leading-relaxed transition-all origin-top
+            ease-in-out duration-300
+            overflow-hidden
+            max-h-0
+            group-hover:max-h-full
+              `}
         >
           {childrenLong}
         </div>

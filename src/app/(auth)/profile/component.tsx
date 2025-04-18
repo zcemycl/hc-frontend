@@ -1,5 +1,5 @@
 "use client";
-import { TypographyH2, PaginationBar, ProtectedRoute } from "@/components";
+import { TypographyH2, ProtectedRoute } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
 import { fetchUserInfoById } from "@/http/backend";
@@ -81,16 +81,20 @@ export default function Profile() {
                   <div className="group flex flex-col">
                     <button
                       className="p-4 sm:p-6
-                                        rounded-md
-                                        text-black font-bold
-                                        text-md
-                                        hover:bg-emerald-500
-                                        bg-emerald-300"
+                        rounded-md
+                        text-black font-bold
+                        text-md
+                        hover:bg-emerald-500
+                        bg-emerald-300"
                       onClick={() => router.push(`profile${v[2]}`)}
                     >
                       {v[0]}
                     </button>
-                    <span className="max-h-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:max-h-40">
+                    <span
+                      className="max-h-0 overflow-hidden 
+                        transition-all duration-300 
+                        ease-in-out group-hover:max-h-40"
+                    >
                       {v[1]}
                     </span>
                   </div>
@@ -99,20 +103,6 @@ export default function Profile() {
             </div>
           </div>
         </div>
-
-        {/* <div className="container px-2 py-24 mx-auto grid justify-items-center">
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
-            <div className="flex flex-col">
-              <div className="flex justify-between">
-                <TypographyH2>
-                  {profileInfo?.username?.toUpperCase()}
-                </TypographyH2>
-                <p className="leading-relaxed mb-1">{profileInfo?.role!}</p>
-              </div>
-              <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
-            </div>
-          </div>
-        </div> */}
       </section>
     </ProtectedRoute>
   );

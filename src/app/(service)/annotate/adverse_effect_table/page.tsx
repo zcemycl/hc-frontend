@@ -47,7 +47,6 @@ export default function Page() {
   } = useAETableAnnotation();
   const [version, setVersion] = useState(AETableVerEnum.v0_0_1);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
-  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [nPerPage, _] = useState(10);
   const [topN, setTopN] = useState(0);
   const refUnannotatedGroup = useRef(null);
@@ -92,7 +91,6 @@ export default function Page() {
       top: 0,
       behavior: "smooth",
     });
-    setHoverIdx(null);
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId, version]);
@@ -210,10 +208,6 @@ export default function Page() {
                             />
                           </>
                         }
-                        hoverCondition={hoverIdx == data.relative_idx}
-                        onMouseOver={(e) => {
-                          setHoverIdx(data.relative_idx as number);
-                        }}
                         onClick={(e) => {
                           e.preventDefault();
                           setIsLoading(true);
@@ -232,8 +226,11 @@ export default function Page() {
                             {data.fdalabel.tradename} [Table {data.idx}]
                           </p>
                           <div
-                            className={`transition duration-300
-                  ${hoverIdx == data.relative_idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                            className={`transition-all duration-300
+                              overflow-hidden
+                              max-w-0
+                              group-hover:max-w-full
+                            `}
                           >
                             <GoIcon />
                           </div>
