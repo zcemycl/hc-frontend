@@ -56,10 +56,11 @@ export default function AI() {
             </div>
           </Modal>
           <div
-            className="sm:w-11/12 md:w-7/12 
-            flex flex-col mt-8 w-full
-            p-1
-            sm:p-10 space-y-2"
+            className="
+            sm:w-11/12 md:w-7/12 w-full
+            flex flex-col mt-8
+            p-1 sm:p-10 
+            space-y-2"
           >
             <div className="flex flex-row justify-between">
               <TypographyH2>AI Tools</TypographyH2>

@@ -12,7 +12,12 @@ export default function Annotate() {
           className="container px-2 py-24 mx-auto grid justify-items-center
     "
         >
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10 space-y-2">
+          <div
+            className="
+            sm:w-11/12 md:w-7/12 w-full
+            p-1 sm:p-10
+            flex flex-col mt-8 space-y-2"
+          >
             <TypographyH2>Annotation</TypographyH2>
             <p className="leading-relaxed mb-5">
               Our aim is to build robust and reliable AI models to digest drug
