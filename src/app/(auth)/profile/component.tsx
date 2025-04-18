@@ -43,17 +43,24 @@ export default function Profile() {
         "
         >
           <div className="w-7/12 flex flex-col space-y-10">
-            <div className="flex justify-between">
-              <TypographyH2>
-                {profileInfo?.username?.toUpperCase()}
-              </TypographyH2>
-              <span className="leading-relaxed mb-1">{profileInfo?.role!}</span>
+            <div className="flex flex-col space-y-1">
+              <div className="flex justify-between">
+                <TypographyH2>
+                  {profileInfo?.username?.toUpperCase()}
+                </TypographyH2>
+                <span className="leading-relaxed mb-1">
+                  {profileInfo?.role!}
+                </span>
+              </div>
+              <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
             </div>
+
             <div
               className="
                     grid gap-4
                     grid-cols-1
                     md:grid-cols-2
+                    lg:grid-cols-3
                     content-center
                     place-content-center
                     place-items-center
