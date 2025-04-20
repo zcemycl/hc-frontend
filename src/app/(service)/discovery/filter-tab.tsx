@@ -92,6 +92,7 @@ export default function FilterTab() {
                       duration: 800,
                     },
                   });
+                  net.selectNodes([targetNodeId]);
                   setTimeout(() => {
                     net.focus(targetNodeId, {
                       scale: 0.5,
