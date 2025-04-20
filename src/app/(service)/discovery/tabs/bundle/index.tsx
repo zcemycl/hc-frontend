@@ -1,20 +1,31 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext } from "@/contexts";
+import { DiscoveryContext, useAuth } from "@/contexts";
 import { INode } from "@/types";
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { fetchBundlesByUserId } from "@/http/backend";
 
 export default function BundleTab() {
+  const { userId, isLoadingAuth, credentials } = useAuth();
   const { tab, multiSelectNodes, setMultiSelectNodes, visToolBarRef, net } =
     useContext(DiscoveryContext);
+  const [bundles, setBundles] = useState([]);
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
   }, [multiSelectNodes]);
 
   useEffect(() => {
-    console.log(multiSelectNodes.filter((v: INode) => v.group === "p"));
-  }, [multiSelectNodes]);
+    async function getData() {
+      const tmpBundles = await fetchBundlesByUserId(userId as number, 0, 0);
+      console.log(tmpBundles);
+      setBundles(tmpBundles);
+    }
+
+    if (isLoadingAuth) return;
+    if (credentials.length === 0) return;
+    getData();
+  }, [userId]);
 
   return (
     <div
@@ -99,6 +110,13 @@ export default function BundleTab() {
       </div>
       <hr className="mb-2 text-white" />
       <h2 className="leading text-slate-300 font-bold">Bundles</h2>
+      {bundles.length === 0 ? (
+        <div className="content-start bg-amber-500 rounded-lg p-2 text-black font-bold">
+          No available bundles
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
