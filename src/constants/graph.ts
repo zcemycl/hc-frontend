@@ -75,7 +75,14 @@ export const drug_product_group_graph_style = {
   font: {
     color: "white",
   },
-  color: graph_node_bg_color_enum.p,
+  color: {
+    border: graph_node_bg_color_enum.p,
+    background: graph_node_bg_color_enum.p,
+    highlight: {
+      border: "lightgreen",
+      Background: graph_node_bg_color_enum.p,
+    },
+  },
   level: 10,
   shape: "circularImage",
   image: "https://icons.getbootstrap.com/assets/icons/capsule.svg",

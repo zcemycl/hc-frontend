@@ -2,10 +2,20 @@
 
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext } from "react";
+import { INode } from "@/types";
+import { useContext, useEffect, useMemo } from "react";
 
 export default function BundleTab() {
-  const { tab } = useContext(DiscoveryContext);
+  const { tab, multiSelectNodes, setMultiSelectNodes, dNodes, setDNodes, net } =
+    useContext(DiscoveryContext);
+  const nodesToBundle = useMemo(() => {
+    return multiSelectNodes.filter((v: INode) => v.group === "p");
+  }, [multiSelectNodes]);
+
+  useEffect(() => {
+    console.log(multiSelectNodes.filter((v: INode) => v.group === "p"));
+  }, [multiSelectNodes]);
+
   return (
     <div
       className={`absolute
@@ -23,6 +33,55 @@ export default function BundleTab() {
         }
         `}
     >
+      <h2 className="leading text-slate-300 font-bold">Candidates</h2>
+      <div className="flex flex-wrap gap-2 content-start bg-amber-500 rounded-lg p-2">
+        {nodesToBundle.length === 0 ? (
+          <div className="text-black font-bold">
+            Multi-Select Nodes via Ctrl+Click
+          </div>
+        ) : (
+          nodesToBundle.map((v: INode, idx: number) => {
+            return (
+              <div
+                key={`${v.label}-${v.group}`}
+                className="flex items-center bg-purple-400 rounded-lg
+                  truncate overflow-x-auto
+                  h-8 px-3 py-1 relative"
+              >
+                <div
+                  className={`text-black font-medium whitespace-nowrap
+                  transition-transform duration-1000`}
+                >
+                  {v.label}
+                </div>
+                <button
+                  className="flex items-center justify-center
+                      absolute right-0 top-0
+                      rounded-full bg-red-400 
+                      hover:bg-red-500 transition-colors"
+                  aria-label={`Remove ${v.label}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    let newMultiSelect = structuredClone(multiSelectNodes);
+                    newMultiSelect.splice(idx, 1);
+                    setMultiSelectNodes([...newMultiSelect]);
+                    // console.log(dNodes.get(v.id));
+                    // dNodes.update({
+                    //   id: v.id,
+                    //   label: 'hello',
+                    // })
+                    // net.unselectAll();
+                    net.selectNodes(newMultiSelect.map((v: INode) => v.id));
+                  }}
+                >
+                  <img src="https://icons.getbootstrap.com/assets/icons/x-circle.svg" />
+                </button>
+              </div>
+            );
+          })
+        )}
+      </div>
+      <hr className="mb-2 text-white" />
       <h2 className="leading text-slate-300 font-bold">Bundles</h2>
     </div>
   );

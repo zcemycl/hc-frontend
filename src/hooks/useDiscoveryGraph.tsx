@@ -1,7 +1,8 @@
 "use client";
 import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { DiscoveryContext, useLoader } from "@/contexts";
-import { Network } from "vis-network";
+import { Network, DataInterfaceNodes } from "vis-network";
+import { DataSet } from "vis-data";
 import { generateGraphOption } from "@/constants";
 import { IEdge, INode } from "@/types";
 
@@ -13,8 +14,10 @@ const useDiscoveryGraph = ({
   const { isLoading, setIsLoading } = useLoader();
   const {
     setSelectedNodes,
+    setMultiSelectNodes,
     nodes,
     edges,
+    setDNodes,
     settings,
     visJsRef,
     visToolBarRef,
@@ -42,11 +45,13 @@ const useDiscoveryGraph = ({
   }, [openToolBar]);
 
   const setUpNetwork = () => {
+    const tmpDNodes = new DataSet(nodes);
+    setDNodes(tmpDNodes);
     const network =
       visJsRef.current &&
       new Network(
         visJsRef.current,
-        { nodes, edges },
+        { nodes: tmpDNodes as DataInterfaceNodes, edges },
         generateGraphOption(settings),
       );
     network?.once("beforeDrawing", function () {
@@ -59,6 +64,7 @@ const useDiscoveryGraph = ({
     network?.on("click", (e: any) => {
       console.log(e);
       if (e.nodes.length >= 1) {
+        setMultiSelectNodes(nodes.filter((v: INode) => e.nodes.includes(v.id)));
         const nodeId = e.nodes[0];
 
         const { x, y } = network.getPositions([nodeId])[nodeId];
