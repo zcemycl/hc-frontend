@@ -6,8 +6,15 @@ import { INode } from "@/types";
 import { useContext, useEffect, useMemo } from "react";
 
 export default function BundleTab() {
-  const { tab, multiSelectNodes, setMultiSelectNodes, dNodes, setDNodes, net } =
-    useContext(DiscoveryContext);
+  const {
+    tab,
+    multiSelectNodes,
+    setMultiSelectNodes,
+    visToolBarRef,
+    dNodes,
+    setDNodes,
+    net,
+  } = useContext(DiscoveryContext);
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
   }, [multiSelectNodes]);
@@ -44,9 +51,25 @@ export default function BundleTab() {
             return (
               <div
                 key={`${v.label}-${v.group}`}
-                className="flex items-center bg-purple-400 rounded-lg
+                className="flex items-center rounded-lg
                   truncate overflow-x-auto
+                  bg-purple-400 hover:bg-purple-200
+                  cursor-pointer
                   h-8 px-3 py-1 relative"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const targetNodeId = v.id;
+                  const pos = net.getPositions([targetNodeId])[targetNodeId];
+                  const { width: offsetx, height: offsety } = (
+                    visToolBarRef.current as any
+                  ).getBoundingClientRect();
+                  const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
+                  net.moveTo({
+                    position: pos,
+                    offset: offset,
+                    animation: true,
+                  });
+                }}
               >
                 <div
                   className={`text-black font-medium whitespace-nowrap

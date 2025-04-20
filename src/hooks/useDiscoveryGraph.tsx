@@ -1,7 +1,7 @@
 "use client";
 import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { DiscoveryContext, useLoader } from "@/contexts";
-import { Network, DataInterfaceNodes } from "vis-network";
+import { Network, DataInterfaceNodes, DataInterfaceEdges } from "vis-network";
 import { DataSet } from "vis-data";
 import { generateGraphOption } from "@/constants";
 import { IEdge, INode } from "@/types";
@@ -54,7 +54,10 @@ const useDiscoveryGraph = ({
       visJsRef.current &&
       new Network(
         visJsRef.current,
-        { nodes: tmpDNodes as DataInterfaceNodes, edges },
+        {
+          nodes: tmpDNodes as DataInterfaceNodes,
+          edges: tmpDEdges as DataInterfaceEdges,
+        },
         generateGraphOption(settings),
       );
     network?.once("beforeDrawing", function () {
