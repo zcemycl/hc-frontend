@@ -6,15 +6,8 @@ import { INode } from "@/types";
 import { useContext, useEffect, useMemo } from "react";
 
 export default function BundleTab() {
-  const {
-    tab,
-    multiSelectNodes,
-    setMultiSelectNodes,
-    visToolBarRef,
-    dNodes,
-    setDNodes,
-    net,
-  } = useContext(DiscoveryContext);
+  const { tab, multiSelectNodes, setMultiSelectNodes, visToolBarRef, net } =
+    useContext(DiscoveryContext);
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
   }, [multiSelectNodes]);

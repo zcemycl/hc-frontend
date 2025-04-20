@@ -7,7 +7,7 @@ import FlagTab from "./flag-tab";
 import TabBar from "./tab-bar";
 import SettingsTab from "./settings-tab";
 import FilterTab from "./filter-tab";
-import BundleTab from "./bundle-tab";
+import { BundleTab } from "./tabs";
 
 export default function VisToolbar() {
   const { openToolBar, setOpenToolBar } = useContext(DiscoveryContext);
