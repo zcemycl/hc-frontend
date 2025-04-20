@@ -6,7 +6,7 @@ import { useRef, useState, useMemo } from "react";
 import { IEdge, INode, IFlagAttrs } from "@/types";
 import { ProtectedRoute } from "@/components";
 import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
-import { Network, DataSet } from "vis-network";
+import { Network } from "vis-network";
 import { useDbsHealth } from "@/hooks";
 
 export default function Discovery() {
@@ -20,6 +20,7 @@ export default function Discovery() {
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [dNodes, setDNodes] = useState<any>(null);
+  const [dEdges, setDEdges] = useState<any>(null);
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
   const [multiSelectNodes, setMultiSelectNodes] = useState<INode[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
@@ -54,6 +55,8 @@ export default function Discovery() {
           setDNodes,
           nodes,
           setNodes,
+          dEdges,
+          setDEdges,
           edges,
           setEdges,
           flagAttrs,

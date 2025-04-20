@@ -18,6 +18,7 @@ const useDiscoveryGraph = ({
     nodes,
     edges,
     setDNodes,
+    setDEdges,
     settings,
     visJsRef,
     visToolBarRef,
@@ -46,7 +47,9 @@ const useDiscoveryGraph = ({
 
   const setUpNetwork = () => {
     const tmpDNodes = new DataSet(nodes);
+    const tmpDEdges = new DataSet(edges);
     setDNodes(tmpDNodes);
+    setDEdges(tmpDEdges);
     const network =
       visJsRef.current &&
       new Network(
