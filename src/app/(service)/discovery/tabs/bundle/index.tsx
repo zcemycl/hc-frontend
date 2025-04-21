@@ -17,7 +17,7 @@ export default function BundleTab() {
 
   useEffect(() => {
     async function getData() {
-      const tmpBundles = await fetchBundlesByUserId(userId as number, 0, 0);
+      const tmpBundles = await fetchBundlesByUserId(userId as number, 0, 5);
       console.log(tmpBundles);
       setBundles(tmpBundles);
     }
