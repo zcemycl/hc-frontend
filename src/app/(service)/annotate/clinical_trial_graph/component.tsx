@@ -25,6 +25,7 @@ import "@xyflow/react/dist/style.css";
 import TextNode from "./textNode";
 import { NodeEdgeGraphContext } from "./context";
 import CustomEdge from "./directionEdge";
+import { PLUS_ICON_URI } from "@/icons/bootstrap";
 
 let id = 0;
 const getId = () => `${id++}`;
@@ -151,10 +152,7 @@ export default function Component() {
                     setNodes((nds) => nds.concat(newNode as any));
                   }}
                 >
-                  <img
-                    src="https://icons.getbootstrap.com/assets/icons/plus.svg"
-                    alt="addnode"
-                  />
+                  <img src={PLUS_ICON_URI} alt="addnode" />
                 </button>
               </div>
               <ReactFlow

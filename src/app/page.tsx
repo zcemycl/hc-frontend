@@ -13,6 +13,7 @@ import {
 } from "@/components";
 import { handleFetchApiRoot } from "@/services";
 import { useDbsHealth, useDummyCreds } from "@/hooks";
+import { DB_CHECK_ICON_URI, DB_X_ICON_URI } from "@/icons/bootstrap";
 
 export default function Home() {
   const router = useRouter();
@@ -76,17 +77,11 @@ export default function Home() {
               <div>
                 {isPGHealthy ? (
                   <div className="bg-emerald-400 text-black font-bold w-fit p-2 rounded-xl">
-                    <img
-                      src="https://icons.getbootstrap.com/assets/icons/database-check.svg"
-                      alt="connected"
-                    />
+                    <img src={DB_CHECK_ICON_URI} alt="connected" />
                   </div>
                 ) : (
                   <div className="bg-red-400 text-black font-bold w-fit p-2 rounded-xl animate-pulse">
-                    <img
-                      src="https://icons.getbootstrap.com/assets/icons/database-x.svg"
-                      alt="connecting"
-                    />
+                    <img src={DB_X_ICON_URI} alt="connecting" />
                   </div>
                 )}
               </div>

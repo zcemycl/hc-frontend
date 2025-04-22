@@ -8,6 +8,7 @@ import {
 } from "@xyflow/react";
 import { useState } from "react";
 import { sizeFlowHandle } from "@/constants";
+import { PLUS_ICON_URI } from "@/icons/bootstrap";
 
 export default function TextNode({
   data,
@@ -68,7 +69,7 @@ export default function TextNode({
             backgroundPosition: "center",
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
-            backgroundImage: `url('https://icons.getbootstrap.com/assets/icons/plus.svg')`,
+            backgroundImage: `url(${PLUS_ICON_URI})`,
           }}
           position={v[1] as Position}
           id={v[0]}

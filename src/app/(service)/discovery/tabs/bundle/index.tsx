@@ -44,6 +44,7 @@ export default function BundleTab() {
         }
         `}
     >
+      <div></div>
       <h2 className="leading text-slate-300 font-bold">Candidates</h2>
       <div className="flex flex-wrap gap-2 content-start bg-amber-500 rounded-lg p-2">
         {nodesToBundle.length === 0 ? (

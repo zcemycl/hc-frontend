@@ -3,6 +3,7 @@ import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
 import { useContext, useState } from "react";
 import { DiscoveryContext } from "@/contexts";
 import { ToggleButton } from "@/components";
+import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
 
 export default function SettingsTab() {
   const { tab } = useContext(DiscoveryContext);
@@ -196,11 +197,7 @@ export default function SettingsTab() {
             });
           }}
         >
-          <img
-            src="https://icons.getbootstrap.com/assets/icons/play-fill.svg"
-            className="w-full"
-            alt="submit"
-          />
+          <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />
         </button>
       </div>
     </div>
