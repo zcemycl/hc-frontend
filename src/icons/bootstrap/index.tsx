@@ -17,6 +17,12 @@ const TOOL_ICON_URI = `${BOOTSTRAP_URI}/tools.svg`;
 const TREE_2_ICON_URI = `${BOOTSTRAP_URI}/diagram-2.svg`;
 const TREE_3_ICON_URI = `${BOOTSTRAP_URI}/diagram-3.svg`;
 const TREE_RADIO_ICON_URI = `${BOOTSTRAP_URI}/broadcast.svg`;
+const BOOKMARK_ICON_URI = `${BOOTSTRAP_URI}/journal-bookmark-fill.svg`;
+const INFO_CIRCLE_FILL_ICON_URI = `${BOOTSTRAP_URI}/info-circle-fill.svg`;
+const FLAG_FILL_ICON_URI = `${BOOTSTRAP_URI}/flag-fill.svg`;
+const SLIDERS_ICON_URI = `${BOOTSTRAP_URI}/sliders.svg`;
+const FUNNEL_FILL_ICON_URI = `${BOOTSTRAP_URI}/funnel-fill.svg`;
+const COLLECTION_FILL_ICON_URI = `${BOOTSTRAP_URI}/collection-fill.svg`;
 
 export {
   DB_CHECK_ICON_URI,
@@ -36,4 +42,10 @@ export {
   TREE_2_ICON_URI,
   TREE_3_ICON_URI,
   TREE_RADIO_ICON_URI,
+  BOOKMARK_ICON_URI,
+  INFO_CIRCLE_FILL_ICON_URI,
+  FLAG_FILL_ICON_URI,
+  SLIDERS_ICON_URI,
+  FUNNEL_FILL_ICON_URI,
+  COLLECTION_FILL_ICON_URI,
 };
