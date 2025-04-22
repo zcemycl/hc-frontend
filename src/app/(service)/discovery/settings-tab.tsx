@@ -3,7 +3,13 @@ import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
 import { useContext, useState } from "react";
 import { DiscoveryContext } from "@/contexts";
 import { ToggleButton } from "@/components";
-import { PLAY_FILL_ICON_URI, X_CIRCLE_FILL_ICON_URI } from "@/icons/bootstrap";
+import {
+  PLAY_FILL_ICON_URI,
+  TREE_2_ICON_URI,
+  TREE_3_ICON_URI,
+  TREE_RADIO_ICON_URI,
+  X_CIRCLE_FILL_ICON_URI,
+} from "@/icons/bootstrap";
 
 export default function SettingsTab() {
   const { tab } = useContext(DiscoveryContext);
@@ -52,14 +58,8 @@ export default function SettingsTab() {
           <span className="text-black">Graph Type</span>
           <div className="flex flex-row space-x-1">
             {[
-              [
-                GraphTypeEnum.hierarchical,
-                "https://icons.getbootstrap.com/assets/icons/diagram-3.svg",
-              ],
-              [
-                GraphTypeEnum.radial,
-                "https://icons.getbootstrap.com/assets/icons/broadcast.svg",
-              ],
+              [GraphTypeEnum.hierarchical, TREE_3_ICON_URI],
+              [GraphTypeEnum.radial, TREE_RADIO_ICON_URI],
             ].map((v) => {
               return (
                 <button
@@ -108,7 +108,7 @@ export default function SettingsTab() {
                   >
                     <img
                       className={`aspect-square ${v[1]}`}
-                      src="https://icons.getbootstrap.com/assets/icons/diagram-2.svg"
+                      src={TREE_2_ICON_URI}
                       alt={`hierarchical-${v[0]}`}
                     />
                   </button>

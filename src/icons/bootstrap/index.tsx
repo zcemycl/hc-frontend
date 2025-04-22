@@ -14,6 +14,9 @@ const COPY_ICON_URI = `${BOOTSTRAP_URI}/copy.svg`;
 const NODE_PLUS_ICON_URI = `${BOOTSTRAP_URI}/node-plus.svg`;
 const NODE_MINUS_ICON_URI = `${BOOTSTRAP_URI}/node-minus.svg`;
 const TOOL_ICON_URI = `${BOOTSTRAP_URI}/tools.svg`;
+const TREE_2_ICON_URI = `${BOOTSTRAP_URI}/diagram-2.svg`;
+const TREE_3_ICON_URI = `${BOOTSTRAP_URI}/diagram-3.svg`;
+const TREE_RADIO_ICON_URI = `${BOOTSTRAP_URI}/broadcast.svg`;
 
 export {
   DB_CHECK_ICON_URI,
@@ -30,4 +33,7 @@ export {
   NODE_PLUS_ICON_URI,
   NODE_MINUS_ICON_URI,
   TOOL_ICON_URI,
+  TREE_2_ICON_URI,
+  TREE_3_ICON_URI,
+  TREE_RADIO_ICON_URI,
 };
