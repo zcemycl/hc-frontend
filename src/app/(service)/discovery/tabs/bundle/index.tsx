@@ -5,7 +5,11 @@ import { DiscoveryContext, useAuth } from "@/contexts";
 import { INode } from "@/types";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { fetchBundlesByUserId } from "@/http/backend";
-import { X_CIRCLE_ICON_URI } from "@/icons/bootstrap";
+import {
+  ARROW_ICON_URI,
+  PLUS_ICON_URI,
+  X_CIRCLE_ICON_URI,
+} from "@/icons/bootstrap";
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
@@ -111,7 +115,34 @@ export default function BundleTab() {
         )}
       </div>
       <hr className="mb-2 text-white" />
-      <h2 className="leading text-slate-300 font-bold">Bundles</h2>
+      {nodesToBundle.length > 0 && (
+        <div className="w-full flex flex-row justify-center">
+          <img
+            className="
+            bg-amber-300 rounded-full 
+            animate-pulse w-5 h-5
+            "
+            src={ARROW_ICON_URI}
+          />
+        </div>
+      )}
+      <div className="w-full flex flex-row justify-start space-x-2 align-middle">
+        <h2 className="leading text-slate-300 font-bold">Bundles</h2>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <img
+            className="w-5 h-5 
+            bg-emerald-300 rounded-full
+            hover:bg-emerald-500
+            "
+            src={PLUS_ICON_URI}
+          />
+        </button>
+      </div>
+
       {bundles.length === 0 ? (
         <div className="content-start bg-amber-500 rounded-lg p-2 text-black font-bold">
           No available bundles

@@ -23,6 +23,8 @@ const FLAG_FILL_ICON_URI = `${BOOTSTRAP_URI}/flag-fill.svg`;
 const SLIDERS_ICON_URI = `${BOOTSTRAP_URI}/sliders.svg`;
 const FUNNEL_FILL_ICON_URI = `${BOOTSTRAP_URI}/funnel-fill.svg`;
 const COLLECTION_FILL_ICON_URI = `${BOOTSTRAP_URI}/collection-fill.svg`;
+const ARROW_ICON_URI = `${BOOTSTRAP_URI}/arrow-down.svg`;
+const ARROW_O_ICON_URI = `${BOOTSTRAP_URI}/arrow-down-circle.svg`;
 const ARROW_O_FILL_ICON_URI = `${BOOTSTRAP_URI}/arrow-down-circle-fill.svg`;
 const BAG_PLUS_FILL_ICON_URI = `${BOOTSTRAP_URI}/bag-plus-fill.svg`;
 const BAG_MINUS_FILL_ICON_URI = `${BOOTSTRAP_URI}/bag-dash-fill.svg`;
@@ -37,6 +39,8 @@ export {
   X_CIRCLE_FILL_ICON_URI,
   PLAY_FILL_ICON_URI,
   ARROW_RETURN_ICON_URI,
+  ARROW_ICON_URI,
+  ARROW_O_ICON_URI,
   ARROW_O_FILL_ICON_URI,
   CAPSULE_ICON_URI,
   COPY_ICON_URI,
