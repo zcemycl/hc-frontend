@@ -7,6 +7,9 @@ const X_ICON_URI = `${BOOTSTRAP_URI}/x.svg`;
 const X_CIRCLE_ICON_URI = `${BOOTSTRAP_URI}/x-circle.svg`;
 const PEN_ICON_URI = `${BOOTSTRAP_URI}/vector-pen.svg`;
 const PLAY_FILL_ICON_URI = `${BOOTSTRAP_URI}/play-fill.svg`;
+const ARROW_RETURN_ICON_URI = `${BOOTSTRAP_URI}/arrow-return-left.svg`;
+const CAPSULE_ICON_URI = `${BOOTSTRAP_URI}/capsule.svg`;
+const COPY_ICON_URI = `${BOOTSTRAP_URI}/copy.svg`;
 
 export {
   DB_CHECK_ICON_URI,
@@ -16,4 +19,7 @@ export {
   PEN_ICON_URI,
   X_CIRCLE_ICON_URI,
   PLAY_FILL_ICON_URI,
+  ARROW_RETURN_ICON_URI,
+  CAPSULE_ICON_URI,
+  COPY_ICON_URI,
 };

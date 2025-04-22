@@ -4,6 +4,7 @@ import { DiscoveryContext } from "@/contexts";
 import { useContext, useState, useMemo } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
 import { INode } from "@/types";
+import { COPY_ICON_URI } from "@/icons/bootstrap";
 
 export default function FilterTab() {
   const { tab, visJsRef, net, nodes, visToolBarRef } =
@@ -124,10 +125,7 @@ export default function FilterTab() {
                     navigator.clipboard.writeText(spanEle?.trim() as string);
                   }}
                 >
-                  <img
-                    src="https://icons.getbootstrap.com/assets/icons/copy.svg"
-                    alt="copy"
-                  />
+                  <img src={COPY_ICON_URI} alt="copy" />
                 </button>
               </p>
             </div>

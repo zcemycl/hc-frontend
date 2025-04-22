@@ -1,4 +1,5 @@
 "use client";
+import { ARROW_RETURN_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 
 const BackBtn = () => {
@@ -12,10 +13,7 @@ const BackBtn = () => {
         h-fit w-fit
         text-white hover:bg-sky-500"
     >
-      <img
-        src="https://icons.getbootstrap.com/assets/icons/arrow-return-left.svg"
-        alt="back"
-      />
+      <img src={ARROW_RETURN_ICON_URI} alt="back" />
     </button>
   );
 };

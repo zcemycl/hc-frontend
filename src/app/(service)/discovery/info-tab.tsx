@@ -3,6 +3,7 @@ import { DiscoveryContext } from "@/contexts";
 import { INode } from "@/types";
 import { GraphTabEnum } from "@/constants";
 import { switch_color_node, switch_hover_color_node } from "./utils";
+import { COPY_ICON_URI } from "@/icons/bootstrap";
 
 export default function InfoTab() {
   const { selectedNodes, tab, visJsRef, net, visToolBarRef } =
@@ -86,10 +87,7 @@ export default function InfoTab() {
                     navigator.clipboard.writeText(spanEle?.trim() as string);
                   }}
                 >
-                  <img
-                    src="https://icons.getbootstrap.com/assets/icons/copy.svg"
-                    alt="copy"
-                  />
+                  <img src={COPY_ICON_URI} alt="copy" />
                 </button>
               </p>
             </div>

@@ -1,3 +1,4 @@
+import { CAPSULE_ICON_URI } from "@/icons/bootstrap";
 import { graph_node_bg_color_enum } from "./color";
 
 export enum GraphDirectionEnum {
@@ -85,7 +86,7 @@ export const drug_product_group_graph_style = {
   },
   level: 10,
   shape: "circularImage",
-  image: "https://icons.getbootstrap.com/assets/icons/capsule.svg",
+  image: CAPSULE_ICON_URI,
   imagePadding: {
     top: 1,
     right: 1,
