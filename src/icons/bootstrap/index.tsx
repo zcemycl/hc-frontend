@@ -5,11 +5,15 @@ const DB_X_ICON_URI = `${BOOTSTRAP_URI}/database-x.svg`;
 const PLUS_ICON_URI = `${BOOTSTRAP_URI}/plus.svg`;
 const X_ICON_URI = `${BOOTSTRAP_URI}/x.svg`;
 const X_CIRCLE_ICON_URI = `${BOOTSTRAP_URI}/x-circle.svg`;
+const X_CIRCLE_FILL_ICON_URI = `${BOOTSTRAP_URI}/x-circle-fill.svg`;
 const PEN_ICON_URI = `${BOOTSTRAP_URI}/vector-pen.svg`;
 const PLAY_FILL_ICON_URI = `${BOOTSTRAP_URI}/play-fill.svg`;
 const ARROW_RETURN_ICON_URI = `${BOOTSTRAP_URI}/arrow-return-left.svg`;
 const CAPSULE_ICON_URI = `${BOOTSTRAP_URI}/capsule.svg`;
 const COPY_ICON_URI = `${BOOTSTRAP_URI}/copy.svg`;
+const NODE_PLUS_ICON_URI = `${BOOTSTRAP_URI}/node-plus.svg`;
+const NODE_MINUS_ICON_URI = `${BOOTSTRAP_URI}/node-minus.svg`;
+const TOOL_ICON_URI = `${BOOTSTRAP_URI}/tools.svg`;
 
 export {
   DB_CHECK_ICON_URI,
@@ -18,8 +22,12 @@ export {
   X_ICON_URI,
   PEN_ICON_URI,
   X_CIRCLE_ICON_URI,
+  X_CIRCLE_FILL_ICON_URI,
   PLAY_FILL_ICON_URI,
   ARROW_RETURN_ICON_URI,
   CAPSULE_ICON_URI,
   COPY_ICON_URI,
+  NODE_PLUS_ICON_URI,
+  NODE_MINUS_ICON_URI,
+  TOOL_ICON_URI,
 };

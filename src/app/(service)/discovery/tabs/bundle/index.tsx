@@ -5,6 +5,7 @@ import { DiscoveryContext, useAuth } from "@/contexts";
 import { INode } from "@/types";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { fetchBundlesByUserId } from "@/http/backend";
+import { X_CIRCLE_ICON_URI } from "@/icons/bootstrap";
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
@@ -102,7 +103,7 @@ export default function BundleTab() {
                     net.selectNodes(newMultiSelect.map((v: INode) => v.id));
                   }}
                 >
-                  <img src="https://icons.getbootstrap.com/assets/icons/x-circle.svg" />
+                  <img src={X_CIRCLE_ICON_URI} />
                 </button>
               </div>
             );

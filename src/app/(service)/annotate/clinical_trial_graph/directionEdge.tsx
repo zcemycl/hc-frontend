@@ -11,6 +11,7 @@ import {
   type EdgeProps,
 } from "@xyflow/react";
 import { getEdgeParams } from "./utils";
+import { PEN_ICON_URI, X_ICON_URI } from "@/icons/bootstrap";
 
 export default function CustomEdge({
   id,
@@ -97,10 +98,7 @@ export default function CustomEdge({
             "
               onClick={onEdgeClick}
             >
-              <img
-                src="https://icons.getbootstrap.com/assets/icons/x.svg"
-                alt="crossEdge"
-              />
+              <img src={X_ICON_URI} alt="crossEdge" />
             </button>
             <button
               className="
@@ -115,10 +113,7 @@ export default function CustomEdge({
                 setIsEditable(!isEditable);
               }}
             >
-              <img
-                src="https://icons.getbootstrap.com/assets/icons/vector-pen.svg"
-                alt="penEdge"
-              />
+              <img src={PEN_ICON_URI} alt="penEdge" />
             </button>
           </div>
           {(isEditable || label !== "") && (

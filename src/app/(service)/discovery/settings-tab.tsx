@@ -3,7 +3,7 @@ import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
 import { useContext, useState } from "react";
 import { DiscoveryContext } from "@/contexts";
 import { ToggleButton } from "@/components";
-import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
+import { PLAY_FILL_ICON_URI, X_CIRCLE_FILL_ICON_URI } from "@/icons/bootstrap";
 
 export default function SettingsTab() {
   const { tab } = useContext(DiscoveryContext);
@@ -133,10 +133,7 @@ export default function SettingsTab() {
                 ${enabledPhysics ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}
                 `}
             >
-              <img
-                src="https://icons.getbootstrap.com/assets/icons/x-circle-fill.svg"
-                alt="cross-physics-sim"
-              />
+              <img src={X_CIRCLE_FILL_ICON_URI} alt="cross-physics-sim" />
             </span>
             <ToggleButton
               {...{
@@ -164,10 +161,7 @@ export default function SettingsTab() {
                 ${physicsStabilisation ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}
                 `}
             >
-              <img
-                src="https://icons.getbootstrap.com/assets/icons/x-circle-fill.svg"
-                alt="cross-physics-sim"
-              />
+              <img src={X_CIRCLE_FILL_ICON_URI} alt="cross-physics-sim" />
             </span>
             <ToggleButton
               {...{

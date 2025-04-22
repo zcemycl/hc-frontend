@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components";
 import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
 import { Network } from "vis-network";
 import { useDbsHealth } from "@/hooks";
+import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
 
 export default function Discovery() {
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
@@ -82,17 +83,11 @@ export default function Discovery() {
                 <div>
                   {isNeo4JHealthy ? (
                     <div className="bg-emerald-400 text-black font-bold w-fit p-2 rounded-xl">
-                      <img
-                        src="https://icons.getbootstrap.com/assets/icons/node-plus.svg"
-                        alt="connected"
-                      />
+                      <img src={NODE_PLUS_ICON_URI} alt="connected" />
                     </div>
                   ) : (
                     <div className="bg-red-400 text-black font-bold w-fit p-2 rounded-xl animate-pulse">
-                      <img
-                        src="https://icons.getbootstrap.com/assets/icons/node-minus.svg"
-                        alt="connecting"
-                      />
+                      <img src={NODE_MINUS_ICON_URI} alt="connecting" />
                     </div>
                   )}
                 </div>

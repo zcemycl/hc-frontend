@@ -8,6 +8,7 @@ import TabBar from "./tab-bar";
 import SettingsTab from "./settings-tab";
 import FilterTab from "./filter-tab";
 import { BundleTab } from "./tabs";
+import { TOOL_ICON_URI } from "@/icons/bootstrap";
 
 export default function VisToolbar() {
   const { openToolBar, setOpenToolBar } = useContext(DiscoveryContext);
@@ -27,10 +28,7 @@ export default function VisToolbar() {
           setOpenToolBar(!openToolBar);
         }}
       >
-        <img
-          src="https://icons.getbootstrap.com/assets/icons/tools.svg"
-          alt="Toolbar"
-        />
+        <img src={TOOL_ICON_URI} alt="Toolbar" />
       </button>
       <div
         className={`origin-top-right transition
