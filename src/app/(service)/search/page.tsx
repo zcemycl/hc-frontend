@@ -34,6 +34,7 @@ import { FdalabelFetchService } from "@/services";
 export default function Search() {
   const searchParams = useSearchParams();
   const historyId = searchParams.get("historyId");
+  const bundleId = searchParams.get("bundleId");
 
   const router = useRouter();
   const [query, setQuery] = useState<string[]>([""]);
