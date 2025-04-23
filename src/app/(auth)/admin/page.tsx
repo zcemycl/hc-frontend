@@ -26,6 +26,7 @@ import {
 } from "@/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { PLUS_ICON_URI, X_ICON_URI } from "@/icons/bootstrap";
 
 export default function Admin() {
   const id = useId();
@@ -75,8 +76,8 @@ export default function Admin() {
   return (
     <ProtectedRoute>
       <section
-        className={`text-gray-400 bg-gray-900 body-font h-[83vh] 
-          sm:h-[90vh] overflow-y-scroll
+        className={`text-gray-400 bg-gray-900 body-font h-[81vh] 
+          sm:h-[89vh] overflow-y-scroll
           ${isLoading || isLoadingAuth ? "animate-pulse" : ""}
           `}
         ref={refUserGroup}
@@ -93,7 +94,8 @@ export default function Admin() {
               px-10 py-5
               rounded-lg bg-red-700 hover:bg-red-900 
               text-white"
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
                   await delete_user(
                     displayData[delUserIndex].username,
                     displayData[delUserIndex].email,
@@ -214,17 +216,22 @@ export default function Admin() {
             </div>
           </Modal>
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
-            <div className="flex justify-between">
+            <div className="flex justify-between align-middle ">
               <TypographyH2>Admin Panel</TypographyH2>
               <button
-                className="w-[1rem] h-1/2 p-1 leading-[0px] m-0
-            bg-green-300 rounded-full text-black hover:bg-green-500"
-                onClick={async () => {
+                className="leading-[0px] m-0
+                text-black"
+                onClick={async (e) => {
+                  e.preventDefault();
                   console.log("adding user");
                   setIsOpenAddUserModal(true);
                 }}
               >
-                +
+                <img
+                  src={PLUS_ICON_URI}
+                  className="w-5 h-5 rounded-full 
+                  hover:bg-green-500 bg-green-300"
+                />
               </button>
             </div>
           </div>
@@ -263,15 +270,22 @@ export default function Admin() {
 
                       {!EXCLUDE_EMAIL_DELETE.includes(each.email) && (
                         <button
-                          className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
-                        bg-red-600 rounded-full text-white hover:bg-red-700"
+                          className="leading-[0px]
+                         rounded-full text-white "
                           onClick={async () => {
                             console.log("deleting user");
                             setIsOpenDelUserModal(true);
                             setDelUserIndex(idx);
                           }}
                         >
-                          x
+                          <img
+                            src={X_ICON_URI}
+                            className="
+                            w-5 h-5
+                            bg-red-600 hover:bg-red-700
+                            rounded-full
+                            "
+                          />
                         </button>
                       )}
                     </div>

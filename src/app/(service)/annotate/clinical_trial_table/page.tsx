@@ -81,7 +81,7 @@ export default function Page() {
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
-        h-[83vh] sm:h-[90vh] overflow-y-scroll
+        h-[81vh] sm:h-[89vh] overflow-y-scroll
         ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
         ref={refUnannotatedGroup}
       >

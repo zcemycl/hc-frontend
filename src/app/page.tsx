@@ -48,7 +48,7 @@ export default function Home() {
   }, [credentials, pgHealthMsg]);
 
   return (
-    <>
+    <div>
       <section className="text-gray-400 bg-gray-900 body-font">
         <div className="container px-5 py-24 mx-auto md:flex md:flex-between">
           <div className="flex flex-wrap -mx-4 mt-auto mb-auto lg:w-1/2 sm:w-2/3 content-start sm:pr-10">
@@ -116,6 +116,6 @@ export default function Home() {
           <RequestDemoForm />
         </div>
       </section>
-    </>
+    </div>
   );
 }

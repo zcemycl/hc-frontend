@@ -75,7 +75,7 @@ export default function Discovery() {
           setOncePlusSignal,
         }}
       >
-        <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
+        <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
           <div className="flex flex-col container pt-24 mx-auto px-10">
             <div className="sm:w-1/2 flex flex-col w-screen space-y-2">
               <h2 className="text-white text-lg mb-1 font-medium title-font space-x-1 flex flex-row">

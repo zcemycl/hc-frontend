@@ -7,7 +7,10 @@ export default function Annotate() {
   const router = useRouter();
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
+      <section
+        className="text-gray-400 bg-gray-900 body-font
+        h-[81vh] sm:h-[89vh]"
+      >
         <div
           className="container px-2 py-24 mx-auto grid justify-items-center
     "
