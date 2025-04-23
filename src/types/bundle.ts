@@ -6,6 +6,7 @@ export interface IBundleConfig {
 }
 
 export interface IBundle {
+  id: string;
   name: string;
   description: string;
   fdalabels: IFdaLabelRef[];

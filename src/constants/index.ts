@@ -13,3 +13,4 @@ export * from "./healthcheck";
 export * from "./loader";
 export * from "./annotate";
 export * from "./flow";
+export * from "./bundle";

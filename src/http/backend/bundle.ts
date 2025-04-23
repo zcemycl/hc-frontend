@@ -33,8 +33,24 @@ export async function createBundleByUserId(
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
+  console.log(new_bundle);
   const response = await fetch(API_URI, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(new_bundle),
+  });
+  validate_response_ok(response);
+  return {};
+}
+
+export async function deleteBundleById(id: string) {
+  const token = get_token_cookie();
+  const API_URI = `${FASTAPI_URI}/bundles/${id}`;
+  const response = await fetch(API_URI, {
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

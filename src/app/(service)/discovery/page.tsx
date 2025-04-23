@@ -1,16 +1,25 @@
 "use client";
 
-import { DiscoveryContext } from "@/contexts";
+import { DiscoveryContext, useAuth } from "@/contexts";
 import VisPanel from "./vis-panel";
-import { useRef, useState, useMemo } from "react";
-import { IEdge, INode, IFlagAttrs, IBundleConfig } from "@/types";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { IEdge, INode, IFlagAttrs, IBundleConfig, IBundle } from "@/types";
 import { Modal, ProtectedRoute } from "@/components";
-import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
+import {
+  defaultBundleConfig,
+  GraphDirectionEnum,
+  GraphTabEnum,
+  GraphTypeEnum,
+} from "@/constants";
 import { Network } from "vis-network";
 import { useDbsHealth } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
+import { createBundleByUserId, fetchBundlesByUserId } from "@/http/backend";
+import { useRouter } from "next/navigation";
 
 export default function Discovery() {
+  const router = useRouter();
+  const { userId, isLoadingAuth, credentials, setIsAuthenticated } = useAuth();
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
   const visJsRef = useRef<HTMLDivElement>(null);
   const visToolBarRef = useRef<HTMLDivElement>(null);
@@ -19,10 +28,9 @@ export default function Discovery() {
   const [openSearchCanvas, setOpenSearchCanvas] = useState<boolean>(false);
   const [openBundleModal, setOpenBundleModal] = useState<boolean>(false);
   const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
-    name: "",
-    description: "",
+    ...defaultBundleConfig,
   });
-  const [bundles, setBundles] = useState([]);
+  const [bundles, setBundles] = useState<IBundle[]>([]);
   const [tab, setTab] = useState<GraphTabEnum>(GraphTabEnum.information);
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
@@ -43,6 +51,16 @@ export default function Discovery() {
     enabled_physics: true,
     physics_stabilisation: true,
   });
+
+  useEffect(() => {
+    if (isLoadingAuth) return;
+    if (credentials.length === 0) {
+      setIsAuthenticated(false);
+      router.push(
+        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
+      );
+    }
+  }, []);
 
   return (
     <ProtectedRoute>
@@ -155,9 +173,25 @@ export default function Discovery() {
                         rounded-lg
                         px-4 py-2
                         font-bold text-black"
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.preventDefault();
                       console.log(bundleConfig);
+                      console.log(userId);
+                      if (bundleConfig.name.trim() === "") {
+                        return;
+                      }
+                      await createBundleByUserId(
+                        userId as number,
+                        bundleConfig,
+                      );
+                      const tmpBundles = await fetchBundlesByUserId(
+                        userId as number,
+                        0,
+                        5,
+                      );
+                      setBundles(tmpBundles);
+                      setBundleConfig({ ...defaultBundleConfig });
+                      setOpenBundleModal(false);
                     }}
                   >
                     Submit

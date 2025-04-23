@@ -2,13 +2,15 @@
 
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useAuth } from "@/contexts";
-import { INode } from "@/types";
+import { IBundle, INode } from "@/types";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { fetchBundlesByUserId } from "@/http/backend";
+import { deleteBundleById, fetchBundlesByUserId } from "@/http/backend";
 import {
   ARROW_ICON_URI,
+  BAG_PLUS_FILL_ICON_URI,
   PLUS_ICON_URI,
   X_CIRCLE_ICON_URI,
+  X_ICON_URI,
 } from "@/icons/bootstrap";
 
 export default function BundleTab() {
@@ -157,7 +159,55 @@ export default function BundleTab() {
           No available bundles
         </div>
       ) : (
-        <></>
+        bundles.map((v: IBundle) => {
+          return (
+            <div
+              key={v.name}
+              className="content-start 
+              bg-amber-500 rounded-lg 
+              p-2 text-black font-bold"
+            >
+              <div
+                id="bundle-summary"
+                className="flex flex-row justify-between"
+              >
+                <div className="flex justfiy-start space-x-2">
+                  <span>{v.name}</span>
+                  <button>
+                    <img
+                      src={PLUS_ICON_URI}
+                      className="rounded-sm border 
+                      bg-emerald-400
+                      border-transparent
+                      hover:border-black
+                      "
+                    />
+                  </button>
+                </div>
+
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    await deleteBundleById(v.id);
+                    const tmpBundles = await fetchBundlesByUserId(
+                      userId as number,
+                      0,
+                      5,
+                    );
+                    console.log(tmpBundles);
+                    setBundles(tmpBundles);
+                  }}
+                >
+                  <img
+                    src={X_ICON_URI}
+                    className="rounded-full 
+                    bg-red-500 hover:bg-red-700"
+                  />
+                </button>
+              </div>
+            </div>
+          );
+        })
       )}
     </div>
   );
