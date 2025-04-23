@@ -1,5 +1,6 @@
 "use server";
 
+import { IBundleConfig } from "@/types";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 import { FASTAPI_URI } from "./constants";
 
@@ -24,4 +25,21 @@ export async function fetchBundlesByUserId(
   validate_response_ok(response);
   const res = await response.json();
   return res;
+}
+
+export async function createBundleByUserId(
+  id: number,
+  new_bundle: IBundleConfig,
+) {
+  const token = get_token_cookie();
+  const API_URI = `${FASTAPI_URI}/bundles/${id}`;
+  const response = await fetch(API_URI, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  validate_response_ok(response);
+  return {};
 }

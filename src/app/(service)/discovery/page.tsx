@@ -22,6 +22,7 @@ export default function Discovery() {
     name: "",
     description: "",
   });
+  const [bundles, setBundles] = useState([]);
   const [tab, setTab] = useState<GraphTabEnum>(GraphTabEnum.information);
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
@@ -82,6 +83,8 @@ export default function Discovery() {
           setOpenBundleModal,
           bundleConfig,
           setBundleConfig,
+          bundles,
+          setBundles,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">

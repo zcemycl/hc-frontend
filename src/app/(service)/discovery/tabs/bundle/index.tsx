@@ -21,8 +21,10 @@ export default function BundleTab() {
     net,
     openBundleModal,
     setOpenBundleModal,
+    bundles,
+    setBundles,
   } = useContext(DiscoveryContext);
-  const [bundles, setBundles] = useState([]);
+
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
   }, [multiSelectNodes]);

@@ -41,10 +41,13 @@ export interface IClinicalTrialTable extends IBaseTableNoHead {
 
 export interface IDrugInteraction extends IBaseTitleContent {}
 
-export interface IFdaLabel {
+export interface IFdaLabelRef {
   id?: number;
   setid?: string;
   tradename: string;
+}
+
+export interface IFdaLabel extends IFdaLabelRef {
   distance?: number;
   indication?: string;
   manufacturer?: string;
