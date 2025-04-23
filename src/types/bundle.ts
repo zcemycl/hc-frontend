@@ -11,3 +11,9 @@ export interface IBundle {
   description: string;
   fdalabels: IFdaLabelRef[];
 }
+
+export interface IBundleUpdate {
+  name?: string;
+  description?: string;
+  tradenames?: string[];
+}

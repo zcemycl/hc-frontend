@@ -2,9 +2,13 @@
 
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useAuth } from "@/contexts";
-import { IBundle, INode } from "@/types";
+import { IBundle, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { deleteBundleById, fetchBundlesByUserId } from "@/http/backend";
+import {
+  deleteBundleById,
+  fetchBundlesByUserId,
+  patchBundleById,
+} from "@/http/backend";
 import {
   ARROW_ICON_URI,
   BAG_PLUS_FILL_ICON_URI,
@@ -163,8 +167,10 @@ export default function BundleTab() {
           return (
             <div
               key={v.name}
-              className="content-start 
-              bg-amber-500 rounded-lg 
+              className="content-start
+              flex flex-col
+              bg-amber-500 hover:bg-amber-300
+              rounded-lg group
               p-2 text-black font-bold"
             >
               <div
@@ -173,7 +179,25 @@ export default function BundleTab() {
               >
                 <div className="flex justfiy-start space-x-2">
                   <span>{v.name}</span>
-                  <button>
+                  <button
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      const tnSet = new Set();
+                      v.fdalabels.forEach((f) => tnSet.add(f.tradename));
+                      nodesToBundle.forEach((n: INode) => tnSet.add(n.label));
+                      const newTradenames = Array.from(tnSet);
+                      await patchBundleById(v.id, {
+                        tradenames: newTradenames as string[],
+                      });
+                      const tmpBundles = await fetchBundlesByUserId(
+                        userId as number,
+                        0,
+                        5,
+                      );
+                      console.log(tmpBundles);
+                      setBundles(tmpBundles);
+                    }}
+                  >
                     <img
                       src={PLUS_ICON_URI}
                       className="rounded-sm border 
@@ -204,6 +228,27 @@ export default function BundleTab() {
                     bg-red-500 hover:bg-red-700"
                   />
                 </button>
+              </div>
+              <div
+                className="flex flex-col space-y-1
+                leading-relaxed transition-all origin-top
+                ease-in-out duration-300
+                overflow-hidden
+                max-h-0
+                group-hover:max-h-full
+              "
+              >
+                {v.fdalabels.map((f: IFdaLabelRef) => {
+                  return (
+                    <span
+                      className="bg-amber-100 
+                        pl-2 py-1 rounded-md
+                        text-xs"
+                    >
+                      - {f.tradename}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           );

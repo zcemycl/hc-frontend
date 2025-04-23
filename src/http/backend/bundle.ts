@@ -1,6 +1,6 @@
 "use server";
 
-import { IBundleConfig } from "@/types";
+import { IBundleConfig, IBundleUpdate } from "@/types";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 import { FASTAPI_URI } from "./constants";
 
@@ -55,6 +55,25 @@ export async function deleteBundleById(id: string) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+  });
+  validate_response_ok(response);
+  return {};
+}
+
+export async function patchBundleById(
+  id: string,
+  bundle_update: IBundleUpdate,
+) {
+  const token = get_token_cookie();
+  const API_URI = `${FASTAPI_URI}/bundles/${id}`;
+  console.log(bundle_update);
+  const response = await fetch(API_URI, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(bundle_update),
   });
   validate_response_ok(response);
   return {};
