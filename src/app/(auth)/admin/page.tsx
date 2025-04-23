@@ -120,7 +120,11 @@ export default function Admin() {
             isOpenModal={isOpenAddUserModal}
             setIsOpenModal={setIsOpenAddUserModal}
           >
-            <div className="flex flex-col space-y-2 px-10 py-5">
+            <div
+              className="flex flex-col space-y-2 
+              px-2 sm:px-10 
+              py-2 sm:py-5"
+            >
               <div>
                 <label htmlFor="">Username</label>
                 <input

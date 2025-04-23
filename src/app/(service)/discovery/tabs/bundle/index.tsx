@@ -13,8 +13,15 @@ import {
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
-  const { tab, multiSelectNodes, setMultiSelectNodes, visToolBarRef, net } =
-    useContext(DiscoveryContext);
+  const {
+    tab,
+    multiSelectNodes,
+    setMultiSelectNodes,
+    visToolBarRef,
+    net,
+    openBundleModal,
+    setOpenBundleModal,
+  } = useContext(DiscoveryContext);
   const [bundles, setBundles] = useState([]);
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
@@ -49,7 +56,6 @@ export default function BundleTab() {
         }
         `}
     >
-      <div></div>
       <h2 className="leading text-slate-300 font-bold">Candidates</h2>
       <div className="flex flex-wrap gap-2 content-start bg-amber-500 rounded-lg p-2">
         {nodesToBundle.length === 0 ? (
@@ -131,6 +137,7 @@ export default function BundleTab() {
         <button
           onClick={(e) => {
             e.preventDefault();
+            setOpenBundleModal(true);
           }}
         >
           <img

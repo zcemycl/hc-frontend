@@ -79,7 +79,8 @@ export default function VisPanel() {
           className="absolute h-[78vh]
           z-20
           flex flex-col justify-center align-middle content-center
-          top-1/2 left-1/2 transform -translate-x-1/2"
+          top-1/2 -translate-y-1/2
+          left-1/2 transform -translate-x-1/2"
         >
           <Spinner />
           <span className="sr-only">Loading...</span>

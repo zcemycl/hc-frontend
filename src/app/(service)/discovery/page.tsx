@@ -3,8 +3,8 @@
 import { DiscoveryContext } from "@/contexts";
 import VisPanel from "./vis-panel";
 import { useRef, useState, useMemo } from "react";
-import { IEdge, INode, IFlagAttrs } from "@/types";
-import { ProtectedRoute } from "@/components";
+import { IEdge, INode, IFlagAttrs, IBundleConfig } from "@/types";
+import { Modal, ProtectedRoute } from "@/components";
 import { GraphDirectionEnum, GraphTabEnum, GraphTypeEnum } from "@/constants";
 import { Network } from "vis-network";
 import { useDbsHealth } from "@/hooks";
@@ -17,6 +17,11 @@ export default function Discovery() {
   const [net, setNet] = useState<Network | null>(null);
   const [openToolBar, setOpenToolBar] = useState<boolean>(false);
   const [openSearchCanvas, setOpenSearchCanvas] = useState<boolean>(false);
+  const [openBundleModal, setOpenBundleModal] = useState<boolean>(false);
+  const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
+    name: "",
+    description: "",
+  });
   const [tab, setTab] = useState<GraphTabEnum>(GraphTabEnum.information);
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
@@ -73,6 +78,10 @@ export default function Discovery() {
           setPrevSignal,
           oncePlusSignal,
           setOncePlusSignal,
+          openBundleModal,
+          setOpenBundleModal,
+          bundleConfig,
+          setBundleConfig,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
@@ -94,6 +103,65 @@ export default function Discovery() {
               </h2>
             </div>
             <VisPanel />
+            <Modal
+              {...{
+                title: "Add Bundle",
+                isOpenModal: openBundleModal,
+                setIsOpenModal: setOpenBundleModal,
+              }}
+            >
+              <div
+                className="flex flex-col space-y-2
+                  px-2 sm:px-5
+                  py-2 pb-5"
+              >
+                <div className="flex flex-col space-y-1">
+                  <label className="font-bold text-white">Name</label>
+                  <input
+                    type="text"
+                    value={bundleConfig.name}
+                    className="bg-slate-300 text-black w-full
+                          rounded-md p-2"
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setBundleConfig({
+                        ...bundleConfig,
+                        name: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <label className="font-bold text-white">Description</label>
+                  <textarea
+                    className="bg-slate-300 text-black w-full
+                        rounded-md p-2 min-w-20"
+                    value={bundleConfig.description}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setBundleConfig({
+                        ...bundleConfig,
+                        description: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    className="bg-emerald-300 hover:bg-emerald-500
+                        rounded-lg
+                        px-4 py-2
+                        font-bold text-black"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log(bundleConfig);
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </Modal>
           </div>
         </section>
       </DiscoveryContext.Provider>
