@@ -119,16 +119,18 @@ export default function Page() {
                 })
               )}
             </div>
-            <div className="flex justify-center space-x-1 flex-wrap">
-              <PaginationBar
-                topN={countAnnotated}
-                pageN={pageNAnnotate}
-                nPerPage={nPerPage}
-                setPageN={(i: number) => {
-                  setPageNAnnotate(i);
-                }}
-              />
-            </div>
+            {countAnnotated / nPerPage > 1 && (
+              <div className="flex justify-center space-x-1 flex-wrap">
+                <PaginationBar
+                  topN={countAnnotated}
+                  pageN={pageNAnnotate}
+                  nPerPage={nPerPage}
+                  setPageN={(i: number) => {
+                    setPageNAnnotate(i);
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>

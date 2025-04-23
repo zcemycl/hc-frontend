@@ -1,5 +1,5 @@
 "use client";
-import { TypographyH2, ProtectedRoute } from "@/components";
+import { TypographyH2, ProtectedRoute, BackBtn } from "@/components";
 import { AnnotatePageNameLinkPairs } from "@/constants";
 import { useRouter } from "next/navigation";
 
@@ -21,7 +21,11 @@ export default function Annotate() {
             p-1 sm:p-10
             flex flex-col mt-8 space-y-2"
           >
-            <TypographyH2>Annotation</TypographyH2>
+            <div className="flex flex-row justify-between">
+              <TypographyH2>Annotation</TypographyH2>
+              <BackBtn />
+            </div>
+
             <p className="leading-relaxed mb-5">
               Our aim is to build robust and reliable AI models to digest drug
               data. We would need domain knowledge from world class expertise to

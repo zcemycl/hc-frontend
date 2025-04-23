@@ -2,12 +2,16 @@
 import { ARROW_RETURN_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 
-const BackBtn = () => {
+const BackBtn = ({ customCallBack }: { customCallBack?: () => void }) => {
   const router = useRouter();
   return (
     <button
       onClick={() => {
-        router.back();
+        if (customCallBack) {
+          customCallBack();
+        } else {
+          router.back();
+        }
       }}
       className="bg-sky-300 rounded p-2 
         h-fit w-fit

@@ -4,6 +4,7 @@ import {
   ExpandableBtn,
   TypographyH2,
   ProtectedRoute,
+  BackBtn,
 } from "@/components";
 import { useAuth } from "@/contexts";
 import { fetchAETableBySetid } from "@/http/backend";
@@ -63,15 +64,7 @@ export default function Page({ params }: PageProps) {
               <div className="flex justify-between items-center space-x-1">
                 <TypographyH2>Annotation Label {params.id}</TypographyH2>
               </div>
-              <button
-                onClick={() => {
-                  router.back();
-                }}
-                className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-              >
-                Back
-              </button>
+              <BackBtn />
             </div>
             <TypographyH2>Adverse Effect Tables</TypographyH2>
           </div>

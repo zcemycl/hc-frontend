@@ -16,6 +16,7 @@ import {
   DropDownList,
   TypographyH2,
   ProtectedRoute,
+  BackBtn,
 } from "@/components";
 import { convert_datetime_to_date } from "@/utils";
 import { create_user, delete_user } from "@/http/internal";
@@ -82,7 +83,10 @@ export default function Admin() {
           `}
         ref={refUserGroup}
       >
-        <div className="container px-2 py-24 mx-auto grid justify-items-center">
+        <div
+          className="flex flex-col mt-[7rem] 
+          content-center items-center space-y-3"
+        >
           <Modal
             title={`Confirm Delete User -- ${displayData[delUserIndex]?.email} ?`}
             isOpenModal={isOpenDelUserModal}
@@ -215,9 +219,16 @@ export default function Admin() {
               </div>
             </div>
           </Modal>
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
-            <div className="flex justify-between align-middle ">
-              <TypographyH2>Admin Panel</TypographyH2>
+          <div
+            className="flex flex-col
+            sm:w-7/12 w-11/12"
+          >
+            <div className="flex justify-between align-middle">
+              <div className="flex flex-row justify-start space-x-2">
+                <TypographyH2>Admin Panel</TypographyH2>
+                <BackBtn />
+              </div>
+
               <button
                 className="leading-[0px] m-0
                 text-black"
@@ -240,11 +251,17 @@ export default function Admin() {
               {displayData.map((each, idx) => {
                 return (
                   <div
-                    className="sm:w-1/2 flex flex-col w-screen px-10 py-1 space-y-2"
+                    className="flex flex-col 
+                    w-11/12 sm:w-7/12
+                    py-1 space-y-2"
                     key={`${id}-user-profile-${each.id}`}
                   >
                     <div className="flex justify-between">
-                      <div className="flex justify-between space-x-1">
+                      <div
+                        className="flex justify-between
+                        sm:flex-row sm:space-x-1 sm:space-y-0
+                        flex-col space-x-0 space-y-1"
+                      >
                         <p className="leading-relaxed flex justify-between space-x-1">
                           <span className="bg-blue-400 rounded-sm text-black px-1">
                             {each.username}

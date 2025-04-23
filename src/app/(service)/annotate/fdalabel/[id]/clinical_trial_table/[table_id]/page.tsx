@@ -1,5 +1,5 @@
 "use client";
-import { Spinner, Table, ProtectedRoute } from "@/components";
+import { Spinner, Table, ProtectedRoute, BackBtn } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { fetchAETableByIds } from "@/http/backend";
 import {
@@ -45,7 +45,7 @@ export default function Page({ params }: PageProps) {
         className={`text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]
         overflow-y-scroll overflow-x-hidden ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
       >
-        <div className="container px-2 py-24 mx-auto grid justify-items-center">
+        <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
           {(isLoading || isLoadingAuth) && (
             <div
               className="absolute left-1/2 top-1/2 
@@ -55,24 +55,25 @@ export default function Page({ params }: PageProps) {
               <span className="sr-only">Loading...</span>
             </div>
           )}
-          <div className="sm:w-2/3 flex flex-col mt-8 w-screen p-10 space-y-2">
+          <div
+            className="flex flex-col mt-8 
+            sm:w-2/3 w-screen
+            p-10 space-y-2"
+          >
             <div className="flex justify-between">
               <h2 className="text-white text-lg mb-1 font-medium title-font">
                 CT Table Annotation
               </h2>
-              <button
-                onClick={() => router.back()}
-                className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-              >
-                Back
-              </button>
+              <BackBtn />
             </div>
             <p className="leading-relaxed w-full">
               C.T Table {params.table_id} from label {params.id}
             </p>
 
-            <div className="overflow-x-auto flex flex-col w-full">
+            <div
+              className="overflow-x-auto 
+              flex flex-col w-full"
+            >
               {tableData && (
                 <Table
                   {...{

@@ -125,16 +125,18 @@ export default function Page() {
                   })
               )}
             </div>
-            <div className="flex justify-center space-x-1 flex-wrap">
-              <PaginationBar
-                topN={countHistory}
-                pageN={pageNHistory}
-                nPerPage={nPerPage}
-                setPageN={(i: number) => {
-                  setPageNHistory(i);
-                }}
-              />
-            </div>
+            {countHistory / nPerPage > 1 && (
+              <div className="flex justify-center space-x-1 flex-wrap">
+                <PaginationBar
+                  topN={countHistory}
+                  pageN={pageNHistory}
+                  nPerPage={nPerPage}
+                  setPageN={(i: number) => {
+                    setPageNHistory(i);
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>

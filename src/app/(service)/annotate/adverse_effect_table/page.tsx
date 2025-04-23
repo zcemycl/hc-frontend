@@ -7,6 +7,7 @@ import {
   ExpandableBtn,
   AETableVerDropdown,
   ProtectedRoute,
+  BackBtn,
 } from "@/components";
 import {
   fetchUnannotatedAETableByUserId,
@@ -160,16 +161,12 @@ export default function Page() {
                 />
               </div>
 
-              <button
-                onClick={() => {
+              <BackBtn
+                customCallBack={() => {
                   saveAETableAnnotationPageCache();
                   router.back();
                 }}
-                className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-              >
-                Back
-              </button>
+              />
             </div>
           </div>
           <div className="sm:w-1/2 flex flex-col w-full px-1 pt-5 pb-5 space-y-2">
