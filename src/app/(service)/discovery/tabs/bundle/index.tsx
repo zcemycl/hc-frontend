@@ -12,6 +12,8 @@ import {
 import {
   ARROW_ICON_URI,
   BAG_PLUS_FILL_ICON_URI,
+  MINUS_ICON_URI,
+  NODE_MINUS_ICON_URI,
   PLUS_ICON_URI,
   X_CIRCLE_ICON_URI,
   X_ICON_URI,
@@ -240,13 +242,43 @@ export default function BundleTab() {
               >
                 {v.fdalabels.map((f: IFdaLabelRef) => {
                   return (
-                    <span
+                    <div
+                      key={f.setid}
                       className="bg-amber-100 
-                        pl-2 py-1 rounded-md
-                        text-xs"
+                      pl-2 py-1 rounded-md
+                      text-xs flex flex-row
+                      space-x-2
+                      content-center items-center align-middle
+                      "
                     >
-                      - {f.tradename}
-                    </span>
+                      <span>- {f.tradename}</span>
+                      <button
+                        className="rounded-full 
+                          bg-red-500 hover:bg-red-300"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          const newTradenames = v.fdalabels
+                            .filter(
+                              (f_: IFdaLabelRef) =>
+                                f_.tradename !== f.tradename,
+                            )
+                            .map((f_: IFdaLabelRef) => f_.tradename);
+                          console.log(newTradenames);
+                          await patchBundleById(v.id, {
+                            tradenames: newTradenames as string[],
+                          });
+                          const tmpBundles = await fetchBundlesByUserId(
+                            userId as number,
+                            0,
+                            5,
+                          );
+                          console.log(tmpBundles);
+                          setBundles(tmpBundles);
+                        }}
+                      >
+                        <img src={MINUS_ICON_URI} />
+                      </button>
+                    </div>
                   );
                 })}
               </div>
