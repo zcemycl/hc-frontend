@@ -11,17 +11,18 @@ import {
 } from "@/http/backend";
 import {
   ARROW_ICON_URI,
-  BAG_PLUS_FILL_ICON_URI,
   MINUS_ICON_URI,
-  NODE_MINUS_ICON_URI,
   PLUS_ICON_URI,
   RELOAD_ICON_URI,
+  SEARCH_ICON_URI,
   X_CIRCLE_ICON_URI,
   X_ICON_URI,
 } from "@/icons/bootstrap";
+import { useRouter } from "next/navigation";
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
+  const router = useRouter();
   const {
     tab,
     multiSelectNodes,
@@ -192,7 +193,10 @@ export default function BundleTab() {
               flex flex-col
               bg-amber-500 hover:bg-amber-300
               rounded-lg group
-              p-2 text-black font-bold"
+              p-2 text-black font-bold
+              hover:shadow-md
+              hover:shadow-black
+              "
             >
               <div
                 id="bundle-summary"
@@ -224,8 +228,24 @@ export default function BundleTab() {
                       className="rounded-sm border 
                       bg-emerald-400
                       border-transparent
-                      hover:border-black
+                      hover:shadow-xl
+                      hover:shadow-black
                       "
+                    />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      router.push(`/search?bundleId=${v.id}`);
+                    }}
+                  >
+                    <img
+                      src={SEARCH_ICON_URI}
+                      className="rounded-sm border 
+                      bg-transparent
+                      border-transparent
+                      hover:shadow-xl
+                      hover:shadow-black"
                     />
                   </button>
                 </div>

@@ -97,6 +97,7 @@ export default function Page() {
                         }
                         key={`history-${idx}`}
                         onClick={(e) => {
+                          e.preventDefault();
                           router.push(`/search?historyId=${x.id}`);
                         }}
                         className="hover:bg-green-200 
