@@ -15,6 +15,7 @@ import {
   MINUS_ICON_URI,
   NODE_MINUS_ICON_URI,
   PLUS_ICON_URI,
+  RELOAD_ICON_URI,
   X_CIRCLE_ICON_URI,
   X_ICON_URI,
 } from "@/icons/bootstrap";
@@ -66,7 +67,25 @@ export default function BundleTab() {
         }
         `}
     >
-      <h2 className="leading text-slate-300 font-bold">Candidates</h2>
+      <div
+        className="flex flex-row justify-start space-x-2
+        content-center align-middle items-center"
+      >
+        <h2 className="leading text-slate-300 font-bold">Candidates</h2>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setMultiSelectNodes([]);
+            net.selectNodes([]);
+          }}
+        >
+          <img
+            src={RELOAD_ICON_URI}
+            className="rounded-full bg-purple-400 hover:bg-purple-600"
+          />
+        </button>
+      </div>
+
       <div className="flex flex-wrap gap-2 content-start bg-amber-500 rounded-lg p-2">
         {nodesToBundle.length === 0 ? (
           <div className="text-black font-bold">
