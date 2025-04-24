@@ -30,10 +30,10 @@ import {
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
 import { FdalabelFetchService } from "@/services";
+import { useHistoryToSearch } from "@/hooks";
 
 export default function Search() {
   const searchParams = useSearchParams();
-  const historyId = searchParams.get("historyId");
   const bundleId = searchParams.get("bundleId");
 
   const router = useRouter();
@@ -69,6 +69,7 @@ export default function Search() {
       ),
     [],
   );
+  useHistoryToSearch({ setQueryType, setQuery });
 
   async function search_query_by_type(
     query: string[],
@@ -140,27 +141,6 @@ export default function Search() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aeVersion]);
-
-  // from profile history
-  useEffect(() => {
-    console.log("profile history useEffect");
-    if (historyId === null) return;
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push("/logout");
-    }
-    if (historyId !== null) {
-      fetchHistoryById(parseInt(historyId)).then(async (history) => {
-        if (history.category === UserHistoryCategoryEnum.SEARCH) {
-          if (history.detail.action === SearchActionEnum.SEARCH) {
-            setQueryType(history.detail.additional_settings.queryType);
-            setQuery(history.detail.query);
-          }
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyId]);
 
   return (
     <ProtectedRoute>
