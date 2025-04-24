@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef, useMemo, Fragment } from "react";
 import { AEVersionContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import { fetchHistoryById } from "@/http/backend";
 import {
   PaginationBar,
   TypographyH2,
@@ -13,13 +12,7 @@ import {
   Spinner,
   ProtectedRoute,
 } from "@/components";
-import {
-  IFdaLabel,
-  ICompareAETable,
-  SearchActionEnum,
-  UserHistoryCategoryEnum,
-  IHistory,
-} from "@/types";
+import { IFdaLabel, ICompareAETable } from "@/types";
 import {
   SortByEnum,
   SearchQueryTypeEnum,
@@ -31,11 +24,10 @@ import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
 import { FdalabelFetchService } from "@/services";
 import { useHistoryToSearch } from "@/hooks";
+import { useBundleToSearch } from "@/hooks/useBundleToSearch";
 
 export default function Search() {
   const searchParams = useSearchParams();
-  const bundleId = searchParams.get("bundleId");
-
   const router = useRouter();
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
@@ -70,6 +62,7 @@ export default function Search() {
     [],
   );
   useHistoryToSearch({ setQueryType, setQuery });
+  useBundleToSearch({ setQueryType, setQuery });
 
   async function search_query_by_type(
     query: string[],
