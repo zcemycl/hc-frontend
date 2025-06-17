@@ -1,6 +1,9 @@
+"use client";
 import { TypographyH2 } from "../typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTable } from "@fortawesome/free-solid-svg-icons";
+import { ITherapeuticArea } from "@/types/fdalabel";
+import { useRouter } from "next/navigation";
 
 function FdaLabelShort({
   setid,
@@ -9,6 +12,7 @@ function FdaLabelShort({
   initial_us_approval_year,
   distance,
   indication,
+  therapeutic_areas,
   ae_tables_count,
   ct_tables_count,
   selectMultipleCallback,
@@ -20,12 +24,15 @@ function FdaLabelShort({
   initial_us_approval_year: number;
   distance: number;
   indication: string;
+  therapeutic_areas: ITherapeuticArea[];
   ae_tables_count: number;
   ct_tables_count: number;
 
   selectMultipleCallback: (e: any) => void;
   clickExpandCallback: () => void;
 }) {
+  const router = useRouter();
+  console.log(therapeutic_areas);
   return (
     <div
       className="flex flex-col p-10
@@ -57,6 +64,29 @@ function FdaLabelShort({
       {distance && (
         <TypographyH2>Indication Proximity: {distance.toFixed(3)}</TypographyH2>
       )}
+      <div
+        className="flex flex-col space-y-0
+        items-start w-full overflow-x-auto
+        justify-start
+        "
+      >
+        <button
+          className="bg-sky-300 hover:bg-sky-400
+          text-black font-bold py-2 px-4 rounded
+          "
+          onClick={(e) => {
+            e.preventDefault();
+            router.push(
+              `/discovery?therapeutic_area=${therapeutic_areas[0].path}`,
+            );
+          }}
+        >
+          <TypographyH2 extraClass="text-black">
+            {therapeutic_areas[0]?.path.replaceAll("_", " ").split(".")[0]}
+          </TypographyH2>
+        </button>
+      </div>
+
       <p>{indication}</p>
       <button
         onClick={(e) => {

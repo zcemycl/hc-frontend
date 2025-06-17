@@ -1,9 +1,13 @@
+"use client";
 import { convert_datetime_to_date } from "@/utils";
 import { TypographyH2 } from "../typography";
+import { ITherapeuticArea } from "@/types/fdalabel";
+import { useRouter } from "next/navigation";
 
 function IntroSection({
   tradename,
   setid,
+  therapeutic_areas,
   spl_earliest_date,
   spl_effective_date,
   manufacturer,
@@ -13,6 +17,7 @@ function IntroSection({
 }: {
   tradename: string;
   setid: string;
+  therapeutic_areas: ITherapeuticArea[];
   spl_earliest_date: string;
   spl_effective_date: string;
   manufacturer: string;
@@ -20,6 +25,7 @@ function IntroSection({
   pdf_link: string;
   back_btn_callback: (s: any) => void;
 }) {
+  const router = useRouter();
   return (
     <>
       <div className="flex justify-between">
@@ -39,6 +45,29 @@ function IntroSection({
         {convert_datetime_to_date(spl_effective_date)}
       </TypographyH2>
       <TypographyH2>{manufacturer}</TypographyH2>
+      <div
+        className="flex flex-col space-y-0
+        items-start w-full overflow-x-auto
+        justify-start
+        "
+      >
+        <button
+          className="bg-sky-300 hover:bg-sky-400
+          text-black font-bold py-2 px-4 rounded
+          "
+          onClick={(e) => {
+            e.preventDefault();
+            router.push(
+              `/discovery?therapeutic_area=${therapeutic_areas[0].path}`,
+            );
+          }}
+        >
+          <TypographyH2 extraClass="text-black">
+            {therapeutic_areas[0]?.path.replaceAll("_", " ").split(".")[0]}
+          </TypographyH2>
+        </button>
+      </div>
+
       <p className="leading-relaxed">
         XML source:{" "}
         <a href={xml_link} target="_blank">

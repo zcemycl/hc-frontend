@@ -22,6 +22,7 @@ function FdaLabel({
         {...{
           setid: each.setid!,
           tradename: each.tradename!,
+          therapeutic_areas: each.therapeutic_areas!,
           spl_earliest_date: each.spl_earliest_date!,
           spl_effective_date: each.spl_effective_date!,
           manufacturer: each.manufacturer!,

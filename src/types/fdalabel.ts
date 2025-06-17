@@ -41,6 +41,11 @@ export interface IClinicalTrialTable extends IBaseTableNoHead {
 
 export interface IDrugInteraction extends IBaseTitleContent {}
 
+export interface ITherapeuticArea {
+  name: string;
+  path: string;
+}
+
 export interface IFdaLabelRef {
   id?: number;
   setid?: string;
@@ -62,6 +67,7 @@ export interface IFdaLabel extends IFdaLabelRef {
   clinical_trials?: IClinicalTrial[];
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
+  therapeutic_areas?: ITherapeuticArea[];
   ae_tables_count?: number;
   ct_tables_count?: number;
 }
@@ -74,11 +80,6 @@ export interface IFdaLabelHistory {
 }
 
 export interface ICompareAETable extends IBaseTable {}
-
-export interface ITherapeuticArea {
-  name: string;
-  path: string;
-}
 
 export interface IUnAnnotatedAETable {
   idx: number;

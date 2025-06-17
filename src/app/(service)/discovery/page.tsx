@@ -15,23 +15,30 @@ import { Network } from "vis-network";
 import { useDbsHealth } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
 import { createBundleByUserId, fetchBundlesByUserId } from "@/http/backend";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Discovery() {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { userId, isLoadingAuth, credentials, setIsAuthenticated } = useAuth();
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
   const visJsRef = useRef<HTMLDivElement>(null);
   const visToolBarRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
-  const [openToolBar, setOpenToolBar] = useState<boolean>(false);
+  const [openToolBar, setOpenToolBar] = useState<boolean>(
+    searchParams.get("therapeutic_area") !== undefined,
+  );
   const [openSearchCanvas, setOpenSearchCanvas] = useState<boolean>(false);
   const [openBundleModal, setOpenBundleModal] = useState<boolean>(false);
   const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
     ...defaultBundleConfig,
   });
   const [bundles, setBundles] = useState<IBundle[]>([]);
-  const [tab, setTab] = useState<GraphTabEnum>(GraphTabEnum.information);
+  const [tab, setTab] = useState<GraphTabEnum>(
+    searchParams.get("therapeutic_area")
+      ? GraphTabEnum.initialisation
+      : GraphTabEnum.information,
+  );
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [dNodes, setDNodes] = useState<any>(null);
@@ -41,7 +48,9 @@ export default function Discovery() {
   const [prevSignal, setPrevSignal] = useState<string>("False");
   const [oncePlusSignal, setOncePlusSignal] = useState<number>(0);
   const [flagAttrs, setFlagAttrs] = useState<IFlagAttrs>({
-    name: "Neoplasms",
+    name: searchParams.get("therapeutic_area")
+      ? searchParams.get("therapeutic_area")!
+      : "Neoplasms",
     numNodes: 50,
     offset: 0,
   });

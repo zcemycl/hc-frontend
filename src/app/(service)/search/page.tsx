@@ -95,6 +95,10 @@ export default function Search() {
     return resp;
   }
 
+  useEffect(() => {
+    console.log(displayData);
+  }, [displayData]);
+
   // refresh drug list when page is changed
   useEffect(() => {
     async function pageCallback(pageN: number) {
@@ -370,6 +374,7 @@ export default function Search() {
                           each.initial_us_approval_year!,
                         distance: each.distance!,
                         indication: each.indication!,
+                        therapeutic_areas: each.therapeutic_areas!,
                         ae_tables_count: each.ae_tables_count!,
                         ct_tables_count: each.ct_tables_count!,
                         selectMultipleCallback: (e) => {
