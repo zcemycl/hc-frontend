@@ -4,6 +4,7 @@ import {
   ExpandableBtn,
   TypographyH2,
   ProtectedRoute,
+  BackBtn,
 } from "@/components";
 import { useAuth } from "@/contexts";
 import { fetchAETableBySetid } from "@/http/backend";
@@ -28,8 +29,6 @@ export default function Page({ params }: PageProps) {
   const { credentials, isLoadingAuth } = useAuth();
   const [tableData, setTableData] = useState<IAdverseEffectTable[]>([]);
   const [ctTableData, setCtTableData] = useState<IClinicalTrialTable[]>([]);
-  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
-  const [ctHoverIdx, setCtHoverIdx] = useState<number | null>(null);
 
   useEffect(() => {
     async function getData() {
@@ -53,8 +52,8 @@ export default function Page({ params }: PageProps) {
   return (
     <ProtectedRoute>
       <section
-        className="text-gray-400 bg-gray-900 body-font h-[83vh] 
-        sm:h-[90vh] overflow-y-scroll"
+        className="text-gray-400 bg-gray-900 body-font h-[81vh] 
+        sm:h-[89vh] overflow-y-scroll"
       >
         <div
           className="container px-2 py-24 mx-auto grid justify-items-center
@@ -65,15 +64,7 @@ export default function Page({ params }: PageProps) {
               <div className="flex justify-between items-center space-x-1">
                 <TypographyH2>Annotation Label {params.id}</TypographyH2>
               </div>
-              <button
-                onClick={() => {
-                  router.back();
-                }}
-                className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-              >
-                Back
-              </button>
+              <BackBtn />
             </div>
             <TypographyH2>Adverse Effect Tables</TypographyH2>
           </div>
@@ -82,15 +73,11 @@ export default function Page({ params }: PageProps) {
               <ExpandableBtn
                 key={`${params.id}-${idx}`}
                 refkey={`${params.id}-${idx}`}
-                hoverCondition={hoverIdx === idx}
                 onClick={(e) => {
                   e.preventDefault();
                   router.push(
                     `/annotate/fdalabel/${params.id}/adverse_effect_table/${idx + 1}`,
                   );
-                }}
-                onMouseOver={(e) => {
-                  setHoverIdx(idx);
                 }}
                 childrenLong={
                   <Table
@@ -106,8 +93,11 @@ export default function Page({ params }: PageProps) {
                 <>
                   <p className="leading-relaxed w-full">[Table {idx + 1}]</p>
                   <div
-                    className={`transition duration-300
-                    ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                    className={`transition-all duration-300
+                      overflow-hidden
+                      max-w-0
+                      group-hover:max-w-full
+                      `}
                   >
                     <GoIcon />
                   </div>
@@ -125,15 +115,11 @@ export default function Page({ params }: PageProps) {
               <ExpandableBtn
                 key={`${params.id}-${idx}`}
                 refkey={`${params.id}-${idx}`}
-                hoverCondition={ctHoverIdx === idx}
                 onClick={(e) => {
                   e.preventDefault();
                   router.push(
                     `/annotate/fdalabel/${params.id}/clinical_trial_table/${idx + 1}`,
                   );
-                }}
-                onMouseOver={(e) => {
-                  setCtHoverIdx(idx);
                 }}
                 childrenLong={
                   <Table
@@ -149,8 +135,11 @@ export default function Page({ params }: PageProps) {
                 <>
                   <p className="leading-relaxed w-full">[Table {idx + 1}]</p>
                   <div
-                    className={`transition duration-300
-                    ${hoverIdx == idx ? "opacity-1 translate-x-0" : "opacity-0 -translate-x-1/2"}`}
+                    className={`transition-all duration-300
+                      overflow-hidden
+                      max-w-0
+                      group-hover:max-w-full
+                      `}
                   >
                     <GoIcon />
                   </div>

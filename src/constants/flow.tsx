@@ -4,7 +4,7 @@ const sizeFlowHandle = "15px";
 
 const flowProOptions = { hideAttribution: true };
 
-const flowNodeOrigin = [0.5, 0];
+const flowNodeOrigin: [number, number] = [0.5, 0];
 
 const defaultFlowEdgeStyle = {
   type: "directionEdge",

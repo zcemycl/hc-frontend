@@ -1,3 +1,12 @@
+import {
+  BOOKMARK_ICON_URI,
+  CAPSULE_ICON_URI,
+  COLLECTION_FILL_ICON_URI,
+  FLAG_FILL_ICON_URI,
+  FUNNEL_FILL_ICON_URI,
+  INFO_CIRCLE_FILL_ICON_URI,
+  SLIDERS_ICON_URI,
+} from "@/icons/bootstrap";
 import { graph_node_bg_color_enum } from "./color";
 
 export enum GraphDirectionEnum {
@@ -16,21 +25,16 @@ export enum GraphTabEnum {
   initialisation = "init",
   information = "info",
   settings = "settings",
+  filters = "filters",
+  bundle = "bundle",
 }
 
 export const ToolBarTabCouples = [
-  [
-    GraphTabEnum.information,
-    "https://icons.getbootstrap.com/assets/icons/info-circle-fill.svg",
-  ],
-  [
-    GraphTabEnum.initialisation,
-    "https://icons.getbootstrap.com/assets/icons/flag.svg",
-  ],
-  [
-    GraphTabEnum.settings,
-    "https://icons.getbootstrap.com/assets/icons/sliders.svg",
-  ],
+  [GraphTabEnum.information, INFO_CIRCLE_FILL_ICON_URI],
+  [GraphTabEnum.initialisation, FLAG_FILL_ICON_URI],
+  [GraphTabEnum.settings, SLIDERS_ICON_URI],
+  [GraphTabEnum.filters, FUNNEL_FILL_ICON_URI],
+  [GraphTabEnum.bundle, COLLECTION_FILL_ICON_URI],
 ];
 
 export const therapeutic_area_group_graph_style = {
@@ -39,8 +43,7 @@ export const therapeutic_area_group_graph_style = {
     color: "white",
   },
   shape: "image",
-  image:
-    "https://icons.getbootstrap.com/assets/icons/journal-bookmark-fill.svg",
+  image: BOOKMARK_ICON_URI,
   mass: 8,
   level: 3,
   imagePadding: {
@@ -65,10 +68,17 @@ export const drug_product_group_graph_style = {
   font: {
     color: "white",
   },
-  color: graph_node_bg_color_enum.p,
+  color: {
+    border: graph_node_bg_color_enum.p,
+    background: graph_node_bg_color_enum.p,
+    highlight: {
+      border: "lightgreen",
+      Background: graph_node_bg_color_enum.p,
+    },
+  },
   level: 10,
   shape: "circularImage",
-  image: "https://icons.getbootstrap.com/assets/icons/capsule.svg",
+  image: CAPSULE_ICON_URI,
   imagePadding: {
     top: 1,
     right: 1,

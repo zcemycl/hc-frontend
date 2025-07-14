@@ -1,6 +1,7 @@
 "use client";
 import { useContext } from "react";
 import { SelectedWordsContext } from "@/contexts";
+import { X_CIRCLE_ICON_URI } from "@/icons/bootstrap";
 
 const PhraseBubble = ({
   word,
@@ -48,7 +49,7 @@ const PhraseBubble = ({
           setSelectedWords([...copyWords]);
         }}
       >
-        <img src="https://icons.getbootstrap.com/assets/icons/x-circle.svg" />
+        <img src={X_CIRCLE_ICON_URI} />
       </button>
     </div>
   );

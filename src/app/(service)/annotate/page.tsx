@@ -1,5 +1,5 @@
 "use client";
-import { TypographyH2, ProtectedRoute } from "@/components";
+import { TypographyH2, ProtectedRoute, BackBtn } from "@/components";
 import { AnnotatePageNameLinkPairs } from "@/constants";
 import { useRouter } from "next/navigation";
 
@@ -7,13 +7,25 @@ export default function Annotate() {
   const router = useRouter();
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
+      <section
+        className="text-gray-400 bg-gray-900 body-font
+        h-[81vh] sm:h-[89vh]"
+      >
         <div
           className="container px-2 py-24 mx-auto grid justify-items-center
     "
         >
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10 space-y-2">
-            <TypographyH2>Annotation</TypographyH2>
+          <div
+            className="
+            sm:w-11/12 md:w-7/12 w-full
+            p-1 sm:p-10
+            flex flex-col mt-8 space-y-2"
+          >
+            <div className="flex flex-row justify-between">
+              <TypographyH2>Annotation</TypographyH2>
+              <BackBtn />
+            </div>
+
             <p className="leading-relaxed mb-5">
               Our aim is to build robust and reliable AI models to digest drug
               data. We would need domain knowledge from world class expertise to

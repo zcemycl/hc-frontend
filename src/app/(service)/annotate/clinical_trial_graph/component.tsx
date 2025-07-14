@@ -1,4 +1,4 @@
-import { TypographyH2 } from "@/components";
+import { TypographyH2, BackBtn } from "@/components";
 import { useRouter } from "next/navigation";
 import {
   addEdge,
@@ -25,6 +25,7 @@ import "@xyflow/react/dist/style.css";
 import TextNode from "./textNode";
 import { NodeEdgeGraphContext } from "./context";
 import CustomEdge from "./directionEdge";
+import { PLUS_ICON_URI } from "@/icons/bootstrap";
 
 let id = 0;
 const getId = () => `${id++}`;
@@ -77,7 +78,7 @@ export default function Component() {
             y: clientY,
           }),
           data: { label: `Node ${id}` },
-          origin: [0.5, 0.0],
+          origin: flowNodeOrigin,
           type: "textNode",
         } as Node;
 
@@ -108,7 +109,7 @@ export default function Component() {
         setNodes,
       }}
     >
-      <section className="text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]">
+      <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
         <div className="px-2 py-24 flex flex-col justify-center items-center align-center">
           <div
             className="sm:w-10/12 flex flex-col mt-8 
@@ -118,18 +119,7 @@ export default function Component() {
               <div className="flex justify-between items-center space-x-1">
                 <TypographyH2>Clinical Trials Graph Annotations</TypographyH2>
               </div>
-              <button
-                onClick={() => {
-                  router.back();
-                }}
-                className="bg-purple-700 rounded p-2 
-                text-white hover:bg-purple-800"
-              >
-                <img
-                  src="https://icons.getbootstrap.com/assets/icons/arrow-return-left.svg"
-                  alt="back"
-                />
-              </button>
+              <BackBtn />
             </div>
             <div
               className="h-[60vh] relative 
@@ -156,16 +146,13 @@ export default function Component() {
                       // type: 'output',
                       type: "textNode",
                       data: { label: `Node ${id}` },
-                      origin: [0.5, 0.0] as [number, number],
+                      origin: flowNodeOrigin,
                     };
 
                     setNodes((nds) => nds.concat(newNode as any));
                   }}
                 >
-                  <img
-                    src="https://icons.getbootstrap.com/assets/icons/plus.svg"
-                    alt="addnode"
-                  />
+                  <img src={PLUS_ICON_URI} alt="addnode" />
                 </button>
               </div>
               <ReactFlow

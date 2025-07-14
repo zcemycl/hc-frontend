@@ -12,8 +12,14 @@ export default function VisPanel() {
   const { credentials, setIsAuthenticated } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
-  const { setNodes, setEdges, flagAttrs, visJsRef, neo4jHealthMsg } =
-    useContext(DiscoveryContext);
+  const {
+    setNodes,
+    setEdges,
+    flagAttrs,
+    visJsRef,
+    neo4jHealthMsg,
+    visToolBarRef,
+  } = useContext(DiscoveryContext);
   const [path, setPath] = useState<string[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
   const { setUpNetwork } = useDiscoveryGraph({ setPath });
@@ -67,13 +73,14 @@ export default function VisPanel() {
   }, [neo4jHealthMsg]);
 
   return (
-    <div id="vis-panel" className="relative rounded-lg">
+    <div id="vis-panel" className="relative rounded-lg h-[78vh]">
       {isLoading && (
         <div
           className="absolute h-[78vh]
           z-20
           flex flex-col justify-center align-middle content-center
-          top-1/2 left-1/2 transform -translate-x-1/2"
+          top-1/2 -translate-y-1/2
+          left-1/2 transform -translate-x-1/2"
         >
           <Spinner />
           <span className="sr-only">Loading...</span>
@@ -90,6 +97,7 @@ export default function VisPanel() {
                 left-0 right-0 top-0 bottom-0"
       />
       <div
+        ref={visToolBarRef}
         id="vis-toolbar"
         className="absolute right-0 top-0
           pointer-events-none

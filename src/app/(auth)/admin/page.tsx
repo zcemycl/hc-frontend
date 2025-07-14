@@ -16,6 +16,7 @@ import {
   DropDownList,
   TypographyH2,
   ProtectedRoute,
+  BackBtn,
 } from "@/components";
 import { convert_datetime_to_date } from "@/utils";
 import { create_user, delete_user } from "@/http/internal";
@@ -26,6 +27,7 @@ import {
 } from "@/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { PLUS_ICON_URI, X_ICON_URI } from "@/icons/bootstrap";
 
 export default function Admin() {
   const id = useId();
@@ -75,13 +77,16 @@ export default function Admin() {
   return (
     <ProtectedRoute>
       <section
-        className={`text-gray-400 bg-gray-900 body-font h-[83vh] 
-          sm:h-[90vh] overflow-y-scroll
+        className={`text-gray-400 bg-gray-900 body-font h-[81vh] 
+          sm:h-[89vh] overflow-y-scroll
           ${isLoading || isLoadingAuth ? "animate-pulse" : ""}
           `}
         ref={refUserGroup}
       >
-        <div className="container px-2 py-24 mx-auto grid justify-items-center">
+        <div
+          className="flex flex-col mt-[7rem] 
+          content-center items-center space-y-3"
+        >
           <Modal
             title={`Confirm Delete User -- ${displayData[delUserIndex]?.email} ?`}
             isOpenModal={isOpenDelUserModal}
@@ -93,7 +98,8 @@ export default function Admin() {
               px-10 py-5
               rounded-lg bg-red-700 hover:bg-red-900 
               text-white"
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
                   await delete_user(
                     displayData[delUserIndex].username,
                     displayData[delUserIndex].email,
@@ -114,7 +120,11 @@ export default function Admin() {
             isOpenModal={isOpenAddUserModal}
             setIsOpenModal={setIsOpenAddUserModal}
           >
-            <div className="flex flex-col space-y-2 px-10 py-5">
+            <div
+              className="flex flex-col space-y-2 
+              px-2 sm:px-10 
+              py-2 sm:py-5"
+            >
               <div>
                 <label htmlFor="">Username</label>
                 <input
@@ -213,18 +223,30 @@ export default function Admin() {
               </div>
             </div>
           </Modal>
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
-            <div className="flex justify-between">
-              <TypographyH2>Admin Panel</TypographyH2>
+          <div
+            className="flex flex-col
+            sm:w-7/12 w-11/12"
+          >
+            <div className="flex justify-between align-middle">
+              <div className="flex flex-row justify-start space-x-2">
+                <TypographyH2>Admin Panel</TypographyH2>
+                <BackBtn />
+              </div>
+
               <button
-                className="w-[1rem] h-1/2 p-1 leading-[0px] m-0
-            bg-green-300 rounded-full text-black hover:bg-green-500"
-                onClick={async () => {
+                className="leading-[0px] m-0
+                text-black"
+                onClick={async (e) => {
+                  e.preventDefault();
                   console.log("adding user");
                   setIsOpenAddUserModal(true);
                 }}
               >
-                +
+                <img
+                  src={PLUS_ICON_URI}
+                  className="w-5 h-5 rounded-full 
+                  hover:bg-green-500 bg-green-300"
+                />
               </button>
             </div>
           </div>
@@ -233,11 +255,17 @@ export default function Admin() {
               {displayData.map((each, idx) => {
                 return (
                   <div
-                    className="sm:w-1/2 flex flex-col w-screen px-10 py-1 space-y-2"
+                    className="flex flex-col 
+                    w-11/12 sm:w-7/12
+                    py-1 space-y-2"
                     key={`${id}-user-profile-${each.id}`}
                   >
                     <div className="flex justify-between">
-                      <div className="flex justify-between space-x-1">
+                      <div
+                        className="flex justify-between
+                        sm:flex-row sm:space-x-1 sm:space-y-0
+                        flex-col space-x-0 space-y-1"
+                      >
                         <p className="leading-relaxed flex justify-between space-x-1">
                           <span className="bg-blue-400 rounded-sm text-black px-1">
                             {each.username}
@@ -263,15 +291,22 @@ export default function Admin() {
 
                       {!EXCLUDE_EMAIL_DELETE.includes(each.email) && (
                         <button
-                          className="w-[1rem] h-[1rem] p-0 leading-[0px] m-0
-                        bg-red-600 rounded-full text-white hover:bg-red-700"
+                          className="leading-[0px]
+                         rounded-full text-white "
                           onClick={async () => {
                             console.log("deleting user");
                             setIsOpenDelUserModal(true);
                             setDelUserIndex(idx);
                           }}
                         >
-                          x
+                          <img
+                            src={X_ICON_URI}
+                            className="
+                            w-5 h-5
+                            bg-red-600 hover:bg-red-700
+                            rounded-full
+                            "
+                          />
                         </button>
                       )}
                     </div>

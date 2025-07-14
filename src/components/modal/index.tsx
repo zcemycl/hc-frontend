@@ -20,12 +20,28 @@ const Modal: FC<ModalProps> = ({
       tabIndex={-1}
       aria-hidden="true"
       className={`fixed place-items-center transition-all
+            inset-0
             z-10 justify-center items-center w-full md:inset-0 h-full 
             ${isOpenModal ? "scale-100" : "scale-0"}`}
     >
-      <div className="relative p-4 w-full h-full">
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 translate-x-1/2 -translate-y-1/2 top-1/2">
-          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+      <div
+        className="relative 
+        p-2 sm:p-4 
+        w-full h-full"
+      >
+        <div
+          className="relative bg-white rounded-lg shadow 
+          dark:bg-gray-700 
+          w-full sm:w-1/2 
+          translate-x-0 sm:translate-x-1/2 
+          -translate-y-3/4 sm:-translate-y-1/2 
+          top-1/2"
+        >
+          <div
+            className="flex items-center justify-between 
+            p-1 md:p-5 
+            order-b rounded-t dark:border-gray-600"
+          >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               {title}
             </h3>

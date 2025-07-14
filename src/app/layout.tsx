@@ -28,15 +28,17 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
           crossOrigin="anonymous"
         ></link>
       </head>
-      <body className="overflow-x-hidden overflow-y-auto">
+      <body className="overflow-x-hidden overflow-y-hidden">
         <ThemeProvider attribute="class">
           <LoaderProvider>
             <OpenBarProvider>
               <AuthProvider>
                 <SideBar>
-                  <NavBar />
-                  {children}
-                  <Footer />
+                  <div className="h-[100vh] overflow-y-auto">
+                    <NavBar />
+                    {children}
+                    <Footer />
+                  </div>
                 </SideBar>
               </AuthProvider>
             </OpenBarProvider>

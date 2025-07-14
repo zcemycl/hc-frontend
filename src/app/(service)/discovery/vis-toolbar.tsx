@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { DiscoveryContext } from "@/contexts";
 import InfoTab from "./info-tab";
 import FlagTab from "./flag-tab";
 import TabBar from "./tab-bar";
 import SettingsTab from "./settings-tab";
+import FilterTab from "./filter-tab";
+import { BundleTab } from "./tabs";
+import { TOOL_ICON_URI } from "@/icons/bootstrap";
 
 export default function VisToolbar() {
   const { openToolBar, setOpenToolBar } = useContext(DiscoveryContext);
+
   return (
     <>
       <button
@@ -24,10 +28,7 @@ export default function VisToolbar() {
           setOpenToolBar(!openToolBar);
         }}
       >
-        <img
-          src="https://icons.getbootstrap.com/assets/icons/tools.svg"
-          alt="Toolbar"
-        />
+        <img src={TOOL_ICON_URI} alt="Toolbar" />
       </button>
       <div
         className={`origin-top-right transition
@@ -52,6 +53,8 @@ export default function VisToolbar() {
           <InfoTab />
           <FlagTab />
           <SettingsTab />
+          <FilterTab />
+          <BundleTab />
         </div>
 
         <TabBar />

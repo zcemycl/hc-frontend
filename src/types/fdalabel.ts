@@ -27,31 +27,33 @@ export interface IBaseTitleContent {
 
 export interface IAdverseEffectTable extends IBaseTableNoHead {
   id: number;
-  s3_bucket?: string;
-  s3_key?: string;
 }
 
 export interface IClinicalTrial extends IBaseTitleContent {}
 
 export interface IClinicalTrialTable extends IBaseTableNoHead {
   id: number;
-  s3_bucket?: string;
-  s3_key?: string;
 }
 
 export interface IDrugInteraction extends IBaseTitleContent {}
 
-export interface IFdaLabel {
+export interface ITherapeuticArea {
+  name: string;
+  path: string;
+}
+
+export interface IFdaLabelRef {
   id?: number;
   setid?: string;
   tradename: string;
+}
+
+export interface IFdaLabel extends IFdaLabelRef {
   distance?: number;
   indication?: string;
   manufacturer?: string;
   pdf_link?: string;
   xml_link?: string;
-  s3_bucket?: string;
-  s3_key?: string;
   initial_us_approval_year?: number;
   spl_effective_date: string;
   spl_earliest_date: string;
@@ -59,6 +61,7 @@ export interface IFdaLabel {
   clinical_trials?: IClinicalTrial[];
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
+  therapeutic_areas?: ITherapeuticArea[];
   ae_tables_count?: number;
   ct_tables_count?: number;
 }
@@ -71,11 +74,6 @@ export interface IFdaLabelHistory {
 }
 
 export interface ICompareAETable extends IBaseTable {}
-
-export interface ITherapeuticArea {
-  name: string;
-  path: string;
-}
 
 export interface IUnAnnotatedAETable {
   idx: number;

@@ -5,7 +5,13 @@ import { JupyterIcon, ChatbotIcon, AnnotateIcon, DiscoveryIcon } from "@/icons";
 import { redirect, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { UserRoleEnum } from "@/types/users";
-import { Modal, Spinner, TypographyH2, ProtectedRoute } from "@/components";
+import {
+  Modal,
+  Spinner,
+  TypographyH2,
+  ProtectedRoute,
+  BackBtn,
+} from "@/components";
 import { useStopLoadingEarly } from "@/hooks";
 
 export default function AI() {
@@ -20,7 +26,8 @@ export default function AI() {
   return (
     <ProtectedRoute>
       <section
-        className={`text-gray-400 bg-gray-900 body-font h-[83vh] sm:h-[90vh]
+        className={`text-gray-400 bg-gray-900 body-font 
+          h-[81vh] sm:h-[89vh]
         ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
@@ -49,8 +56,18 @@ export default function AI() {
               </a>
             </div>
           </Modal>
-          <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10 space-y-2">
-            <TypographyH2>AI Tools</TypographyH2>
+          <div
+            className="
+            sm:w-11/12 md:w-7/12 w-full
+            flex flex-col mt-8
+            p-1 sm:p-10 
+            space-y-2"
+          >
+            <div className="flex flex-row justify-between">
+              <TypographyH2>AI Tools</TypographyH2>
+              <BackBtn />
+            </div>
+
             <p className="leading-relaxed mb-5">
               Tools to explore, align and train our AI models.
             </p>

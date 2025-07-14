@@ -1,5 +1,6 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
+import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
 import { useContext, useState } from "react";
 
 export default function FlagTab() {
@@ -70,11 +71,7 @@ export default function FlagTab() {
             console.log(`${limit} ${skip} ${tmpName}`);
           }}
         >
-          <img
-            src="https://icons.getbootstrap.com/assets/icons/play-fill.svg"
-            className="w-full"
-            alt="submit"
-          />
+          <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />
         </button>
       </div>
     </div>

@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef, useMemo, Fragment } from "react";
 import { AEVersionContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import { fetchHistoryById } from "@/http/backend";
 import {
   PaginationBar,
   TypographyH2,
@@ -13,13 +12,7 @@ import {
   Spinner,
   ProtectedRoute,
 } from "@/components";
-import {
-  IFdaLabel,
-  ICompareAETable,
-  SearchActionEnum,
-  UserHistoryCategoryEnum,
-  IHistory,
-} from "@/types";
+import { IFdaLabel, ICompareAETable } from "@/types";
 import {
   SortByEnum,
   SearchQueryTypeEnum,
@@ -30,11 +23,11 @@ import {
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
 import { FdalabelFetchService } from "@/services";
+import { useHistoryToSearch } from "@/hooks";
+import { useBundleToSearch } from "@/hooks/useBundleToSearch";
 
 export default function Search() {
   const searchParams = useSearchParams();
-  const historyId = searchParams.get("historyId");
-
   const router = useRouter();
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
@@ -68,6 +61,8 @@ export default function Search() {
       ),
     [],
   );
+  useHistoryToSearch({ setQueryType, setQuery });
+  useBundleToSearch({ setQueryType, setQuery });
 
   async function search_query_by_type(
     query: string[],
@@ -99,6 +94,10 @@ export default function Search() {
     setDisplayData(resp);
     return resp;
   }
+
+  useEffect(() => {
+    console.log(displayData);
+  }, [displayData]);
 
   // refresh drug list when page is changed
   useEffect(() => {
@@ -140,27 +139,6 @@ export default function Search() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aeVersion]);
 
-  // from profile history
-  useEffect(() => {
-    console.log("profile history useEffect");
-    if (historyId === null) return;
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push("/logout");
-    }
-    if (historyId !== null) {
-      fetchHistoryById(parseInt(historyId)).then(async (history) => {
-        if (history.category === UserHistoryCategoryEnum.SEARCH) {
-          if (history.detail.action === SearchActionEnum.SEARCH) {
-            setQueryType(history.detail.additional_settings.queryType);
-            setQuery(history.detail.query);
-          }
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyId]);
-
   return (
     <ProtectedRoute>
       <AEVersionContext.Provider
@@ -168,7 +146,7 @@ export default function Search() {
       >
         <section
           className={`text-gray-400 bg-gray-900 body-font 
-          h-[83vh] sm:h-[90vh] overflow-y-scroll
+          h-[81vh] sm:h-[89vh] overflow-y-auto
           overflow-x-hidden
           ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
           ref={refSearchResGroup}
@@ -396,6 +374,7 @@ export default function Search() {
                           each.initial_us_approval_year!,
                         distance: each.distance!,
                         indication: each.indication!,
+                        therapeutic_areas: each.therapeutic_areas!,
                         ae_tables_count: each.ae_tables_count!,
                         ct_tables_count: each.ct_tables_count!,
                         selectMultipleCallback: (e) => {

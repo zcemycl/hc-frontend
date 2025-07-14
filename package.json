@@ -62,6 +62,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-highlight-words": "^0.20.0",
+    "@types/uuid": "^10.0.0",
     "cypress": "^13.7.1",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.1.4",

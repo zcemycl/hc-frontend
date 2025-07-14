@@ -13,6 +13,7 @@ import {
 } from "@/components";
 import { handleFetchApiRoot } from "@/services";
 import { useDbsHealth, useDummyCreds } from "@/hooks";
+import { DB_CHECK_ICON_URI, DB_X_ICON_URI } from "@/icons/bootstrap";
 
 export default function Home() {
   const router = useRouter();
@@ -47,10 +48,17 @@ export default function Home() {
   }, [credentials, pgHealthMsg]);
 
   return (
-    <>
+    <div>
       <section className="text-gray-400 bg-gray-900 body-font">
-        <div className="container px-5 py-24 mx-auto md:flex md:flex-between">
-          <div className="flex flex-wrap -mx-4 mt-auto mb-auto lg:w-1/2 sm:w-2/3 content-start sm:pr-10">
+        <div
+          className="container px-5 py-24 mx-auto md:flex md:flex-between
+          overflow-x-hidden"
+        >
+          <div
+            className="flex flex-wrap -mx-4 
+            mt-auto mb-auto lg:w-1/2 sm:w-2/3 
+            content-start sm:pr-10"
+          >
             <div className="w-full sm:p-4 px-4 mb-6 space-y-1">
               <h1 className="title-font font-medium text-xl mb-2 text-white">
                 Hello{" "}
@@ -76,17 +84,11 @@ export default function Home() {
               <div>
                 {isPGHealthy ? (
                   <div className="bg-emerald-400 text-black font-bold w-fit p-2 rounded-xl">
-                    <img
-                      src="https://icons.getbootstrap.com/assets/icons/database-check.svg"
-                      alt="connected"
-                    />
+                    <img src={DB_CHECK_ICON_URI} alt="connected" />
                   </div>
                 ) : (
                   <div className="bg-red-400 text-black font-bold w-fit p-2 rounded-xl animate-pulse">
-                    <img
-                      src="https://icons.getbootstrap.com/assets/icons/database-x.svg"
-                      alt="connecting"
-                    />
+                    <img src={DB_X_ICON_URI} alt="connecting" />
                   </div>
                 )}
               </div>
@@ -121,6 +123,6 @@ export default function Home() {
           <RequestDemoForm />
         </div>
       </section>
-    </>
+    </div>
   );
 }
