@@ -27,16 +27,12 @@ export interface IBaseTitleContent {
 
 export interface IAdverseEffectTable extends IBaseTableNoHead {
   id: number;
-  s3_bucket?: string;
-  s3_key?: string;
 }
 
 export interface IClinicalTrial extends IBaseTitleContent {}
 
 export interface IClinicalTrialTable extends IBaseTableNoHead {
   id: number;
-  s3_bucket?: string;
-  s3_key?: string;
 }
 
 export interface IDrugInteraction extends IBaseTitleContent {}
@@ -58,8 +54,6 @@ export interface IFdaLabel extends IFdaLabelRef {
   manufacturer?: string;
   pdf_link?: string;
   xml_link?: string;
-  s3_bucket?: string;
-  s3_key?: string;
   initial_us_approval_year?: number;
   spl_effective_date: string;
   spl_earliest_date: string;
