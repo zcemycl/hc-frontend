@@ -12,13 +12,14 @@ import {
   Spinner,
   ProtectedRoute,
 } from "@/components";
-import { IFdaLabel, ICompareAETable } from "@/types";
+import { IFdaLabel, ICompareAETable, IFdaVersions } from "@/types";
 import {
   SortByEnum,
   SearchQueryTypeEnum,
   AETableVerEnum,
   tabletype_compare_caption,
   AETableTypeEnum,
+  DEFAULT_FDALABEL_VERSIONS,
 } from "@/constants";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { SortByDropdown } from "./SortByDropdown";
@@ -71,7 +72,10 @@ export default function Search() {
   ) {
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
-      resp = await fdaservice.handleFdalabelBySetid(query, version);
+      resp = await fdaservice.handleFdalabelBySetid(
+        query,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+      );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
       resp = await fdaservice.handleFdalabelByTradename(query, version);
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {

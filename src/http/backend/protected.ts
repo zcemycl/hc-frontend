@@ -1,14 +1,15 @@
 "use server";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
-import { AETableVerEnum } from "@/constants";
+import { AETableVerEnum, DEFAULT_FDALABEL_VERSIONS } from "@/constants";
+import { IFdaVersions } from "@/types";
 
 export async function fetchFdalabelBySetid(
   setid: string[],
   maxn: number = 30,
   offset: number = 0,
   limit: number | null = 10,
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_id`;
@@ -16,18 +17,21 @@ export async function fetchFdalabelBySetid(
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
-  params.append("version", version);
+  // params.append("version", version);
   if (limit !== null) {
     params.append("limit", limit!.toString());
   }
 
   let API_URI_PAGINATION = `${API_URI}?id=${setids_param}&${params}`;
   const response = await fetch(API_URI_PAGINATION, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      versions: versions,
+    }),
     cache: "force-cache",
   });
   validate_response_ok(response);

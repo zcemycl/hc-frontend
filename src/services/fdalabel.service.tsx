@@ -2,6 +2,7 @@ import {
   SearchActionEnum,
   TBooleanDummySetState,
   UserHistoryCategoryEnum,
+  IFdaVersions,
 } from "@/types";
 import { BaseServiceHandler } from "./utils";
 import {
@@ -13,7 +14,12 @@ import {
   fetchFdalabelByTherapeuticArea,
 } from "@/http/backend";
 import { useRouter } from "next/navigation";
-import { SearchQueryTypeEnum, SortByEnum, AETableVerEnum } from "@/constants";
+import {
+  SearchQueryTypeEnum,
+  SortByEnum,
+  AETableVerEnum,
+  DEFAULT_FDALABEL_VERSIONS,
+} from "@/constants";
 
 export class FdalabelFetchService extends BaseServiceHandler {
   userId: number;
@@ -31,10 +37,17 @@ export class FdalabelFetchService extends BaseServiceHandler {
 
   async handleFdalabelBySetid(
     query: string[],
-    version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
-      const resp = await fetchFdalabelBySetid(query, this.topN, 0, -1, version);
+      const resp = await fetchFdalabelBySetid(
+        query,
+        this.topN,
+        0,
+        -1,
+        versions,
+      );
       await addHistoryByUserId(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
@@ -43,7 +56,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
           query,
           additional_settings: {
             queryType: SearchQueryTypeEnum.SETID,
-            aeVersion: version,
+            versions: versions,
           },
         },
       );
