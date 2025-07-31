@@ -174,7 +174,10 @@ export async function fetchFdalabelHistoryBySetid(
   return res;
 }
 
-export async function fetchFdalabelCompareAdverseEffects(setids: string[]) {
+export async function fetchFdalabelCompareAdverseEffects(
+  setids: string[],
+  versions: IFdaVersions,
+) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/compare/adverse-effects`;
   const response = await fetch(API_URI, {
@@ -184,7 +187,8 @@ export async function fetchFdalabelCompareAdverseEffects(setids: string[]) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      setids: setids,
+      item: { setids: setids },
+      versions: versions,
     }),
   });
   validate_response_ok(response);

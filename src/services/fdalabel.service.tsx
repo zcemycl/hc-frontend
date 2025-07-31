@@ -178,10 +178,14 @@ export class FdalabelFetchService extends BaseServiceHandler {
     setIdsToCompare: Set<string>,
     query: string[],
     queryType: SearchQueryTypeEnum,
+    versions: IFdaVersions,
   ) {
     try {
       const arrSetIdsToCompare = Array.from(setIdsToCompare);
-      const resp = await fetchFdalabelCompareAdverseEffects(arrSetIdsToCompare);
+      const resp = await fetchFdalabelCompareAdverseEffects(
+        arrSetIdsToCompare,
+        versions,
+      );
       await addHistoryByUserId(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
@@ -191,6 +195,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
           additional_settings: {
             query,
             queryType,
+            versions,
           },
         },
       );
