@@ -144,15 +144,21 @@ export async function fetchFdalabelByIndication(
   return res;
 }
 
-export async function fetchFdalabelHistoryBySetid(setid: string) {
+export async function fetchFdalabelHistoryBySetid(
+  setid: string,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
+) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/history`;
   const response = await fetch(`${API_URI}/${setid}`, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      versions: versions,
+    }),
     cache: "force-cache",
   });
   validate_response_ok(response);
