@@ -82,14 +82,15 @@ export async function fetchFdalabelByTherapeuticArea(
   offset: number = 0,
   limit: number = 10,
   sort_by: string = "relevance",
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
   params.append("sort_by", sort_by);
-  params.append("version", version);
+  // params.append("version", version);
   if (limit !== null) {
     params.append("limit", limit!.toString());
   }
@@ -97,11 +98,14 @@ export async function fetchFdalabelByTherapeuticArea(
   const response = await fetch(
     `${API_URI}?ta_description=${ta_description}&${params}`,
     {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({
+        versions: versions,
+      }),
       cache: "force-cache",
     },
   );

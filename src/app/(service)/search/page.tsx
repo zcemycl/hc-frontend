@@ -98,7 +98,7 @@ export default function Search() {
         pageN,
         nPerPage,
         sortBy,
-        version,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
     }
     setDisplayData(resp);
