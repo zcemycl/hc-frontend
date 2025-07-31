@@ -1,10 +1,11 @@
 import { FdaLabel } from "@/components";
-import { SearchSupportContext } from "@/contexts";
+import { SearchSupportContext, FdaVersionsContext } from "@/contexts";
 import { useContext } from "react";
 
 export default function ExpandSearchResultItem() {
   const { displayData, displayDataIndex, setDisplayDataIndex } =
     useContext(SearchSupportContext);
+  const { versions } = useContext(FdaVersionsContext);
   return (
     <>
       {displayData.length > 0 && displayDataIndex != null && (
@@ -13,6 +14,7 @@ export default function ExpandSearchResultItem() {
             each={displayData[displayDataIndex]}
             displayDataIndex={displayDataIndex}
             back_btn_callback={(s) => setDisplayDataIndex(s)}
+            versions={versions}
           />
         </div>
       )}
