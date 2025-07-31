@@ -80,7 +80,10 @@ export default function Search() {
         DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
-      resp = await fdaservice.handleFdalabelByTradename(query, version);
+      resp = await fdaservice.handleFdalabelByTradename(
+        query,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+      );
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
       resp = await fdaservice.handleFdalabelByIndication(
         query,

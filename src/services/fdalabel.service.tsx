@@ -68,7 +68,8 @@ export class FdalabelFetchService extends BaseServiceHandler {
 
   async handleFdalabelByTradename(
     query: string[],
-    version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
+    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   ) {
     try {
       const resp = await fetchFdalabelByTradename(
@@ -76,7 +77,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         this.topN,
         0,
         -1,
-        version,
+        versions,
       );
       await addHistoryByUserId(
         this.userId as number,
@@ -86,7 +87,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
           query,
           additional_settings: {
             queryType: SearchQueryTypeEnum.TRADENAME,
-            aeVersion: version,
+            versions: versions,
           },
         },
       );
