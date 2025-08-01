@@ -99,15 +99,19 @@ export async function fetchAETableByIds(
 export async function fetchAETableBySetid(
   setid: string,
   tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${setid}/${tablename}`;
   const response = await fetch(API_URI, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      versions: versions,
+    }),
     // cache: "force-cache",
   });
   validate_response_ok(response);
