@@ -29,13 +29,11 @@ export async function fetchFdalabelBySetid(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      versions: versions,
-    }),
-    cache: "force-cache",
+    body: JSON.stringify(versions),
   });
   validate_response_ok(response);
   const res = await response.json();
+  console.log(res);
   return res;
 }
 
@@ -65,9 +63,7 @@ export async function fetchFdalabelByTradename(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      versions: versions,
-    }),
+    body: JSON.stringify(versions),
     cache: "force-cache",
   });
   validate_response_ok(response);
@@ -101,9 +97,7 @@ export async function fetchFdalabelByTherapeuticArea(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        versions: versions,
-      }),
+      body: JSON.stringify(versions),
       cache: "force-cache",
     },
   );
@@ -138,9 +132,7 @@ export async function fetchFdalabelByIndication(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        versions: versions,
-      }),
+      body: JSON.stringify(versions),
       cache: "force-cache",
     },
   );
@@ -161,9 +153,7 @@ export async function fetchFdalabelHistoryBySetid(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      versions: versions,
-    }),
+    body: JSON.stringify(versions),
     cache: "force-cache",
   });
   validate_response_ok(response);

@@ -75,6 +75,7 @@ export interface IFdaLabel extends IFdaLabelRef {
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
   therapeutic_areas?: ITherapeuticArea[];
+  version?: string;
   ae_tables_count?: number;
   ct_tables_count?: number;
 }

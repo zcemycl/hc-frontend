@@ -1,6 +1,6 @@
 import { SearchBar, TypographyH2 } from "@/components";
 import { DEFAULT_FDALABEL_VERSIONS, SearchQueryTypeEnum } from "@/constants";
-import { SearchSupportContext, useAuth } from "@/contexts";
+import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
 import { useContext, useMemo } from "react";
 import { SortByDropdown } from "./SortByDropdown";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 export default function ComplexSearchBar() {
   const router = useRouter();
   const { setIsAuthenticated, credentials, userId } = useAuth();
+  const { versions } = useContext(FdaVersionsContext);
   const {
     query,
     setQuery,
@@ -29,6 +30,7 @@ export default function ComplexSearchBar() {
     setSetIdsToCompare,
     setCompareTable,
     setIdsToCompare,
+    search_query_by_type,
   } = useContext(SearchSupportContext);
 
   const fdaservice = useMemo(
@@ -41,42 +43,6 @@ export default function ComplexSearchBar() {
       ),
     [],
   );
-
-  async function search_query_by_type(
-    query: string[],
-    queryType: SearchQueryTypeEnum,
-  ) {
-    let resp;
-    if (queryType === SearchQueryTypeEnum.SETID) {
-      resp = await fdaservice.handleFdalabelBySetid(
-        query,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
-      );
-    } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
-      resp = await fdaservice.handleFdalabelByTradename(
-        query,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
-      );
-    } else if (queryType === SearchQueryTypeEnum.INDICATION) {
-      resp = await fdaservice.handleFdalabelByIndication(
-        query,
-        pageN,
-        nPerPage,
-        sortBy,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
-      );
-    } else if (queryType === SearchQueryTypeEnum.TA) {
-      resp = await fdaservice.handleFdalabelByTherapeuticArea(
-        query,
-        pageN,
-        nPerPage,
-        sortBy,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
-      );
-    }
-    setDisplayData(resp);
-    return resp;
-  }
 
   return (
     <div
@@ -155,7 +121,15 @@ export default function ComplexSearchBar() {
               setIsAuthenticated(false);
               router.push("/logout");
             }
-            const resp = await search_query_by_type(query, queryType);
+            const resp = await search_query_by_type(
+              fdaservice,
+              query,
+              queryType,
+              pageN,
+              nPerPage,
+              sortBy,
+              versions,
+            );
             console.log(resp);
             setIsLoading(false);
           }}

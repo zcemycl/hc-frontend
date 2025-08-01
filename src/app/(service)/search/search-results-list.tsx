@@ -1,10 +1,13 @@
 import { FdaLabelShort, PaginationBar } from "@/components";
 import { SearchQueryTypeEnum } from "@/constants";
-import { SearchSupportContext } from "@/contexts";
+import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
 import { IFdaLabel } from "@/types";
-import { useContext } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
 
 export default function SearchResultsList() {
+  const router = useRouter();
+  const { setIsAuthenticated, credentials } = useAuth();
   const {
     displayData,
     displayDataIndex,
@@ -16,7 +19,45 @@ export default function SearchResultsList() {
     topN,
     setPageN,
     setIdsToCompare,
+    setCompareTable,
+    search_query_by_type,
+    fdaservice,
+    query,
+    sortBy,
+    refSearchResGroup,
   } = useContext(SearchSupportContext);
+  const { versions } = useContext(FdaVersionsContext);
+
+  useEffect(() => {
+    async function pageCallback(pageN: number) {
+      setDisplayDataIndex(null);
+      setCompareTable({ table: [] });
+      console.log("ae table useeffect");
+      if (credentials.length === 0) {
+        setIsAuthenticated(false);
+        router.push("/logout");
+      }
+      const resp = await search_query_by_type(
+        fdaservice,
+        query,
+        queryType,
+        pageN,
+        nPerPage,
+        sortBy,
+        versions,
+      );
+      console.log(resp);
+    }
+    if (query[0] !== "") {
+      pageCallback(pageN);
+      (refSearchResGroup.current as any).scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageN]);
+
   return (
     <>
       {displayData.length > 0 && displayDataIndex === null && (
