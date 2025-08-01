@@ -15,7 +15,6 @@ export async function fetchUnannotatedAETableByUserId(
   limit: number = 10,
   reverse: boolean = false,
   complete: boolean = false,
-  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
@@ -47,7 +46,6 @@ export async function fetchUnannotatedAETableByUserIdCount(
   tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
   reverse: boolean = false,
   complete: boolean = false,
-  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
@@ -142,7 +140,6 @@ export async function fetchAnnotatedTableMapByNameIds(
   id: number,
   name: string,
   is_ai: boolean = false,
-  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();

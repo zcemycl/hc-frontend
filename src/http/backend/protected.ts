@@ -1,7 +1,7 @@
 "use server";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
-import { AETableVerEnum, DEFAULT_FDALABEL_VERSIONS } from "@/constants";
+import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { IFdaVersions } from "@/types";
 
 export async function fetchFdalabelBySetid(
@@ -44,7 +44,6 @@ export async function fetchFdalabelByTradename(
   maxn: number = 30,
   offset: number = 0,
   limit: number | null = 10,
-  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
@@ -82,7 +81,6 @@ export async function fetchFdalabelByTherapeuticArea(
   offset: number = 0,
   limit: number = 10,
   sort_by: string = "relevance",
-  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
@@ -120,7 +118,6 @@ export async function fetchFdalabelByIndication(
   offset: number = 0,
   limit: number = 10,
   sort_by: string = "relevance",
-  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
