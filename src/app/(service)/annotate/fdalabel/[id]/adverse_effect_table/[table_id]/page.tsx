@@ -11,6 +11,7 @@ import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
   IBaseTable,
+  IFdaVersions,
 } from "@/types";
 import {
   Table,
@@ -22,7 +23,11 @@ import {
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "./questions";
-import { AETableVerEnum, aeTableVersionMap } from "@/constants";
+import {
+  AETableVerEnum,
+  aeTableVersionMap,
+  DEFAULT_FDALABEL_VERSIONS,
+} from "@/constants";
 import { useTickableTableCell } from "@/hooks";
 
 interface PageProps {
@@ -80,14 +85,14 @@ export default function Page({ params }: Readonly<PageProps>) {
         params.table_id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         params.id,
-        version as AETableVerEnum,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         false,
-        version as AETableVerEnum,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
       if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
     }

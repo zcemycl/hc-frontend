@@ -19,7 +19,7 @@ export async function fetchUnannotatedAETableByUserId(
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables/${tablename}`;
+  const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables/${tablename}`;
   const params = new URLSearchParams();
   params.append("offset", offset.toString());
   params.append("limit", limit.toString());
@@ -51,7 +51,7 @@ export async function fetchUnannotatedAETableByUserIdCount(
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables_count/${tablename}`;
+  const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables_count/${tablename}`;
   const params = new URLSearchParams();
   params.append("reverse", reverse.toString());
   params.append("complete", complete.toString());
@@ -76,18 +76,19 @@ export async function fetchAETableByIds(
   id: number,
   tablename: AnnotationCategoryEnum,
   setid: string,
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
-  const params = new URLSearchParams();
-  params.append("version", version);
-  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/${tablename}/${id}?${params}`;
+  const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${setid}/${tablename}/${id}`;
   const response = await fetch(API_URI, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      versions: versions,
+    }),
     // cache: "force-cache",
   });
   validate_response_ok(response);
@@ -100,7 +101,7 @@ export async function fetchAETableBySetid(
   tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${setid}/${tablename}`;
+  const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${setid}/${tablename}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
@@ -120,7 +121,7 @@ export async function addAnnotationByNameId(
   annotation: { [key: string]: any },
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/fdalabel/${name}/${id}`;
+  const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${name}/${id}`;
   const response = await fetch(API_URI, {
     method: "POST",
     headers: {
@@ -137,20 +138,23 @@ export async function fetchAnnotatedTableMapByNameIds(
   id: number,
   name: string,
   is_ai: boolean = false,
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const params = new URLSearchParams();
   params.append("is_ai", is_ai.toString());
-  params.append("version", version);
-  const API_URI = `${FASTAPI_URI}/annnotation/annotated/${name}/${id}?${params}`;
+  const API_URI = `${FASTAPI_URI}/annotation/annotated/${name}/${id}?${params}`;
 
   const response = await fetch(API_URI, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      versions: versions,
+    }),
   });
   validate_response_ok(response);
   try {
@@ -166,7 +170,7 @@ export async function fetchAnnotatedCountByUserId(
   tablename: AnnotationCategoryEnum,
 ) {
   const token = get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/annnotation/user/${user_id}/annotated/${tablename}`;
+  const API_URI = `${FASTAPI_URI}/annotation/user/${user_id}/annotated/${tablename}`;
   const response = await fetch(API_URI, {
     method: "GET",
     headers: {
