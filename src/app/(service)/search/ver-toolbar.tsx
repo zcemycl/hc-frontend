@@ -2,15 +2,9 @@ import { VerDropdown } from "@/components";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
 import { RELOAD_ICON_URI } from "@/icons/bootstrap";
+import { formatUnderscoreString } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
-
-function formatUnderscoreString(input: string): string {
-  return input
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
 
 export default function VerToolbar() {
   const router = useRouter();
