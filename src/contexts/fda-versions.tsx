@@ -1,8 +1,13 @@
 "use client";
 
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
+import {
+  fetchFdalabelScrapeVersions,
+  fetchFdalabelSectionVersions,
+} from "@/http/backend";
 import { IFdaVersions } from "@/types";
-import React, { createContext, useMemo, useState } from "react";
+import { keyBy } from "node_modules/cypress/types/lodash";
+import React, { createContext, useMemo, useState, useEffect } from "react";
 
 export const FdaVersionsContext = createContext<any>({});
 
@@ -14,13 +19,52 @@ export const FdaVersionsProvider = ({
   const [versions, setVersions] = useState<IFdaVersions>(
     DEFAULT_FDALABEL_VERSIONS,
   );
+  const [fdaVers, setFdaVers] = useState<string[]>([
+    DEFAULT_FDALABEL_VERSIONS.fdalabel,
+  ]);
+  const [sectionVersions, setSectionVersions] = useState<{
+    [key: string]: any;
+  }>(
+    Object.fromEntries(
+      Object.entries(DEFAULT_FDALABEL_VERSIONS).map(([key, value]) => [
+        `${key}_available_versions`,
+        [value],
+      ]),
+    ),
+  );
+
+  useEffect(() => {
+    async function getData() {
+      const _fdaVers = await fetchFdalabelScrapeVersions();
+      setFdaVers([..._fdaVers]);
+      const _sectionVers = await fetchFdalabelSectionVersions(
+        versions.fdalabel,
+      );
+      setSectionVersions({ ..._sectionVers });
+    }
+    getData();
+  }, []);
+
+  useEffect(() => {
+    async function updateSectionVers() {
+      const _sectionVers = await fetchFdalabelSectionVersions(
+        versions.fdalabel,
+      );
+      setSectionVersions({ ..._sectionVers });
+    }
+    updateSectionVers();
+  }, [versions]);
 
   const FdaVersionsProviderValue = useMemo(() => {
     return {
       versions,
       setVersions,
+      fdaVers,
+      setFdaVers,
+      sectionVersions,
+      setSectionVersions,
     };
-  }, [versions]);
+  }, [versions, fdaVers, sectionVersions]);
 
   return (
     <FdaVersionsContext.Provider value={FdaVersionsProviderValue}>

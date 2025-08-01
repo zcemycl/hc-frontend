@@ -2,15 +2,15 @@ import { Dispatch, SetStateAction } from "react";
 
 export interface IFdaVersions {
   fdalabel: string;
-  indication_usage: string;
-  dosage_administration: string;
-  dosage_form: string;
-  contraindication: string;
-  adverse_effect: string;
-  adverse_effect_table: string;
-  drug_interaction: string;
-  clinical_trial: string;
-  clinical_trial_table: string;
+  indication_usage?: string;
+  dosage_administration?: string;
+  dosage_form?: string;
+  contraindication?: string;
+  adverse_effect?: string;
+  adverse_effect_table?: string;
+  drug_interaction?: string;
+  clinical_trial?: string;
+  clinical_trial_table?: string;
 }
 
 export interface IBaseTable {

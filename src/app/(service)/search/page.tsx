@@ -24,6 +24,7 @@ import ExpandSearchResultItem from "./expand-search-result-item";
 import SearchResultsList from "./search-results-list";
 import ComplexSearchBar from "./complex-search-bar";
 import CompareTables from "./compare-tables";
+import VerToolbar from "./ver-toolbar";
 
 export default function Search() {
   const router = useRouter();
@@ -198,6 +199,7 @@ export default function Search() {
                   </div>
                 )}
                 <ComplexSearchBar />
+                <VerToolbar />
                 <CompareTables />
 
                 <ExpandSearchResultItem />
