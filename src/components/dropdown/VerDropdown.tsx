@@ -21,13 +21,15 @@ const VerDropdown = ({
         verDisplayName: val,
       }));
     } else {
-      console.log(sectionVersions);
-      return sectionVersions[`${verKey}_available_versions`]?.map(
-        (val: string) => ({
-          verType: val,
-          verDisplayName: val,
-        }),
-      );
+      const tmpVersions = sectionVersions[`${verKey}_available_versions`];
+      //   console.log(sectionVersions);
+      if (tmpVersions === null) {
+        return [];
+      }
+      return tmpVersions.map((val: string) => ({
+        verType: val,
+        verDisplayName: val,
+      }));
     }
   }, [fdaVers, sectionVersions]);
   return (

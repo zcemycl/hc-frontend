@@ -6,7 +6,6 @@ import {
   fetchFdalabelSectionVersions,
 } from "@/http/backend";
 import { IFdaVersions } from "@/types";
-import { keyBy } from "node_modules/cypress/types/lodash";
 import React, { createContext, useMemo, useState, useEffect } from "react";
 
 export const FdaVersionsContext = createContext<any>({});
