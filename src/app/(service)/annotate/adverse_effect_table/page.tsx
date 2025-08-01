@@ -17,6 +17,7 @@ import { useAuth, useAETableAnnotation, useLoader } from "@/contexts";
 import {
   AnnotationCategoryEnum,
   IBaseTable,
+  IFdaVersions,
   IUnAnnotatedAETable,
 } from "@/types";
 import { useState, useEffect, useRef } from "react";
@@ -26,6 +27,7 @@ import {
   AnnotationTypeEnum,
   AETableVerEnum,
   aeTableVersionMap,
+  DEFAULT_FDALABEL_VERSIONS,
 } from "@/constants";
 import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 import { transformData } from "@/utils";
@@ -65,14 +67,14 @@ export default function Page() {
         nPerPage,
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
-        version,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
       const count = await fetchUnannotatedAETableByUserIdCount(
         userId,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         tabName === AnnotationTypeEnum.COMPLETE,
         tabName === AnnotationTypeEnum.AI,
-        version,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
       if ("detail" in res) {
         router.push("/logout");

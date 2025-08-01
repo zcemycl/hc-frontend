@@ -1,6 +1,10 @@
 "use server";
-import { AnnotationCategoryEnum } from "@/types";
-import { AETableVerEnum, aeTableVersionMap } from "@/constants";
+import { AnnotationCategoryEnum, IFdaVersions } from "@/types";
+import {
+  AETableVerEnum,
+  aeTableVersionMap,
+  DEFAULT_FDALABEL_VERSIONS,
+} from "@/constants";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 
@@ -11,7 +15,8 @@ export async function fetchUnannotatedAETableByUserId(
   limit: number = 10,
   reverse: boolean = false,
   complete: boolean = false,
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables/${tablename}`;
@@ -20,14 +25,17 @@ export async function fetchUnannotatedAETableByUserId(
   params.append("limit", limit.toString());
   params.append("reverse", reverse.toString());
   params.append("complete", complete.toString());
-  params.append("version", version);
+  // params.append("version", version);
   const API_URI_PAGINATION = `${API_URI}?${params}`;
   const response = await fetch(API_URI_PAGINATION, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      versions: versions,
+    }),
   });
   validate_response_ok(response);
   const res = await response.json();
@@ -39,21 +47,25 @@ export async function fetchUnannotatedAETableByUserIdCount(
   tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
   reverse: boolean = false,
   complete: boolean = false,
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annnotation/${id}/unannotated_ae_tables_count/${tablename}`;
   const params = new URLSearchParams();
   params.append("reverse", reverse.toString());
   params.append("complete", complete.toString());
-  params.append("version", version);
+  // params.append("version", version);
   const API_URI_PAGINATION = `${API_URI}?${params}`;
   const response = await fetch(API_URI_PAGINATION, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      versions: versions,
+    }),
   });
   validate_response_ok(response);
   const res = await response.json();
