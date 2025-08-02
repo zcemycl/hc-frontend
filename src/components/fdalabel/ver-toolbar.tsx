@@ -1,24 +1,21 @@
+"use client";
 import { VerDropdown } from "@/components";
-import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
-import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
+import { FdaVersionsContext, useAuth } from "@/contexts";
 import { RELOAD_ICON_URI } from "@/icons/bootstrap";
 import { formatUnderscoreString } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 
-export default function VerToolbar() {
+function VerToolbar({
+  fdaSections,
+  reloadCallback,
+}: {
+  fdaSections: string[];
+  reloadCallback: () => void;
+}) {
   const router = useRouter();
   const { sectionVersions, versions } = useContext(FdaVersionsContext);
   const { setIsAuthenticated, credentials } = useAuth();
-  const {
-    queryType,
-    pageN,
-    nPerPage,
-    search_query_by_type,
-    fdaservice,
-    query,
-    sortBy,
-  } = useContext(SearchSupportContext);
   return (
     <div
       className="flex flex-col space-y-1
@@ -36,7 +33,7 @@ export default function VerToolbar() {
               align-center
               justify-start"
       >
-        {Object.keys(DEFAULT_FDALABEL_VERSIONS).map(
+        {fdaSections.map(
           (key) =>
             sectionVersions[`${key}_available_versions`] !== null && (
               <VerDropdown
@@ -49,23 +46,12 @@ export default function VerToolbar() {
         <button
           onClick={async (e) => {
             e.preventDefault();
-            if (query[0] === "") return;
             if (credentials.length === 0) {
               setIsAuthenticated(false);
               router.push("/logout");
             }
             console.log(versions);
-
-            const resp = await search_query_by_type(
-              fdaservice,
-              query,
-              queryType,
-              pageN,
-              nPerPage,
-              sortBy,
-              versions,
-            );
-            console.log(resp);
+            await reloadCallback();
           }}
         >
           <img
@@ -77,3 +63,5 @@ export default function VerToolbar() {
     </div>
   );
 }
+
+export { VerToolbar };

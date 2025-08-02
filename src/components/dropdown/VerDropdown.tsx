@@ -2,7 +2,6 @@
 import { useContext, useMemo, useState } from "react";
 import { DropDownBtn, DropDownList } from "./BasicDropdown";
 import { FdaVersionsContext } from "@/contexts";
-import { aeTableVersionMap } from "@/constants";
 
 const VerDropdown = ({
   verKey = "fdalabel",

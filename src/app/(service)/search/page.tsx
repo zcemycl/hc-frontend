@@ -1,22 +1,27 @@
 "use client";
 import { useState, useRef, useMemo } from "react";
 import {
+  FdaVersionsContext,
   FdaVersionsProvider,
   SearchSupportContext,
   useAuth,
   useLoader,
 } from "@/contexts";
 import { useRouter } from "next/navigation";
-import { Spinner, ProtectedRoute } from "@/components";
+import { Spinner, ProtectedRoute, VerToolbar } from "@/components";
 import { IFdaLabel, ICompareAETable, IFdaVersions } from "@/types";
-import { SortByEnum, SearchQueryTypeEnum, AETableTypeEnum } from "@/constants";
+import {
+  SortByEnum,
+  SearchQueryTypeEnum,
+  AETableTypeEnum,
+  DEFAULT_FDALABEL_VERSIONS,
+} from "@/constants";
 import { FdalabelFetchService } from "@/services";
 import { useHistoryToSearch, useBundleToSearch } from "@/hooks";
 import ExpandSearchResultItem from "./expand-search-result-item";
 import SearchResultsList from "./search-results-list";
 import ComplexSearchBar from "./complex-search-bar";
 import CompareTables from "./compare-tables";
-import VerToolbar from "./ver-toolbar";
 
 export default function Search() {
   const router = useRouter();
@@ -144,7 +149,27 @@ export default function Search() {
                 </div>
               )}
               <ComplexSearchBar />
-              <VerToolbar />
+              <FdaVersionsContext.Consumer>
+                {(values) => (
+                  <VerToolbar
+                    fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
+                    reloadCallback={async () => {
+                      if (query[0] === "") return;
+                      const resp = await search_query_by_type(
+                        fdaservice,
+                        query,
+                        queryType,
+                        pageN,
+                        nPerPage,
+                        sortBy,
+                        values.versions,
+                      );
+                      console.log(resp);
+                    }}
+                  />
+                )}
+              </FdaVersionsContext.Consumer>
+
               <CompareTables />
 
               <ExpandSearchResultItem />
