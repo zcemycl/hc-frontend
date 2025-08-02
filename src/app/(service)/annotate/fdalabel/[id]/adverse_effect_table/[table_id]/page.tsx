@@ -105,7 +105,7 @@ export default function Page({ params }: Readonly<PageProps>) {
     getData();
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth, versions]);
+  }, [isLoadingAuth]);
 
   // set selected table dimension when table is ready
   useEffect(() => {

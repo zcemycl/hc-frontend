@@ -13,7 +13,6 @@ export async function fetchUnannotatedAETableByUserId(
   complete: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  console.log(versions);
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables/${tablename}`;
   const params = new URLSearchParams();
@@ -21,7 +20,6 @@ export async function fetchUnannotatedAETableByUserId(
   params.append("limit", limit.toString());
   params.append("reverse", reverse.toString());
   params.append("complete", complete.toString());
-  // params.append("version", version);
   const API_URI_PAGINATION = `${API_URI}?${params}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "POST",
@@ -112,11 +110,7 @@ export async function addAnnotationByNameId(
   annotation: { [key: string]: any },
 ) {
   const token = get_token_cookie();
-  console.log(JSON.stringify(annotation));
-  console.log(name);
-  console.log(id);
   const API_URI = `${FASTAPI_URI}/annotation/add/fdalabel/${name}/${id}`;
-  console.log(API_URI);
   const response = await fetch(API_URI, {
     method: "POST",
     headers: {

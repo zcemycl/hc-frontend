@@ -1,7 +1,6 @@
 "use client";
-import { useAuth, useLoader } from "@/contexts";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, Fragment } from "react";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
+import { useState, useEffect, Fragment, useContext } from "react";
 import {
   fetchAETableByIds,
   fetchAnnotatedTableMapByNameIds,
@@ -10,7 +9,6 @@ import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
   IBaseTable,
-  IFdaVersions,
 } from "@/types";
 import {
   Table,
@@ -22,11 +20,6 @@ import {
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "../questions";
-import {
-  AETableVerEnum,
-  aeTableVersionMap,
-  DEFAULT_FDALABEL_VERSIONS,
-} from "@/constants";
 import { useTickableTableCell } from "@/hooks";
 
 interface PageProps {
@@ -37,11 +30,6 @@ interface PageProps {
 }
 
 export default function Page({ params }: Readonly<PageProps>) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const defaultVersion = searchParams.has("version")
-    ? searchParams.get("version")
-    : AETableVerEnum.v0_0_1;
   const { credentials, isLoadingAuth } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
@@ -59,7 +47,7 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
-  const [version, setVersion] = useState(defaultVersion);
+  const { versions } = useContext(FdaVersionsContext);
 
   // set table
   useEffect(() => {
@@ -68,14 +56,14 @@ export default function Page({ params }: Readonly<PageProps>) {
         params.table_id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         params.id,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+        versions,
       );
       setTableData(res);
       const res_history = await fetchAnnotatedTableMapByNameIds(
         res.id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         true,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+        versions,
       );
       if ("annotated" in res_history) {
         setFinalResults(res_history["annotated"]);
@@ -99,6 +87,7 @@ export default function Page({ params }: Readonly<PageProps>) {
   }, [tableData]);
 
   useEffect(() => {
+    console.log(finalResults);
     const qIds = questions
       .map((each, idx) => {
         if (Object.keys(finalResults).includes(each.identifier)) {
