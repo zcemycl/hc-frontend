@@ -49,7 +49,6 @@ function VerToolbar({
               setIsAuthenticated(false);
               router.push("/logout");
             }
-            console.log(versions);
             await reloadCallback();
           }}
         >

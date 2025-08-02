@@ -33,7 +33,6 @@ export async function fetchFdalabelBySetid(
   });
   validate_response_ok(response);
   const res = await response.json();
-  console.log(res);
   return res;
 }
 

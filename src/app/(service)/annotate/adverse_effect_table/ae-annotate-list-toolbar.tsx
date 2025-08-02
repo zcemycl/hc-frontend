@@ -35,10 +35,7 @@ export default function AEAnnotateListToolbar() {
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     if (!userId) return;
-
-    console.log("ae calls?");
     setIsLoading(true);
-    console.log(versions);
     fetchAnnotationTableList(
       userId,
       tabName,
@@ -52,10 +49,9 @@ export default function AEAnnotateListToolbar() {
       top: 0,
       behavior: "smooth",
     });
-    console.log("ae calls?222");
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabName, pageN, isLoadingAuth, userId, versions]);
+  }, [tabName, pageN, isLoadingAuth, userId]);
 
   return (
     <Fragment>

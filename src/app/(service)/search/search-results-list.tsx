@@ -32,7 +32,6 @@ export default function SearchResultsList() {
     async function pageCallback(pageN: number) {
       setDisplayDataIndex(null);
       setCompareTable({ table: [] });
-      console.log("ae table useeffect");
       if (credentials.length === 0) {
         setIsAuthenticated(false);
         router.push("/logout");

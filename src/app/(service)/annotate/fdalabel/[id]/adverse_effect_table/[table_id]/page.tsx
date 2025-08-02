@@ -57,10 +57,6 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   const { versions } = useContext(FdaVersionsContext);
 
-  useEffect(() => {
-    console.log(versions);
-  }, [versions]);
-
   const storeCache = async () => {
     let tmp = { ...finalResults };
     tmp[questions[questionIdx].identifier] = isCellSelected;

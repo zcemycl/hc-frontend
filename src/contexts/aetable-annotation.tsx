@@ -131,7 +131,6 @@ export const AETableAnnotationProvider = ({
     const tmpCache = JSON.parse(
       localStorage.getItem("aeTableAnnotationPageCache") as string,
     );
-    // console.log(tmpCache["pageN"]);
     if (tmpCache !== null) {
       setCache(tmpCache);
       if ("tabName" in tmpCache) {
@@ -223,7 +222,6 @@ export const AETableAnnotationProvider = ({
         setTopN: (i: number) => void,
         setTableData: (d: IUnAnnotatedAETable[]) => void,
       ) {
-        console.log("within fetch");
         const res = await fetchUnannotatedAETableByUserId(
           userId,
           AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
@@ -244,8 +242,6 @@ export const AETableAnnotationProvider = ({
           router.push("/logout");
           return;
         }
-        console.log(count);
-        console.log(res);
         setTopN(count);
         setTableData([...res]);
       }

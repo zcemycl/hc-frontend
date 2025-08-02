@@ -87,7 +87,6 @@ export default function Page({ params }: Readonly<PageProps>) {
   }, [tableData]);
 
   useEffect(() => {
-    console.log(finalResults);
     const qIds = questions
       .map((each, idx) => {
         if (Object.keys(finalResults).includes(each.identifier)) {

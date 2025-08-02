@@ -21,7 +21,6 @@ const VerDropdown = ({
       }));
     } else {
       const tmpVersions = sectionVersions[`${verKey}_available_versions`];
-      //   console.log(sectionVersions);
       if (tmpVersions === null) {
         return [];
       }
