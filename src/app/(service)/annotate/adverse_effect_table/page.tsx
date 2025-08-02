@@ -5,15 +5,20 @@ import {
   Table,
   Spinner,
   ExpandableBtn,
-  AETableVerDropdown,
   ProtectedRoute,
   BackBtn,
+  VerToolbar,
 } from "@/components";
 import {
   fetchUnannotatedAETableByUserId,
   fetchUnannotatedAETableByUserIdCount,
 } from "@/http/backend";
-import { useAuth, useAETableAnnotation, useLoader } from "@/contexts";
+import {
+  useAuth,
+  useAETableAnnotation,
+  useLoader,
+  FdaVersionsProvider,
+} from "@/contexts";
 import {
   AnnotationCategoryEnum,
   IBaseTable,
@@ -23,12 +28,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GoIcon } from "@/icons";
-import {
-  AnnotationTypeEnum,
-  AETableVerEnum,
-  aeTableVersionMap,
-  DEFAULT_FDALABEL_VERSIONS,
-} from "@/constants";
+import { AnnotationTypeEnum, DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 import { transformData } from "@/utils";
 
@@ -48,7 +48,6 @@ export default function Page() {
     ongoingPageN,
     completePageN,
   } = useAETableAnnotation();
-  const [version, setVersion] = useState(AETableVerEnum.v0_0_1);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [nPerPage, _] = useState(10);
   const [topN, setTopN] = useState(0);
@@ -96,166 +95,173 @@ export default function Page() {
     });
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabName, pageN, isLoadingAuth, userId, version]);
+  }, [tabName, pageN, isLoadingAuth, userId]);
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
+      <FdaVersionsProvider>
+        <section
+          className={`text-gray-400 bg-gray-900 body-font 
         h-[81vh] sm:h-[89vh] overflow-y-scroll
         ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
-        ref={refUnannotatedGroup}
-      >
-        <div className="px-2 py-24 flex flex-col justify-center items-center align-center">
-          <div
-            role="status"
-            className={`absolute left-1/2 top-1/2 transition-opacity duration-700
+          ref={refUnannotatedGroup}
+        >
+          <div className="px-2 py-24 flex flex-col justify-center items-center align-center">
+            <div
+              role="status"
+              className={`absolute left-1/2 top-1/2 transition-opacity duration-700
             -translate-x-1/2 -translate-y-1/2 ${isLoading || isLoadingAuth ? "opacity-1" : "opacity-0"}`}
-          >
-            <Spinner />
-            <span className="sr-only">Loading...</span>
-          </div>
-          <div
-            className="sm:w-1/2 flex flex-col mt-8 
+            >
+              <Spinner />
+              <span className="sr-only">Loading...</span>
+            </div>
+            <div
+              className="sm:w-1/2 flex flex-col mt-8 
             w-full px-1 pt-5 pb-5 space-y-2"
-          >
-            <div className="flex justify-between items-center">
-              <div className="flex justify-between items-center space-x-1">
-                <TypographyH2>AE Table Annotations</TypographyH2>
-                <AnnotationTypeDropdown
-                  queryType={tabName}
-                  setQueryType={(q) => {
-                    setTabName(q);
-                    let tmpCache = aePageCache;
-                    let pageN_ = pageN;
-                    if (q === AnnotationTypeEnum.AI && "aiPageN" in tmpCache) {
-                      // setPageN(tmpCache["aiPageN"] as number);
-                      setPageN(aiPageN);
-                      // pageN_ = tmpCache["aiPageN"] as number;
-                    }
-                    if (
-                      q === AnnotationTypeEnum.COMPLETE &&
-                      "completePageN" in tmpCache
-                    ) {
-                      // setPageN(tmpCache["completePageN"] as number);
-                      setPageN(completePageN);
-                      // pageN_ = tmpCache["completePageN"] as number;
-                    }
-                    if (
-                      q === AnnotationTypeEnum.ONGOING &&
-                      "ongoingPageN" in tmpCache
-                    ) {
-                      // setPageN(tmpCache["ongoingPageN"] as number);
-                      setPageN(ongoingPageN);
-                      // pageN_ = tmpCache["ongoingPageN"] as number;
-                    }
-                    saveAETableAnnotationPageCache(q);
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center space-x-1">
+                  <TypographyH2>AE Table Annotations</TypographyH2>
+                  <AnnotationTypeDropdown
+                    queryType={tabName}
+                    setQueryType={(q) => {
+                      setTabName(q);
+                      let tmpCache = aePageCache;
+                      let pageN_ = pageN;
+                      if (
+                        q === AnnotationTypeEnum.AI &&
+                        "aiPageN" in tmpCache
+                      ) {
+                        // setPageN(tmpCache["aiPageN"] as number);
+                        setPageN(aiPageN);
+                        // pageN_ = tmpCache["aiPageN"] as number;
+                      }
+                      if (
+                        q === AnnotationTypeEnum.COMPLETE &&
+                        "completePageN" in tmpCache
+                      ) {
+                        // setPageN(tmpCache["completePageN"] as number);
+                        setPageN(completePageN);
+                        // pageN_ = tmpCache["completePageN"] as number;
+                      }
+                      if (
+                        q === AnnotationTypeEnum.ONGOING &&
+                        "ongoingPageN" in tmpCache
+                      ) {
+                        // setPageN(tmpCache["ongoingPageN"] as number);
+                        setPageN(ongoingPageN);
+                        // pageN_ = tmpCache["ongoingPageN"] as number;
+                      }
+                      saveAETableAnnotationPageCache(q);
+                    }}
+                    additionalResetCallback={() => {}}
+                  />
+                </div>
+
+                <BackBtn
+                  customCallBack={() => {
+                    saveAETableAnnotationPageCache();
+                    router.back();
                   }}
-                  additionalResetCallback={() => {}}
-                />
-                <AETableVerDropdown
-                  verType={version}
-                  setVerType={(q) => {
-                    console.log(q);
-                    setVersion(q);
-                  }}
-                  additionalResetCallback={() => {}}
                 />
               </div>
-
-              <BackBtn
-                customCallBack={() => {
-                  saveAETableAnnotationPageCache();
-                  router.back();
-                }}
+            </div>
+            <div
+              className="flex flex-row space-y-2 align-center
+            sm:w-1/2 w-full"
+            >
+              <VerToolbar
+                fdaSections={["fdalabel", "adverse_effect_table"]}
+                reloadCallback={() => {}}
               />
             </div>
-          </div>
-          <div className="sm:w-1/2 flex flex-col w-full px-1 pt-5 pb-5 space-y-2">
-            {Object.keys(transformData(tableData)).map((keyName, kid) => {
-              return (
-                <div
-                  key={keyName}
-                  className="w-full overflow-x-hidden
+
+            <div className="sm:w-1/2 flex flex-col w-full px-1 pt-5 pb-5 space-y-2">
+              {Object.keys(transformData(tableData)).map((keyName, kid) => {
+                return (
+                  <div
+                    key={keyName}
+                    className="w-full overflow-x-hidden
                 flex flex-col justify-center"
-                >
-                  <h1 key={keyName}>{keyName}</h1>
-                  {transformData(tableData)[keyName].map((data, idx) => {
-                    return (
-                      <ExpandableBtn
-                        key={`${data.fdalabel.setid}-${data.idx}`}
-                        refkey={`${data.fdalabel.setid}-${data.idx}`}
-                        childrenLong={
-                          <>
-                            {data.fdalabel.indication
-                              ?.split(" ")
-                              .splice(0, 20)
-                              .join(" ")}{" "}
-                            ...
-                            <Table
-                              {...{
-                                content: {
-                                  table:
-                                    data.adverse_effect_table!.content.table.slice(
-                                      0,
-                                      6,
-                                    ),
-                                } as IBaseTable,
-                                keyname: "table",
-                                hasCopyBtn: false,
-                              }}
-                            />
-                          </>
-                        }
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setIsLoading(true);
-                          const params = new URLSearchParams();
-                          params.append("version", version);
-                          let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
-                          if (tabName === AnnotationTypeEnum.AI) {
-                            redirectUrl = `${redirectUrl}/ai`;
+                  >
+                    <h1 key={keyName}>{keyName}</h1>
+                    {transformData(tableData)[keyName].map((data, idx) => {
+                      return (
+                        <ExpandableBtn
+                          key={`${data.fdalabel.setid}-${data.idx}`}
+                          refkey={`${data.fdalabel.setid}-${data.idx}`}
+                          childrenLong={
+                            <>
+                              {data.fdalabel.indication
+                                ?.split(" ")
+                                .splice(0, 20)
+                                .join(" ")}{" "}
+                              ...
+                              <Table
+                                {...{
+                                  content: {
+                                    table:
+                                      data.adverse_effect_table!.content.table.slice(
+                                        0,
+                                        6,
+                                      ),
+                                  } as IBaseTable,
+                                  keyname: "table",
+                                  hasCopyBtn: false,
+                                }}
+                              />
+                            </>
                           }
-                          redirectUrl = `${redirectUrl}?${params}`;
-                          router.push(redirectUrl);
-                        }}
-                      >
-                        <>
-                          <p className="leading-relaxed w-full">
-                            {data.fdalabel.tradename} [Table {data.idx}]
-                          </p>
-                          <div
-                            className={`transition-all duration-300
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsLoading(true);
+                            const params = new URLSearchParams();
+                            // params.append("version", version);
+                            let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
+                            if (tabName === AnnotationTypeEnum.AI) {
+                              redirectUrl = `${redirectUrl}/ai`;
+                            }
+                            redirectUrl = `${redirectUrl}?${params}`;
+                            router.push(redirectUrl);
+                          }}
+                        >
+                          <>
+                            <p className="leading-relaxed w-full">
+                              {data.fdalabel.tradename} [Table {data.idx}]
+                            </p>
+                            <div
+                              className={`transition-all duration-300
                               overflow-hidden
                               max-w-0
                               group-hover:max-w-full
                             `}
-                          >
-                            <GoIcon />
-                          </div>
-                        </>
-                      </ExpandableBtn>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
+                            >
+                              <GoIcon />
+                            </div>
+                          </>
+                        </ExpandableBtn>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
 
-          <div className="flex justify-center space-x-1 flex-wrap">
-            <PaginationBar
-              topN={topN}
-              pageN={pageN}
-              nPerPage={nPerPage}
-              setPageN={(i: number) => {
-                // setPageN(i);
-                saveAETableAnnotationPageCache(tabName, i);
-                saveTabPage(i);
-              }}
-            />
+            <div className="flex justify-center space-x-1 flex-wrap">
+              <PaginationBar
+                topN={topN}
+                pageN={pageN}
+                nPerPage={nPerPage}
+                setPageN={(i: number) => {
+                  // setPageN(i);
+                  saveAETableAnnotationPageCache(tabName, i);
+                  saveTabPage(i);
+                }}
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </FdaVersionsProvider>
     </ProtectedRoute>
   );
 }

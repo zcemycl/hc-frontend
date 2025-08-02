@@ -17,32 +17,31 @@ function VerToolbar({
   const { sectionVersions, versions } = useContext(FdaVersionsContext);
   const { setIsAuthenticated, credentials } = useAuth();
   return (
-    <div
-      className="flex flex-col space-y-1
-      w-full sm:w-11/12 md:w-8/12
-      sm:px-10"
-    >
+    <div className="flex flex-col space-y-1 w-full items-center">
       <div
         className="
               flex 
               flex-row
               flex-wrap
               w-full
-              space-x-2
+              space-x-0
               space-y-1
               align-center
+              items-center
               justify-start"
       >
-        {fdaSections.map(
-          (key) =>
-            sectionVersions[`${key}_available_versions`] !== null && (
-              <VerDropdown
-                key={key}
-                verKey={key}
-                displayName={`${formatUnderscoreString(key)} Version`}
-              />
-            ),
-        )}
+        {fdaSections
+          // .filter(v => v!== "fdalabel")
+          .map(
+            (key) =>
+              sectionVersions[`${key}_available_versions`] !== null && (
+                <VerDropdown
+                  key={key}
+                  verKey={key}
+                  displayName={`${formatUnderscoreString(key)} Version`}
+                />
+              ),
+          )}
         <button
           onClick={async (e) => {
             e.preventDefault();

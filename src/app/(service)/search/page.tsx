@@ -151,22 +151,29 @@ export default function Search() {
               <ComplexSearchBar />
               <FdaVersionsContext.Consumer>
                 {(values) => (
-                  <VerToolbar
-                    fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
-                    reloadCallback={async () => {
-                      if (query[0] === "") return;
-                      const resp = await search_query_by_type(
-                        fdaservice,
-                        query,
-                        queryType,
-                        pageN,
-                        nPerPage,
-                        sortBy,
-                        values.versions,
-                      );
-                      console.log(resp);
-                    }}
-                  />
+                  <div
+                    className="flex flex-col
+                      w-full sm:w-11/12 md:w-8/12
+                      space-y-0 sm:space-y-1
+                      px-0 sm:px-10"
+                  >
+                    <VerToolbar
+                      fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
+                      reloadCallback={async () => {
+                        if (query[0] === "") return;
+                        const resp = await search_query_by_type(
+                          fdaservice,
+                          query,
+                          queryType,
+                          pageN,
+                          nPerPage,
+                          sortBy,
+                          values.versions,
+                        );
+                        console.log(resp);
+                      }}
+                    />
+                  </div>
                 )}
               </FdaVersionsContext.Consumer>
 
