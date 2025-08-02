@@ -1,13 +1,10 @@
 "use client";
 import {
   PaginationBar,
-  TypographyH2,
   Table,
   Spinner,
   ExpandableBtn,
   ProtectedRoute,
-  BackBtn,
-  VerToolbar,
 } from "@/components";
 import {
   fetchUnannotatedAETableByUserId,
@@ -29,25 +26,15 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GoIcon } from "@/icons";
 import { AnnotationTypeEnum, DEFAULT_FDALABEL_VERSIONS } from "@/constants";
-import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 import { transformData } from "@/utils";
+import AEAnnotateListToolbar from "./ae-annotate-list-toolbar";
 
 export default function Page() {
   const router = useRouter();
   const { userId, credentials, isLoadingAuth } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
-  const {
-    aePageCache,
-    tabName,
-    setTabName,
-    saveAETableAnnotationPageCache,
-    saveTabPage,
-    pageN,
-    setPageN,
-    aiPageN,
-    ongoingPageN,
-    completePageN,
-  } = useAETableAnnotation();
+  const { tabName, saveAETableAnnotationPageCache, saveTabPage, pageN } =
+    useAETableAnnotation();
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const [nPerPage, _] = useState(10);
   const [topN, setTopN] = useState(0);
@@ -115,66 +102,7 @@ export default function Page() {
               <Spinner />
               <span className="sr-only">Loading...</span>
             </div>
-            <div
-              className="sm:w-1/2 flex flex-col mt-8 
-            w-full px-1 pt-5 pb-5 space-y-2"
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex justify-between items-center space-x-1">
-                  <TypographyH2>AE Table Annotations</TypographyH2>
-                  <AnnotationTypeDropdown
-                    queryType={tabName}
-                    setQueryType={(q) => {
-                      setTabName(q);
-                      let tmpCache = aePageCache;
-                      let pageN_ = pageN;
-                      if (
-                        q === AnnotationTypeEnum.AI &&
-                        "aiPageN" in tmpCache
-                      ) {
-                        // setPageN(tmpCache["aiPageN"] as number);
-                        setPageN(aiPageN);
-                        // pageN_ = tmpCache["aiPageN"] as number;
-                      }
-                      if (
-                        q === AnnotationTypeEnum.COMPLETE &&
-                        "completePageN" in tmpCache
-                      ) {
-                        // setPageN(tmpCache["completePageN"] as number);
-                        setPageN(completePageN);
-                        // pageN_ = tmpCache["completePageN"] as number;
-                      }
-                      if (
-                        q === AnnotationTypeEnum.ONGOING &&
-                        "ongoingPageN" in tmpCache
-                      ) {
-                        // setPageN(tmpCache["ongoingPageN"] as number);
-                        setPageN(ongoingPageN);
-                        // pageN_ = tmpCache["ongoingPageN"] as number;
-                      }
-                      saveAETableAnnotationPageCache(q);
-                    }}
-                    additionalResetCallback={() => {}}
-                  />
-                </div>
-
-                <BackBtn
-                  customCallBack={() => {
-                    saveAETableAnnotationPageCache();
-                    router.back();
-                  }}
-                />
-              </div>
-            </div>
-            <div
-              className="flex flex-row space-y-2 align-center
-            sm:w-1/2 w-full"
-            >
-              <VerToolbar
-                fdaSections={["fdalabel", "adverse_effect_table"]}
-                reloadCallback={() => {}}
-              />
-            </div>
+            <AEAnnotateListToolbar />
 
             <div className="sm:w-1/2 flex flex-col w-full px-1 pt-5 pb-5 space-y-2">
               {Object.keys(transformData(tableData)).map((keyName, kid) => {
