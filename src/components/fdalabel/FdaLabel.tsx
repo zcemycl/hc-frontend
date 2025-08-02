@@ -1,5 +1,5 @@
 "use client";
-import { IFdaLabel } from "@/types";
+import { IFdaLabel, IFdaVersions } from "@/types";
 import { IntroSection } from "./IntroSection";
 import { IndicationSection } from "./IndicationSection";
 import { AdverseReactionSection } from "./AdverseReactionSection";
@@ -11,10 +11,12 @@ function FdaLabel({
   each,
   back_btn_callback,
   displayDataIndex,
+  versions,
 }: {
   each: IFdaLabel;
   displayDataIndex: number | null;
   back_btn_callback: (s: any) => void;
+  versions: IFdaVersions;
 }) {
   return (
     <div className="flex flex-col w-full">
@@ -44,6 +46,7 @@ function FdaLabel({
       <FdaLabelHistory
         setid={each.setid!}
         displayDataIndex={displayDataIndex}
+        versions={versions}
       />
     </div>
   );

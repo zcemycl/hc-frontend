@@ -1,11 +1,13 @@
 "use client";
 import { Spinner, Table, ProtectedRoute, BackBtn } from "@/components";
+import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
 import { fetchAETableByIds } from "@/http/backend";
 import {
   AnnotationCategoryEnum,
   IBaseTable,
   IClinicalTrialTable,
+  IFdaVersions,
 } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,6 +31,7 @@ export default function Page({ params }: PageProps) {
         params.table_id,
         AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
         params.id,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
       setTableData(res);
     }

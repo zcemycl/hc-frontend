@@ -1,19 +1,22 @@
 "use client";
 import { fetchFdalabelHistoryBySetid } from "@/http/backend";
-import { IFdaLabelHistory } from "@/types";
+import { IFdaLabelHistory, IFdaVersions } from "@/types";
 import { convert_datetime_to_date } from "@/utils";
 import { useRouter } from "next/navigation";
 import { TableFromCols } from "../table";
 import { TypographyH2 } from "../typography";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts";
+import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 
 function FdaLabelHistory({
   setid,
   displayDataIndex,
+  versions = DEFAULT_FDALABEL_VERSIONS,
 }: {
   setid: string;
   displayDataIndex: number | null;
+  versions: IFdaVersions;
 }) {
   const router = useRouter();
   const [displayHistoryData, setDisplayHistoryData] =
@@ -30,7 +33,7 @@ function FdaLabelHistory({
       }
     }
     async function getData() {
-      resp = await fetchFdalabelHistoryBySetid(setid);
+      resp = await fetchFdalabelHistoryBySetid(setid, versions);
       setDisplayHistoryData(resp);
     }
     if (displayDataIndex != null) {

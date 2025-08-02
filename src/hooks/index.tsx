@@ -6,3 +6,4 @@ export * from "./useCognitoAuth";
 export * from "./useStopLoadingEarly";
 export * from "./useTickableTableCell";
 export * from "./useHistoryToSearch";
+export * from "./useBundleToSearch";

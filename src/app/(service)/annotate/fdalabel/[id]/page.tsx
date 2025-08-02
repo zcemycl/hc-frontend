@@ -6,6 +6,7 @@ import {
   ProtectedRoute,
   BackBtn,
 } from "@/components";
+import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { useAuth } from "@/contexts";
 import { fetchAETableBySetid } from "@/http/backend";
 import { GoIcon } from "@/icons";
@@ -14,6 +15,7 @@ import {
   IAdverseEffectTable,
   IBaseTable,
   IClinicalTrialTable,
+  IFdaVersions,
 } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -35,11 +37,13 @@ export default function Page({ params }: PageProps) {
       const res = await fetchAETableBySetid(
         params.id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
       setTableData(res);
       const res2 = await fetchAETableBySetid(
         params.id,
         AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
+        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
       );
       setCtTableData(res2);
     }

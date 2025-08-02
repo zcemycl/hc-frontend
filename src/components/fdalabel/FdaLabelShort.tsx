@@ -32,7 +32,6 @@ function FdaLabelShort({
   clickExpandCallback: () => void;
 }) {
   const router = useRouter();
-  console.log(therapeutic_areas);
   return (
     <div
       className="flex flex-col p-10
