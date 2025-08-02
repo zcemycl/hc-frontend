@@ -1,195 +1,41 @@
 "use client";
-import {
-  PaginationBar,
-  Table,
-  Spinner,
-  ExpandableBtn,
-  ProtectedRoute,
-} from "@/components";
-import {
-  fetchUnannotatedAETableByUserId,
-  fetchUnannotatedAETableByUserIdCount,
-} from "@/http/backend";
+import { Spinner, ProtectedRoute } from "@/components";
 import {
   useAuth,
   useAETableAnnotation,
   useLoader,
   FdaVersionsProvider,
 } from "@/contexts";
-import {
-  AnnotationCategoryEnum,
-  IBaseTable,
-  IFdaVersions,
-  IUnAnnotatedAETable,
-} from "@/types";
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { GoIcon } from "@/icons";
-import { AnnotationTypeEnum, DEFAULT_FDALABEL_VERSIONS } from "@/constants";
-import { transformData } from "@/utils";
 import AEAnnotateListToolbar from "./ae-annotate-list-toolbar";
+import ListAETablesPanel from "./list-ae-tables-panel";
 
 export default function Page() {
-  const router = useRouter();
-  const { userId, credentials, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
-  const { tabName, saveAETableAnnotationPageCache, saveTabPage, pageN } =
-    useAETableAnnotation();
-  const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
-  const [nPerPage, _] = useState(10);
-  const [topN, setTopN] = useState(0);
-  const refUnannotatedGroup = useRef(null);
-
-  useEffect(() => {
-    async function getData(
-      userId: number,
-      tabName: AnnotationTypeEnum,
-      pageN: number,
-    ) {
-      const res = await fetchUnannotatedAETableByUserId(
-        userId,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        pageN * nPerPage,
-        nPerPage,
-        tabName === AnnotationTypeEnum.COMPLETE,
-        tabName === AnnotationTypeEnum.AI,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
-      );
-      const count = await fetchUnannotatedAETableByUserIdCount(
-        userId,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        tabName === AnnotationTypeEnum.COMPLETE,
-        tabName === AnnotationTypeEnum.AI,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
-      );
-      if ("detail" in res) {
-        router.push("/logout");
-        return;
-      }
-      setTopN(count);
-      setTableData(res);
-    }
-    if (isLoadingAuth) return;
-    if (credentials.length === 0) return;
-    if (!userId) return;
-
-    console.log(credentials, isLoadingAuth, userId);
-    setIsLoading(true);
-    getData(userId as number, tabName, pageN);
-    (refUnannotatedGroup.current as any).scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-    setIsLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabName, pageN, isLoadingAuth, userId]);
+  const { isLoadingAuth } = useAuth();
+  const { isLoading } = useLoader();
+  const { refUnannotatedGroup } = useAETableAnnotation();
 
   return (
     <ProtectedRoute>
-      <FdaVersionsProvider>
-        <section
-          className={`text-gray-400 bg-gray-900 body-font 
+      <section
+        className={`text-gray-400 bg-gray-900 body-font 
         h-[81vh] sm:h-[89vh] overflow-y-scroll
         ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
-          ref={refUnannotatedGroup}
-        >
-          <div className="px-2 py-24 flex flex-col justify-center items-center align-center">
-            <div
-              role="status"
-              className={`absolute left-1/2 top-1/2 transition-opacity duration-700
+        ref={refUnannotatedGroup}
+      >
+        <div className="px-2 py-24 flex flex-col justify-center items-center align-center">
+          <div
+            role="status"
+            className={`absolute left-1/2 top-1/2 transition-opacity duration-700
             -translate-x-1/2 -translate-y-1/2 ${isLoading || isLoadingAuth ? "opacity-1" : "opacity-0"}`}
-            >
-              <Spinner />
-              <span className="sr-only">Loading...</span>
-            </div>
-            <AEAnnotateListToolbar />
-
-            <div className="sm:w-1/2 flex flex-col w-full px-1 pt-5 pb-5 space-y-2">
-              {Object.keys(transformData(tableData)).map((keyName, kid) => {
-                return (
-                  <div
-                    key={keyName}
-                    className="w-full overflow-x-hidden
-                flex flex-col justify-center"
-                  >
-                    <h1 key={keyName}>{keyName}</h1>
-                    {transformData(tableData)[keyName].map((data, idx) => {
-                      return (
-                        <ExpandableBtn
-                          key={`${data.fdalabel.setid}-${data.idx}`}
-                          refkey={`${data.fdalabel.setid}-${data.idx}`}
-                          childrenLong={
-                            <>
-                              {data.fdalabel.indication
-                                ?.split(" ")
-                                .splice(0, 20)
-                                .join(" ")}{" "}
-                              ...
-                              <Table
-                                {...{
-                                  content: {
-                                    table:
-                                      data.adverse_effect_table!.content.table.slice(
-                                        0,
-                                        6,
-                                      ),
-                                  } as IBaseTable,
-                                  keyname: "table",
-                                  hasCopyBtn: false,
-                                }}
-                              />
-                            </>
-                          }
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setIsLoading(true);
-                            const params = new URLSearchParams();
-                            // params.append("version", version);
-                            let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
-                            if (tabName === AnnotationTypeEnum.AI) {
-                              redirectUrl = `${redirectUrl}/ai`;
-                            }
-                            redirectUrl = `${redirectUrl}?${params}`;
-                            router.push(redirectUrl);
-                          }}
-                        >
-                          <>
-                            <p className="leading-relaxed w-full">
-                              {data.fdalabel.tradename} [Table {data.idx}]
-                            </p>
-                            <div
-                              className={`transition-all duration-300
-                              overflow-hidden
-                              max-w-0
-                              group-hover:max-w-full
-                            `}
-                            >
-                              <GoIcon />
-                            </div>
-                          </>
-                        </ExpandableBtn>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-center space-x-1 flex-wrap">
-              <PaginationBar
-                topN={topN}
-                pageN={pageN}
-                nPerPage={nPerPage}
-                setPageN={(i: number) => {
-                  // setPageN(i);
-                  saveAETableAnnotationPageCache(tabName, i);
-                  saveTabPage(i);
-                }}
-              />
-            </div>
+          >
+            <Spinner />
+            <span className="sr-only">Loading...</span>
           </div>
-        </section>
-      </FdaVersionsProvider>
+          <AEAnnotateListToolbar />
+
+          <ListAETablesPanel />
+        </div>
+      </section>
     </ProtectedRoute>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
-import { useAuth, useLoader } from "@/contexts";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, useContext } from "react";
 import {
   fetchAETableByIds,
   addAnnotationByNameId,
@@ -11,7 +11,6 @@ import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
   IBaseTable,
-  IFdaVersions,
 } from "@/types";
 import {
   Table,
@@ -23,11 +22,7 @@ import {
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "./questions";
-import {
-  AETableVerEnum,
-  aeTableVersionMap,
-  DEFAULT_FDALABEL_VERSIONS,
-} from "@/constants";
+import { AnnotationTypeEnum } from "@/constants";
 import { useTickableTableCell } from "@/hooks";
 
 interface PageProps {
@@ -40,9 +35,9 @@ interface PageProps {
 export default function Page({ params }: Readonly<PageProps>) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const defaultVersion = searchParams.has("version")
-    ? searchParams.get("version")
-    : AETableVerEnum.v0_0_1;
+  const tab = searchParams.has("tab")
+    ? searchParams.get("tab")
+    : AnnotationTypeEnum.ONGOING;
   const { credentials, isLoadingAuth } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
@@ -60,7 +55,11 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
-  const [version, setVersion] = useState(defaultVersion);
+  const { versions } = useContext(FdaVersionsContext);
+
+  useEffect(() => {
+    console.log(versions);
+  }, [versions]);
 
   const storeCache = async () => {
     let tmp = { ...finalResults };
@@ -85,16 +84,20 @@ export default function Page({ params }: Readonly<PageProps>) {
         params.table_id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         params.id,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+        versions,
       );
       setTableData(res);
-      const res_history = await fetchAnnotatedTableMapByNameIds(
-        res.id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        false,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
-      );
-      if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
+      console.log(versions);
+      if (tab !== AnnotationTypeEnum.ONGOING) {
+        const res_history = await fetchAnnotatedTableMapByNameIds(
+          res.id,
+          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+          tab === AnnotationTypeEnum.AI,
+          versions,
+        );
+        if ("annotated" in res_history)
+          setFinalResults(res_history["annotated"]);
+      }
     }
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
@@ -102,7 +105,7 @@ export default function Page({ params }: Readonly<PageProps>) {
     getData();
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth]);
+  }, [isLoadingAuth, versions]);
 
   // set selected table dimension when table is ready
   useEffect(() => {

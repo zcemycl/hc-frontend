@@ -2,12 +2,19 @@ import { BackBtn, TypographyH2, VerToolbar } from "@/components";
 import { AnnotationTypeDropdown } from "./AnnotationTypeDropdown";
 import { AnnotationTypeEnum } from "@/constants";
 import { useRouter } from "next/navigation";
-import { Fragment, useContext } from "react";
-import { FdaVersionsContext, useAETableAnnotation } from "@/contexts";
+import { Fragment, useContext, useEffect } from "react";
+import {
+  FdaVersionsContext,
+  useAETableAnnotation,
+  useAuth,
+  useLoader,
+} from "@/contexts";
 
 export default function AEAnnotateListToolbar() {
   const router = useRouter();
   const { versions } = useContext(FdaVersionsContext);
+  const { userId, credentials, isLoadingAuth } = useAuth();
+  const { setIsLoading } = useLoader();
   const {
     aePageCache,
     tabName,
@@ -18,7 +25,38 @@ export default function AEAnnotateListToolbar() {
     aiPageN,
     ongoingPageN,
     completePageN,
+    refUnannotatedGroup,
+    setTopN,
+    setTableData,
+    fetchAnnotationTableList,
   } = useAETableAnnotation();
+
+  useEffect(() => {
+    if (isLoadingAuth) return;
+    if (credentials.length === 0) return;
+    if (!userId) return;
+
+    console.log("ae calls?");
+    setIsLoading(true);
+    console.log(versions);
+    fetchAnnotationTableList(
+      userId,
+      tabName,
+      pageN,
+      router,
+      versions,
+      setTopN,
+      setTableData,
+    );
+    (refUnannotatedGroup.current as any).scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    console.log("ae calls?222");
+    setIsLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabName, pageN, isLoadingAuth, userId, versions]);
+
   return (
     <Fragment>
       <div
@@ -75,7 +113,20 @@ export default function AEAnnotateListToolbar() {
       >
         <VerToolbar
           fdaSections={["fdalabel", "adverse_effect_table"]}
-          reloadCallback={() => {}}
+          reloadCallback={async () => {
+            if (isLoadingAuth) return;
+            if (credentials.length === 0) return;
+            if (!userId) return;
+            await fetchAnnotationTableList(
+              userId,
+              tabName,
+              pageN,
+              router,
+              versions,
+              setTopN,
+              setTableData,
+            );
+          }}
         />
       </div>
     </Fragment>

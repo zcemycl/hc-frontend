@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useContext } from "react";
 import {
   FdaVersionsContext,
   FdaVersionsProvider,
@@ -46,6 +46,7 @@ export default function Search() {
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
   const refSearchResGroup = useRef(null);
+  const { versions } = useContext(FdaVersionsContext);
   const fdaservice = useMemo(
     () =>
       new FdalabelFetchService(
@@ -96,95 +97,89 @@ export default function Search() {
 
   return (
     <ProtectedRoute>
-      <FdaVersionsProvider>
-        <SearchSupportContext.Provider
-          value={{
-            displayData,
-            displayDataIndex,
-            setDisplayDataIndex,
-            queryType,
-            pageN,
-            nPerPage,
-            setSetIdsToCompare,
-            topN,
-            setPageN,
-            setIdsToCompare,
-            query,
-            setQuery,
-            setTopN,
-            setIsLoading,
-            sortBy,
-            setSortBy,
-            setQueryType,
-            setDisplayData,
-            compareTable,
-            setCompareTable,
-            openCollapseCompSection,
-            setOpenCollapseCompSection,
-            search_query_by_type,
-            fdaservice,
-            refSearchResGroup,
-          }}
-        >
-          <section
-            className={`text-gray-400 bg-gray-900 body-font 
+      <SearchSupportContext.Provider
+        value={{
+          displayData,
+          displayDataIndex,
+          setDisplayDataIndex,
+          queryType,
+          pageN,
+          nPerPage,
+          setSetIdsToCompare,
+          topN,
+          setPageN,
+          setIdsToCompare,
+          query,
+          setQuery,
+          setTopN,
+          setIsLoading,
+          sortBy,
+          setSortBy,
+          setQueryType,
+          setDisplayData,
+          compareTable,
+          setCompareTable,
+          openCollapseCompSection,
+          setOpenCollapseCompSection,
+          search_query_by_type,
+          fdaservice,
+          refSearchResGroup,
+        }}
+      >
+        <section
+          className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh] overflow-y-auto
           overflow-x-hidden
           ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
-            ref={refSearchResGroup}
-          >
-            {/* <div className="container px-2 py-24 mx-auto grid justify-items-center"> */}
-            <div
-              className="flex flex-col px-10 sm:px-5 py-24
+          ref={refSearchResGroup}
+        >
+          {/* <div className="container px-2 py-24 mx-auto grid justify-items-center"> */}
+          <div
+            className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"
-            >
-              {(isLoading || isLoadingAuth) && (
-                <div
-                  role="status"
-                  className="absolute left-1/2 top-1/2 
+          >
+            {(isLoading || isLoadingAuth) && (
+              <div
+                role="status"
+                className="absolute left-1/2 top-1/2 
             -translate-x-1/2 -translate-y-1/2"
-                >
-                  <Spinner />
-                  <span className="sr-only">Loading...</span>
-                </div>
-              )}
-              <ComplexSearchBar />
-              <FdaVersionsContext.Consumer>
-                {(values) => (
-                  <div
-                    className="flex flex-col
-                      w-full sm:w-11/12 md:w-8/12
-                      space-y-0 sm:space-y-1
-                      px-0 sm:px-10"
-                  >
-                    <VerToolbar
-                      fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
-                      reloadCallback={async () => {
-                        if (query[0] === "") return;
-                        const resp = await search_query_by_type(
-                          fdaservice,
-                          query,
-                          queryType,
-                          pageN,
-                          nPerPage,
-                          sortBy,
-                          values.versions,
-                        );
-                        console.log(resp);
-                      }}
-                    />
-                  </div>
-                )}
-              </FdaVersionsContext.Consumer>
-
-              <CompareTables />
-
-              <ExpandSearchResultItem />
-              <SearchResultsList />
+              >
+                <Spinner />
+                <span className="sr-only">Loading...</span>
+              </div>
+            )}
+            <ComplexSearchBar />
+            <div
+              className="flex flex-col
+                  w-full sm:w-11/12 md:w-8/12
+                  space-y-0 sm:space-y-1
+                  px-0 sm:px-10"
+            >
+              <VerToolbar
+                fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
+                reloadCallback={async () => {
+                  if (query[0] === "") return;
+                  const resp = await search_query_by_type(
+                    fdaservice,
+                    query,
+                    queryType,
+                    pageN,
+                    nPerPage,
+                    sortBy,
+                    versions,
+                  );
+                  console.log(resp);
+                }}
+              />
             </div>
-          </section>
-        </SearchSupportContext.Provider>
-      </FdaVersionsProvider>
+
+            <CompareTables />
+
+            <ExpandSearchResultItem />
+            <SearchResultsList />
+          </div>
+        </section>
+      </SearchSupportContext.Provider>
     </ProtectedRoute>
   );
 }
