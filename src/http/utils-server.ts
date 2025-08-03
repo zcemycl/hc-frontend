@@ -18,6 +18,11 @@ export function validate_response_ok(response: any) {
     if (response.status == 401) {
       redirect("/logout");
     }
-    throw new Error(`Failed to fetch data: ${response.statusText}`);
+    if (response.status == 404) {
+      // return {"message": "Not Found"}
+    }
+    // throw new Error(`Failed to fetch data: ${response.statusText}`);
+    return false;
   }
+  return true;
 }

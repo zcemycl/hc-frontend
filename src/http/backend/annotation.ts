@@ -1,5 +1,5 @@
 "use server";
-import { AnnotationCategoryEnum, IFdaVersions } from "@/types";
+import { AnnotationCategoryEnum, IFdaVersions, ITableNoHead } from "@/types";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
@@ -87,7 +87,7 @@ export async function fetchAETableBySetid(
   setid: string,
   tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<ITableNoHead[]> {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${setid}/${tablename}`;
   const response = await fetch(API_URI, {
@@ -99,7 +99,7 @@ export async function fetchAETableBySetid(
     body: JSON.stringify(versions),
     // cache: "force-cache",
   });
-  validate_response_ok(response);
+  if (!validate_response_ok(response)) return [];
   const res = await response.json();
   return res;
 }
@@ -128,7 +128,7 @@ export async function fetchAnnotatedTableMapByNameIds(
   name: string,
   is_ai: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<{ [key: string]: any }> {
   const token = get_token_cookie();
   const params = new URLSearchParams();
   params.append("is_ai", is_ai.toString());
@@ -142,7 +142,7 @@ export async function fetchAnnotatedTableMapByNameIds(
     },
     body: JSON.stringify(versions),
   });
-  validate_response_ok(response);
+  if (!validate_response_ok(response)) return {};
   try {
     const res = await response.json();
     return res;

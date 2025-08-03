@@ -1,11 +1,6 @@
 "use client";
 import { Spinner, ProtectedRoute } from "@/components";
-import {
-  useAuth,
-  useAETableAnnotation,
-  useLoader,
-  FdaVersionsProvider,
-} from "@/contexts";
+import { useAuth, useAETableAnnotation, useLoader } from "@/contexts";
 import AEAnnotateListToolbar from "./ae-annotate-list-toolbar";
 import ListAETablesPanel from "./list-ae-tables-panel";
 
