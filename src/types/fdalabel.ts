@@ -32,21 +32,21 @@ export interface IBaseTableNoHead {
   setIsCellSelected?: Dispatch<SetStateAction<boolean[][]>>;
 }
 
+export interface ITableNoHead extends IBaseTableNoHead {
+  id: number;
+}
+
 export interface IBaseTitleContent {
   id: number;
   tag: string;
   content: string;
 }
 
-export interface IAdverseEffectTable extends IBaseTableNoHead {
-  id: number;
-}
+export interface IAdverseEffectTable extends ITableNoHead {}
 
 export interface IClinicalTrial extends IBaseTitleContent {}
 
-export interface IClinicalTrialTable extends IBaseTableNoHead {
-  id: number;
-}
+export interface IClinicalTrialTable extends ITableNoHead {}
 
 export interface IDrugInteraction extends IBaseTitleContent {}
 
