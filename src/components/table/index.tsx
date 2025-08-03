@@ -1,7 +1,17 @@
 "use client";
-import { Dispatch, FC, ReactNode, SetStateAction, useId, useRef } from "react";
+import {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useId,
+  useRef,
+} from "react";
 import { IBaseTableNoHead } from "@/types";
 import { isEmpty } from "@/utils";
+import { TableSelectContext } from "@/contexts";
 
 const TableCell: FC<{
   children: ReactNode;
@@ -24,11 +34,64 @@ const TableCell: FC<{
   isSelected,
   setIsTableSelected,
 }) => {
+  const { isDragging, setIsDragging, draggedIds } =
+    useContext(TableSelectContext);
+
+  const handleBoolTables = useCallback(() => {
+    let copy = [...isSelected!];
+    copy[rowid!][colid!] = !copy[rowid!][colid!];
+    setIsTableSelected!(copy);
+  }, [isSelected]);
+
+  const handleMouseDown = useCallback(() => {
+    setIsDragging(true);
+    draggedIds.current.clear();
+    draggedIds.current.add(`${rowid}-${colid}`);
+
+    handleBoolTables();
+    document.body.style.userSelect = "none";
+  }, [isDragging, handleBoolTables]);
+
+  const handleMouseEnter = useCallback(() => {
+    if (isDragging && !draggedIds.current.has(`${rowid}-${colid}`)) {
+      draggedIds.current.add(`${rowid}-${colid}`);
+      handleBoolTables();
+    }
+  }, [isDragging, handleBoolTables]);
+
   return (
     <td
-      className={`border 
+      className={`border
+      rounded-lg
+      ${isSelectable ? "hover:bg-emerald-500 hover:text-black hover:font-bold" : ""}
+      ${
+        isSelected !== undefined &&
+        isSelected![rowid!] !== undefined &&
+        isSelected![rowid!][colid!]
+          ? "bg-emerald-500 text-black font-bold"
+          : ""
+      }
       ${isLeftBorderBold ? "border-l-4" : ""}`}
       colSpan={colspan === undefined ? 1 : colspan}
+      // onClick={isSelectable ? (e) => {
+      //   e.preventDefault();
+      //   handleBoolTables();
+      // } : () => {}}
+      onMouseDown={
+        isSelectable
+          ? (e) => {
+              e.preventDefault(); // Prevent text selection
+              handleMouseDown();
+            }
+          : () => {}
+      }
+      onMouseEnter={
+        isSelectable
+          ? () => {
+              handleMouseEnter();
+            }
+          : () => {}
+      }
     >
       <div
         className={`flex justify-between px-2
@@ -46,10 +109,10 @@ const TableCell: FC<{
                 : isSelected![rowid!][colid!]
             }
             onChange={(e) => {
-              e.preventDefault();
-              let copy = [...isSelected!];
-              copy[rowid!][colid!] = !copy[rowid!][colid!];
-              setIsTableSelected!(copy);
+              // e.preventDefault();
+              // let copy = [...isSelected!];
+              // copy[rowid!][colid!] = !copy[rowid!][colid!];
+              // setIsTableSelected!(copy);
             }}
           />
         )}

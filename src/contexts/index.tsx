@@ -11,3 +11,4 @@ export { DbsHealthContext } from "./dbs-health";
 export { SelectedWordsContext } from "./phrase-bubble";
 export { FdaVersionsContext, FdaVersionsProvider } from "./fda-versions";
 export { SearchSupportContext } from "./search-support";
+export { TableSelectContext, TableSelectProvider } from "./table-select";

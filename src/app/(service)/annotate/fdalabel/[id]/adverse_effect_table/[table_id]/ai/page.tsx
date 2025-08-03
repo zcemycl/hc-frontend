@@ -261,7 +261,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                         cell_map,
                         col_map,
                         none_map,
-                        questions[questionIdx].mapMode,
+                        "none",
                       ),
                     },
                     isSelected: {

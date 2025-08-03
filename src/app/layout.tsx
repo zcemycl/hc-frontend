@@ -6,6 +6,7 @@ import {
   OpenBarProvider,
   LoaderProvider,
   FdaVersionsProvider,
+  TableSelectProvider,
 } from "@/contexts";
 
 export const metadata = {
@@ -40,11 +41,13 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
               <AuthProvider>
                 <FdaVersionsProvider>
                   <SideBar>
-                    <div className="h-[100vh] overflow-y-auto">
-                      <NavBar />
-                      {children}
-                      <Footer />
-                    </div>
+                    <TableSelectProvider>
+                      <div className="h-[100vh] overflow-y-auto">
+                        <NavBar />
+                        {children}
+                        <Footer />
+                      </div>
+                    </TableSelectProvider>
                   </SideBar>
                 </FdaVersionsProvider>
               </AuthProvider>
