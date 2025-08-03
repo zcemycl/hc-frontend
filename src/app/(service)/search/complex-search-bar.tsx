@@ -152,7 +152,7 @@ export default function ComplexSearchBar() {
                 setIdsToCompare,
                 query,
                 queryType,
-                DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+                versions,
               );
               setCompareTable(resp);
               console.log(resp);

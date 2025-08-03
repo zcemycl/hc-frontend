@@ -173,8 +173,8 @@ export async function fetchFdalabelCompareAdverseEffects(
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      item: { setids: setids },
-      versions: versions,
+      item: { setids },
+      versions,
     }),
   });
   validate_response_ok(response);
