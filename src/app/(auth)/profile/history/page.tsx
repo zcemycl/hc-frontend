@@ -34,7 +34,6 @@ export default function Page() {
       nPerPage * pageN,
       nPerPage,
     );
-    console.log(historyInfo);
     setHistory(historyInfo);
   }, []);
 
@@ -100,7 +99,6 @@ export default function Page() {
                         key={`history-${idx}`}
                         onClick={(e) => {
                           e.preventDefault();
-                          console.log(x);
                           if (
                             Object.keys(x.detail.additional_settings).includes(
                               "versions",
