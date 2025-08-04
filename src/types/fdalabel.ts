@@ -1,5 +1,18 @@
 import { Dispatch, SetStateAction } from "react";
 
+export interface IFdaVersions {
+  fdalabel: string;
+  indication_usage?: string;
+  dosage_administration?: string;
+  dosage_form?: string;
+  contraindication?: string;
+  adverse_effect?: string;
+  adverse_effect_table?: string;
+  drug_interaction?: string;
+  clinical_trial?: string;
+  clinical_trial_table?: string;
+}
+
 export interface IBaseTable {
   [key: string]: string[][];
 }
@@ -19,21 +32,21 @@ export interface IBaseTableNoHead {
   setIsCellSelected?: Dispatch<SetStateAction<boolean[][]>>;
 }
 
+export interface ITableNoHead extends IBaseTableNoHead {
+  id: number;
+}
+
 export interface IBaseTitleContent {
   id: number;
   tag: string;
   content: string;
 }
 
-export interface IAdverseEffectTable extends IBaseTableNoHead {
-  id: number;
-}
+export interface IAdverseEffectTable extends ITableNoHead {}
 
 export interface IClinicalTrial extends IBaseTitleContent {}
 
-export interface IClinicalTrialTable extends IBaseTableNoHead {
-  id: number;
-}
+export interface IClinicalTrialTable extends ITableNoHead {}
 
 export interface IDrugInteraction extends IBaseTitleContent {}
 
@@ -62,6 +75,7 @@ export interface IFdaLabel extends IFdaLabelRef {
   clinical_trial_tables?: IClinicalTrialTable[];
   drug_interactions?: IDrugInteraction[];
   therapeutic_areas?: ITherapeuticArea[];
+  version?: string;
   ae_tables_count?: number;
   ct_tables_count?: number;
 }

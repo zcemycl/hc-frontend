@@ -1,7 +1,7 @@
 "use client";
 import { TypographyH2, PaginationBar, ProtectedRoute } from "@/components";
-import { useAuth, useLoader } from "@/contexts";
-import { useState, useEffect, useCallback } from "react";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { convert_datetime_to_simple } from "@/utils";
 import { useRouter } from "next/navigation";
 import {
@@ -26,6 +26,7 @@ export default function Page() {
   const [countHistory, setCountHistory] = useState(0);
   const [nPerPage, _] = useState(10);
   const [pageNHistory, setPageNHistory] = useState(0);
+  const { setVersions } = useContext(FdaVersionsContext);
 
   const setHistoryData = useCallback(async (id: number, pageN: number) => {
     const historyInfo = await fetchHistoryByUserId(
@@ -98,6 +99,14 @@ export default function Page() {
                         key={`history-${idx}`}
                         onClick={(e) => {
                           e.preventDefault();
+                          if (
+                            Object.keys(x.detail.additional_settings).includes(
+                              "versions",
+                            )
+                          ) {
+                            setVersions(x.detail.additional_settings.versions);
+                            // setFdaVers(x.detail.additional_settings.versions.fdalabel);
+                          }
                           router.push(`/search?historyId=${x.id}`);
                         }}
                         className="hover:bg-green-200 

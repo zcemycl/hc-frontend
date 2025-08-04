@@ -2,6 +2,7 @@ import {
   SearchActionEnum,
   TBooleanDummySetState,
   UserHistoryCategoryEnum,
+  IFdaVersions,
 } from "@/types";
 import { BaseServiceHandler } from "./utils";
 import {
@@ -13,7 +14,12 @@ import {
   fetchFdalabelByTherapeuticArea,
 } from "@/http/backend";
 import { useRouter } from "next/navigation";
-import { SearchQueryTypeEnum, SortByEnum, AETableVerEnum } from "@/constants";
+import {
+  SearchQueryTypeEnum,
+  SortByEnum,
+  AETableVerEnum,
+  DEFAULT_FDALABEL_VERSIONS,
+} from "@/constants";
 
 export class FdalabelFetchService extends BaseServiceHandler {
   userId: number;
@@ -31,10 +37,17 @@ export class FdalabelFetchService extends BaseServiceHandler {
 
   async handleFdalabelBySetid(
     query: string[],
-    version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
-      const resp = await fetchFdalabelBySetid(query, this.topN, 0, -1, version);
+      const resp = await fetchFdalabelBySetid(
+        query,
+        this.topN,
+        0,
+        -1,
+        versions,
+      );
       await addHistoryByUserId(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
@@ -43,7 +56,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
           query,
           additional_settings: {
             queryType: SearchQueryTypeEnum.SETID,
-            aeVersion: version,
+            versions: versions,
           },
         },
       );
@@ -55,7 +68,8 @@ export class FdalabelFetchService extends BaseServiceHandler {
 
   async handleFdalabelByTradename(
     query: string[],
-    version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
+    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   ) {
     try {
       const resp = await fetchFdalabelByTradename(
@@ -63,7 +77,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         this.topN,
         0,
         -1,
-        version,
+        versions,
       );
       await addHistoryByUserId(
         this.userId as number,
@@ -73,7 +87,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
           query,
           additional_settings: {
             queryType: SearchQueryTypeEnum.TRADENAME,
-            aeVersion: version,
+            versions: versions,
           },
         },
       );
@@ -88,7 +102,8 @@ export class FdalabelFetchService extends BaseServiceHandler {
     pageN: number,
     nPerPage: number,
     sortBy: SortByEnum,
-    version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
       const resp = await fetchFdalabelByIndication(
@@ -97,7 +112,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         pageN * nPerPage,
         undefined,
         sortBy,
-        version,
+        versions,
       );
       await addHistoryByUserId(
         this.userId as number,
@@ -110,7 +125,8 @@ export class FdalabelFetchService extends BaseServiceHandler {
             queryType: SearchQueryTypeEnum.INDICATION,
             pageN: `${pageN}`,
             nPerPage: `${nPerPage}`,
-            aeVersion: version,
+            // aeVersion: version,
+            versions: versions,
           },
         },
       );
@@ -125,7 +141,8 @@ export class FdalabelFetchService extends BaseServiceHandler {
     pageN: number,
     nPerPage: number,
     sortBy: SortByEnum,
-    version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
+    versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
       const resp = await fetchFdalabelByTherapeuticArea(
@@ -134,7 +151,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         pageN * nPerPage,
         undefined,
         sortBy,
-        version,
+        versions,
       );
       await addHistoryByUserId(
         this.userId as number,
@@ -147,7 +164,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
             queryType: SearchQueryTypeEnum.TA,
             pageN: `${pageN}`,
             nPerPage: `${nPerPage}`,
-            aeVersion: version,
+            versions: versions,
           },
         },
       );
@@ -161,10 +178,14 @@ export class FdalabelFetchService extends BaseServiceHandler {
     setIdsToCompare: Set<string>,
     query: string[],
     queryType: SearchQueryTypeEnum,
+    versions: IFdaVersions,
   ) {
     try {
       const arrSetIdsToCompare = Array.from(setIdsToCompare);
-      const resp = await fetchFdalabelCompareAdverseEffects(arrSetIdsToCompare);
+      const resp = await fetchFdalabelCompareAdverseEffects(
+        arrSetIdsToCompare,
+        versions,
+      );
       await addHistoryByUserId(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
@@ -174,6 +195,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
           additional_settings: {
             query,
             queryType,
+            versions,
           },
         },
       );

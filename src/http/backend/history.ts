@@ -43,8 +43,6 @@ export async function addHistoryByUserId(
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/history/${id}`;
-  console.log(category);
-  console.log(detail);
   const response = await fetch(API_URI, {
     method: "POST",
     headers: {

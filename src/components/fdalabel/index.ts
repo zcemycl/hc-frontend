@@ -7,3 +7,4 @@ export * from "./ClinicalTrialSection";
 export * from "./FdaLabelHistory";
 export * from "./FdaLabel";
 export * from "./FdaLabelShort";
+export * from "./ver-toolbar";

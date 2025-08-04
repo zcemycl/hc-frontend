@@ -1,7 +1,12 @@
 "use client";
-import { useAuth, useLoader } from "@/contexts";
+import {
+  FdaVersionsContext,
+  TableSelectContext,
+  useAuth,
+  useLoader,
+} from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, useContext } from "react";
 import {
   fetchAETableByIds,
   addAnnotationByNameId,
@@ -22,7 +27,7 @@ import {
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "./questions";
-import { AETableVerEnum, aeTableVersionMap } from "@/constants";
+import { AnnotationTypeEnum } from "@/constants";
 import { useTickableTableCell } from "@/hooks";
 
 interface PageProps {
@@ -35,9 +40,9 @@ interface PageProps {
 export default function Page({ params }: Readonly<PageProps>) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const defaultVersion = searchParams.has("version")
-    ? searchParams.get("version")
-    : AETableVerEnum.v0_0_1;
+  const tab = searchParams.has("tab")
+    ? searchParams.get("tab")
+    : AnnotationTypeEnum.ONGOING;
   const { credentials, isLoadingAuth } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
@@ -55,7 +60,8 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
-  const [version, setVersion] = useState(defaultVersion);
+  const { versions } = useContext(FdaVersionsContext);
+  const { handleMouseUp } = useContext(TableSelectContext);
 
   const storeCache = async () => {
     let tmp = { ...finalResults };
@@ -73,6 +79,15 @@ export default function Page({ params }: Readonly<PageProps>) {
     tmp["additionalRequire"] = addtmp;
     return tmp;
   };
+
+  useEffect(() => {
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.userSelect = "";
+    };
+  }, [handleMouseUp]);
+
   // set table
   useEffect(() => {
     async function getData() {
@@ -80,16 +95,20 @@ export default function Page({ params }: Readonly<PageProps>) {
         params.table_id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         params.id,
-        version as AETableVerEnum,
+        versions,
       );
       setTableData(res);
-      const res_history = await fetchAnnotatedTableMapByNameIds(
-        res.id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        false,
-        version as AETableVerEnum,
-      );
-      if ("annotated" in res_history) setFinalResults(res_history["annotated"]);
+      console.log(versions);
+      if (tab !== AnnotationTypeEnum.ONGOING) {
+        const res_history = await fetchAnnotatedTableMapByNameIds(
+          res.id,
+          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+          tab === AnnotationTypeEnum.AI,
+          versions,
+        );
+        if ("annotated" in res_history)
+          setFinalResults(res_history["annotated"]);
+      }
     }
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;

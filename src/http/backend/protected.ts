@@ -1,14 +1,15 @@
 "use server";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
-import { AETableVerEnum } from "@/constants";
+import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
+import { IFdaVersions } from "@/types";
 
 export async function fetchFdalabelBySetid(
   setid: string[],
   maxn: number = 30,
   offset: number = 0,
   limit: number | null = 10,
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_id`;
@@ -16,19 +17,19 @@ export async function fetchFdalabelBySetid(
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
-  params.append("version", version);
+  // params.append("version", version);
   if (limit !== null) {
     params.append("limit", limit!.toString());
   }
 
   let API_URI_PAGINATION = `${API_URI}?id=${setids_param}&${params}`;
   const response = await fetch(API_URI_PAGINATION, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    cache: "force-cache",
+    body: JSON.stringify(versions),
   });
   validate_response_ok(response);
   const res = await response.json();
@@ -40,7 +41,7 @@ export async function fetchFdalabelByTradename(
   maxn: number = 30,
   offset: number = 0,
   limit: number | null = 10,
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_tradename`;
@@ -48,7 +49,7 @@ export async function fetchFdalabelByTradename(
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
-  params.append("version", version);
+  // params.append("version", version);
   if (limit !== null) {
     params.append("limit", limit!.toString());
   }
@@ -56,11 +57,12 @@ export async function fetchFdalabelByTradename(
   let API_URI_PAGINATION = `${API_URI}?tradename=${tradenames_param}&${params}`;
 
   const response = await fetch(API_URI_PAGINATION, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify(versions),
     cache: "force-cache",
   });
   validate_response_ok(response);
@@ -74,14 +76,14 @@ export async function fetchFdalabelByTherapeuticArea(
   offset: number = 0,
   limit: number = 10,
   sort_by: string = "relevance",
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
   params.append("sort_by", sort_by);
-  params.append("version", version);
+  // params.append("version", version);
   if (limit !== null) {
     params.append("limit", limit!.toString());
   }
@@ -89,11 +91,12 @@ export async function fetchFdalabelByTherapeuticArea(
   const response = await fetch(
     `${API_URI}?ta_description=${ta_description}&${params}`,
     {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(versions),
       cache: "force-cache",
     },
   );
@@ -108,14 +111,14 @@ export async function fetchFdalabelByIndication(
   offset: number = 0,
   limit: number = 10,
   sort_by: string = "relevance",
-  version: AETableVerEnum = AETableVerEnum.v0_0_1,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
   const token = get_token_cookie();
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
   params.append("sort_by", sort_by);
-  params.append("version", version);
+  // params.append("version", version);
   if (limit !== null) {
     params.append("limit", limit!.toString());
   }
@@ -123,11 +126,12 @@ export async function fetchFdalabelByIndication(
   const response = await fetch(
     `${API_URI}?indication=${indication}&${params}`,
     {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(versions),
       cache: "force-cache",
     },
   );
@@ -136,15 +140,19 @@ export async function fetchFdalabelByIndication(
   return res;
 }
 
-export async function fetchFdalabelHistoryBySetid(setid: string) {
+export async function fetchFdalabelHistoryBySetid(
+  setid: string,
+  versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
+) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/history`;
   const response = await fetch(`${API_URI}/${setid}`, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify(versions),
     cache: "force-cache",
   });
   validate_response_ok(response);
@@ -152,7 +160,10 @@ export async function fetchFdalabelHistoryBySetid(setid: string) {
   return res;
 }
 
-export async function fetchFdalabelCompareAdverseEffects(setids: string[]) {
+export async function fetchFdalabelCompareAdverseEffects(
+  setids: string[],
+  versions: IFdaVersions,
+) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/compare/adverse-effects`;
   const response = await fetch(API_URI, {
@@ -162,7 +173,8 @@ export async function fetchFdalabelCompareAdverseEffects(setids: string[]) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      setids: setids,
+      item: { setids },
+      versions,
     }),
   });
   validate_response_ok(response);

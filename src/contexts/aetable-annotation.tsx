@@ -5,14 +5,22 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
 } from "react";
 import { AnnotationTypeEnum } from "@/constants";
 import {
+  AnnotationCategoryEnum,
   DummySetStateFactory,
+  IFdaVersions,
+  IUnAnnotatedAETable,
   numberDummySetState,
   TDummySetState,
   TNumberDummySetState,
 } from "@/types";
+import {
+  fetchUnannotatedAETableByUserId,
+  fetchUnannotatedAETableByUserIdCount,
+} from "@/http/backend";
 
 interface IAePageCache {
   tabName?: AnnotationTypeEnum;
@@ -39,6 +47,21 @@ interface AETableAnnotationContextType {
     newPageN?: number | null,
   ) => void;
   saveTabPage: (i: number) => void;
+  tableData: IUnAnnotatedAETable[];
+  setTableData: (t: IUnAnnotatedAETable[]) => void;
+  nPerPage: number;
+  topN: number;
+  setTopN: (i: number) => void;
+  fetchAnnotationTableList: (
+    userId: number,
+    tabName: AnnotationTypeEnum,
+    pageN: number,
+    router: any,
+    versions: IFdaVersions,
+    setTopN: (i: number) => void,
+    setTableData: (d: IUnAnnotatedAETable[]) => void,
+  ) => void;
+  refUnannotatedGroup: any;
 }
 
 export const AETableAnnotationContext =
@@ -59,6 +82,21 @@ export const AETableAnnotationContext =
       newPageN?: number | null,
     ) => {},
     saveTabPage: (i: number) => {},
+    tableData: [],
+    setTableData: (t: IUnAnnotatedAETable[]) => {},
+    nPerPage: 10,
+    topN: 0,
+    setTopN: (i: number) => {},
+    fetchAnnotationTableList: (
+      userId: number,
+      tabName: AnnotationTypeEnum,
+      pageN: number,
+      router: any,
+      versions: IFdaVersions,
+      setTopN: (i: number) => void,
+      setTableData: (d: IUnAnnotatedAETable[]) => void,
+    ) => {},
+    refUnannotatedGroup: null,
   });
 
 export const AETableAnnotationProvider = ({
@@ -67,6 +105,10 @@ export const AETableAnnotationProvider = ({
   children?: React.ReactNode;
 }) => {
   const [cache, setCache] = useState({});
+  const [topN, setTopN] = useState(0);
+  const [nPerPage, _] = useState(10);
+  const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
+  const refUnannotatedGroup = useRef(null);
   const [tabName, setTabName] = useState(
     ("tabName" in cache
       ? cache["tabName"]
@@ -89,7 +131,6 @@ export const AETableAnnotationProvider = ({
     const tmpCache = JSON.parse(
       localStorage.getItem("aeTableAnnotationPageCache") as string,
     );
-    // console.log(tmpCache["pageN"]);
     if (tmpCache !== null) {
       setCache(tmpCache);
       if ("tabName" in tmpCache) {
@@ -171,6 +212,42 @@ export const AETableAnnotationProvider = ({
         }
         setPageN(i);
       };
+
+      async function fetchAnnotationTableList(
+        userId: number,
+        tabName: AnnotationTypeEnum,
+        pageN: number,
+        router: any,
+        versions: IFdaVersions,
+        setTopN: (i: number) => void,
+        setTableData: (d: IUnAnnotatedAETable[]) => void,
+      ) {
+        const [res, count] = await Promise.all([
+          fetchUnannotatedAETableByUserId(
+            userId,
+            AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+            pageN * nPerPage,
+            nPerPage,
+            tabName === AnnotationTypeEnum.COMPLETE,
+            tabName === AnnotationTypeEnum.AI,
+            versions,
+          ),
+          fetchUnannotatedAETableByUserIdCount(
+            userId,
+            AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+            tabName === AnnotationTypeEnum.COMPLETE,
+            tabName === AnnotationTypeEnum.AI,
+            versions,
+          ),
+        ]);
+        if ("detail" in res) {
+          router.push("/logout");
+          return;
+        }
+        setTopN(count);
+        setTableData([...res]);
+      }
+
       return {
         aePageCache: cache,
         tabName,
@@ -185,6 +262,13 @@ export const AETableAnnotationProvider = ({
         setPageN,
         saveAETableAnnotationPageCache,
         saveTabPage,
+        nPerPage,
+        topN,
+        setTopN,
+        tableData,
+        setTableData,
+        fetchAnnotationTableList,
+        refUnannotatedGroup,
       };
     }, [
       cache,
@@ -198,6 +282,9 @@ export const AETableAnnotationProvider = ({
       setAIPageN,
       pageN,
       setPageN,
+      refUnannotatedGroup,
+      topN,
+      tableData,
     ]);
   return (
     <AETableAnnotationContext.Provider value={AETableAnnotationProviderValue}>
