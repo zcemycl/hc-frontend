@@ -21,6 +21,9 @@ export async function fetchUserCount() {
       "Content-Type": "application/json",
     },
     cache: "force-cache",
+    next: {
+      revalidate: 600,
+    },
   });
   const res = await response.json();
   return res;
