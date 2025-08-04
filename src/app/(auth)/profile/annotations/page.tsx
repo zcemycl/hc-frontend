@@ -38,6 +38,7 @@ export default function Page() {
       true,
       false,
       versions,
+      true,
     );
     if (annotatedData !== undefined) setTableData(annotatedData);
   }, []);

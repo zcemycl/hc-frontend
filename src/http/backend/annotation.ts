@@ -12,6 +12,7 @@ export async function fetchUnannotatedAETableByUserId(
   reverse: boolean = false,
   complete: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
+  isHistory: boolean = false,
 ) {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables/${tablename}`;
@@ -20,6 +21,7 @@ export async function fetchUnannotatedAETableByUserId(
   params.append("limit", limit.toString());
   params.append("reverse", reverse.toString());
   params.append("complete", complete.toString());
+  params.append("isHistory", isHistory.toString());
   const API_URI_PAGINATION = `${API_URI}?${params}`;
   const response = await fetch(API_URI_PAGINATION, {
     method: "POST",
