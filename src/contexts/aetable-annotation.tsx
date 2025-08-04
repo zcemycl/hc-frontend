@@ -222,22 +222,24 @@ export const AETableAnnotationProvider = ({
         setTopN: (i: number) => void,
         setTableData: (d: IUnAnnotatedAETable[]) => void,
       ) {
-        const res = await fetchUnannotatedAETableByUserId(
-          userId,
-          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-          pageN * nPerPage,
-          nPerPage,
-          tabName === AnnotationTypeEnum.COMPLETE,
-          tabName === AnnotationTypeEnum.AI,
-          versions,
-        );
-        const count = await fetchUnannotatedAETableByUserIdCount(
-          userId,
-          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-          tabName === AnnotationTypeEnum.COMPLETE,
-          tabName === AnnotationTypeEnum.AI,
-          versions,
-        );
+        const [res, count] = await Promise.all([
+          fetchUnannotatedAETableByUserId(
+            userId,
+            AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+            pageN * nPerPage,
+            nPerPage,
+            tabName === AnnotationTypeEnum.COMPLETE,
+            tabName === AnnotationTypeEnum.AI,
+            versions,
+          ),
+          fetchUnannotatedAETableByUserIdCount(
+            userId,
+            AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+            tabName === AnnotationTypeEnum.COMPLETE,
+            tabName === AnnotationTypeEnum.AI,
+            versions,
+          ),
+        ]);
         if ("detail" in res) {
           router.push("/logout");
           return;

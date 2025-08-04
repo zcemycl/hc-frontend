@@ -34,11 +34,11 @@ export const FdaVersionsProvider = ({
 
   useEffect(() => {
     async function getData() {
-      const _fdaVers = await fetchFdalabelScrapeVersions();
+      const [_fdaVers, _sectionVers] = await Promise.all([
+        fetchFdalabelScrapeVersions(),
+        fetchFdalabelSectionVersions(versions.fdalabel),
+      ]);
       setFdaVers([..._fdaVers]);
-      const _sectionVers = await fetchFdalabelSectionVersions(
-        versions.fdalabel,
-      );
       setSectionVersions({ ..._sectionVers });
     }
     getData();
