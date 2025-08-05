@@ -27,9 +27,16 @@ function IntroSection({
 }) {
   const router = useRouter();
   return (
-    <>
+    <div className="flex flex-col space-y-2">
       <div className="flex justify-between">
-        <TypographyH2>{tradename}</TypographyH2>
+        <h1
+          className="text-3xl mb-1 font-medium
+          align-middle content-center
+          text-wrap text-white
+          title-font"
+        >
+          {tradename}
+        </h1>
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -39,12 +46,15 @@ function IntroSection({
           Back
         </button>
       </div>
-      <TypographyH2>{setid}</TypographyH2>
-      <TypographyH2>
-        {convert_datetime_to_date(spl_earliest_date)} -{" "}
-        {convert_datetime_to_date(spl_effective_date)}
-      </TypographyH2>
-      <TypographyH2>{manufacturer}</TypographyH2>
+      <div className="flex flex-col space-x-0">
+        <TypographyH2 extraClass="text-md">{manufacturer}</TypographyH2>
+        <TypographyH2 extraClass="text-md">{setid}</TypographyH2>
+        <TypographyH2 extraClass="text-md">
+          {convert_datetime_to_date(spl_earliest_date)} -{" "}
+          {convert_datetime_to_date(spl_effective_date)}
+        </TypographyH2>
+      </div>
+
       <div
         className="flex flex-col space-y-0
         items-start w-full overflow-x-auto
@@ -71,19 +81,21 @@ function IntroSection({
         </button>
       </div>
 
-      <p className="leading-relaxed">
-        XML source:{" "}
-        <a href={xml_link} target="_blank">
-          {xml_link}
-        </a>
-      </p>
-      <p className="leading-relaxed">
-        Download pdf:{" "}
-        <a href={pdf_link} target="_blank">
-          {pdf_link}
-        </a>
-      </p>
-    </>
+      <div className="flex flex-col space-x-0 text-xs">
+        <p className="leading-relaxed">
+          XML source:{" "}
+          <a href={xml_link} target="_blank" className="text-emerald-100">
+            {xml_link}
+          </a>
+        </p>
+        <p className="leading-relaxed">
+          Download pdf:{" "}
+          <a href={pdf_link} target="_blank" className="text-emerald-100">
+            {pdf_link}
+          </a>
+        </p>
+      </div>
+    </div>
   );
 }
 
