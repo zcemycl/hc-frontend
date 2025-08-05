@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DropDownBtn, DropDownList } from "./BasicDropdown";
 import { FdaVersionsContext } from "@/contexts";
 
@@ -13,23 +13,28 @@ const VerDropdown = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { versions, setVersions, fdaVers, sectionVersions } =
     useContext(FdaVersionsContext);
-  const optMap = useMemo(() => {
+  const [optMap, setOptMap] = useState<any>([]);
+  useEffect(() => {
+    let target;
     if (verKey === "fdalabel") {
-      return fdaVers.map((val: string) => ({
+      target = fdaVers.map((val: string) => ({
         verType: val,
         verDisplayName: val,
       }));
     } else {
       const tmpVersions = sectionVersions[`${verKey}_available_versions`];
-      if (tmpVersions === null) {
-        return [];
+      if (tmpVersions === null || tmpVersions === undefined) {
+        target = [];
+      } else {
+        target = tmpVersions.map((val: string) => ({
+          verType: val,
+          verDisplayName: val,
+        }));
       }
-      return tmpVersions.map((val: string) => ({
-        verType: val,
-        verDisplayName: val,
-      }));
     }
+    setOptMap([...target]);
   }, [fdaVers, sectionVersions]);
+
   return (
     <div className="transition-all">
       <DropDownBtn onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
