@@ -20,7 +20,7 @@ function FdaLabel({
   versions: IFdaVersions;
 }) {
   return (
-    <div className="flex flex-col w-full space-y-3">
+    <div className="flex flex-col space-y-3 w-11/12 sm:w-full justify-center">
       <IntroSection
         {...{
           setid: each.setid!,

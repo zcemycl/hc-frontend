@@ -63,8 +63,6 @@ function AdverseReactionSection({
                 <div className="overflow-x-auto">
                   <Table {...{ ...tabledata, keyname: "table" }} />
                 </div>
-
-                <hr />
               </div>
             );
           })}

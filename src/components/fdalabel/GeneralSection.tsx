@@ -105,7 +105,6 @@ function GeneralSection({
                       {...{ ...idx_tables[Number(c[0])], keyname: "table" }}
                     />
                   </div>
-                  <hr />
                 </div>
               );
             }
