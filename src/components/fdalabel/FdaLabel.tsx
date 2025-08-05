@@ -6,6 +6,7 @@ import { AdverseReactionSection } from "./AdverseReactionSection";
 import { DrugInteractionSection } from "./DrugInteractionSection";
 import { ClinicalTrialSection } from "./ClinicalTrialSection";
 import { FdaLabelHistory } from "./FdaLabelHistory";
+import { GeneralSection } from "./GeneralSection";
 
 function FdaLabel({
   each,
@@ -19,7 +20,7 @@ function FdaLabel({
   versions: IFdaVersions;
 }) {
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full space-y-3">
       <IntroSection
         {...{
           setid: each.setid!,
@@ -33,16 +34,44 @@ function FdaLabel({
           back_btn_callback,
         }}
       />
+      {/* section 1 */}
       <IndicationSection indication={each.indication!} />
+      {/* section 3 */}
+      {each.dosage_forms!.length === 1 && (
+        <GeneralSection
+          title={"Drug Interactions"}
+          section={each.dosage_forms![0]}
+          tables={[]}
+        />
+      )}
+      {/* section 6 */}
       <AdverseReactionSection
         setid={each.setid!}
         adverse_effect_tables={each.adverse_effect_tables!}
       />
-      <DrugInteractionSection drug_interactions={each.drug_interactions!} />
-      <ClinicalTrialSection
-        clinical_trials={each.clinical_trials!}
-        clinical_trial_tables={each.clinical_trial_tables!}
-      />
+      {/* section 7 */}
+      {each.drug_interactions!.length > 1 ? (
+        <DrugInteractionSection drug_interactions={each.drug_interactions!} />
+      ) : (
+        <GeneralSection
+          title={"Drug Interactions"}
+          section={each.drug_interactions![0]}
+          tables={[]}
+        />
+      )}
+      {/* section 14 */}
+      {each.clinical_trials!.length > 1 ? (
+        <ClinicalTrialSection
+          clinical_trials={each.clinical_trials!}
+          clinical_trial_tables={each.clinical_trial_tables!}
+        />
+      ) : (
+        <GeneralSection
+          title={"Clinical Trial"}
+          section={each.clinical_trials![0]}
+          tables={each.clinical_trial_tables!}
+        />
+      )}
       <FdaLabelHistory
         setid={each.setid!}
         displayDataIndex={displayDataIndex}

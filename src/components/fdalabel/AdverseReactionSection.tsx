@@ -19,6 +19,7 @@ function AdverseReactionSection({
   // const { version, setVersion } = useContext(AEVersionContext);
   return (
     <Fragment key={id}>
+      <hr />
       {(adverse_effect_tables as IAdverseEffectTable[])?.length > 0 && (
         <Fragment key={id}>
           <div

@@ -63,17 +63,23 @@ export interface IFdaLabelRef {
 
 export interface IFdaLabel extends IFdaLabelRef {
   distance?: number;
-  indication?: string;
   manufacturer?: string;
   pdf_link?: string;
   xml_link?: string;
   initial_us_approval_year?: number;
   spl_effective_date: string;
   spl_earliest_date: string;
+  // s1
+  indication?: string;
+  // s3
+  dosage_forms?: IBaseTitleContent[];
+  // s6
   adverse_effect_tables?: IAdverseEffectTable[];
+  // s7
+  drug_interactions?: IDrugInteraction[];
+  // s14
   clinical_trials?: IClinicalTrial[];
   clinical_trial_tables?: IClinicalTrialTable[];
-  drug_interactions?: IDrugInteraction[];
   therapeutic_areas?: ITherapeuticArea[];
   version?: string;
   ae_tables_count?: number;
