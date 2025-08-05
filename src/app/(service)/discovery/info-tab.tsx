@@ -39,7 +39,6 @@ export default function InfoTab() {
                 e.preventDefault();
                 if (visJsRef.current) {
                   net.releaseNode();
-                  console.log(selectedNodes);
                   const targetNodeId = selectedNodes.filter(
                     (x: INode) => x.id === v.id,
                   )[0].id;

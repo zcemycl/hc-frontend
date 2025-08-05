@@ -3,7 +3,7 @@ import { TypographyH2 } from "../typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTable } from "@fortawesome/free-solid-svg-icons";
 import { ITherapeuticArea } from "@/types/fdalabel";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function FdaLabelShort({
   setid,
