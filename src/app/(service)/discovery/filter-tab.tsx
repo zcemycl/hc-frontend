@@ -1,7 +1,7 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useState, useMemo, useEffect } from "react";
+import { useContext, useState, useMemo, useEffect, useRef } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
 import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
@@ -11,21 +11,24 @@ export default function FilterTab() {
   const { tab, visJsRef, net, nodes, dNodes, visToolBarRef } =
     useContext(DiscoveryContext);
   const searchParams = useSearchParams();
-  const [term, setTerm] = useState<string>(
-    searchParams.has("product_name")
-      ? (searchParams.get("product_name") as string)
-      : "",
-  );
+  const [term, setTerm] = useState<string>("");
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const filterNodes = useMemo(() => {
     return nodes
-      .filter((v: INode) => v["label"].toLowerCase().includes(term))
+      .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
       .slice(0, 5);
-  }, [term]);
+  }, [term, nodes]);
 
   useEffect(() => {
-    console.log(dNodes);
-  }, []);
+    setTerm(searchParams.get("product_name") || "");
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (filterNodes.length > 0 && net && term && buttonRef.current) {
+      buttonRef.current.click();
+    }
+  }, [filterNodes, net, term]);
 
   return (
     <div
@@ -67,8 +70,8 @@ export default function FilterTab() {
             setTerm(e.target.value.toLowerCase());
           }}
           className={`w-full
-                            p-2 bg-slate-100 text-black rounded-lg
-                            `}
+            p-2 bg-slate-100 text-black rounded-lg
+            `}
           type="input"
         />
       </div>
@@ -77,10 +80,16 @@ export default function FilterTab() {
         filterNodes.map((v: INode) => {
           return (
             <div
+              ref={
+                searchParams.has("product_name") &&
+                v["label"].toLowerCase().trim() === term
+                  ? buttonRef
+                  : undefined
+              }
               className={`text-black
-                                rounded-lg p-2 cursor-pointer
-                                ${switch_hover_color_node(v.group!)}
-                                ${switch_color_node(v.group!)}`}
+                rounded-lg p-2 cursor-pointer
+                ${switch_hover_color_node(v.group!)}
+                ${switch_color_node(v.group!)}`}
               key={v.id}
               onClick={(e) => {
                 e.preventDefault();

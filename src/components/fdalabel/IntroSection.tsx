@@ -60,7 +60,7 @@ function IntroSection({
             let redirectUrl = `/discovery`;
             const params = new URLSearchParams();
             params.append("therapeutic_area", therapeutic_areas[0].path);
-            params.append("product_name", tradename.toLowerCase());
+            params.append("product_name", tradename.toLowerCase().trim());
             redirectUrl = `${redirectUrl}?${params}`;
             router.push(redirectUrl);
           }}
