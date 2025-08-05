@@ -1,34 +1,26 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useState, useMemo, useEffect, useRef } from "react";
+import { useContext, useState, useMemo, useRef } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
 import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 
 export default function FilterTab() {
-  const { tab, visJsRef, net, nodes, dNodes, visToolBarRef } =
+  const { tab, visJsRef, net, nodes, visToolBarRef } =
     useContext(DiscoveryContext);
   const searchParams = useSearchParams();
-  const [term, setTerm] = useState<string>("");
+  const [term, setTerm] = useState<string>(
+    searchParams.get("product_name") || "",
+  );
   const buttonRef = useRef<HTMLDivElement>(null);
 
   const filterNodes = useMemo(() => {
     return nodes
       .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
       .slice(0, 5);
-  }, [term, nodes]);
-
-  useEffect(() => {
-    setTerm(searchParams.get("product_name") || "");
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (filterNodes.length > 0 && net && term && buttonRef.current) {
-      buttonRef.current.click();
-    }
-  }, [filterNodes, net, term]);
+  }, [term, nodes, net]);
 
   return (
     <div
@@ -94,34 +86,36 @@ export default function FilterTab() {
               onClick={(e) => {
                 e.preventDefault();
                 if (visJsRef.current) {
-                  net.releaseNode();
-                  const targetNodeId = filterNodes.filter(
-                    (x: INode) => x.id === v.id,
-                  )[0].id;
-                  //   const pos = net.getViewPosition();
-                  const pos = net.getPositions([targetNodeId])[targetNodeId];
-                  const { width: offsetx, height: offsety } = (
-                    visToolBarRef.current as any
-                  ).getBoundingClientRect();
-                  const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
-                  net.moveTo({
-                    position: pos,
-                    scale: 0.2,
-                    offset: offset,
-                    animation: {
-                      duration: 800,
-                    },
-                  });
-                  net.selectNodes([targetNodeId]);
-                  setTimeout(() => {
-                    net.focus(targetNodeId, {
-                      scale: 0.5,
-                      offset,
+                  try {
+                    // net.releaseNode();
+                    const targetNodeId = filterNodes.filter(
+                      (x: INode) => x.id === v.id,
+                    )[0].id;
+                    //   const pos = net.getViewPosition();
+                    const pos = net.getPositions([targetNodeId])[targetNodeId];
+                    const { width: offsetx, height: offsety } = (
+                      visToolBarRef.current as any
+                    ).getBoundingClientRect();
+                    const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
+                    net.moveTo({
+                      position: pos,
+                      scale: 0.2,
+                      offset: offset,
                       animation: {
                         duration: 800,
                       },
                     });
-                  }, 1500);
+                    net.selectNodes([targetNodeId]);
+                    setTimeout(() => {
+                      net.focus(targetNodeId, {
+                        scale: 0.5,
+                        offset,
+                        animation: {
+                          duration: 800,
+                        },
+                      });
+                    }, 1500);
+                  } catch (e) {}
                 }
               }}
             >
