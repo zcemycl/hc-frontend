@@ -57,9 +57,12 @@ function IntroSection({
           "
           onClick={(e) => {
             e.preventDefault();
-            router.push(
-              `/discovery?therapeutic_area=${therapeutic_areas[0].path}`,
-            );
+            let redirectUrl = `/discovery`;
+            const params = new URLSearchParams();
+            params.append("therapeutic_area", therapeutic_areas[0].path);
+            params.append("product_name", tradename.toLowerCase());
+            redirectUrl = `${redirectUrl}?${params}`;
+            router.push(redirectUrl);
           }}
         >
           <TypographyH2 extraClass="text-black">

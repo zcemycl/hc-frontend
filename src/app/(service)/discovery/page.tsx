@@ -51,7 +51,7 @@ export default function Discovery() {
     name: searchParams.get("therapeutic_area")
       ? searchParams.get("therapeutic_area")!
       : "Neoplasms",
-    numNodes: 50,
+    numNodes: 500,
     offset: 0,
   });
   const [settings, defineSettings] = useState<any>({

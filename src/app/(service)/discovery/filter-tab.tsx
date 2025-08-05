@@ -1,21 +1,31 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useEffect } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
 import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
+import { useSearchParams } from "next/navigation";
 
 export default function FilterTab() {
-  const { tab, visJsRef, net, nodes, visToolBarRef } =
+  const { tab, visJsRef, net, nodes, dNodes, visToolBarRef } =
     useContext(DiscoveryContext);
-  const [term, setTerm] = useState("");
+  const searchParams = useSearchParams();
+  const [term, setTerm] = useState<string>(
+    searchParams.has("product_name")
+      ? (searchParams.get("product_name") as string)
+      : "",
+  );
 
   const filterNodes = useMemo(() => {
     return nodes
       .filter((v: INode) => v["label"].toLowerCase().includes(term))
       .slice(0, 5);
   }, [term]);
+
+  useEffect(() => {
+    console.log(dNodes);
+  }, []);
 
   return (
     <div
