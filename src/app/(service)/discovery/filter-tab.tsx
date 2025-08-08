@@ -1,21 +1,28 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useRef, useEffect } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
 import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
+import { useSearchParams } from "next/navigation";
 
 export default function FilterTab() {
   const { tab, visJsRef, net, nodes, visToolBarRef } =
     useContext(DiscoveryContext);
-  const [term, setTerm] = useState("");
+  const searchParams = useSearchParams();
+  const [term, setTerm] = useState<string>("");
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const filterNodes = useMemo(() => {
     return nodes
-      .filter((v: INode) => v["label"].toLowerCase().includes(term))
+      .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
       .slice(0, 5);
-  }, [term]);
+  }, [term, nodes, net]);
+
+  useEffect(() => {
+    setTerm(searchParams.get("product_name") || "");
+  }, [searchParams]);
 
   return (
     <div
@@ -57,8 +64,8 @@ export default function FilterTab() {
             setTerm(e.target.value.toLowerCase());
           }}
           className={`w-full
-                            p-2 bg-slate-100 text-black rounded-lg
-                            `}
+            p-2 bg-slate-100 text-black rounded-lg
+            `}
           type="input"
         />
       </div>
@@ -67,42 +74,50 @@ export default function FilterTab() {
         filterNodes.map((v: INode) => {
           return (
             <div
+              ref={
+                searchParams.has("product_name") &&
+                v["label"].toLowerCase().trim() === term
+                  ? buttonRef
+                  : undefined
+              }
               className={`text-black
-                                rounded-lg p-2 cursor-pointer
-                                ${switch_hover_color_node(v.group!)}
-                                ${switch_color_node(v.group!)}`}
+                rounded-lg p-2 cursor-pointer
+                ${switch_hover_color_node(v.group!)}
+                ${switch_color_node(v.group!)}`}
               key={v.id}
               onClick={(e) => {
                 e.preventDefault();
                 if (visJsRef.current) {
-                  net.releaseNode();
-                  const targetNodeId = filterNodes.filter(
-                    (x: INode) => x.id === v.id,
-                  )[0].id;
-                  //   const pos = net.getViewPosition();
-                  const pos = net.getPositions([targetNodeId])[targetNodeId];
-                  const { width: offsetx, height: offsety } = (
-                    visToolBarRef.current as any
-                  ).getBoundingClientRect();
-                  const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
-                  net.moveTo({
-                    position: pos,
-                    scale: 0.2,
-                    offset: offset,
-                    animation: {
-                      duration: 800,
-                    },
-                  });
-                  net.selectNodes([targetNodeId]);
-                  setTimeout(() => {
-                    net.focus(targetNodeId, {
-                      scale: 0.5,
-                      offset,
+                  try {
+                    // net.releaseNode();
+                    const targetNodeId = filterNodes.filter(
+                      (x: INode) => x.id === v.id,
+                    )[0].id;
+                    //   const pos = net.getViewPosition();
+                    const pos = net.getPositions([targetNodeId])[targetNodeId];
+                    const { width: offsetx, height: offsety } = (
+                      visToolBarRef.current as any
+                    ).getBoundingClientRect();
+                    const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
+                    net.moveTo({
+                      position: pos,
+                      scale: 0.2,
+                      offset: offset,
                       animation: {
                         duration: 800,
                       },
                     });
-                  }, 1500);
+                    net.selectNodes([targetNodeId]);
+                    setTimeout(() => {
+                      net.focus(targetNodeId, {
+                        scale: 0.5,
+                        offset,
+                        animation: {
+                          duration: 800,
+                        },
+                      });
+                    }, 1500);
+                  } catch (e) {}
                 }
               }}
             >

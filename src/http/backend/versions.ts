@@ -11,7 +11,6 @@ export async function fetchFdalabelScrapeVersions() {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    // cache: "force-cache",
   });
   validate_response_ok(response);
   const res = await response.json();
@@ -29,7 +28,6 @@ export async function fetchFdalabelSectionVersions(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    cache: "force-cache",
   });
   validate_response_ok(response);
   const res = await response.json();

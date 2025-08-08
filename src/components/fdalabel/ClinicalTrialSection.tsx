@@ -30,8 +30,10 @@ function ClinicalTrialSection({
           {clinical_trial_tables!.map((tabledata, tableid) => {
             return (
               <Fragment key={`${id}-${tableid}`}>
+                <caption className="flex justify-start text-left">
+                  {tabledata.caption}
+                </caption>
                 <Table {...{ ...tabledata, keyname: "table" }} />
-                <hr />
               </Fragment>
             );
           })}

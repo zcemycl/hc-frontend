@@ -157,6 +157,12 @@ export function generateGraphOption({
 
   let physics_settings: any = {
     enabled: enabled_physics,
+    adaptiveTimestep: true,
+    barnesHut: {
+      gravitationalConstant: -8000,
+      springConstant: 0.04,
+      springLength: 95,
+    },
     stabilization: physics_stabilisation,
   };
 

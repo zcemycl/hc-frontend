@@ -36,7 +36,9 @@ export default function Discovery() {
   const [bundles, setBundles] = useState<IBundle[]>([]);
   const [tab, setTab] = useState<GraphTabEnum>(
     searchParams.get("therapeutic_area")
-      ? GraphTabEnum.initialisation
+      ? searchParams.get("product_name")
+        ? GraphTabEnum.filters
+        : GraphTabEnum.initialisation
       : GraphTabEnum.information,
   );
   const [nodes, setNodes] = useState<INode[]>([]);
@@ -51,7 +53,7 @@ export default function Discovery() {
     name: searchParams.get("therapeutic_area")
       ? searchParams.get("therapeutic_area")!
       : "Neoplasms",
-    numNodes: 50,
+    numNodes: 500,
     offset: 0,
   });
   const [settings, defineSettings] = useState<any>({
