@@ -9,10 +9,8 @@ import React, {
 import { Amplify } from "aws-amplify";
 import { defaultStorage } from "aws-amplify/utils";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
-// import { CognitoIdentity } from "@aws-sdk/client-cognito-identity";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-// import CognitoProvider from "next-auth/providers/cognito";
 import { AuthContextType, UserRoleEnum, defaultAuthContext } from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";
 import { handleFetchApiRoot } from "@/services";
@@ -42,10 +40,6 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   const [userId, setUserId] = useState<number | null>(null);
   const router = useRouter();
   const { cognitoIdentity, signIn, answerCustomChallenge } = useCognitoAuth();
-
-  // const cognitoidentity = new CognitoIdentity({
-  //   region: process.env.NEXT_PUBLIC_AWS_REGION,
-  // });
 
   useEffect(() => {
     if (typeof window !== "undefined") {

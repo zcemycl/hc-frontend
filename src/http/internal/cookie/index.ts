@@ -1,0 +1,13 @@
+export async function setFdalabelCount(count: number) {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const resp = await fetch("/api/fdalabel_count", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      count,
+    }),
+  });
+  return resp;
+}
