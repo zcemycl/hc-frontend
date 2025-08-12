@@ -1,10 +1,10 @@
 "use server";
 
-import { IBundleConfig, IBundleUpdate } from "@/types";
+import { IBundle, IBundleConfig, IBundleUpdate } from "@/types";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 import { FASTAPI_URI } from "./constants";
 
-export async function fetchBundleById(id: string) {
+export async function fetchBundleById(id: string): Promise<IBundle> {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
   const response = await fetch(API_URI, {
@@ -23,7 +23,7 @@ export async function fetchBundlesByUserId(
   id: number,
   offset: number = 0,
   limit: number = 5,
-) {
+): Promise<IBundle[]> {
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/user/${id}`;
   const params = new URLSearchParams();
@@ -37,7 +37,9 @@ export async function fetchBundlesByUserId(
       Authorization: `Bearer ${token}`,
     },
   });
-  validate_response_ok(response);
+  if (!validate_response_ok(response)) {
+    return [];
+  }
   const res = await response.json();
   return res;
 }
