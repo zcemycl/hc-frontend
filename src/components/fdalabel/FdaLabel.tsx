@@ -39,7 +39,7 @@ function FdaLabel({
       {/* section 3 */}
       {each.dosage_forms!.length === 1 && (
         <GeneralSection
-          title={"Drug Interactions"}
+          title={"Dosage Forms And Strengths"}
           section={each.dosage_forms![0]}
           tables={[]}
         />
