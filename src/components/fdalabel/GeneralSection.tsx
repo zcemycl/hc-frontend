@@ -95,6 +95,11 @@ function GeneralSection({
                 </div>
               );
             } else if (c[1] === "tableid") {
+              if (Object.keys(idx_tables).length === 0) return <></>;
+              console.log(c);
+              console.log(tables);
+              console.log(idx_tables);
+              console.log(idx_tables[Number(c[0])]);
               return (
                 <div key={`${id}-${idx}-${c[1]}`} className="flex flex-col">
                   <caption className="flex justify-start text-left text-md text-emerald-500">
