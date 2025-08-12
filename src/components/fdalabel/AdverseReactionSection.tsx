@@ -58,7 +58,7 @@ function AdverseReactionSection({
             return (
               <div key={`${id}-${tableid}`} className="flex flex-col">
                 <caption className="flex justify-start text-left">
-                  {tabledata.caption}
+                  {tabledata?.caption ?? ""}
                 </caption>
                 <div className="overflow-x-auto">
                   <Table {...{ ...tabledata, keyname: "table" }} />

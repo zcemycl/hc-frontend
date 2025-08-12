@@ -11,11 +11,17 @@ import { defaultStorage } from "aws-amplify/utils";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
 import { useRouter } from "next/navigation";
 
-import { AuthContextType, UserRoleEnum, defaultAuthContext } from "@/types";
+import {
+  AuthContextType,
+  SiteMode,
+  UserRoleEnum,
+  defaultAuthContext,
+} from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";
 import { handleFetchApiRoot } from "@/services";
 import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 import { useCognitoAuth } from "@/hooks";
+import { setPostLogin } from "@/http/internal";
 
 Amplify.configure({
   Auth: {
@@ -30,12 +36,18 @@ Amplify.configure({
 
 cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 
-export const AuthContext = createContext<AuthContextType>(defaultAuthContext);
+export const AuthContext = createContext<any>({});
 
-export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
+export const AuthProvider = ({
+  defaultCredentials,
+  children,
+}: {
+  defaultCredentials: string;
+  children?: React.ReactNode;
+}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true); // is Window mounted?
-  const [credentials, setCredentials] = useState<string>("");
+  const [credentials, setCredentials] = useState<string>(defaultCredentials);
   const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
   const [userId, setUserId] = useState<number | null>(null);
   const router = useRouter();
@@ -50,14 +62,13 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
   useEffect(() => {
     if (!isLoadingAuth) return;
     console.log("mounted window");
-    const creds = JSON.parse(localStorage.getItem("credentials") as string);
-    // console.log(creds);
-    if (!!creds) {
+    const creds = JSON.parse(defaultCredentials as string);
+    console.log(creds);
+    if ("AccessToken" in creds) {
       setIsAuthenticated(true);
-      setCredentials(JSON.stringify(creds));
     } else {
       setIsAuthenticated(false);
-      setCredentials("");
+      setCredentials("{}");
     }
     setIsLoadingAuth(false);
   }, [isLoadingAuth]);
@@ -81,7 +92,7 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       return { isAuthToken: false, username: "" };
     }
     if (typeof window === "undefined" || isLoadingAuth) return;
-    const creds = JSON.parse(localStorage.getItem("credentials") as string);
+    const creds = JSON.parse(credentials as string);
     // If credential exists, quit
     if (!creds) return;
     console.log("3. Avoid credential injection");
@@ -91,65 +102,49 @@ export const AuthProvider = ({ children }: { children?: React.ReactNode }) => {
       if (!isAuthToken) {
         localStorage.clear();
         setIsAuthenticated(false);
-        setCredentials("");
+        setCredentials("{}");
         router.push(
           process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
         );
         return;
       }
 
-      fetchUserInfoByName(username as string).then((x) => {
+      fetchUserInfoByName(username as string).then(async (x) => {
         setRole(x.role as UserRoleEnum);
         setUserId(x.id);
+        await setPostLogin(
+          SiteMode.LOGIN,
+          "",
+          credentials,
+          "3600",
+          x.id.toString(),
+          x.role as UserRoleEnum,
+        );
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
 
-  useEffect(() => {
-    if (localStorage.getItem("credentials")) return;
-    if (localStorage.getItem("expireAt")) return;
-    const credJson = JSON.parse(localStorage.getItem("credentials") as string);
-    const expireAt = parseFloat(localStorage.getItem("expireAt") as string);
-    if (new Date().getTime() / 1000 < expireAt && "AccessToken" in credJson) {
-      setIsAuthenticated(true);
-      setCredentials(localStorage.getItem("credentials") ?? "");
-    }
-  }, []);
-
-  const AuthProviderValue = useMemo<AuthContextType>(() => {
-    return {
-      isAuthenticated,
-      setIsAuthenticated,
-      isLoadingAuth,
-      setIsLoadingAuth,
-      credentials,
-      setCredentials,
-      cognitoIdentity,
-      signIn,
-      answerCustomChallenge,
-      amplifySignIn,
-      amplifyConfirmSignIn,
-      role,
-      setRole,
-      userId,
-      setUserId,
-    };
-  }, [
-    isAuthenticated,
-    // setIsAuthenticated,
-    isLoadingAuth,
-    // setIsLoadingAuth,
-    credentials,
-    // setCredentials,
-    role,
-    // setRole,
-    userId,
-    // setUserId,
-  ]);
-
   return (
-    <AuthContext.Provider value={AuthProviderValue}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        setIsAuthenticated,
+        isLoadingAuth,
+        setIsLoadingAuth,
+        credentials,
+        setCredentials,
+        cognitoIdentity,
+        signIn,
+        answerCustomChallenge,
+        amplifySignIn,
+        amplifyConfirmSignIn,
+        role,
+        setRole,
+        userId,
+        setUserId,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

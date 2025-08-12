@@ -15,7 +15,7 @@ export default function Logout() {
     if (isLoadingAuth) return;
     localStorage.clear();
     setIsAuthenticated(false);
-    setCredentials("");
+    setCredentials("{}");
     setIsDropDownOpen(false);
     setIsSideBarOpen(false);
     signOut();

@@ -98,7 +98,7 @@ function GeneralSection({
               return (
                 <div key={`${id}-${idx}-${c[1]}`} className="flex flex-col">
                   <caption className="flex justify-start text-left text-md text-emerald-500">
-                    {idx_tables[Number(c[0])]!.caption}
+                    {idx_tables[Number(c[0])]!.caption ?? ""}
                   </caption>
                   <div className="overflow-x-auto">
                     <Table

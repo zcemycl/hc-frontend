@@ -67,3 +67,8 @@ export const defaultAuthContext = {
     throw new Error("Function not implemented.");
   },
 };
+
+export enum SiteMode {
+  LOGIN = "login",
+  VERIFY = "verify",
+}

@@ -23,7 +23,7 @@ export default function Component() {
   const [prevSignal, setPrevSignal] = useState<string>("False");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { pgHealthMsg, isPGHealthy } = useDbsHealth();
-  useDummyCreds({ prevSignal, setPrevSignal }); // only trigger when local
+  // useDummyCreds({ prevSignal, setPrevSignal }); // only trigger when local
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -31,6 +31,9 @@ export default function Component() {
     console.log("2 Set cookie creds");
     async function getData(credentials: string) {
       const credJson = JSON.parse(credentials);
+      if (!("AccessToken" in credJson)) {
+        return;
+      }
       const resp = await handleFetchApiRoot(
         credJson.AccessToken,
         setIsAuthenticated,

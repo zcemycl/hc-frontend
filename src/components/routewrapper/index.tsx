@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from "@/contexts";
 import { useRouter } from "next/navigation";
 
 export const ProtectedRoute = ({
@@ -7,14 +8,17 @@ export const ProtectedRoute = ({
   children?: React.ReactNode;
 }) => {
   const router = useRouter();
+  const { credentials, isLoadingAuth } = useAuth();
   if (typeof window === "undefined") {
     console.log("window not mounted");
     return children;
   }
-  // console.log("window mounted");
-  const creds = JSON.parse(localStorage.getItem("credentials") as string);
+  if (isLoadingAuth) {
+    return children;
+  }
+  const creds = JSON.parse(credentials as string);
   let isAuthenticated = false;
-  if (!!creds) {
+  if (creds && "AccessToken" in creds) {
     isAuthenticated = true;
   }
   if (!isAuthenticated) {

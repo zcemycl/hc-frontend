@@ -1,38 +1,18 @@
-"use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+"use server";
 
-export default function Prelogin() {
-  const router = useRouter();
+import { LocalGenericProvider } from "@/contexts";
+import Component from "./component";
+import { cookies } from "next/headers";
+import { SiteMode } from "@/types";
 
-  useEffect(() => {
-    const mode = localStorage.getItem("mode") ?? "login";
-    if (mode !== "verify") {
-      router.push("/login");
-    }
-  }, []);
-
+export default async function Page() {
+  const cookie = cookies();
+  const modeCookie = cookie.get("mode");
+  const hasModeCookie = modeCookie && modeCookie.value != "";
+  const defaultMode = hasModeCookie ? modeCookie.value : SiteMode.LOGIN;
   return (
-    <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
-      <div
-        className="container px-2 py-24 mx-auto grid justify-items-center
-        "
-      >
-        <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
-          <h2 className="text-white text-lg mb-1 font-medium title-font">
-            Check your email
-          </h2>
-          <p className="leading-relaxed mb-5">
-            If you are registered by admin, you should manage to get a login
-            link in your email to sign in.
-          </p>
-          <p className="text-xs text-gray-400 text-opacity-90 mt-3">
-            Not registered? Submit a Demo Request Form at{" "}
-            <Link href="/">Home Page</Link>.
-          </p>
-        </div>
-      </div>
-    </section>
+    <LocalGenericProvider initialData={{ defaultMode }}>
+      <Component />
+    </LocalGenericProvider>
   );
 }
