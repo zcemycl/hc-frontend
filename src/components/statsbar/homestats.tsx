@@ -1,17 +1,25 @@
 "use client";
 import { LocalGenericContext } from "@/contexts";
-import { setFdalabelCount } from "@/http/internal";
+import { setFdalabelCount, setUserCount } from "@/http/internal";
 import { beautifulNumber } from "@/http/utils";
 import { useContext, useEffect } from "react";
 
 const HomeStats = () => {
   const { initialData } = useContext(LocalGenericContext);
-  const { hasFdalabelCountCookie, fdalabelCount, userCount } = initialData;
+  const {
+    hasFdalabelCountCookie,
+    hasUserCountCookie,
+    fdalabelCount,
+    userCount,
+  } = initialData;
 
   useEffect(() => {
     async function setCookieSelf() {
       if (!hasFdalabelCountCookie) {
         await setFdalabelCount(initialData.fdalabelCount);
+      }
+      if (!hasUserCountCookie) {
+        await setUserCount(initialData.userCount);
       }
     }
     setCookieSelf();
