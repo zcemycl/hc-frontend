@@ -4,7 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const cookies = request.cookies;
   if (cookies.has("drug-count")) {
-    return Number(cookies.get("drug-count"));
+    return NextResponse.json(
+      { count: Number(cookies.get("drug-count")?.value) },
+      { status: 200 },
+    );
   }
   const API_URI = `${FASTAPI_URI}/get_fdalabel_count`;
   const resp = await fetch(API_URI, {
