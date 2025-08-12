@@ -31,7 +31,7 @@ function ClinicalTrialSection({
             return (
               <Fragment key={`${id}-${tableid}`}>
                 <caption className="flex justify-start text-left">
-                  {tabledata.caption}
+                  {tabledata?.caption ?? ""}
                 </caption>
                 <Table {...{ ...tabledata, keyname: "table" }} />
               </Fragment>

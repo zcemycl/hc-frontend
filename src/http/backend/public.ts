@@ -20,10 +20,6 @@ export async function fetchUserCount(): Promise<number> {
     headers: {
       "Content-Type": "application/json",
     },
-    cache: "force-cache",
-    next: {
-      revalidate: 600,
-    },
   });
   const res = await response.json();
   return res;

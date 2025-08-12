@@ -8,9 +8,6 @@ export async function GET(request: Request) {
   const authorization = request.headers.get("Authorization") as string;
   const [_, token] = authorization.split(" ");
   console.log(identity);
-  // FROM ?id={id}
-  // const { searchParams } = new URL(request.url);
-  // const id = searchParams.get("id");
   const username =
     identity && "username" in identity ? identity.username : "fake";
   const role = identity && "role" in identity ? identity.role : "User";
