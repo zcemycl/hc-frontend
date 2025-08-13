@@ -112,12 +112,13 @@ export const AuthProvider = ({
       const x = await fetchUserInfoByName(username as string);
       setRole(x.role as UserRoleEnum);
       setUserId(x.id);
+      console.log("tired... ", x);
       await setPostLogin(
         SiteMode.LOGIN,
         x.email,
         credentials!,
         "3600",
-        x.id.toString(),
+        x.id.toString() as string,
         x.role as UserRoleEnum,
       );
       if (isAuthenticated) {
@@ -131,7 +132,7 @@ export const AuthProvider = ({
     console.log("3. Avoid credential injection");
     fetchIsAuthToken(creds);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth, credentials]);
+  }, [isLoadingAuth, credentials, isAuthenticated]);
 
   return (
     <AuthContext.Provider
