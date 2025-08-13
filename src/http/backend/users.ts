@@ -22,6 +22,7 @@ export async function fetchUserInfoById(id: number) {
 
 export async function fetchUserInfoByName(name: string) {
   const token = get_token_cookie();
+  console.log(token);
   const API_URI = `${FASTAPI_URI}/users/name/${name}`;
   const response = await fetch(API_URI, {
     method: "GET",
