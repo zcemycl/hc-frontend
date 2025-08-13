@@ -67,19 +67,19 @@ export const AuthProvider = ({
     }
   }, []);
 
-  useEffect(() => {
-    if (!isLoadingAuth) return;
-    console.log("mounted window");
-    const creds = JSON.parse(credentials as string);
-    console.log(creds);
-    if ("AccessToken" in creds) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-      setCredentials("{}");
-    }
-    setIsLoadingAuth(false);
-  }, [isLoadingAuth, credentials]);
+  // useEffect(() => {
+  //   if (!isLoadingAuth) return;
+  //   console.log("mounted window");
+  //   const creds = JSON.parse(credentials as string);
+  //   console.log(creds);
+  //   if ("AccessToken" in creds) {
+  //     setIsAuthenticated(true);
+  //   } else {
+  //     setIsAuthenticated(false);
+  //     setCredentials("{}");
+  //   }
+  //   setIsLoadingAuth(false);
+  // }, [isLoadingAuth, credentials]);
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
@@ -126,6 +126,7 @@ export const AuthProvider = ({
       }
     }
     if (typeof window === "undefined" || isLoadingAuth) return;
+    console.log("debug...1", credentials);
     const creds = JSON.parse(credentials as string);
     // If credential exists, quit
     if (!Object.keys(creds).length) return;

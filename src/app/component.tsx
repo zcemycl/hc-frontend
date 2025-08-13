@@ -46,6 +46,8 @@ export default function Component() {
       setData(res);
       setIsLoading(false);
     }
+    console.log(credentials);
+    if (credentials === null || !credentials || credentials === "{}") return;
     getData(credentials);
     setPrevSignal(pgHealthMsg?.data as string);
   }, [credentials, pgHealthMsg]);

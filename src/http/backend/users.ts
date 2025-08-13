@@ -6,7 +6,7 @@ import { get_token_cookie, validate_response_ok } from "../utils-server";
 import { cookies } from "next/headers";
 
 export async function fetchUserInfoById(id: number) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/id/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -21,8 +21,8 @@ export async function fetchUserInfoById(id: number) {
 }
 
 export async function fetchUserInfoByName(name: string) {
-  const token = get_token_cookie();
-  console.log(token);
+  const token = await get_token_cookie();
+  console.log("unhappy token ... ", token);
   const API_URI = `${FASTAPI_URI}/users/name/${name}`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -37,7 +37,7 @@ export async function fetchUserInfoByName(name: string) {
 }
 
 export async function fetchUserAll(offset = 0, limit = 10) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/?offset=${offset}&limit=${limit}`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -52,7 +52,7 @@ export async function fetchUserAll(offset = 0, limit = 10) {
 }
 
 export async function deleteUserById(id: number) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/${id}`;
   const response = await fetch(API_URI, {
     method: "DELETE",
@@ -72,7 +72,7 @@ export async function createUserPostgres(
   enabled: boolean,
   role: UserRoleEnum,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/`;
   const response = await fetch(API_URI, {
     method: "POST",

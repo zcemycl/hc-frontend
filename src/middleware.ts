@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
 
 export async function middleware(request: NextRequest) {
-  console.log(openid_conf_uri);
+  console.log("openid... ", openid_conf_uri);
 
   const cookie = cookies();
   let authorization;

@@ -11,7 +11,7 @@ export async function fetchFdalabelBySetid(
   limit: number | null = 10,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_id`;
   let setids_param = setid.join("&id=");
   const params = new URLSearchParams();
@@ -43,7 +43,7 @@ export async function fetchFdalabelByTradename(
   limit: number | null = 10,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_tradename`;
   let tradenames_param = tradename.join("&tradename=");
   const params = new URLSearchParams();
@@ -78,7 +78,7 @@ export async function fetchFdalabelByTherapeuticArea(
   sort_by: string = "relevance",
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
@@ -113,7 +113,7 @@ export async function fetchFdalabelByIndication(
   sort_by: string = "relevance",
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
   params.append("offset", offset.toString());
@@ -144,7 +144,7 @@ export async function fetchFdalabelHistoryBySetid(
   setid: string,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/history`;
   const response = await fetch(`${API_URI}/${setid}`, {
     method: "POST",
@@ -164,7 +164,7 @@ export async function fetchFdalabelCompareAdverseEffects(
   setids: string[],
   versions: IFdaVersions,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/compare/adverse-effects`;
   const response = await fetch(API_URI, {
     method: "POST",

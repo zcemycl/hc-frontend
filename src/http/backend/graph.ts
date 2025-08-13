@@ -7,7 +7,7 @@ export async function fetchGraphDummy(
   limit: number = 50,
   offset: number = 0,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/graph`;
   const params = new URLSearchParams();
   params.append("name", name);

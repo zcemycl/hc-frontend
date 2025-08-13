@@ -16,6 +16,7 @@ export const ProtectedRoute = ({
     if (isLoadingAuth) return;
 
     let authenticated = false;
+    console.log("debug... ", credentials);
 
     try {
       const creds = credentials ? JSON.parse(credentials as string) : null;

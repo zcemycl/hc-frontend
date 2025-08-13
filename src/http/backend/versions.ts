@@ -3,7 +3,7 @@ import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 
 export async function fetchFdalabelScrapeVersions() {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/get_scrape_version`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -20,7 +20,7 @@ export async function fetchFdalabelScrapeVersions() {
 export async function fetchFdalabelSectionVersions(
   fdaVersion: string = "v0.0.0",
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/get_section_scrape_version?version=${fdaVersion}`;
   const response = await fetch(API_URI, {
     method: "GET",
