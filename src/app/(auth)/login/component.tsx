@@ -4,23 +4,18 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LocalGenericContext, useAuth, useLoader } from "@/contexts";
 import { SiteMode } from "@/types";
-import { UserRoleEnum } from "@/types";
-import { fetchUserInfoByName } from "@/http/backend";
 import { Spinner } from "@/components";
-import { handleFetchApiRoot } from "@/services";
-import { setPostLogin, setPreLogin } from "@/http/internal";
+import { setPreLogin } from "@/http/internal";
 
 export default function Component() {
   const router = useRouter();
   const {
     isAuthenticated,
-    setRole,
-    setIsAuthenticated,
     signIn,
     answerCustomChallenge,
     setCredentials,
-    setUserId,
     isLoadingAuth,
+    setIsAuthenticated,
   } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const { initialData } = useContext(LocalGenericContext);
@@ -70,38 +65,11 @@ export default function Component() {
         );
         console.log("setting mode...");
         setMode(SiteMode.LOGIN);
-        const expiresAt =
-          new Date().getTime() / 1000 + resp.AuthenticationResult?.ExpiresIn!;
+        // const expiresAt =
+        //   new Date().getTime() / 1000 + resp.AuthenticationResult?.ExpiresIn!;
         const credentials = JSON.stringify(resp.AuthenticationResult);
         setCredentials(credentials);
         console.log("setting creds...");
-        const _ = await handleFetchApiRoot(
-          resp.AuthenticationResult?.AccessToken!,
-          setIsAuthenticated,
-          router,
-        );
-        const resp_user = await fetchUserInfoByName(
-          cognito_user_obj.ChallengeParameters.USERNAME,
-        );
-        setRole(resp_user.role as UserRoleEnum);
-        setUserId(resp_user.id);
-        await setPostLogin(
-          SiteMode.LOGIN,
-          urlEmail,
-          credentials,
-          expiresAt.toString(),
-          resp_user.id.toString(),
-          resp_user.role as UserRoleEnum,
-        );
-        console.log("postlogin setting...");
-        if (
-          resp &&
-          Object.keys(resp).length === 0 &&
-          resp.constructor === Object
-        ) {
-          return;
-        }
-
         setIsAuthenticated(true);
       }
     }

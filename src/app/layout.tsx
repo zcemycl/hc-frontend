@@ -8,8 +8,7 @@ import {
   FdaVersionsProvider,
   TableSelectProvider,
 } from "@/contexts";
-import { cookies } from "next/headers";
-import { dummy_cred } from "@/utils";
+import { setupAuthHook } from "./utils";
 
 export const metadata = {
   title: "RXScope",
@@ -24,24 +23,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookie = cookies();
-  const credsCookie = cookie.get("credentials");
-  const hasCredsCookie = credsCookie && credsCookie.value != "";
-  let defaultCredentials = "{}";
-  if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
-    console.log("1. Dummy creds for testing without cognito");
-    const dummy_username = "leo.leung.rxscope";
-    const act = await dummy_cred(dummy_username);
-    defaultCredentials = JSON.stringify({
-      AccessToken: act,
-      ExpiresIn: 3600,
-      IdToken: "",
-      RefreshToken: "",
-      TokenType: "Bearer",
-    });
-  } else {
-    defaultCredentials = hasCredsCookie ? credsCookie.value : "{}";
-  }
+  const [
+    hasCreds,
+    defaultCredentials,
+    hasUsername,
+    defaultUsername,
+    hasRole,
+    defaultRole,
+    hasUserId,
+    defaultUserId,
+  ] = await setupAuthHook();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -58,7 +49,18 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
         <ThemeProvider attribute="class">
           <LoaderProvider>
             <OpenBarProvider>
-              <AuthProvider defaultCredentials={defaultCredentials}>
+              <AuthProvider
+                initialData={{
+                  hasCreds,
+                  defaultCredentials,
+                  hasUsername,
+                  defaultUsername,
+                  hasRole,
+                  defaultRole,
+                  hasUserId,
+                  defaultUserId,
+                }}
+              >
                 <FdaVersionsProvider>
                   <SideBar>
                     <TableSelectProvider>

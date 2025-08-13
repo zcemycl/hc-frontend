@@ -21,7 +21,6 @@ export async function fetchUserInfoById(id: number) {
 }
 
 export async function fetchUserInfoByName(name: string) {
-  const cookie = cookies();
   const token = get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/name/${name}`;
   const response = await fetch(API_URI, {
@@ -33,8 +32,6 @@ export async function fetchUserInfoByName(name: string) {
   });
   validate_response_ok(response);
   const res = await response.json();
-  cookie.set("role", res.role);
-  cookie.set("userId", res.id);
   return res;
 }
 

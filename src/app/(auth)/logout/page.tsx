@@ -13,7 +13,6 @@ export default function Logout() {
       const _ = await fetchApiLogout();
     }
     if (isLoadingAuth) return;
-    localStorage.clear();
     setIsAuthenticated(false);
     setCredentials("{}");
     setIsDropDownOpen(false);

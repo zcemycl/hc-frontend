@@ -38,18 +38,26 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 
 export const AuthContext = createContext<any>({});
 
+type IInitialData = Record<string, any>;
+
 export const AuthProvider = ({
-  defaultCredentials,
+  initialData,
   children,
 }: {
-  defaultCredentials: string;
+  initialData: IInitialData;
   children?: React.ReactNode;
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true); // is Window mounted?
-  const [credentials, setCredentials] = useState<string>(defaultCredentials);
-  const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
-  const [userId, setUserId] = useState<number | null>(null);
+  const [credentials, setCredentials] = useState<string | null>(
+    initialData.defaultCredentials ?? "{}",
+  );
+  const [role, setRole] = useState<UserRoleEnum>(
+    initialData.defaultRole ?? UserRoleEnum.USER,
+  );
+  const [userId, setUserId] = useState<number | null>(
+    initialData.defaultUserId ?? null,
+  );
   const router = useRouter();
   const { cognitoIdentity, signIn, answerCustomChallenge } = useCognitoAuth();
 
@@ -62,7 +70,7 @@ export const AuthProvider = ({
   useEffect(() => {
     if (!isLoadingAuth) return;
     console.log("mounted window");
-    const creds = JSON.parse(defaultCredentials as string);
+    const creds = JSON.parse(credentials as string);
     console.log(creds);
     if ("AccessToken" in creds) {
       setIsAuthenticated(true);
@@ -71,7 +79,7 @@ export const AuthProvider = ({
       setCredentials("{}");
     }
     setIsLoadingAuth(false);
-  }, [isLoadingAuth]);
+  }, [isLoadingAuth, credentials]);
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
@@ -87,20 +95,13 @@ export const AuthProvider = ({
           process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
         );
       }
+      let IsAuthTokenUsername = { isAuthToken: false, username: "" };
       if ("username" in res)
-        return { isAuthToken: true, username: res.username };
-      return { isAuthToken: false, username: "" };
-    }
-    if (typeof window === "undefined" || isLoadingAuth) return;
-    const creds = JSON.parse(credentials as string);
-    // If credential exists, quit
-    if (!creds) return;
-    console.log("3. Avoid credential injection");
-    fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
+        IsAuthTokenUsername = { isAuthToken: true, username: res.username };
+      const { isAuthToken, username } = IsAuthTokenUsername;
       console.log(isAuthToken, username);
       console.log(creds);
       if (!isAuthToken) {
-        localStorage.clear();
         setIsAuthenticated(false);
         setCredentials("{}");
         router.push(
@@ -108,22 +109,29 @@ export const AuthProvider = ({
         );
         return;
       }
-
-      fetchUserInfoByName(username as string).then(async (x) => {
-        setRole(x.role as UserRoleEnum);
-        setUserId(x.id);
-        await setPostLogin(
-          SiteMode.LOGIN,
-          "",
-          credentials,
-          "3600",
-          x.id.toString(),
-          x.role as UserRoleEnum,
-        );
-      });
-    });
+      const x = await fetchUserInfoByName(username as string);
+      setRole(x.role as UserRoleEnum);
+      setUserId(x.id);
+      await setPostLogin(
+        SiteMode.LOGIN,
+        x.email,
+        credentials!,
+        "3600",
+        x.id.toString(),
+        x.role as UserRoleEnum,
+      );
+      if (isAuthenticated) {
+        router.push("/");
+      }
+    }
+    if (typeof window === "undefined" || isLoadingAuth) return;
+    const creds = JSON.parse(credentials as string);
+    // If credential exists, quit
+    if (!Object.keys(creds).length) return;
+    console.log("3. Avoid credential injection");
+    fetchIsAuthToken(creds);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth]);
+  }, [isLoadingAuth, credentials]);
 
   return (
     <AuthContext.Provider
