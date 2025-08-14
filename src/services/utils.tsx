@@ -26,6 +26,7 @@ export function handle401(
   router?: ReturnType<typeof useRouter>,
 ) {
   if (resp.status === 401) {
+    console.log("handle 401");
     if (setIsAuthenticated !== undefined) setIsAuthenticated(false);
     if (router !== undefined) router.push("/logout");
   }
