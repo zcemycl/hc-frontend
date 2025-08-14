@@ -7,6 +7,7 @@ import {
 } from "@/http/backend";
 import { IFdaVersions } from "@/types";
 import React, { createContext, useMemo, useState, useEffect } from "react";
+import { useAuth } from "./auth";
 
 export const FdaVersionsContext = createContext<any>({});
 
@@ -15,6 +16,7 @@ export const FdaVersionsProvider = ({
 }: {
   children?: React.ReactNode;
 }) => {
+  const { isAuthenticated, isLoadingAuth } = useAuth();
   const [versions, setVersions] = useState<IFdaVersions>(
     DEFAULT_FDALABEL_VERSIONS,
   );
@@ -41,8 +43,8 @@ export const FdaVersionsProvider = ({
       setFdaVers([..._fdaVers]);
       setSectionVersions({ ..._sectionVers });
     }
-    getData();
-  }, []);
+    if (!isLoadingAuth && isAuthenticated) getData();
+  }, [isLoadingAuth, isAuthenticated]);
 
   useEffect(() => {
     async function updateSectionVers() {

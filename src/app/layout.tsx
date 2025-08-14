@@ -8,7 +8,7 @@ import {
   FdaVersionsProvider,
   TableSelectProvider,
 } from "@/contexts";
-import { setupAuthHook } from "./utils";
+import { setupAuthHook } from "@/http/utils-server";
 
 export const metadata = {
   title: "RXScope",

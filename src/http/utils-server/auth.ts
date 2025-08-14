@@ -2,6 +2,7 @@
 import { UserRoleEnum } from "@/types";
 import { dummy_cred } from "@/utils";
 import { cookies } from "next/headers";
+import { defineCookieAttr } from "./generic";
 
 export async function defineCreds(): Promise<[boolean, string | null]> {
   const cookie = cookies();
@@ -25,23 +26,6 @@ export async function defineCreds(): Promise<[boolean, string | null]> {
     creds = hasCreds ? credsCookie!.value : null;
   }
   return [hasCreds, creds];
-}
-
-export async function defineCookieAttr<T>(
-  cookiename: string,
-  parser?: (raw: string) => T,
-): Promise<[boolean, T | null]> {
-  const cookie = cookies();
-  let has_ = false,
-    target = null;
-  const targetCookie = cookie.get(cookiename);
-  has_ = !!targetCookie && targetCookie.value != "";
-  if (!!parser) {
-    target = has_ ? parser(targetCookie!.value) : null;
-  } else {
-    target = has_ ? targetCookie!.value : null;
-  }
-  return [has_, target as T];
 }
 
 export async function setupAuthHook(): Promise<
