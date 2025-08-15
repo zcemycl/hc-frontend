@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
+export type IFdaSecAvailVers = Record<string, string[] | null>;
+
 export interface IFdaVersions {
   fdalabel: string;
   indication_usage?: string;

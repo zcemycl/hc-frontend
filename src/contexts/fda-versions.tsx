@@ -1,37 +1,41 @@
 "use client";
 
-import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
+import {
+  DEFAULT_FDALABEL_VERSIONS,
+  DEFAULT_FDALALBEL_SECTION_AVAILABLE_VERS,
+} from "@/constants";
 import {
   fetchFdalabelScrapeVersions,
   fetchFdalabelSectionVersions,
 } from "@/http/backend";
-import { IFdaVersions } from "@/types";
+import { IFdaSecAvailVers, IFdaVersions, IInitialData } from "@/types";
 import React, { createContext, useMemo, useState, useEffect } from "react";
 import { useAuth } from "./auth";
 
 export const FdaVersionsContext = createContext<any>({});
 
 export const FdaVersionsProvider = ({
+  initialData,
   children,
 }: {
+  initialData: IInitialData;
   children?: React.ReactNode;
 }) => {
   const { isAuthenticated, isLoadingAuth } = useAuth();
+  const {
+    defaultVers,
+    defaultFdaScrapeAvailVers,
+    defaultFdaSectionScrapeAvailVers,
+  } = initialData;
   const [versions, setVersions] = useState<IFdaVersions>(
-    DEFAULT_FDALABEL_VERSIONS,
+    defaultVers ?? DEFAULT_FDALABEL_VERSIONS,
   );
-  const [fdaVers, setFdaVers] = useState<string[]>([
-    DEFAULT_FDALABEL_VERSIONS.fdalabel,
-  ]);
-  const [sectionVersions, setSectionVersions] = useState<{
-    [key: string]: any;
-  }>(
-    Object.fromEntries(
-      Object.entries(DEFAULT_FDALABEL_VERSIONS).map(([key, value]) => [
-        `${key}_available_versions`,
-        [value],
-      ]),
-    ),
+  const [fdaVers, setFdaVers] = useState<string[]>(
+    defaultFdaScrapeAvailVers ?? [DEFAULT_FDALABEL_VERSIONS.fdalabel],
+  );
+  const [sectionVersions, setSectionVersions] = useState<IFdaSecAvailVers>(
+    defaultFdaSectionScrapeAvailVers ??
+      DEFAULT_FDALALBEL_SECTION_AVAILABLE_VERS,
   );
 
   useEffect(() => {
@@ -53,8 +57,12 @@ export const FdaVersionsProvider = ({
       );
       setSectionVersions({ ..._sectionVers });
     }
-    updateSectionVers();
-  }, [versions]);
+    if (!isLoadingAuth && isAuthenticated) updateSectionVers();
+  }, [isLoadingAuth, isAuthenticated, versions]);
+
+  // useEffect(() => {
+
+  // }, [versions, ])
 
   const FdaVersionsProviderValue = useMemo(() => {
     return {

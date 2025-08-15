@@ -3,7 +3,6 @@
 import { UserRoleEnum } from "@/types";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
-import { cookies } from "next/headers";
 
 export async function fetchUserInfoById(id: number) {
   const token = await get_token_cookie();
@@ -22,7 +21,7 @@ export async function fetchUserInfoById(id: number) {
 
 export async function fetchUserInfoByName(name: string) {
   const token = await get_token_cookie();
-  console.log("unhappy token ... ", token);
+  console.log("unhappy token ... ", token, name);
   const API_URI = `${FASTAPI_URI}/users/name/${name}`;
   const response = await fetch(API_URI, {
     method: "GET",

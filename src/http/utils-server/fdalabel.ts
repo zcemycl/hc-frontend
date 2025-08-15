@@ -1,8 +1,6 @@
 "use server";
 import { defineCookieAttr } from "./generic";
-import { IFdaVersions } from "@/types";
-
-type IFdaSecAvailVers = Record<string, string[] | null>;
+import { IFdaSecAvailVers, IFdaVersions } from "@/types";
 
 export async function setupScrapeVersionsHook(): Promise<
   [

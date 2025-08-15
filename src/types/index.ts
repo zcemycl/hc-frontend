@@ -8,3 +8,4 @@ export * from "./graph";
 export * from "./auth";
 export * from "./admin";
 export * from "./bundle";
+export * from "./generic";

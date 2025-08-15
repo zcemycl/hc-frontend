@@ -13,6 +13,7 @@ import { useRouter, usePathname } from "next/navigation";
 
 import {
   AuthContextType,
+  IInitialData,
   SiteMode,
   UserRoleEnum,
   defaultAuthContext,
@@ -38,7 +39,6 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 
 export const AuthContext = createContext<any>({});
 
-type IInitialData = Record<string, any>;
 type IUserData = {
   username?: string;
   id?: number;

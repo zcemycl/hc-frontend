@@ -33,7 +33,14 @@ export default async function RootLayout({
     hasUserId,
     defaultUserId,
   ] = await setupAuthHook();
-  const [] = await setupScrapeVersionsHook();
+  const [
+    hasDefaultVers,
+    defaultVers,
+    hasDefaultFdaScrapeAvailVers,
+    defaultFdaScrapeAvailVers,
+    hasDefaultFdaSectionScrapeAvailVers,
+    defaultFdaSectionScrapeAvailVers,
+  ] = await setupScrapeVersionsHook();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -62,7 +69,16 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
                   defaultUserId,
                 }}
               >
-                <FdaVersionsProvider>
+                <FdaVersionsProvider
+                  initialData={{
+                    hasDefaultVers,
+                    defaultVers,
+                    hasDefaultFdaScrapeAvailVers,
+                    defaultFdaScrapeAvailVers,
+                    hasDefaultFdaSectionScrapeAvailVers,
+                    defaultFdaSectionScrapeAvailVers,
+                  }}
+                >
                   <SideBar>
                     <TableSelectProvider>
                       <div className="h-[100vh] overflow-y-auto">
