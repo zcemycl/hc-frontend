@@ -9,8 +9,16 @@ import {
   fetchFdalabelSectionVersions,
 } from "@/http/backend";
 import { IFdaSecAvailVers, IFdaVersions, IInitialData } from "@/types";
-import React, { createContext, useMemo, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { useAuth } from "./auth";
+import { usePathname } from "next/navigation";
+import { setFdaVersAllCookie } from "@/http/internal";
 
 export const FdaVersionsContext = createContext<any>({});
 
@@ -21,6 +29,8 @@ export const FdaVersionsProvider = ({
   initialData: IInitialData;
   children?: React.ReactNode;
 }) => {
+  const pathname = usePathname();
+  const prevPath = useRef(pathname);
   const { isAuthenticated, isLoadingAuth } = useAuth();
   const {
     defaultVers,
@@ -60,9 +70,20 @@ export const FdaVersionsProvider = ({
     if (!isLoadingAuth && isAuthenticated) updateSectionVers();
   }, [isLoadingAuth, isAuthenticated, versions]);
 
-  // useEffect(() => {
+  // change page and store options
+  useEffect(() => {
+    if (pathname !== prevPath.current) {
+      setFdaVersAllCookie(versions, fdaVers, sectionVersions);
+      prevPath.current = pathname;
+    }
+  }, [pathname]);
 
-  // }, [versions, ])
+  // store cookie when changing
+  useEffect(() => {
+    if (!isLoadingAuth && isAuthenticated) {
+      setFdaVersAllCookie(versions, fdaVers, sectionVersions);
+    }
+  }, [versions, sectionVersions, isLoadingAuth, isAuthenticated]);
 
   const FdaVersionsProviderValue = useMemo(() => {
     return {

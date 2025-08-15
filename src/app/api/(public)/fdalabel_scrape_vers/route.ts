@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     JSON.stringify(defaultFdaScrapeAvailVers),
   );
   response.cookies.set(
-    "fda-section-scrape-available-versions",
+    `fda-section-scrape-available-versions-${defaultVers.fdalabel}`,
     JSON.stringify(defaultFdaSectionScrapeAvailVers),
   );
   return response;

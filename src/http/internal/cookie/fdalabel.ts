@@ -1,6 +1,6 @@
 import { IFdaSecAvailVers, IFdaVersions } from "@/types";
 
-export async function setFdaVers(
+export async function setFdaVersAllCookie(
   fdaVers: IFdaVersions,
   fdaAvailableScrapeVers: string[],
   fdaSecAvailableScrapeVers: IFdaSecAvailVers,
