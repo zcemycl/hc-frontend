@@ -9,10 +9,11 @@ import React, {
 import { Amplify } from "aws-amplify";
 import { defaultStorage } from "aws-amplify/utils";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import {
   AuthContextType,
+  IInitialData,
   SiteMode,
   UserRoleEnum,
   defaultAuthContext,
@@ -38,40 +39,48 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(defaultStorage);
 
 export const AuthContext = createContext<any>({});
 
+type IUserData = {
+  username?: string;
+  id?: number;
+  role?: UserRoleEnum;
+  email?: string;
+};
+
 export const AuthProvider = ({
-  defaultCredentials,
+  initialData,
   children,
 }: {
-  defaultCredentials: string;
+  initialData: IInitialData;
   children?: React.ReactNode;
 }) => {
+  const pathname = usePathname();
+  const {
+    hasCreds,
+    defaultCredentials,
+    hasUsername,
+    defaultUsername,
+    hasRole,
+    defaultRole,
+    hasUserId,
+    defaultUserId,
+  } = initialData;
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true); // is Window mounted?
-  const [credentials, setCredentials] = useState<string>(defaultCredentials);
-  const [role, setRole] = useState<UserRoleEnum>(UserRoleEnum.USER);
-  const [userId, setUserId] = useState<number | null>(null);
+  const [credentials, setCredentials] = useState<string | null>(
+    defaultCredentials ?? "{}",
+  );
+  const [userData, setUserData] = useState<IUserData | null>({
+    username: defaultUsername,
+    id: defaultUserId,
+    role: defaultRole,
+  });
+  const [role, setRole] = useState<UserRoleEnum>(
+    defaultRole ?? UserRoleEnum.USER,
+  );
+  const [userId, setUserId] = useState<number | null>(defaultUserId ?? null);
   const router = useRouter();
   const { cognitoIdentity, signIn, answerCustomChallenge } = useCognitoAuth();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsLoadingAuth(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isLoadingAuth) return;
-    console.log("mounted window");
-    const creds = JSON.parse(defaultCredentials as string);
-    console.log(creds);
-    if ("AccessToken" in creds) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-      setCredentials("{}");
-    }
-    setIsLoadingAuth(false);
-  }, [isLoadingAuth]);
+  const hasAuthCookie = hasCreds && hasUsername && hasRole && hasUserId;
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
@@ -82,25 +91,19 @@ export const AuthProvider = ({
         router,
       );
       const res = await resp.json();
+      // If creds expired or not correct
       if ("success" in res && !res.success) {
         router.push(
           process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
         );
       }
+      let IsAuthTokenUsername = { isAuthToken: false, username: "" };
       if ("username" in res)
-        return { isAuthToken: true, username: res.username };
-      return { isAuthToken: false, username: "" };
-    }
-    if (typeof window === "undefined" || isLoadingAuth) return;
-    const creds = JSON.parse(credentials as string);
-    // If credential exists, quit
-    if (!creds) return;
-    console.log("3. Avoid credential injection");
-    fetchIsAuthToken(creds).then(({ isAuthToken, username }) => {
+        IsAuthTokenUsername = { isAuthToken: true, username: res.username };
+      const { isAuthToken, username } = IsAuthTokenUsername;
       console.log(isAuthToken, username);
       console.log(creds);
       if (!isAuthToken) {
-        localStorage.clear();
         setIsAuthenticated(false);
         setCredentials("{}");
         router.push(
@@ -108,22 +111,57 @@ export const AuthProvider = ({
         );
         return;
       }
-
-      fetchUserInfoByName(username as string).then(async (x) => {
-        setRole(x.role as UserRoleEnum);
-        setUserId(x.id);
-        await setPostLogin(
-          SiteMode.LOGIN,
-          "",
-          credentials,
-          "3600",
-          x.id.toString(),
-          x.role as UserRoleEnum,
-        );
+      const x = await fetchUserInfoByName(username as string);
+      setRole(x.role as UserRoleEnum);
+      setUserId(x.id);
+      console.log("tired... ", x);
+      await setPostLogin(
+        SiteMode.LOGIN,
+        x.email,
+        credentials!,
+        "3600",
+        x.id.toString() as string,
+        x.role as UserRoleEnum,
+      );
+      setUserData({
+        username,
+        id: x.id,
+        role: x.role,
+        email: x.email,
       });
-    });
+      setIsAuthenticated(true);
+      if (isAuthenticated) {
+        router.push(pathname === "/login" ? "/" : pathname);
+      }
+    }
+    if (typeof window === "undefined") return;
+    console.log("hello world!!", credentials, hasAuthCookie);
+    // (assumption) if all credentials userdata exist,
+    // skip authenticating because user have logged in.
+    if (hasAuthCookie) {
+      console.log("has cred cookie exit");
+      setIsAuthenticated(true);
+      setIsLoadingAuth(false);
+      return;
+    }
+    const creds = JSON.parse(credentials as string);
+    // If credential empty, quit
+    // for first loading, no discovery of credentials
+    // stop authenticating because user is not logged in.
+    if (!Object.keys(creds).length && isLoadingAuth) {
+      console.log("no cred exit");
+      setIsLoadingAuth(false);
+      return;
+    }
+    // 1. reauthenicate any userdata
+    // 2. login workflow (isLoadingAuth = false, credentials setstate)
+    if (Object.keys(creds).length && !isLoadingAuth) {
+      console.log("3. Avoid credential injection");
+      fetchIsAuthToken(creds);
+    }
+    setIsLoadingAuth(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth]);
+  }, [credentials, isLoadingAuth]);
 
   return (
     <AuthContext.Provider
@@ -143,6 +181,8 @@ export const AuthProvider = ({
         setRole,
         userId,
         setUserId,
+        userData,
+        setUserData,
       }}
     >
       {children}

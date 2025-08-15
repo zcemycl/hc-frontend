@@ -5,7 +5,7 @@ import { get_token_cookie, validate_response_ok } from "../utils-server";
 import { FASTAPI_URI } from "./constants";
 
 export async function fetchBundleById(id: string): Promise<IBundle> {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
   const response = await fetch(API_URI, {
     method: "GET",
@@ -24,7 +24,7 @@ export async function fetchBundlesByUserId(
   offset: number = 0,
   limit: number = 5,
 ): Promise<IBundle[]> {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/user/${id}`;
   const params = new URLSearchParams();
   params.append("offset", offset.toString());
@@ -48,7 +48,7 @@ export async function createBundleByUserId(
   id: number,
   new_bundle: IBundleConfig,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
   console.log(new_bundle);
   const response = await fetch(API_URI, {
@@ -64,7 +64,7 @@ export async function createBundleByUserId(
 }
 
 export async function deleteBundleById(id: string) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
   const response = await fetch(API_URI, {
     method: "DELETE",
@@ -81,7 +81,7 @@ export async function patchBundleById(
   id: string,
   bundle_update: IBundleUpdate,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
   console.log(bundle_update);
   const response = await fetch(API_URI, {

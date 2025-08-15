@@ -27,7 +27,7 @@ export default function Page() {
   const [countAnnotated, setCountAnnotated] = useState(0);
   const [nPerPage, _] = useState(10);
   const [pageNAnnotate, setPageNAnnotate] = useState(0);
-  const { versions, setVersions } = useContext(FdaVersionsContext);
+  const { versions } = useContext(FdaVersionsContext);
 
   const setAnnotationRecord = useCallback(async (id: number, pageN: number) => {
     const annotatedData = await fetchUnannotatedAETableByUserId(

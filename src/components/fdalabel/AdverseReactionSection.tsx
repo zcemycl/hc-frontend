@@ -16,7 +16,6 @@ function AdverseReactionSection({
   const id = useId();
   const router = useRouter();
   const { role, isLoadingAuth } = useAuth();
-  // const { version, setVersion } = useContext(AEVersionContext);
   return (
     <Fragment key={id}>
       <hr />
@@ -28,13 +27,6 @@ function AdverseReactionSection({
           >
             <div className="flex justify-start space-x-1">
               <TypographyH2>ADVERSE REACTIONS</TypographyH2>
-              {/* <AETableVerDropdown
-                verType={version!}
-                setVerType={(q) => {
-                  setVersion!(q);
-                }}
-                additionalResetCallback={() => {}}
-              /> */}
             </div>
 
             {!isLoadingAuth && role === UserRoleEnum.ADMIN && (

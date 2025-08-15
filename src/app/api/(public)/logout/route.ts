@@ -7,6 +7,10 @@ export async function POST(request: Request) {
   cookie.delete("userId");
   cookie.delete("role");
   cookie.delete("username");
+  cookie.delete("credentials");
+  cookie.delete("email");
+  cookie.delete("cognito_user");
+  cookie.delete("expireAt");
 
   return NextResponse.json({}, { status: 200 });
 }

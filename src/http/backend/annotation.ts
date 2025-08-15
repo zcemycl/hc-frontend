@@ -14,7 +14,7 @@ export async function fetchUnannotatedAETableByUserId(
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   isHistory: boolean = false,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables/${tablename}`;
   const params = new URLSearchParams();
   params.append("offset", offset.toString());
@@ -43,7 +43,7 @@ export async function fetchUnannotatedAETableByUserIdCount(
   complete: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables_count/${tablename}`;
   const params = new URLSearchParams();
   params.append("reverse", reverse.toString());
@@ -69,7 +69,7 @@ export async function fetchAETableByIds(
   setid: string,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${setid}/${tablename}/${id}`;
   const response = await fetch(API_URI, {
     method: "POST",
@@ -90,7 +90,7 @@ export async function fetchAETableBySetid(
   tablename: AnnotationCategoryEnum = AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ): Promise<ITableNoHead[]> {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${setid}/${tablename}`;
   const response = await fetch(API_URI, {
     method: "POST",
@@ -111,7 +111,7 @@ export async function addAnnotationByNameId(
   name: string,
   annotation: { [key: string]: any },
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/add/fdalabel/${name}/${id}`;
   const response = await fetch(API_URI, {
     method: "POST",
@@ -131,7 +131,7 @@ export async function fetchAnnotatedTableMapByNameIds(
   is_ai: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
 ): Promise<{ [key: string]: any }> {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const params = new URLSearchParams();
   params.append("is_ai", is_ai.toString());
   const API_URI = `${FASTAPI_URI}/annotation/annotated/${name}/${id}?${params}`;
@@ -157,7 +157,7 @@ export async function fetchAnnotatedCountByUserId(
   user_id: number,
   tablename: AnnotationCategoryEnum,
 ) {
-  const token = get_token_cookie();
+  const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/user/${user_id}/annotated/${tablename}`;
   const response = await fetch(API_URI, {
     method: "GET",

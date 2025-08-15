@@ -31,6 +31,8 @@ export const LoaderProvider = ({
   useEffect(() => {
     setIsLoading(true);
 
+    if (pathname === "/login") return;
+
     const timeout = setTimeout(() => {
       setIsLoading(false);
     }, max_loading_period); // Adjust this based on real API calls

@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import {
   SearchQueryTypeEnum,
   SortByEnum,
-  AETableVerEnum,
   DEFAULT_FDALABEL_VERSIONS,
 } from "@/constants";
 
@@ -37,7 +36,6 @@ export class FdalabelFetchService extends BaseServiceHandler {
 
   async handleFdalabelBySetid(
     query: string[],
-    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
@@ -69,7 +67,6 @@ export class FdalabelFetchService extends BaseServiceHandler {
   async handleFdalabelByTradename(
     query: string[],
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
   ) {
     try {
       const resp = await fetchFdalabelByTradename(
@@ -102,7 +99,6 @@ export class FdalabelFetchService extends BaseServiceHandler {
     pageN: number,
     nPerPage: number,
     sortBy: SortByEnum,
-    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
@@ -141,7 +137,6 @@ export class FdalabelFetchService extends BaseServiceHandler {
     pageN: number,
     nPerPage: number,
     sortBy: SortByEnum,
-    // version: AETableVerEnum = AETableVerEnum.v0_0_1,
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {

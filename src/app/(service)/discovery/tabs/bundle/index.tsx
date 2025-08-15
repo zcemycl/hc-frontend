@@ -40,15 +40,16 @@ export default function BundleTab() {
   }, [multiSelectNodes]);
 
   useEffect(() => {
-    async function getData() {
-      const tmpBundles = await fetchBundlesByUserId(userId as number, 0, 5);
+    async function getData(userId: number) {
+      const tmpBundles = await fetchBundlesByUserId(userId, 0, 5);
       console.log(tmpBundles);
       setBundles(tmpBundles);
     }
 
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
-    getData();
+    if (!userId.toString()) return;
+    getData(userId);
   }, [userId]);
 
   return (

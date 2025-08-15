@@ -15,11 +15,11 @@ export async function POST(request: NextRequest) {
     { status: 200 },
   );
   response.cookies.set("mode", mode);
-  response.cookies.set("email", email);
   response.cookies.set("credentials", credentials, {
     maxAge: EXP_TOKEN_TIMEOUT,
   });
   response.cookies.set("expireAt", expireAt);
+  response.cookies.set("email", email);
   response.cookies.set("userId", userId);
   response.cookies.set("role", role);
   return response;

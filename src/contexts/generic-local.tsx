@@ -1,8 +1,7 @@
 "use client";
 
+import { IInitialData } from "@/types";
 import { createContext } from "react";
-
-type IInitialData = Record<string, any>;
 
 export const LocalGenericContext = createContext<any>({});
 

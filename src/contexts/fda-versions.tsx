@@ -1,35 +1,51 @@
 "use client";
 
-import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
+import {
+  DEFAULT_FDALABEL_VERSIONS,
+  DEFAULT_FDALALBEL_SECTION_AVAILABLE_VERS,
+} from "@/constants";
 import {
   fetchFdalabelScrapeVersions,
   fetchFdalabelSectionVersions,
 } from "@/http/backend";
-import { IFdaVersions } from "@/types";
-import React, { createContext, useMemo, useState, useEffect } from "react";
+import { IFdaSecAvailVers, IFdaVersions, IInitialData } from "@/types";
+import React, {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
+import { useAuth } from "./auth";
+import { usePathname } from "next/navigation";
+import { setFdaVersAllCookie } from "@/http/internal";
 
 export const FdaVersionsContext = createContext<any>({});
 
 export const FdaVersionsProvider = ({
+  initialData,
   children,
 }: {
+  initialData: IInitialData;
   children?: React.ReactNode;
 }) => {
+  const pathname = usePathname();
+  const prevPath = useRef(pathname);
+  const { isAuthenticated, isLoadingAuth } = useAuth();
+  const {
+    defaultVers,
+    defaultFdaScrapeAvailVers,
+    defaultFdaSectionScrapeAvailVers,
+  } = initialData;
   const [versions, setVersions] = useState<IFdaVersions>(
-    DEFAULT_FDALABEL_VERSIONS,
+    defaultVers ?? DEFAULT_FDALABEL_VERSIONS,
   );
-  const [fdaVers, setFdaVers] = useState<string[]>([
-    DEFAULT_FDALABEL_VERSIONS.fdalabel,
-  ]);
-  const [sectionVersions, setSectionVersions] = useState<{
-    [key: string]: any;
-  }>(
-    Object.fromEntries(
-      Object.entries(DEFAULT_FDALABEL_VERSIONS).map(([key, value]) => [
-        `${key}_available_versions`,
-        [value],
-      ]),
-    ),
+  const [fdaVers, setFdaVers] = useState<string[]>(
+    defaultFdaScrapeAvailVers ?? [DEFAULT_FDALABEL_VERSIONS.fdalabel],
+  );
+  const [sectionVersions, setSectionVersions] = useState<IFdaSecAvailVers>(
+    defaultFdaSectionScrapeAvailVers ??
+      DEFAULT_FDALALBEL_SECTION_AVAILABLE_VERS,
   );
 
   useEffect(() => {
@@ -38,21 +54,37 @@ export const FdaVersionsProvider = ({
         fetchFdalabelScrapeVersions(),
         fetchFdalabelSectionVersions(versions.fdalabel),
       ]);
-      setFdaVers([..._fdaVers]);
-      setSectionVersions({ ..._sectionVers });
+      if (!("detail" in _fdaVers)) setFdaVers([..._fdaVers]);
+      if (!("detail" in _sectionVers)) setSectionVersions({ ..._sectionVers });
     }
-    getData();
-  }, []);
+    console.log(isLoadingAuth, isAuthenticated, pathname);
+    if (!isLoadingAuth && isAuthenticated) getData();
+  }, [isLoadingAuth, isAuthenticated]);
 
   useEffect(() => {
     async function updateSectionVers() {
       const _sectionVers = await fetchFdalabelSectionVersions(
         versions.fdalabel,
       );
-      setSectionVersions({ ..._sectionVers });
+      if (!("detail" in _sectionVers)) setSectionVersions({ ..._sectionVers });
     }
-    updateSectionVers();
-  }, [versions]);
+    if (!isLoadingAuth && isAuthenticated) updateSectionVers();
+  }, [isLoadingAuth, isAuthenticated, versions]);
+
+  // change page and store options
+  useEffect(() => {
+    if (pathname !== prevPath.current) {
+      setFdaVersAllCookie(versions, fdaVers, sectionVersions);
+      prevPath.current = pathname;
+    }
+  }, [pathname]);
+
+  // store cookie when changing
+  useEffect(() => {
+    if (!isLoadingAuth && isAuthenticated) {
+      setFdaVersAllCookie(versions, fdaVers, sectionVersions);
+    }
+  }, [versions, sectionVersions, isLoadingAuth, isAuthenticated]);
 
   const FdaVersionsProviderValue = useMemo(() => {
     return {
