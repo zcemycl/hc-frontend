@@ -15,7 +15,6 @@ import { DB_CHECK_ICON_URI, DB_X_ICON_URI } from "@/icons/bootstrap";
 export default function Component() {
   const { isAuthenticated, isLoadingAuth, userData } = useAuth();
   const { pgHealthMsg, isPGHealthy } = useDbsHealth();
-  // useDummyCreds({ prevSignal, setPrevSignal }); // only trigger when local
 
   return (
     <div>

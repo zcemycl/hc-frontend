@@ -8,7 +8,7 @@ export async function get_token_cookie() {
     // throw new Error("Missing token cookie");
     // avoiding loop from home to logout in local test
     console.log("get token cookie XX trigger");
-    if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") redirect("/logout");
+    // if (process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev") redirect("/logout");
     return "";
   }
   const token = cookie.get("token")?.value;
@@ -19,7 +19,7 @@ export async function validate_response_ok(response: any) {
   if (!response.ok) {
     if (response.status == 401) {
       console.log("401 validate_response_ok XX trigger");
-      redirect("/logout");
+      //   redirect("/logout");
     }
     if (response.status == 404) {
       // return {"message": "Not Found"}

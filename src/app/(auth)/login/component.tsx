@@ -15,7 +15,6 @@ export default function Component() {
     answerCustomChallenge,
     setCredentials,
     isLoadingAuth,
-    setIsAuthenticated,
   } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const { initialData } = useContext(LocalGenericContext);
@@ -56,6 +55,7 @@ export default function Component() {
         mode === SiteMode.VERIFY &&
         !isAuthenticated
       ) {
+        setIsLoading(true);
         console.log("Login Verifying...");
         const sessionLoginId = cognito_user_obj.Session;
         const resp = await answerCustomChallenge(
@@ -70,7 +70,6 @@ export default function Component() {
         const credentials = JSON.stringify(resp.AuthenticationResult);
         setCredentials(credentials);
         console.log("setting creds...");
-        setIsAuthenticated(true);
       }
     }
     respondAuthChallege(urlCode, urlEmail, isAuthenticated);

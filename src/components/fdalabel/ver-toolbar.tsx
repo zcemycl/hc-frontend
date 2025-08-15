@@ -14,7 +14,7 @@ function VerToolbar({
   reloadCallback: () => void;
 }) {
   const router = useRouter();
-  const { sectionVersions, versions } = useContext(FdaVersionsContext);
+  const { sectionVersions } = useContext(FdaVersionsContext);
   const { setIsAuthenticated, credentials } = useAuth();
   return (
     <div className="flex flex-col space-y-1 w-full items-center">

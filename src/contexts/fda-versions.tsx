@@ -54,9 +54,10 @@ export const FdaVersionsProvider = ({
         fetchFdalabelScrapeVersions(),
         fetchFdalabelSectionVersions(versions.fdalabel),
       ]);
-      setFdaVers([..._fdaVers]);
-      setSectionVersions({ ..._sectionVers });
+      if (!("detail" in _fdaVers)) setFdaVers([..._fdaVers]);
+      if (!("detail" in _sectionVers)) setSectionVersions({ ..._sectionVers });
     }
+    console.log(isLoadingAuth, isAuthenticated, pathname);
     if (!isLoadingAuth && isAuthenticated) getData();
   }, [isLoadingAuth, isAuthenticated]);
 
@@ -65,7 +66,7 @@ export const FdaVersionsProvider = ({
       const _sectionVers = await fetchFdalabelSectionVersions(
         versions.fdalabel,
       );
-      setSectionVersions({ ..._sectionVers });
+      if (!("detail" in _sectionVers)) setSectionVersions({ ..._sectionVers });
     }
     if (!isLoadingAuth && isAuthenticated) updateSectionVers();
   }, [isLoadingAuth, isAuthenticated, versions]);

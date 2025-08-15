@@ -6,7 +6,8 @@ import { useEffect } from "react";
 import { fetchApiLogout } from "@/http/internal";
 
 export default function Logout() {
-  const { setIsAuthenticated, setCredentials, isLoadingAuth } = useAuth();
+  const { setIsAuthenticated, setCredentials, isLoadingAuth, setUserData } =
+    useAuth();
   const { setIsDropDownOpen, setIsSideBarOpen } = useOpenBar();
   useEffect(() => {
     async function signOut() {
@@ -14,6 +15,7 @@ export default function Logout() {
     }
     if (isLoadingAuth) return;
     setIsAuthenticated(false);
+    setUserData(null);
     setCredentials("{}");
     setIsDropDownOpen(false);
     setIsSideBarOpen(false);
