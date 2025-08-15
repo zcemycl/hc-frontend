@@ -8,7 +8,7 @@ import {
   FdaVersionsProvider,
   TableSelectProvider,
 } from "@/contexts";
-import { setupAuthHook } from "@/http/utils-server";
+import { setupAuthHook, setupScrapeVersionsHook } from "@/http/utils-server";
 
 export const metadata = {
   title: "RXScope",
@@ -33,6 +33,7 @@ export default async function RootLayout({
     hasUserId,
     defaultUserId,
   ] = await setupAuthHook();
+  const [] = await setupScrapeVersionsHook();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
