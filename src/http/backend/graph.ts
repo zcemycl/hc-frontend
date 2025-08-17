@@ -1,4 +1,5 @@
 "use server";
+import { cookies } from "next/headers";
 import { get_token_cookie } from "../utils-server";
 import { FASTAPI_URI } from "./constants";
 
@@ -7,6 +8,8 @@ export async function fetchGraphDummy(
   limit: number = 50,
   offset: number = 0,
 ) {
+  const cookie = cookies();
+  const versions = JSON.parse(cookie.get("fda-scrape-cur-version")!.value);
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/graph`;
   const params = new URLSearchParams();
@@ -16,11 +19,12 @@ export async function fetchGraphDummy(
   const API_URI_COMPLETE = `${API_URI}/?${params}`;
 
   const response = await fetch(API_URI_COMPLETE, {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify(versions),
   });
   const res = await response.json();
   return res;
