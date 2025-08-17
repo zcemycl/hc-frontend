@@ -1,10 +1,14 @@
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext } from "@/contexts";
+import { DiscoveryContext, useLoader } from "@/contexts";
+import { fetchGraphDummy } from "@/http/backend";
 import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
+import { INode } from "@/types";
 import { useContext, useState } from "react";
 
 export default function FlagTab() {
-  const { tab, flagAttrs, setFlagAttrs } = useContext(DiscoveryContext);
+  const { tab, flagAttrs, setFlagAttrs, term, setNodes, setEdges } =
+    useContext(DiscoveryContext);
+  const { setIsLoading } = useLoader();
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
   const [skip, setSkip] = useState(flagAttrs.offset);
@@ -61,7 +65,7 @@ export default function FlagTab() {
                     h-full aspect-square
                     justify-end align-middle
                     content-center"
-          onClick={(e) => {
+          onClick={async (e) => {
             e.preventDefault();
             setFlagAttrs({
               name: tmpName,
@@ -69,6 +73,31 @@ export default function FlagTab() {
               offset: skip,
             });
             console.log(`${limit} ${skip} ${tmpName}`);
+            if (tmpName == "") return;
+            setIsLoading(true);
+            const res = await fetchGraphDummy(
+              tmpName as string,
+              limit,
+              skip,
+              null,
+            );
+            console.log(res);
+            let all_nodes = [
+              ...res["ta"].map((v: INode) => ({
+                ...v,
+                group: "ta",
+              })),
+              ...res["p"].map((v: INode) => ({
+                ...v,
+                group: "p",
+              })),
+            ];
+            const final_all_nodes = all_nodes.map((obj) =>
+              obj.label == name ? { ...obj, fixed: true } : obj,
+            );
+            setNodes(final_all_nodes);
+            setEdges([...res["links"]]);
+            setIsLoading(false);
           }}
         >
           <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />

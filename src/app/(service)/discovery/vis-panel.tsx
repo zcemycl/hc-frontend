@@ -9,7 +9,7 @@ import { Spinner } from "@/components";
 import { useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
-  const { credentials, setIsAuthenticated } = useAuth();
+  const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
   const { isLoading, setIsLoading } = useLoader();
   const router = useRouter();
   const {
@@ -19,6 +19,7 @@ export default function VisPanel() {
     visJsRef,
     neo4jHealthMsg,
     visToolBarRef,
+    term,
   } = useContext(DiscoveryContext);
   const [path, setPath] = useState<string[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
@@ -26,6 +27,7 @@ export default function VisPanel() {
 
   useEffect(() => {
     if (credentials.length === 0) return;
+    if (isLoadingAuth) return;
     async function getData(credentials: string) {
       if (credentials.length === 0) {
         setIsAuthenticated(false);
@@ -36,6 +38,7 @@ export default function VisPanel() {
         flagAttrs.name,
         flagAttrs.numNodes,
         flagAttrs.offset,
+        term == "" ? null : term,
       );
       console.log(res);
       let all_nodes = [
@@ -57,7 +60,7 @@ export default function VisPanel() {
     }
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [credentials, flagAttrs]);
+  }, [credentials]);
 
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;

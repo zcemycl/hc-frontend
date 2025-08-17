@@ -8,10 +8,9 @@ import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 
 export default function FilterTab() {
-  const { tab, visJsRef, net, nodes, visToolBarRef } =
+  const { tab, visJsRef, net, nodes, visToolBarRef, term, setTerm } =
     useContext(DiscoveryContext);
   const searchParams = useSearchParams();
-  const [term, setTerm] = useState<string>("");
   const buttonRef = useRef<HTMLDivElement>(null);
 
   const filterNodes = useMemo(() => {

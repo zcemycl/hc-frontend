@@ -34,6 +34,7 @@ export default function Discovery() {
     ...defaultBundleConfig,
   });
   const [bundles, setBundles] = useState<IBundle[]>([]);
+  const [term, setTerm] = useState<string>("");
   const [tab, setTab] = useState<GraphTabEnum>(
     searchParams.get("therapeutic_area")
       ? searchParams.get("product_name")
@@ -53,7 +54,7 @@ export default function Discovery() {
     name: searchParams.get("therapeutic_area")
       ? searchParams.get("therapeutic_area")!
       : "Neoplasms",
-    numNodes: 500,
+    numNodes: 50,
     offset: 0,
   });
   const [settings, defineSettings] = useState<any>({
@@ -114,6 +115,8 @@ export default function Discovery() {
           setBundleConfig,
           bundles,
           setBundles,
+          term,
+          setTerm,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">

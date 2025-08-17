@@ -7,6 +7,7 @@ export async function fetchGraphDummy(
   name: string = "Neoplasms",
   limit: number = 50,
   offset: number = 0,
+  product: string | null = null,
 ) {
   const cookie = cookies();
   const versions = JSON.parse(cookie.get("fda-scrape-cur-version")!.value);
@@ -16,6 +17,9 @@ export async function fetchGraphDummy(
   params.append("name", name);
   params.append("limit", limit.toString());
   params.append("offset", offset.toString());
+  if (product != null) {
+    params.append("product", product);
+  }
   const API_URI_COMPLETE = `${API_URI}/?${params}`;
 
   const response = await fetch(API_URI_COMPLETE, {
