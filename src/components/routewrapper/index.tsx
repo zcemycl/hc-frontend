@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -10,6 +10,7 @@ export const ProtectedRoute = ({
 }) => {
   const router = useRouter();
   const { credentials, isLoadingAuth } = useAuth();
+  const { setIsLoading } = useLoader();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -34,6 +35,13 @@ export const ProtectedRoute = ({
       );
     }
   }, [credentials, isLoadingAuth, router]);
+
+  useEffect(() => {
+    console.log("protect", isLoadingAuth, isAuthenticated);
+    if (!isLoadingAuth && isAuthenticated) {
+      setIsLoading(false);
+    }
+  }, [isLoadingAuth, isAuthenticated]);
 
   if (isLoadingAuth) {
     return children; // Or maybe a loading spinner
