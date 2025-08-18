@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import jwkToPem from "jwk-to-pem";
-import { createRemoteJWKSet, importSPKI, jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 
 const openid_conf_uri = process.env.NEXT_PUBLIC_COGNITO_OPENID_CONF_URI;
 const openid_conf = await (await fetch(openid_conf_uri as string)).json();
