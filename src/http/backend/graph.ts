@@ -2,13 +2,14 @@
 import { cookies } from "next/headers";
 import { get_token_cookie } from "../utils-server";
 import { FASTAPI_URI } from "./constants";
+import { ITa2PGraph } from "@/types";
 
 export async function fetchGraphDummy(
   name: string = "Neoplasms",
   limit: number = 50,
   offset: number = 0,
   product: string | null = null,
-) {
+): Promise<ITa2PGraph> {
   const cookie = cookies();
   const versions = JSON.parse(cookie.get("fda-scrape-cur-version")!.value);
   const token = await get_token_cookie();

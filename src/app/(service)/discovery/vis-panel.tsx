@@ -52,7 +52,7 @@ export default function VisPanel() {
         })),
       ];
       const final_all_nodes = all_nodes.map((obj) =>
-        obj.label == name ? { ...obj, fixed: true } : obj,
+        obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
       );
       setNodes(final_all_nodes);
       setEdges([...res["links"]]);

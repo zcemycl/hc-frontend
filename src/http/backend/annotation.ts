@@ -1,5 +1,12 @@
 "use server";
-import { AnnotationCategoryEnum, IFdaVersions, ITableNoHead } from "@/types";
+import {
+  AnnotationCategoryEnum,
+  IAdverseEffectTable,
+  IFdaVersions,
+  IGenericMap,
+  ITableNoHead,
+  IUnAnnotatedAETable,
+} from "@/types";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
@@ -13,7 +20,7 @@ export async function fetchUnannotatedAETableByUserId(
   complete: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   isHistory: boolean = false,
-) {
+): Promise<IUnAnnotatedAETable[]> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables/${tablename}`;
   const params = new URLSearchParams();
@@ -42,7 +49,7 @@ export async function fetchUnannotatedAETableByUserIdCount(
   reverse: boolean = false,
   complete: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<number> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/${id}/unannotated_ae_tables_count/${tablename}`;
   const params = new URLSearchParams();
@@ -68,7 +75,7 @@ export async function fetchAETableByIds(
   tablename: AnnotationCategoryEnum,
   setid: string,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<IAdverseEffectTable> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/annotation/fdalabel/${setid}/${tablename}/${id}`;
   const response = await fetch(API_URI, {
@@ -130,7 +137,7 @@ export async function fetchAnnotatedTableMapByNameIds(
   name: string,
   is_ai: boolean = false,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-): Promise<{ [key: string]: any }> {
+): Promise<IGenericMap> {
   const token = await get_token_cookie();
   const params = new URLSearchParams();
   params.append("is_ai", is_ai.toString());

@@ -16,3 +16,9 @@ export interface IFlagAttrs {
   numNodes?: number;
   offset?: number;
 }
+
+export interface ITa2PGraph {
+  ta: INode[];
+  p: INode[];
+  links: IEdge[];
+}

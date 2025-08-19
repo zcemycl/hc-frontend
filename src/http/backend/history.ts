@@ -7,7 +7,7 @@ export async function fetchHistoryByUserId(
   id: number,
   offset: number = 0,
   limit: number = 10,
-) {
+): Promise<IHistory[]> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/history/${id}?offset=${offset}&limit=${limit}`;
   const response = await fetch(API_URI, {
@@ -22,7 +22,7 @@ export async function fetchHistoryByUserId(
   return res;
 }
 
-export async function fetchHistoryByUserIdCount(id: number) {
+export async function fetchHistoryByUserIdCount(id: number): Promise<number> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/history/${id}/count`;
   const response = await fetch(API_URI, {
