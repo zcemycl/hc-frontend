@@ -1,10 +1,10 @@
 "use server";
 
-import { UserRoleEnum } from "@/types";
+import { IUser, UserRoleEnum } from "@/types";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 
-export async function fetchUserInfoById(id: number) {
+export async function fetchUserInfoById(id: number): Promise<IUser> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/id/${id}`;
   const response = await fetch(API_URI, {
@@ -19,7 +19,7 @@ export async function fetchUserInfoById(id: number) {
   return res;
 }
 
-export async function fetchUserInfoByName(name: string) {
+export async function fetchUserInfoByName(name: string): Promise<IUser> {
   const token = await get_token_cookie();
   console.log("unhappy token ... ", token, name);
   const API_URI = `${FASTAPI_URI}/users/name/${name}`;
@@ -35,7 +35,7 @@ export async function fetchUserInfoByName(name: string) {
   return res;
 }
 
-export async function fetchUserAll(offset = 0, limit = 10) {
+export async function fetchUserAll(offset = 0, limit = 10): Promise<IUser[]> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/?offset=${offset}&limit=${limit}`;
   const response = await fetch(API_URI, {

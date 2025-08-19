@@ -2,7 +2,12 @@
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
-import { IFdaVersions } from "@/types";
+import {
+  ICompareAETable,
+  IFdaLabel,
+  IFdaLabelHistory,
+  IFdaVersions,
+} from "@/types";
 
 export async function fetchFdalabelBySetid(
   setid: string[],
@@ -10,7 +15,7 @@ export async function fetchFdalabelBySetid(
   offset: number = 0,
   limit: number | null = 10,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<IFdaLabel[]> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_id`;
   let setids_param = setid.join("&id=");
@@ -42,7 +47,7 @@ export async function fetchFdalabelByTradename(
   offset: number = 0,
   limit: number | null = 10,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<IFdaLabel[]> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/search_by_tradename`;
   let tradenames_param = tradename.join("&tradename=");
@@ -77,7 +82,7 @@ export async function fetchFdalabelByTherapeuticArea(
   limit: number = 10,
   sort_by: string = "relevance",
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<IFdaLabel[]> {
   const token = await get_token_cookie();
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
@@ -112,7 +117,7 @@ export async function fetchFdalabelByIndication(
   limit: number = 10,
   sort_by: string = "relevance",
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<IFdaLabel[]> {
   const token = await get_token_cookie();
   const params = new URLSearchParams();
   params.append("maxn", maxn.toString());
@@ -143,7 +148,7 @@ export async function fetchFdalabelByIndication(
 export async function fetchFdalabelHistoryBySetid(
   setid: string,
   versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
-) {
+): Promise<IFdaLabelHistory> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/history`;
   const response = await fetch(`${API_URI}/${setid}`, {
@@ -163,7 +168,7 @@ export async function fetchFdalabelHistoryBySetid(
 export async function fetchFdalabelCompareAdverseEffects(
   setids: string[],
   versions: IFdaVersions,
-) {
+): Promise<ICompareAETable> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/fdalabels/compare/adverse-effects`;
   const response = await fetch(API_URI, {
