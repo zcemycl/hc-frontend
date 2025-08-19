@@ -21,6 +21,7 @@ import {
   fetchUnannotatedAETableByUserId,
   fetchUnannotatedAETableByUserIdCount,
 } from "@/http/backend";
+import { useLoader } from "./loader";
 
 interface IAePageCache {
   tabName?: AnnotationTypeEnum;
@@ -109,6 +110,7 @@ export const AETableAnnotationProvider = ({
   const [nPerPage, _] = useState(10);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
   const refUnannotatedGroup = useRef(null);
+  const { withLoading } = useLoader();
   const [tabName, setTabName] = useState(
     ("tabName" in cache
       ? cache["tabName"]
@@ -222,24 +224,26 @@ export const AETableAnnotationProvider = ({
         setTopN: (i: number) => void,
         setTableData: (d: IUnAnnotatedAETable[]) => void,
       ) {
-        const [res, count] = await Promise.all([
-          fetchUnannotatedAETableByUserId(
-            userId,
-            AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-            pageN * nPerPage,
-            nPerPage,
-            tabName === AnnotationTypeEnum.COMPLETE,
-            tabName === AnnotationTypeEnum.AI,
-            versions,
-          ),
-          fetchUnannotatedAETableByUserIdCount(
-            userId,
-            AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-            tabName === AnnotationTypeEnum.COMPLETE,
-            tabName === AnnotationTypeEnum.AI,
-            versions,
-          ),
-        ]);
+        const [res, count] = await withLoading(() =>
+          Promise.all([
+            fetchUnannotatedAETableByUserId(
+              userId,
+              AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+              pageN * nPerPage,
+              nPerPage,
+              tabName === AnnotationTypeEnum.COMPLETE,
+              tabName === AnnotationTypeEnum.AI,
+              versions,
+            ),
+            fetchUnannotatedAETableByUserIdCount(
+              userId,
+              AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+              tabName === AnnotationTypeEnum.COMPLETE,
+              tabName === AnnotationTypeEnum.AI,
+              versions,
+            ),
+          ]),
+        );
         if ("detail" in res) {
           router.push("/logout");
           return;

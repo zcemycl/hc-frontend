@@ -170,14 +170,16 @@ export default function Search() {
                 fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
                 reloadCallback={async () => {
                   if (query[0] === "") return;
-                  const resp = await search_query_by_type(
-                    fdaservice,
-                    query,
-                    queryType,
-                    pageN,
-                    nPerPage,
-                    sortBy,
-                    versions,
+                  const resp = await withLoading(() =>
+                    search_query_by_type(
+                      fdaservice,
+                      query,
+                      queryType,
+                      pageN,
+                      nPerPage,
+                      sortBy,
+                      versions,
+                    ),
                   );
                   console.log(resp);
                 }}

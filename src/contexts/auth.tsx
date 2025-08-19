@@ -24,6 +24,7 @@ import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 import { useCognitoAuth } from "@/hooks";
 import { setPostLogin, validateToken } from "@/http/internal";
 import { useLoader } from "./loader";
+import { useApiHandler } from "@/hooks/useApiHandler";
 
 Amplify.configure({
   Auth: {
@@ -83,23 +84,16 @@ export const AuthProvider = ({
   const router = useRouter();
   const { cognitoIdentity, signIn, answerCustomChallenge } = useCognitoAuth();
   const hasAuthCookie = hasCreds && hasUsername && hasRole && hasUserId;
+  const { handleResponse } = useApiHandler();
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
-      const { success: isSuccessToken, data: tokenPayload } = await withLoading(
-        () => validateToken(creds!.AccessToken),
+      const tokenResult = await withLoading(() =>
+        validateToken(creds!.AccessToken),
       );
-      if (!isSuccessToken) {
-        setIsAuthenticated(false);
-        setCredentials("{}");
-        router.push(
-          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
-        );
-        return;
-      }
-      const { username } = tokenPayload!;
-      console.log(username);
-      console.log(creds);
+      handleResponse(tokenResult);
+      const { username } = tokenResult.data!;
+      console.log(username, creds);
       const x = await withLoading(() =>
         fetchUserInfoByName(username as string),
       );

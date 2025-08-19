@@ -14,7 +14,7 @@ export default function AEAnnotateListToolbar() {
   const router = useRouter();
   const { versions } = useContext(FdaVersionsContext);
   const { userId, credentials, isLoadingAuth } = useAuth();
-  const { setIsLoading } = useLoader();
+  const { setIsLoading, withLoading } = useLoader();
   const {
     aePageCache,
     tabName,
@@ -113,14 +113,16 @@ export default function AEAnnotateListToolbar() {
             if (isLoadingAuth) return;
             if (credentials.length === 0) return;
             if (!userId) return;
-            await fetchAnnotationTableList(
-              userId,
-              tabName,
-              pageN,
-              router,
-              versions,
-              setTopN,
-              setTableData,
+            await withLoading(() =>
+              fetchAnnotationTableList(
+                userId,
+                tabName,
+                pageN,
+                router,
+                versions,
+                setTopN,
+                setTableData,
+              ),
             );
           }}
         />
