@@ -10,7 +10,7 @@ import { useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading, isLoadingv2, withLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const router = useRouter();
   const {
     setNodes,

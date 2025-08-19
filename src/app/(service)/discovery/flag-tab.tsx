@@ -8,7 +8,7 @@ import { useContext, useState } from "react";
 export default function FlagTab() {
   const { tab, flagAttrs, setFlagAttrs, term, setNodes, setEdges } =
     useContext(DiscoveryContext);
-  const { setIsLoading, withLoading } = useLoader();
+  const { withLoading } = useLoader();
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
   const [skip, setSkip] = useState(flagAttrs.offset);

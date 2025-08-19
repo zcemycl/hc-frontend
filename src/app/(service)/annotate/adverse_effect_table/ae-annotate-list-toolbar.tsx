@@ -14,7 +14,7 @@ export default function AEAnnotateListToolbar() {
   const router = useRouter();
   const { versions } = useContext(FdaVersionsContext);
   const { userId, credentials, isLoadingAuth } = useAuth();
-  const { setIsLoading, withLoading } = useLoader();
+  const { withLoading } = useLoader();
   const {
     aePageCache,
     tabName,
@@ -35,21 +35,21 @@ export default function AEAnnotateListToolbar() {
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     if (!userId) return;
-    setIsLoading(true);
-    fetchAnnotationTableList(
-      userId,
-      tabName,
-      pageN,
-      router,
-      versions,
-      setTopN,
-      setTableData,
+    withLoading(() =>
+      fetchAnnotationTableList(
+        userId,
+        tabName,
+        pageN,
+        router,
+        versions,
+        setTopN,
+        setTableData,
+      ),
     );
     (refUnannotatedGroup.current as any).scrollTo({
       top: 0,
       behavior: "smooth",
     });
-    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId]);
 

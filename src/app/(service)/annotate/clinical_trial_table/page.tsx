@@ -28,7 +28,7 @@ import { transformData } from "@/utils";
 export default function Page() {
   const router = useRouter();
   const { userId, credentials, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const refUnannotatedGroup = useRef(null);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
 
@@ -43,19 +43,23 @@ export default function Page() {
       tabName: AnnotationTypeEnum,
       pageN: number,
     ) {
-      const res = await fetchUnannotatedAETableByUserId(
-        userId,
-        AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
-        pageN * nPerPage,
-        nPerPage,
-        tabName === AnnotationTypeEnum.COMPLETE,
-        tabName === AnnotationTypeEnum.AI,
+      const res = await withLoading(() =>
+        fetchUnannotatedAETableByUserId(
+          userId,
+          AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
+          pageN * nPerPage,
+          nPerPage,
+          tabName === AnnotationTypeEnum.COMPLETE,
+          tabName === AnnotationTypeEnum.AI,
+        ),
       );
-      const count = await fetchUnannotatedAETableByUserIdCount(
-        userId,
-        AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
-        tabName === AnnotationTypeEnum.COMPLETE,
-        tabName === AnnotationTypeEnum.AI,
+      const count = await withLoading(() =>
+        fetchUnannotatedAETableByUserIdCount(
+          userId,
+          AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
+          tabName === AnnotationTypeEnum.COMPLETE,
+          tabName === AnnotationTypeEnum.AI,
+        ),
       );
       if ("detail" in res) {
         router.push("/logout");
@@ -68,13 +72,11 @@ export default function Page() {
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     if (!userId) return;
-    setIsLoading(true);
     getData(userId as number, tabName, pageN);
     (refUnannotatedGroup.current as any).scrollTo({
       top: 0,
       behavior: "smooth",
     });
-    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId]);
 
@@ -83,7 +85,7 @@ export default function Page() {
       <section
         className={`text-gray-400 bg-gray-900 body-font 
         h-[81vh] sm:h-[89vh] overflow-y-scroll
-        ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        ${isLoadingv2 ? "animate-pulse" : ""}`}
         ref={refUnannotatedGroup}
       >
         <div
@@ -93,7 +95,7 @@ export default function Page() {
           <div
             role="status"
             className={`absolute left-1/2 top-1/2 transition-opacity duration-700
-            -translate-x-1/2 -translate-y-1/2 ${isLoading || isLoadingAuth ? "opacity-1" : "opacity-0"}`}
+            -translate-x-1/2 -translate-y-1/2 ${isLoadingv2 ? "opacity-1" : "opacity-0"}`}
           >
             <Spinner />
             <span className="sr-only">Loading...</span>
@@ -145,7 +147,6 @@ export default function Page() {
                         }
                         onClick={(e) => {
                           e.preventDefault();
-                          setIsLoading(true);
                           let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/clinical_trial_table/${data.idx}`;
                           if (tabName === AnnotationTypeEnum.AI) {
                             redirectUrl = `${redirectUrl}/ai`;

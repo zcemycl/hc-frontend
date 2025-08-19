@@ -31,7 +31,7 @@ export default function Search() {
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, userId, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading, isLoadingv2, withLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -58,10 +58,6 @@ export default function Search() {
   );
   useHistoryToSearch({ setQueryType, setQuery });
   useBundleToSearch({ setQueryType, setQuery });
-
-  useEffect(() => {
-    console.log("loading", isLoading, isLoadingAuth);
-  }, [isLoading, isLoadingAuth]);
 
   async function search_query_by_type(
     fdaservice: FdalabelFetchService,
@@ -123,7 +119,6 @@ export default function Search() {
           query,
           setQuery,
           setTopN,
-          setIsLoading,
           sortBy,
           setSortBy,
           setQueryType,

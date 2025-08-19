@@ -11,7 +11,7 @@ const useDiscoveryGraph = ({
 }: {
   setPath: Dispatch<SetStateAction<string[]>>;
 }) => {
-  const { isLoading, setIsLoading } = useLoader();
+  const { withLoading } = useLoader();
   const {
     setSelectedNodes,
     setMultiSelectNodes,
@@ -124,16 +124,11 @@ const useDiscoveryGraph = ({
     //     return !prev;
     //   })
     // });
-    network?.on("initRedraw", (e: any) => {
-      setIsLoading(true);
-    });
+    network?.on("initRedraw", (e: any) => {});
     // network?.on("beforeDrawing", (e: any) => {
-    //   setIsLoading(true);
     // })
-    network?.on("afterDrawing", (e: any) => {
-      setIsLoading(false);
-    });
-    setNet(network);
+    network?.on("afterDrawing", (e: any) => {});
+    withLoading(() => setNet(network));
     network?.fit();
     return network;
   };

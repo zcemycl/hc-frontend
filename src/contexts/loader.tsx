@@ -48,22 +48,10 @@ export const LoaderProvider = ({
     console.log("v2", isLoadingv2, loadingCountv2);
   }, [isLoadingv2, loadingCountv2]);
 
-  // useEffect(() => {
-  //   console.log(pathname)
-  //   setIsLoading(true);
-
-  //   const timeout = setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, max_loading_period); // Adjust this based on real API calls
-
-  //   return () => clearTimeout(timeout);
-  // }, [pathname]);
-
   useEffect(() => {
     if (pathname !== prevPath.current) {
       console.log("useloader", pathname, prevPath);
       // setLoadingCountv2((c) => c + 1);
-      setIsLoading(true);
       prevPath.current = pathname;
     }
   }, [pathname]);

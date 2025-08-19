@@ -16,7 +16,7 @@ export default function Component() {
     setCredentials,
     isLoadingAuth,
   } = useAuth();
-  const { isLoading, setIsLoading, withLoading, isLoadingv2 } = useLoader();
+  const { withLoading, isLoadingv2 } = useLoader();
   const { initialData } = useContext(LocalGenericContext);
   const { urlCode, urlEmail, defaultMode, defaultEmail, cognito_user } =
     initialData;
@@ -54,7 +54,6 @@ export default function Component() {
         mode === SiteMode.VERIFY &&
         !isAuthenticated
       ) {
-        setIsLoading(true);
         console.log("Login Verifying...");
         const sessionLoginId = cognito_user_obj.Session;
         const resp = await withLoading(() =>

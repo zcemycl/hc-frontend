@@ -36,13 +36,6 @@ export const ProtectedRoute = ({
     }
   }, [credentials, isLoadingv2, router]);
 
-  // useEffect(() => {
-  //   console.log("protect", isLoadingAuth, isAuthenticated);
-  //   if (!isLoadingAuth && isAuthenticated) {
-  //     setIsLoading(false);
-  //   }
-  // }, [isLoadingAuth, isAuthenticated]);
-
   if (isLoadingv2) {
     return children; // Or maybe a loading spinner
   }

@@ -9,7 +9,7 @@ import { IUser } from "@/types";
 
 export default function Page() {
   const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2 } = useLoader();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
 
@@ -35,7 +35,7 @@ export default function Page() {
       <section
         className={`text-gray-400 bg-gray-900 body-font 
               h-[81vh] sm:h-[89vh] overflow-y-scroll
-              ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+              ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div
           className="mt-[10rem] flex flex-col
