@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useEffect,
   useRef,
+  useCallback,
 } from "react";
 import { booleanDummySetState, TBooleanDummySetState } from "@/types";
 import { usePathname } from "next/navigation";
@@ -29,6 +30,20 @@ export const LoaderProvider = ({
   const [loadingCountv2, setLoadingCountv2] = useState(0);
   const isLoadingv2 = loadingCountv2 > 0;
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  const withLoading = useCallback(
+    async <T,>(fn: () => Promise<T>): Promise<T> => {
+      setLoadingCountv2((c) => c + 1);
+      try {
+        return await fn();
+      } catch (err) {
+        throw err;
+      } finally {
+        setLoadingCountv2((c) => c - 1); // always decrement
+      }
+    },
+    [],
+  );
 
   // useEffect(() => {
   //   console.log(pathname)
@@ -60,6 +75,7 @@ export const LoaderProvider = ({
         isLoadingv2,
         loadError,
         setLoadError,
+        withLoading,
       }}
     >
       {children}
