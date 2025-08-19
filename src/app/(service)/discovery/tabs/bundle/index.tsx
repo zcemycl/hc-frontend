@@ -1,7 +1,7 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext, useAuth } from "@/contexts";
+import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
   const router = useRouter();
+  const { withLoading } = useLoader();
   const {
     tab,
     multiSelectNodes,
@@ -41,7 +42,9 @@ export default function BundleTab() {
 
   useEffect(() => {
     async function getData(userId: number) {
-      const tmpBundles = await fetchBundlesByUserId(userId, 0, 5);
+      const tmpBundles = await withLoading(() =>
+        fetchBundlesByUserId(userId, 0, 5),
+      );
       console.log(tmpBundles);
       setBundles(tmpBundles);
     }
@@ -212,13 +215,13 @@ export default function BundleTab() {
                       v.fdalabels.forEach((f) => tnSet.add(f.tradename));
                       nodesToBundle.forEach((n: INode) => tnSet.add(n.label));
                       const newTradenames = Array.from(tnSet);
-                      await patchBundleById(v.id, {
-                        tradenames: newTradenames as string[],
-                      });
-                      const tmpBundles = await fetchBundlesByUserId(
-                        userId as number,
-                        0,
-                        5,
+                      await withLoading(() =>
+                        patchBundleById(v.id, {
+                          tradenames: newTradenames as string[],
+                        }),
+                      );
+                      const tmpBundles = await withLoading(() =>
+                        fetchBundlesByUserId(userId as number, 0, 5),
                       );
                       console.log(tmpBundles);
                       setBundles(tmpBundles);
@@ -254,11 +257,9 @@ export default function BundleTab() {
                 <button
                   onClick={async (e) => {
                     e.preventDefault();
-                    await deleteBundleById(v.id);
-                    const tmpBundles = await fetchBundlesByUserId(
-                      userId as number,
-                      0,
-                      5,
+                    await withLoading(() => deleteBundleById(v.id));
+                    const tmpBundles = await withLoading(() =>
+                      fetchBundlesByUserId(userId as number, 0, 5),
                     );
                     console.log(tmpBundles);
                     setBundles(tmpBundles);
@@ -304,13 +305,13 @@ export default function BundleTab() {
                             )
                             .map((f_: IFdaLabelRef) => f_.tradename);
                           console.log(newTradenames);
-                          await patchBundleById(v.id, {
-                            tradenames: newTradenames as string[],
-                          });
-                          const tmpBundles = await fetchBundlesByUserId(
-                            userId as number,
-                            0,
-                            5,
+                          await withLoading(() =>
+                            patchBundleById(v.id, {
+                              tradenames: newTradenames as string[],
+                            }),
+                          );
+                          const tmpBundles = await withLoading(() =>
+                            fetchBundlesByUserId(userId as number, 0, 5),
                           );
                           console.log(tmpBundles);
                           setBundles(tmpBundles);

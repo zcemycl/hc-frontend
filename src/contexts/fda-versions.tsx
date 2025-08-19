@@ -19,6 +19,7 @@ import React, {
 import { useAuth } from "./auth";
 import { usePathname } from "next/navigation";
 import { setFdaVersAllCookie } from "@/http/internal";
+import { useLoader } from "./loader";
 
 export const FdaVersionsContext = createContext<any>({});
 
@@ -31,6 +32,7 @@ export const FdaVersionsProvider = ({
 }) => {
   const pathname = usePathname();
   const prevPath = useRef(pathname);
+  const { withLoading } = useLoader();
   const { isAuthenticated, isLoadingAuth } = useAuth();
   const {
     defaultVers,
@@ -50,26 +52,28 @@ export const FdaVersionsProvider = ({
 
   useEffect(() => {
     async function getData() {
-      const [_fdaVers, _sectionVers] = await Promise.all([
-        fetchFdalabelScrapeVersions(),
-        fetchFdalabelSectionVersions(versions.fdalabel),
-      ]);
+      const [_fdaVers, _sectionVers] = await withLoading(() =>
+        Promise.all([
+          fetchFdalabelScrapeVersions(),
+          fetchFdalabelSectionVersions(versions.fdalabel),
+        ]),
+      );
       if (!("detail" in _fdaVers)) setFdaVers([..._fdaVers]);
       if (!("detail" in _sectionVers)) setSectionVersions({ ..._sectionVers });
     }
     console.log(isLoadingAuth, isAuthenticated, pathname);
-    if (!isLoadingAuth && isAuthenticated) getData();
-  }, [isLoadingAuth, isAuthenticated]);
+    if (isAuthenticated) getData();
+  }, [isAuthenticated]);
 
   useEffect(() => {
     async function updateSectionVers() {
-      const _sectionVers = await fetchFdalabelSectionVersions(
-        versions.fdalabel,
+      const _sectionVers = await withLoading(() =>
+        fetchFdalabelSectionVersions(versions.fdalabel),
       );
       if (!("detail" in _sectionVers)) setSectionVersions({ ..._sectionVers });
     }
-    if (!isLoadingAuth && isAuthenticated) updateSectionVers();
-  }, [isLoadingAuth, isAuthenticated, versions]);
+    if (isAuthenticated) updateSectionVers();
+  }, [isAuthenticated, versions]);
 
   // change page and store options
   useEffect(() => {

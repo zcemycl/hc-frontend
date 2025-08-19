@@ -34,7 +34,7 @@ export default function Admin() {
   const refUserGroup = useRef(null);
   const router = useRouter();
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [isOpenAddUserModal, setIsOpenAddUserModal] = useState(false);
   const [isOpenDelUserModal, setIsOpenDelUserModal] = useState(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -50,7 +50,7 @@ export default function Admin() {
   const [nPerPage, _] = useState(10);
 
   useEffect(() => {
-    fetchUserCount().then((x) => setTopN(x));
+    withLoading(() => fetchUserCount()).then((x: number) => setTopN(x));
   }, []);
 
   useEffect(() => {
@@ -62,7 +62,9 @@ export default function Admin() {
       );
     }
     async function getData() {
-      const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
+      const resp = await withLoading(() =>
+        fetchUserAll(pageN * nPerPage, nPerPage),
+      );
       console.log(resp);
       if ("detail" in resp) {
         router.push("/logout");
@@ -79,7 +81,7 @@ export default function Admin() {
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[81vh] 
           sm:h-[89vh] overflow-y-scroll
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}
+          ${isLoadingv2 ? "animate-pulse" : ""}
           `}
         ref={refUserGroup}
       >
@@ -100,14 +102,20 @@ export default function Admin() {
               text-white"
                 onClick={async (e) => {
                   e.preventDefault();
-                  await delete_user(
-                    displayData[delUserIndex].username,
-                    displayData[delUserIndex].email,
+                  await withLoading(() =>
+                    delete_user(
+                      displayData[delUserIndex].username,
+                      displayData[delUserIndex].email,
+                    ),
                   );
-                  await deleteUserById(displayData[delUserIndex].id);
+                  await withLoading(() =>
+                    deleteUserById(displayData[delUserIndex].id),
+                  );
                   setIsOpenDelUserModal(false);
                   setDelUserIndex(0);
-                  const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
+                  const resp = await withLoading(() =>
+                    fetchUserAll(pageN * nPerPage, nPerPage),
+                  );
                   setDisplayData(resp);
                 }}
               >
@@ -197,24 +205,27 @@ export default function Admin() {
                     px-6 py-3 rounded-lg"
                   onClick={async (e) => {
                     e.preventDefault();
-                    const res = await create_user(
-                      addUserInfo.username,
-                      addUserInfo.email,
+                    const res = await withLoading(() =>
+                      create_user(addUserInfo.username, addUserInfo.email),
                     );
                     console.log(res);
                     const sub = res.Attributes.filter(
                       (each: { Name: string }) => each.Name === "sub",
                     )[0].Value;
-                    const final_res = await createUserPostgres(
-                      addUserInfo.username,
-                      addUserInfo.email,
-                      sub,
-                      res.Enabled,
-                      addUserInfo.role,
+                    const final_res = await withLoading(() =>
+                      createUserPostgres(
+                        addUserInfo.username,
+                        addUserInfo.email,
+                        sub,
+                        res.Enabled,
+                        addUserInfo.role,
+                      ),
                     );
                     console.log(final_res);
                     setIsOpenAddUserModal(false);
-                    const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
+                    const resp = await withLoading(() =>
+                      fetchUserAll(pageN * nPerPage, nPerPage),
+                    );
                     setDisplayData(resp);
                   }}
                 >

@@ -10,7 +10,7 @@ import { useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoading, setIsLoading, isLoadingv2, withLoading } = useLoader();
   const router = useRouter();
   const {
     setNodes,
@@ -33,12 +33,13 @@ export default function VisPanel() {
         setIsAuthenticated(false);
         router.push("/logout");
       }
-      setIsLoading(true);
-      const res = await fetchGraphDummy(
-        flagAttrs.name,
-        flagAttrs.numNodes,
-        flagAttrs.offset,
-        term == "" ? null : term,
+      const res = await withLoading(() =>
+        fetchGraphDummy(
+          flagAttrs.name,
+          flagAttrs.numNodes,
+          flagAttrs.offset,
+          term == "" ? null : term,
+        ),
       );
       console.log(res);
       let all_nodes = [
@@ -56,7 +57,6 @@ export default function VisPanel() {
       );
       setNodes(final_all_nodes);
       setEdges([...res["links"]]);
-      setIsLoading(false);
     }
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,12 +64,10 @@ export default function VisPanel() {
 
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;
-    setIsLoading(true);
     let network_ = null;
     if (visJsRef.current && neo4jHealthMsg?.data === "True") {
       network_ = setUpNetwork();
     }
-    setIsLoading(false);
     setPrevSignal(neo4jHealthMsg?.data);
     // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +75,7 @@ export default function VisPanel() {
 
   return (
     <div id="vis-panel" className="relative rounded-lg h-[78vh]">
-      {isLoading && (
+      {isLoadingv2 && (
         <div
           className="absolute h-[78vh]
           z-20

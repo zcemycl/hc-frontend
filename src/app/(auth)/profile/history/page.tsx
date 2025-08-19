@@ -20,7 +20,7 @@ import ProfileBar from "../profile-bar";
 export default function Page() {
   const router = useRouter();
   const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [history, setHistory] = useState<IHistory[]>([]);
   const [countHistory, setCountHistory] = useState(0);
@@ -29,10 +29,8 @@ export default function Page() {
   const { setVersions } = useContext(FdaVersionsContext);
 
   const setHistoryData = useCallback(async (id: number, pageN: number) => {
-    const historyInfo = await fetchHistoryByUserId(
-      id,
-      nPerPage * pageN,
-      nPerPage,
+    const historyInfo = await withLoading(() =>
+      fetchHistoryByUserId(id, nPerPage * pageN, nPerPage),
     );
     setHistory(historyInfo);
   }, []);
@@ -68,7 +66,7 @@ export default function Page() {
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div
           className="mt-[10rem] flex flex-col
