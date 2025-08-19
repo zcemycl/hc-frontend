@@ -22,7 +22,7 @@ import { fetchUserInfoByName } from "@/http/backend";
 import { handleFetchApiRoot } from "@/services";
 import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 import { useCognitoAuth } from "@/hooks";
-import { setPostLogin } from "@/http/internal";
+import { setPostLogin, validateToken } from "@/http/internal";
 
 Amplify.configure({
   Auth: {
@@ -84,26 +84,9 @@ export const AuthProvider = ({
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
-      // set credential to cookie for next backend server
-      const resp = await handleFetchApiRoot(
-        creds!.AccessToken,
-        setIsAuthenticated,
-        router,
-      );
-      const res = await resp.json();
-      // If creds expired or not correct
-      if ("success" in res && !res.success) {
-        router.push(
-          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
-        );
-      }
-      let IsAuthTokenUsername = { isAuthToken: false, username: "" };
-      if ("username" in res)
-        IsAuthTokenUsername = { isAuthToken: true, username: res.username };
-      const { isAuthToken, username } = IsAuthTokenUsername;
-      console.log(isAuthToken, username);
-      console.log(creds);
-      if (!isAuthToken) {
+      const { success: isSuccessToken, data: tokenPayload } =
+        await validateToken(creds!.AccessToken);
+      if (!isSuccessToken) {
         setIsAuthenticated(false);
         setCredentials("{}");
         router.push(
@@ -111,6 +94,9 @@ export const AuthProvider = ({
         );
         return;
       }
+      const { username } = tokenPayload!;
+      console.log(username);
+      console.log(creds);
       const x = await fetchUserInfoByName(username as string);
       setRole(x.role as UserRoleEnum);
       setUserId(x.id);
