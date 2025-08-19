@@ -8,8 +8,8 @@ import {
   IUnAnnotatedAETable,
 } from "@/types";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
-import { FASTAPI_URI } from "./constants";
-import { get_token_cookie, validate_response_ok } from "../utils-server";
+import { FASTAPI_URI } from "../constants";
+import { get_token_cookie, validate_response_ok } from "../../utils-server";
 
 export async function fetchUnannotatedAETableByUserId(
   id: number,

@@ -1,7 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
-import { get_token_cookie } from "../utils-server";
-import { FASTAPI_URI } from "./constants";
+import { get_token_cookie } from "../../utils-server";
+import { FASTAPI_URI } from "../constants";
 import { ITa2PGraph } from "@/types";
 
 export async function fetchGraphDummy(

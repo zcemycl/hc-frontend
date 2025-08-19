@@ -1,8 +1,8 @@
 "use server";
 
 import { IUser, UserRoleEnum } from "@/types";
-import { FASTAPI_URI } from "./constants";
-import { get_token_cookie, validate_response_ok } from "../utils-server";
+import { FASTAPI_URI } from "../constants";
+import { get_token_cookie, validate_response_ok } from "../../utils-server";
 
 export async function fetchUserInfoById(id: number): Promise<IUser> {
   const token = await get_token_cookie();

@@ -1,8 +1,8 @@
 "use server";
 
 import { IBundle, IBundleConfig, IBundleUpdate } from "@/types";
-import { get_token_cookie, validate_response_ok } from "../utils-server";
-import { FASTAPI_URI } from "./constants";
+import { get_token_cookie, validate_response_ok } from "../../utils-server";
+import { FASTAPI_URI } from "../constants";
 
 export async function fetchBundleById(id: string): Promise<IBundle> {
   const token = await get_token_cookie();
