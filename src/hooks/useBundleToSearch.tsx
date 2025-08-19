@@ -1,7 +1,7 @@
 "use client";
 
 import { SearchQueryTypeEnum } from "@/constants";
-import { useAuth } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import { fetchBundleById } from "@/http/backend";
 import { IBundle } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,6 +17,7 @@ const useBundleToSearch = ({
   const searchParams = useSearchParams();
   const bundleId = searchParams.get("bundleId");
   const router = useRouter();
+  const { withLoading } = useLoader();
   const { credentials, setIsAuthenticated } = useAuth();
   useEffect(() => {
     console.log("profile history useEffect");
@@ -26,10 +27,12 @@ const useBundleToSearch = ({
       router.push("/logout");
     }
     if (bundleId !== null) {
-      fetchBundleById(bundleId).then(async (bundle: IBundle) => {
-        setQueryType(SearchQueryTypeEnum.SETID);
-        setQuery(bundle.fdalabels.map((f) => f.setid) as string[]);
-      });
+      withLoading(() => fetchBundleById(bundleId)).then(
+        async (bundle: IBundle) => {
+          setQueryType(SearchQueryTypeEnum.SETID);
+          setQuery(bundle.fdalabels.map((f) => f.setid) as string[]);
+        },
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bundleId]);

@@ -31,7 +31,7 @@ export default function Search() {
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, userId, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoading, setIsLoading, isLoadingv2, withLoading } = useLoader();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -74,24 +74,32 @@ export default function Search() {
   ) {
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
-      resp = await fdaservice.handleFdalabelBySetid(query, versions);
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelBySetid(query, versions),
+      );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
-      resp = await fdaservice.handleFdalabelByTradename(query, versions);
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelByTradename(query, versions),
+      );
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
-      resp = await fdaservice.handleFdalabelByIndication(
-        query,
-        pageN,
-        nPerPage,
-        sortBy,
-        versions,
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelByIndication(
+          query,
+          pageN,
+          nPerPage,
+          sortBy,
+          versions,
+        ),
       );
     } else if (queryType === SearchQueryTypeEnum.TA) {
-      resp = await fdaservice.handleFdalabelByTherapeuticArea(
-        query,
-        pageN,
-        nPerPage,
-        sortBy,
-        versions,
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelByTherapeuticArea(
+          query,
+          pageN,
+          nPerPage,
+          sortBy,
+          versions,
+        ),
       );
     }
     setDisplayData(resp);
@@ -133,7 +141,7 @@ export default function Search() {
           className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh] overflow-y-auto
           overflow-x-hidden
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
           ref={refSearchResGroup}
         >
           {/* <div className="container px-2 py-24 mx-auto grid justify-items-center"> */}
@@ -141,7 +149,7 @@ export default function Search() {
             className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"
           >
-            {(isLoading || isLoadingAuth) && (
+            {isLoadingv2 && (
               <div
                 role="status"
                 className="absolute left-1/2 top-1/2 

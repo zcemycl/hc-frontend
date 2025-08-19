@@ -23,6 +23,7 @@ import { handleFetchApiRoot } from "@/services";
 import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 import { useCognitoAuth } from "@/hooks";
 import { setPostLogin, validateToken } from "@/http/internal";
+import { useLoader } from "./loader";
 
 Amplify.configure({
   Auth: {
@@ -64,6 +65,7 @@ export const AuthProvider = ({
     hasUserId,
     defaultUserId,
   } = initialData;
+  const { isLoadingv2, withLoading } = useLoader();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true); // is Window mounted?
   const [credentials, setCredentials] = useState<string | null>(
@@ -84,8 +86,9 @@ export const AuthProvider = ({
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
-      const { success: isSuccessToken, data: tokenPayload } =
-        await validateToken(creds!.AccessToken);
+      const { success: isSuccessToken, data: tokenPayload } = await withLoading(
+        () => validateToken(creds!.AccessToken),
+      );
       if (!isSuccessToken) {
         setIsAuthenticated(false);
         setCredentials("{}");
@@ -97,17 +100,21 @@ export const AuthProvider = ({
       const { username } = tokenPayload!;
       console.log(username);
       console.log(creds);
-      const x = await fetchUserInfoByName(username as string);
+      const x = await withLoading(() =>
+        fetchUserInfoByName(username as string),
+      );
       setRole(x.role as UserRoleEnum);
       setUserId(x.id);
       console.log("tired... ", x);
-      await setPostLogin(
-        SiteMode.LOGIN,
-        x.email,
-        credentials!,
-        "3600",
-        x.id.toString() as string,
-        x.role as UserRoleEnum,
+      await withLoading(() =>
+        setPostLogin(
+          SiteMode.LOGIN,
+          x.email,
+          credentials!,
+          "3600",
+          x.id.toString() as string,
+          x.role as UserRoleEnum,
+        ),
       );
       setUserData({
         username,

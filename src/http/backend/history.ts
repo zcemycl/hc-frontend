@@ -1,6 +1,7 @@
 "use server";
 import { FASTAPI_URI } from "./constants";
 import { get_token_cookie, validate_response_ok } from "../utils-server";
+import { IHistory } from "@/types";
 
 export async function fetchHistoryByUserId(
   id: number,
@@ -58,7 +59,7 @@ export async function addHistoryByUserId(
   return {};
 }
 
-export async function fetchHistoryById(id: number) {
+export async function fetchHistoryById(id: number): Promise<IHistory> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/history/history_id/${id}`;
   const response = await fetch(API_URI, {
