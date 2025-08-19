@@ -1,3 +1,6 @@
+/**
+ * @deprecated Use `validateToken` instead.
+ */
 export async function fetchApiRoot(token: string) {
   const headers = {
     Authorization: `Bearer ${token}`,

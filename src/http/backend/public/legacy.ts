@@ -1,5 +1,5 @@
 "use server";
-import { FASTAPI_URI } from "./constants";
+import { FASTAPI_URI } from "../constants";
 
 export async function fetchFdalabelCount(): Promise<number> {
   const API_URI = `${FASTAPI_URI}/get_fdalabel_count`;
