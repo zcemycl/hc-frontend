@@ -129,14 +129,16 @@ const useDiscoveryGraph = ({
       setIsDrawingGraph(widthFactor < 1);
     });
     network.once("stabilizationIterationsDone", () => {
-      setIsDrawingGraph(false);
+      setTimeout(function () {
+        setIsDrawingGraph(false);
+      }, 1500);
     });
     network?.on("initRedraw", (e: any) => {});
     // network?.on("beforeDrawing", (e: any) => {
     // })
     network?.on("afterDrawing", (e: any) => {});
     withLoading(() => setNet(network));
-    network?.fit();
+    withLoading(() => network?.fit());
     return network;
   };
 
