@@ -21,15 +21,9 @@ function VerToolbar({
     <div className="flex flex-col space-y-1 w-full items-center">
       <div
         className="
-              flex 
-              flex-row
-              flex-wrap
-              w-full
-              space-x-0
-              space-y-1
-              align-center
-              items-center
-              justify-start"
+        flex flex-row flex-wrap
+        w-full items-center   
+        justify-start gap-2"
       >
         {fdaSections
           // .filter(v => v!== "fdalabel")
