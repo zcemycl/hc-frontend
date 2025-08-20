@@ -10,7 +10,7 @@ import {
   fetchFdalabelBySetidv2,
   fetchFdalabelByIndicationv2,
   fetchFdalabelByTradenamev2,
-  fetchFdalabelCompareAdverseEffects,
+  fetchFdalabelCompareAdverseEffectsv2,
   fetchFdalabelByTherapeuticAreav2,
 } from "@/http/backend";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
     } catch {
       return {
         success: false,
-        data: [],
+        data: null,
         message: "Error fetching fdalabel by setid",
         status: 500,
       };
@@ -97,7 +97,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
     } catch {
       return {
         success: false,
-        data: [],
+        data: null,
         message: "Error fetching fdalabel by tradename",
         status: 500,
       };
@@ -140,7 +140,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
     } catch {
       return {
         success: false,
-        data: [],
+        data: null,
         message: "Error fetching fdalabel by indication",
         status: 500,
       };
@@ -182,7 +182,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
     } catch {
       return {
         success: false,
-        data: [],
+        data: null,
         message: "Error fetching fdalabel by therapeutic area",
         status: 500,
       };
@@ -197,7 +197,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
   ) {
     try {
       const arrSetIdsToCompare = Array.from(setIdsToCompare);
-      const resp = await fetchFdalabelCompareAdverseEffects(
+      const resp = await fetchFdalabelCompareAdverseEffectsv2(
         arrSetIdsToCompare,
         versions,
       );
@@ -216,7 +216,12 @@ export class FdalabelFetchService extends BaseServiceHandler {
       );
       return resp;
     } catch {
-      return { table: [] };
+      return {
+        success: false,
+        data: null,
+        message: "Error fetching fdalabel compare adverse effects",
+        status: 500,
+      };
     }
   }
 }

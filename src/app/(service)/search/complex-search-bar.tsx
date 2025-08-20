@@ -161,7 +161,8 @@ export default function ComplexSearchBar() {
                   versions,
                 ),
               );
-              setCompareTable(resp);
+              handleResponse(resp);
+              if (resp.success) setCompareTable(resp.data ?? { table: [] });
               console.log(resp);
             }}
             className={`text-black bg-green-600 

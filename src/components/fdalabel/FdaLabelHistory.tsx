@@ -1,5 +1,5 @@
 "use client";
-import { fetchFdalabelHistoryBySetid } from "@/http/backend";
+import { fetchFdalabelHistoryBySetidv2 } from "@/http/backend";
 import { IFdaLabelHistory, IFdaVersions } from "@/types";
 import { convert_datetime_to_date } from "@/utils";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { TypographyH2 } from "../typography";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
+import { useApiHandler } from "@/hooks";
 
 function FdaLabelHistory({
   setid,
@@ -19,6 +20,7 @@ function FdaLabelHistory({
   versions: IFdaVersions;
 }) {
   const router = useRouter();
+  const { handleResponse } = useApiHandler();
   const [displayHistoryData, setDisplayHistoryData] =
     useState<IFdaLabelHistory>({});
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
@@ -33,8 +35,9 @@ function FdaLabelHistory({
       }
     }
     async function getData() {
-      resp = await fetchFdalabelHistoryBySetid(setid, versions);
-      setDisplayHistoryData(resp);
+      resp = await fetchFdalabelHistoryBySetidv2(setid, versions);
+      handleResponse(resp);
+      if (resp.success) setDisplayHistoryData(resp.data ?? {});
     }
     if (displayDataIndex != null) {
       getData();
