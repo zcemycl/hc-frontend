@@ -11,7 +11,6 @@ export async function patchBundleByIdv2(
 ): Promise<EmptyResult> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
-  console.log(bundle_update);
 
   return apiFetch<{}>(API_URI, {
     method: "PATCH",

@@ -5,9 +5,9 @@ import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
 import { useCallback, useContext, useEffect, useMemo } from "react";
 import {
-  deleteBundleById,
+  deleteBundleByIdv2,
   fetchBundlesByUserIdv2,
-  patchBundleById,
+  patchBundleByIdv2,
 } from "@/http/backend";
 import {
   ARROW_ICON_URI,
@@ -222,11 +222,13 @@ export default function BundleTab() {
                       v.fdalabels.forEach((f) => tnSet.add(f.tradename));
                       nodesToBundle.forEach((n: INode) => tnSet.add(n.label));
                       const newTradenames = Array.from(tnSet);
-                      await withLoading(() =>
-                        patchBundleById(v.id, {
+                      const patchBundleResult = await withLoading(() =>
+                        patchBundleByIdv2(v.id, {
                           tradenames: newTradenames as string[],
                         }),
                       );
+                      handleResponse(patchBundleResult);
+                      if (!patchBundleResult.success) return;
                       await fetchBundlesCallback();
                     }}
                   >
@@ -260,7 +262,11 @@ export default function BundleTab() {
                 <button
                   onClick={async (e) => {
                     e.preventDefault();
-                    await withLoading(() => deleteBundleById(v.id));
+                    const deleteBundleResult = await withLoading(() =>
+                      deleteBundleByIdv2(v.id),
+                    );
+                    handleResponse(deleteBundleResult);
+                    if (!deleteBundleResult.success) return;
                     await fetchBundlesCallback();
                   }}
                 >
@@ -304,11 +310,13 @@ export default function BundleTab() {
                             )
                             .map((f_: IFdaLabelRef) => f_.tradename);
                           console.log(newTradenames);
-                          await withLoading(() =>
-                            patchBundleById(v.id, {
+                          const patchBundleResult = await withLoading(() =>
+                            patchBundleByIdv2(v.id, {
                               tradenames: newTradenames as string[],
                             }),
                           );
+                          handleResponse(patchBundleResult);
+                          if (!patchBundleResult.success) return;
                           await fetchBundlesCallback();
                         }}
                       >

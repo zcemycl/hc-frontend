@@ -2,8 +2,8 @@
 
 import { SearchQueryTypeEnum } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
-import { fetchBundleById } from "@/http/backend";
-import { IBundle } from "@/types";
+import { fetchBundleByIdv2 } from "@/http/backend";
+import { BundleResult, IBundle } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect } from "react";
 
@@ -27,10 +27,12 @@ const useBundleToSearch = ({
       router.push("/logout");
     }
     if (bundleId !== null) {
-      withLoading(() => fetchBundleById(bundleId)).then(
-        async (bundle: IBundle) => {
-          setQueryType(SearchQueryTypeEnum.SETID);
-          setQuery(bundle.fdalabels.map((f) => f.setid) as string[]);
+      withLoading(() => fetchBundleByIdv2(bundleId)).then(
+        async (bundle: BundleResult) => {
+          if (bundle.success) {
+            setQueryType(SearchQueryTypeEnum.SETID);
+            setQuery(bundle.data?.fdalabels.map((f) => f.setid) as string[]);
+          }
         },
       );
     }

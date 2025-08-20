@@ -11,7 +11,6 @@ export async function createBundleByUserIdv2(
 ): Promise<EmptyResult> {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/bundles/${id}`;
-  console.log(new_bundle);
 
   return apiFetch<{}>(API_URI, {
     method: "POST",
