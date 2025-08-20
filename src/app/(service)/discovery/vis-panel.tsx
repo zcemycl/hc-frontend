@@ -4,11 +4,12 @@ import { useAuth, useLoader, DiscoveryContext } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import { INode } from "@/types";
 import { useRouter } from "next/navigation";
-import { fetchGraphDummy } from "@/http/backend";
+import { fetchGraphDummyv2 } from "@/http/backend";
 import { Spinner } from "@/components";
-import { useDiscoveryGraph } from "@/hooks";
+import { useDiscoveryGraph, useApiHandler } from "@/hooks";
 
 export default function VisPanel() {
+  const { handleResponse } = useApiHandler();
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading, isDrawingGraph } = useLoader();
   const router = useRouter();
@@ -36,13 +37,15 @@ export default function VisPanel() {
         router.push("/logout");
       }
       const res = await withLoading(() =>
-        fetchGraphDummy(
+        fetchGraphDummyv2(
           flagAttrs.name,
           flagAttrs.numNodes,
           flagAttrs.offset,
           term == "" ? null : term,
         ),
       );
+      handleResponse(res);
+      if (!res.success) return;
       console.log(res);
       let all_nodes = [
         ...res["ta"].map((v: INode) => ({

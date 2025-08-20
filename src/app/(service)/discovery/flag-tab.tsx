@@ -1,11 +1,13 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useLoader } from "@/contexts";
-import { fetchGraphDummy } from "@/http/backend";
+import { fetchGraphDummyv2 } from "@/http/backend";
 import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
+import { useApiHandler } from "@/hooks";
 import { INode } from "@/types";
 import { useContext, useState } from "react";
 
 export default function FlagTab() {
+  const { handleResponse } = useApiHandler();
   const { tab, flagAttrs, setFlagAttrs, term, setNodes, setEdges } =
     useContext(DiscoveryContext);
   const { withLoading, setIsDrawingGraph } = useLoader();
@@ -76,8 +78,10 @@ export default function FlagTab() {
             console.log(`${limit} ${skip} ${tmpName}`);
             if (tmpName == "") return;
             const res = await withLoading(() =>
-              fetchGraphDummy(tmpName as string, limit, skip, null),
+              fetchGraphDummyv2(tmpName as string, limit, skip, null),
             );
+            handleResponse(res);
+            if (!res.success) return;
             console.log(res);
             let all_nodes = [
               ...res["ta"].map((v: INode) => ({
