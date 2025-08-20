@@ -44,6 +44,9 @@ export async function fetchFdalabelBySetid(
   return res;
 }
 
+/**
+ * @deprecated Use `fetchFdalabelByTradenamev2` instead
+ */
 export async function fetchFdalabelByTradename(
   tradename: string[],
   maxn: number = 30,
@@ -78,6 +81,9 @@ export async function fetchFdalabelByTradename(
   return res;
 }
 
+/**
+ * @deprecated Use `fetchFdalabelByTherapeuticAreav2` instead
+ */
 export async function fetchFdalabelByTherapeuticArea(
   ta_description: string,
   maxn: number = 30,
@@ -113,6 +119,9 @@ export async function fetchFdalabelByTherapeuticArea(
   return res;
 }
 
+/**
+ * @deprecated Use `fetchFdalabelByIndicationv2` instead
+ */
 export async function fetchFdalabelByIndication(
   indication: string,
   maxn: number = 30,
