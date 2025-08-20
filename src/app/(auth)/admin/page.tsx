@@ -1,8 +1,8 @@
 "use client";
-import { useRef, useState, useEffect, useId } from "react";
+import { useRef, useState, useEffect, useId, useCallback } from "react";
 import { useAuth, useLoader } from "@/contexts";
 import {
-  fetchUserAll,
+  fetchUserAllv2,
   createUserPostgres,
   deleteUserById,
   fetchUserCount,
@@ -28,9 +28,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { PLUS_ICON_URI, X_ICON_URI } from "@/icons/bootstrap";
+import { useApiHandler } from "@/hooks";
 
 export default function Admin() {
   const id = useId();
+  const { handleResponse } = useApiHandler();
   const refUserGroup = useRef(null);
   const router = useRouter();
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
@@ -49,6 +51,14 @@ export default function Admin() {
   const [topN, setTopN] = useState(0);
   const [nPerPage, _] = useState(10);
 
+  const fetchUsersCallback = useCallback(async () => {
+    const resp = await withLoading(() =>
+      fetchUserAllv2(pageN * nPerPage, nPerPage),
+    );
+    handleResponse(resp);
+    setDisplayData(resp.data ?? []);
+  }, [pageN, nPerPage]);
+
   useEffect(() => {
     withLoading(() => fetchUserCount()).then((x: number) => setTopN(x));
   }, []);
@@ -62,15 +72,7 @@ export default function Admin() {
       );
     }
     async function getData() {
-      const resp = await withLoading(() =>
-        fetchUserAll(pageN * nPerPage, nPerPage),
-      );
-      console.log(resp);
-      if ("detail" in resp) {
-        router.push("/logout");
-        return;
-      }
-      setDisplayData(resp);
+      await fetchUsersCallback();
     }
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,10 +115,7 @@ export default function Admin() {
                   );
                   setIsOpenDelUserModal(false);
                   setDelUserIndex(0);
-                  const resp = await withLoading(() =>
-                    fetchUserAll(pageN * nPerPage, nPerPage),
-                  );
-                  setDisplayData(resp);
+                  await fetchUsersCallback();
                 }}
               >
                 YES
@@ -223,10 +222,7 @@ export default function Admin() {
                     );
                     console.log(final_res);
                     setIsOpenAddUserModal(false);
-                    const resp = await withLoading(() =>
-                      fetchUserAll(pageN * nPerPage, nPerPage),
-                    );
-                    setDisplayData(resp);
+                    await fetchUsersCallback();
                   }}
                 >
                   Submit
