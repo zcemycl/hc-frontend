@@ -17,3 +17,4 @@ export * from "./map";
 export * from "./contact";
 export * from "./routewrapper";
 export * from "./backbtn";
+export * from "./error";
