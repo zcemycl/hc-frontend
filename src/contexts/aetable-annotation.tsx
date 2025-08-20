@@ -18,10 +18,11 @@ import {
   TNumberDummySetState,
 } from "@/types";
 import {
-  fetchUnannotatedAETableByUserId,
-  fetchUnannotatedAETableByUserIdCount,
+  fetchUnannotatedAETableByUserIdv2,
+  fetchUnannotatedAETableByUserIdCountv2,
 } from "@/http/backend";
 import { useLoader } from "./loader";
+import { useApiHandler } from "@/hooks";
 
 interface IAePageCache {
   tabName?: AnnotationTypeEnum;
@@ -105,6 +106,7 @@ export const AETableAnnotationProvider = ({
 }: {
   children?: React.ReactNode;
 }) => {
+  const { handleResponse } = useApiHandler();
   const [cache, setCache] = useState({});
   const [topN, setTopN] = useState(0);
   const [nPerPage, _] = useState(10);
@@ -226,7 +228,7 @@ export const AETableAnnotationProvider = ({
       ) {
         const [res, count] = await withLoading(() =>
           Promise.all([
-            fetchUnannotatedAETableByUserId(
+            fetchUnannotatedAETableByUserIdv2(
               userId,
               AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
               pageN * nPerPage,
@@ -235,7 +237,7 @@ export const AETableAnnotationProvider = ({
               tabName === AnnotationTypeEnum.AI,
               versions,
             ),
-            fetchUnannotatedAETableByUserIdCount(
+            fetchUnannotatedAETableByUserIdCountv2(
               userId,
               AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
               tabName === AnnotationTypeEnum.COMPLETE,
@@ -244,12 +246,10 @@ export const AETableAnnotationProvider = ({
             ),
           ]),
         );
-        if ("detail" in res) {
-          router.push("/logout");
-          return;
-        }
-        setTopN(count);
-        setTableData([...res]);
+        handleResponse(res);
+        handleResponse(count);
+        if (count.success) setTopN(count.data ?? 0);
+        if (res.success) setTableData(res.data ?? []);
       }
 
       return {

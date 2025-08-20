@@ -20,4 +20,7 @@ export interface IUser {
   activities_count: number;
 }
 
+// API Result interfaces
 export interface UsersRes extends ApiResult<IUser[]> {}
+export interface UserResult extends ApiResult<IUser> {}
+export interface UserCountResult extends ApiResult<number> {}

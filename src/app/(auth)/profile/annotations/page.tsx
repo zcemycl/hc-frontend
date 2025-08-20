@@ -7,8 +7,8 @@ import {
 } from "@/components";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import {
-  fetchUnannotatedAETableByUserId,
-  fetchUnannotatedAETableByUserIdCount,
+  fetchUnannotatedAETableByUserIdv2,
+  fetchUnannotatedAETableByUserIdCountv2,
   fetchUserInfoById,
 } from "@/http/backend";
 import { AnnotationCategoryEnum, IUnAnnotatedAETable, IUser } from "@/types";
@@ -16,10 +16,12 @@ import { convert_datetime_to_simple } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
 import ProfileBar from "../profile-bar";
-import { AnnotationTypeEnum } from "@/constants";
+import { AnnotationTypeEnum, annotationTypeMap } from "@/constants";
+import { useApiHandler } from "@/hooks";
 
 export default function Page() {
   const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
+  const { handleResponse } = useApiHandler();
   const { isLoadingv2, withLoading } = useLoader();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
@@ -31,7 +33,7 @@ export default function Page() {
 
   const setAnnotationRecord = useCallback(async (id: number, pageN: number) => {
     const annotatedData = await withLoading(() =>
-      fetchUnannotatedAETableByUserId(
+      fetchUnannotatedAETableByUserIdv2(
         id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
         nPerPage * pageNAnnotate,
@@ -42,7 +44,8 @@ export default function Page() {
         true,
       ),
     );
-    if (annotatedData !== undefined) setTableData(annotatedData);
+    handleResponse(annotatedData);
+    if (annotatedData.success) setTableData(annotatedData.data ?? []);
   }, []);
 
   useEffect(() => {
@@ -57,7 +60,7 @@ export default function Page() {
       const userInfo = await withLoading(() => fetchUserInfoById(id));
       setProfileInfo({ ...profileInfo, ...userInfo });
       const numberAnnotated = await withLoading(() =>
-        fetchUnannotatedAETableByUserIdCount(
+        fetchUnannotatedAETableByUserIdCountv2(
           id,
           AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
           true,
@@ -65,7 +68,8 @@ export default function Page() {
           versions,
         ),
       );
-      setCountAnnotated(numberAnnotated);
+      handleResponse(numberAnnotated);
+      if (numberAnnotated.success) setCountAnnotated(numberAnnotated.data ?? 0);
     }
     if (isLoadingAuth) return;
 
@@ -107,7 +111,7 @@ export default function Page() {
                 if (isLoadingAuth) return;
                 if (!userId) return;
                 const annotatedData = await withLoading(() =>
-                  fetchUnannotatedAETableByUserId(
+                  fetchUnannotatedAETableByUserIdv2(
                     userId,
                     AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
                     nPerPage * pageNAnnotate,
@@ -117,9 +121,11 @@ export default function Page() {
                     versions,
                   ),
                 );
-                if (annotatedData !== undefined) setTableData(annotatedData);
+                handleResponse(annotatedData);
+                if (annotatedData.success)
+                  setTableData(annotatedData.data ?? []);
                 const numberAnnotated = await withLoading(() =>
-                  fetchUnannotatedAETableByUserIdCount(
+                  fetchUnannotatedAETableByUserIdCountv2(
                     userId,
                     AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
                     true,
@@ -127,7 +133,9 @@ export default function Page() {
                     versions,
                   ),
                 );
-                setCountAnnotated(numberAnnotated);
+                handleResponse(numberAnnotated);
+                if (numberAnnotated.success)
+                  setCountAnnotated(numberAnnotated.data ?? 0);
               }}
             />
             <div className="flex flex-col space-y-1">

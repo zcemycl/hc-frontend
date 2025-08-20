@@ -2,8 +2,8 @@
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect, Fragment, useContext } from "react";
 import {
-  fetchAETableByIds,
-  fetchAnnotatedTableMapByNameIds,
+  fetchAETableByIdsv2,
+  fetchAnnotatedTableMapByNameIdsv2,
 } from "@/http/backend";
 import {
   AnnotationCategoryEnum,
@@ -20,7 +20,7 @@ import {
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "../questions";
-import { useTickableTableCell } from "@/hooks";
+import { useApiHandler, useTickableTableCell } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -30,6 +30,7 @@ interface PageProps {
 }
 
 export default function Page({ params }: Readonly<PageProps>) {
+  const { handleResponse } = useApiHandler();
   const { credentials, isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
@@ -53,25 +54,26 @@ export default function Page({ params }: Readonly<PageProps>) {
   useEffect(() => {
     async function getData() {
       const res = await withLoading(() =>
-        fetchAETableByIds(
+        fetchAETableByIdsv2(
           params.table_id,
           AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
           params.id,
           versions,
         ),
       );
-      setTableData(res);
+      handleResponse(res);
+      if (res.success) setTableData(res.data);
       const res_history = await withLoading(() =>
-        fetchAnnotatedTableMapByNameIds(
+        fetchAnnotatedTableMapByNameIdsv2(
           res.id,
           AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
           true,
           versions,
         ),
       );
-      if ("annotated" in res_history) {
-        setFinalResults(res_history["annotated"]);
-      }
+      handleResponse(res_history);
+      if (res_history.success)
+        setFinalResults(res_history.data?.annotated ?? {});
     }
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;

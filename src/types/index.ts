@@ -10,3 +10,4 @@ export * from "./admin";
 export * from "./bundle";
 export * from "./generic";
 export * from "./api";
+export * from "./annotation";

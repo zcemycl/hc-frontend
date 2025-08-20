@@ -19,4 +19,6 @@ export interface IBundleUpdate {
   tradenames?: string[];
 }
 
+// API Result interfaces
 export interface BundlesResult extends ApiResult<IBundle[]> {}
+export interface BundleResult extends ApiResult<IBundle> {}

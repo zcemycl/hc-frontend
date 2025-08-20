@@ -1,3 +1,5 @@
+import { ApiResult } from "./api";
+
 export interface INode {
   level?: number;
   group?: string;
@@ -22,3 +24,6 @@ export interface ITa2PGraph {
   p: INode[];
   links: IEdge[];
 }
+
+// API Result interfaces
+export interface GraphResult extends ApiResult<ITa2PGraph> {}

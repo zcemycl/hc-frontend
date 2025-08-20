@@ -9,7 +9,7 @@ import {
 } from "@/components";
 import { AnnotationTypeEnum } from "@/constants";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
-import { fetchAETableBySetid } from "@/http/backend";
+import { fetchAETableBySetidv2 } from "@/http/backend";
 import { GoIcon } from "@/icons";
 import {
   AnnotationCategoryEnum,
@@ -19,6 +19,7 @@ import {
 } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useContext, useCallback } from "react";
+import { useApiHandler } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -27,6 +28,7 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
+  const { handleResponse } = useApiHandler();
   const router = useRouter();
   const { credentials, isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
@@ -37,20 +39,22 @@ export default function Page({ params }: PageProps) {
   const getData = useCallback(async () => {
     const [res, res2] = await withLoading(() =>
       Promise.all([
-        fetchAETableBySetid(
+        fetchAETableBySetidv2(
           params.id,
           AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
           versions,
         ),
-        fetchAETableBySetid(
+        fetchAETableBySetidv2(
           params.id,
           AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
           versions,
         ),
       ]),
     );
-    setTableData(res);
-    setCtTableData(res2);
+    handleResponse(res);
+    handleResponse(res2);
+    if (res.success) setTableData(res.data ?? []);
+    if (res2.success) setCtTableData(res2.data ?? []);
   }, [versions]);
 
   useEffect(() => {

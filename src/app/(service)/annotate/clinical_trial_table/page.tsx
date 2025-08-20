@@ -12,8 +12,8 @@ import {
 import { AnnotationTypeEnum } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
 import {
-  fetchUnannotatedAETableByUserId,
-  fetchUnannotatedAETableByUserIdCount,
+  fetchUnannotatedAETableByUserIdv2,
+  fetchUnannotatedAETableByUserIdCountv2,
 } from "@/http/backend";
 import { GoIcon } from "@/icons";
 import {
@@ -24,10 +24,12 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { transformData } from "@/utils";
+import { useApiHandler } from "@/hooks";
 
 export default function Page() {
   const router = useRouter();
   const { userId, credentials, isLoadingAuth } = useAuth();
+  const { handleResponse } = useApiHandler();
   const { isLoadingv2, withLoading } = useLoader();
   const refUnannotatedGroup = useRef(null);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
@@ -44,7 +46,7 @@ export default function Page() {
       pageN: number,
     ) {
       const res = await withLoading(() =>
-        fetchUnannotatedAETableByUserId(
+        fetchUnannotatedAETableByUserIdv2(
           userId,
           AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
           pageN * nPerPage,
@@ -54,19 +56,17 @@ export default function Page() {
         ),
       );
       const count = await withLoading(() =>
-        fetchUnannotatedAETableByUserIdCount(
+        fetchUnannotatedAETableByUserIdCountv2(
           userId,
           AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
           tabName === AnnotationTypeEnum.COMPLETE,
           tabName === AnnotationTypeEnum.AI,
         ),
       );
-      if ("detail" in res) {
-        router.push("/logout");
-        return;
-      }
-      setTopN(count);
-      setTableData(res);
+      handleResponse(res);
+      handleResponse(count);
+      if (count.success) setTopN(count.data ?? 0);
+      if (res.success) setTableData(res.data ?? []);
     }
 
     if (isLoadingAuth) return;

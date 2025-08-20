@@ -13,7 +13,7 @@ export async function apiFetch<T>(
       const err = await response.json();
       errorMessage = err.error || err.message || errorMessage;
     } catch (e) {
-      errorMessage = e;
+      errorMessage = e instanceof Error ? e.message : String(e);
       // not JSON, stick to statusText
     }
 
@@ -21,6 +21,15 @@ export async function apiFetch<T>(
       success: false,
       status: response.status,
       message: errorMessage,
+      data: null,
+    };
+  }
+
+  if (response.status === 204) {
+    return {
+      success: true,
+      status: response.status,
+      message: "",
       data: null,
     };
   }

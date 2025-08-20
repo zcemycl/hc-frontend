@@ -8,9 +8,9 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Fragment, useContext } from "react";
 import {
-  fetchAETableByIds,
-  addAnnotationByNameId,
-  fetchAnnotatedTableMapByNameIds,
+  fetchAETableByIdsv2,
+  addAnnotationByNameIdv2,
+  fetchAnnotatedTableMapByNameIdsv2,
 } from "@/http/backend";
 import {
   AnnotationCategoryEnum,
@@ -28,7 +28,7 @@ import {
 import { switch_map } from "@/utils";
 import { questions } from "./questions";
 import { AnnotationTypeEnum } from "@/constants";
-import { useTickableTableCell } from "@/hooks";
+import { useApiHandler, useTickableTableCell } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -38,6 +38,7 @@ interface PageProps {
 }
 
 export default function Page({ params }: Readonly<PageProps>) {
+  const { handleResponse } = useApiHandler();
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = searchParams.has("tab")
@@ -92,26 +93,28 @@ export default function Page({ params }: Readonly<PageProps>) {
   useEffect(() => {
     async function getData() {
       const res = await withLoading(() =>
-        fetchAETableByIds(
+        fetchAETableByIdsv2(
           params.table_id,
           AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
           params.id,
           versions,
         ),
       );
-      setTableData(res);
+      handleResponse(res);
+      if (res.success) setTableData(res.data);
       console.log(versions);
       if (tab !== AnnotationTypeEnum.ONGOING) {
         const res_history = await withLoading(() =>
-          fetchAnnotatedTableMapByNameIds(
-            res.id,
+          fetchAnnotatedTableMapByNameIdsv2(
+            res.data?.id!,
             AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
             tab === AnnotationTypeEnum.AI,
             versions,
           ),
         );
-        if ("annotated" in res_history)
-          setFinalResults(res_history["annotated"]);
+        handleResponse(res_history);
+        if (res_history.success)
+          setFinalResults(res_history.data?.annotated ?? {});
       }
     }
     if (isLoadingAuth) return;
@@ -128,10 +131,6 @@ export default function Page({ params }: Readonly<PageProps>) {
     setIsCellSelected(newSelected);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableData]);
-
-  useEffect(() => {
-    console.log(finalResults);
-  }, [finalResults]);
 
   useEffect(() => {
     // get cache
@@ -230,14 +229,18 @@ export default function Page({ params }: Readonly<PageProps>) {
                     const tmp = await withLoading(() => storeCache());
                     setFinalResults(tmp);
                     if (credentials.length === 0) return;
-                    const _ = await withLoading(() =>
-                      addAnnotationByNameId(
+                    console.log(tmp);
+                    const addres = await withLoading(() =>
+                      addAnnotationByNameIdv2(
                         tableData?.id!,
                         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
                         tmp,
                       ),
                     );
-                    router.back();
+                    handleResponse(addres);
+                    if (addres.success) {
+                      router.back();
+                    }
                   }}
                 >
                   Submit

@@ -2,14 +2,14 @@
 import { Spinner, Table, ProtectedRoute, BackBtn } from "@/components";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
-import { fetchAETableByIds } from "@/http/backend";
+import { useApiHandler } from "@/hooks";
+import { fetchAETableByIdsv2 } from "@/http/backend";
 import {
   AnnotationCategoryEnum,
   IBaseTable,
   IClinicalTrialTable,
   IFdaVersions,
 } from "@/types";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface PageProps {
@@ -20,7 +20,7 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const router = useRouter();
+  const { handleResponse } = useApiHandler();
   const { credentials, isLoadingAuth, isAuthenticated } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
   const [tableData, setTableData] = useState<IClinicalTrialTable | null>(null);
@@ -28,14 +28,15 @@ export default function Page({ params }: PageProps) {
   useEffect(() => {
     async function getData() {
       const res = await withLoading(() =>
-        fetchAETableByIds(
+        fetchAETableByIdsv2(
           params.table_id,
           AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
           params.id,
           DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
         ),
       );
-      setTableData(res);
+      handleResponse(res);
+      if (res.success) setTableData(res.data);
     }
     if (!isAuthenticated) return;
     if (credentials.length === 0) return;
