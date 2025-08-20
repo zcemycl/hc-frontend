@@ -19,6 +19,9 @@ export async function fetchBundleById(id: string): Promise<IBundle> {
   return res;
 }
 
+/**
+ * @deprecated Use `fetchBundlesByUserIdv2`
+ */
 export async function fetchBundlesByUserId(
   id: number,
   offset: number = 0,

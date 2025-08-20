@@ -6,7 +6,7 @@ import { IBundle, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   deleteBundleById,
-  fetchBundlesByUserId,
+  fetchBundlesByUserIdv2,
   patchBundleById,
 } from "@/http/backend";
 import {
@@ -19,9 +19,11 @@ import {
   X_ICON_URI,
 } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
+import { useApiHandler } from "@/hooks";
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
+  const { handleResponse } = useApiHandler();
   const router = useRouter();
   const { withLoading } = useLoader();
   const {
@@ -42,11 +44,12 @@ export default function BundleTab() {
 
   useEffect(() => {
     async function getData(userId: number) {
-      const tmpBundles = await withLoading(() =>
-        fetchBundlesByUserId(userId, 0, 5),
+      const tmpBundlesRes = await withLoading(() =>
+        fetchBundlesByUserIdv2(userId, 0, 5),
       );
-      console.log(tmpBundles);
-      setBundles(tmpBundles);
+      handleResponse(tmpBundlesRes);
+      console.log(tmpBundlesRes.data ?? []);
+      setBundles(tmpBundlesRes.data ?? []);
     }
 
     if (isLoadingAuth) return;
@@ -220,11 +223,12 @@ export default function BundleTab() {
                           tradenames: newTradenames as string[],
                         }),
                       );
-                      const tmpBundles = await withLoading(() =>
-                        fetchBundlesByUserId(userId as number, 0, 5),
+                      const tmpBundlesRes = await withLoading(() =>
+                        fetchBundlesByUserIdv2(userId as number, 0, 5),
                       );
-                      console.log(tmpBundles);
-                      setBundles(tmpBundles);
+                      handleResponse(tmpBundlesRes);
+                      console.log(tmpBundlesRes.data ?? []);
+                      setBundles(tmpBundlesRes.data ?? []);
                     }}
                   >
                     <img
@@ -258,11 +262,12 @@ export default function BundleTab() {
                   onClick={async (e) => {
                     e.preventDefault();
                     await withLoading(() => deleteBundleById(v.id));
-                    const tmpBundles = await withLoading(() =>
-                      fetchBundlesByUserId(userId as number, 0, 5),
+                    const tmpBundlesRes = await withLoading(() =>
+                      fetchBundlesByUserIdv2(userId as number, 0, 5),
                     );
-                    console.log(tmpBundles);
-                    setBundles(tmpBundles);
+                    handleResponse(tmpBundlesRes);
+                    console.log(tmpBundlesRes.data ?? []);
+                    setBundles(tmpBundlesRes.data ?? []);
                   }}
                 >
                   <img
@@ -310,11 +315,12 @@ export default function BundleTab() {
                               tradenames: newTradenames as string[],
                             }),
                           );
-                          const tmpBundles = await withLoading(() =>
-                            fetchBundlesByUserId(userId as number, 0, 5),
+                          const tmpBundlesRes = await withLoading(() =>
+                            fetchBundlesByUserIdv2(userId as number, 0, 5),
                           );
-                          console.log(tmpBundles);
-                          setBundles(tmpBundles);
+                          handleResponse(tmpBundlesRes);
+                          console.log(tmpBundlesRes.data ?? []);
+                          setBundles(tmpBundlesRes.data ?? []);
                         }}
                       >
                         <img src={MINUS_ICON_URI} />

@@ -12,12 +12,13 @@ import {
   GraphTypeEnum,
 } from "@/constants";
 import { Network } from "vis-network";
-import { useDbsHealth } from "@/hooks";
+import { useDbsHealth, useApiHandler } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
-import { createBundleByUserId, fetchBundlesByUserId } from "@/http/backend";
+import { createBundleByUserId, fetchBundlesByUserIdv2 } from "@/http/backend";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Discovery() {
+  const { handleResponse } = useApiHandler();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { userId, isLoadingAuth, credentials, setIsAuthenticated } = useAuth();
@@ -198,12 +199,13 @@ export default function Discovery() {
                         userId as number,
                         bundleConfig,
                       );
-                      const tmpBundles = await fetchBundlesByUserId(
+                      const tmpBundlesRes = await fetchBundlesByUserIdv2(
                         userId as number,
                         0,
                         5,
                       );
-                      setBundles(tmpBundles);
+                      handleResponse(tmpBundlesRes);
+                      setBundles(tmpBundlesRes.data ?? []);
                       setBundleConfig({ ...defaultBundleConfig });
                       setOpenBundleModal(false);
                     }}
