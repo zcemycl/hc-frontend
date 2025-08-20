@@ -9,6 +9,9 @@ import {
   IFdaVersions,
 } from "@/types";
 
+/**
+ * @deprecated Use `fetchFdalabelBySetidv2`
+ */
 export async function fetchFdalabelBySetid(
   setid: string[],
   maxn: number = 30,

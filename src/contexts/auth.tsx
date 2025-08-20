@@ -19,7 +19,6 @@ import {
   defaultAuthContext,
 } from "@/types";
 import { fetchUserInfoByName } from "@/http/backend";
-import { handleFetchApiRoot } from "@/services";
 import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 import { useCognitoAuth } from "@/hooks";
 import { setPostLogin, validateToken } from "@/http/internal";
