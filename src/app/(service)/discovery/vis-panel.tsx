@@ -10,7 +10,7 @@ import { useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoadingv2, withLoading } = useLoader();
+  const { isLoadingv2, withLoading, isDrawingGraph } = useLoader();
   const router = useRouter();
   const {
     setNodes,
@@ -24,6 +24,8 @@ export default function VisPanel() {
   const [path, setPath] = useState<string[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
   const { setUpNetwork } = useDiscoveryGraph({ setPath });
+
+  const isDiscoveryLoading = isLoadingv2 && isDrawingGraph;
 
   useEffect(() => {
     if (credentials.length === 0) return;
@@ -75,7 +77,7 @@ export default function VisPanel() {
 
   return (
     <div id="vis-panel" className="relative rounded-lg h-[78vh]">
-      {isLoadingv2 && (
+      {isDiscoveryLoading && (
         <div
           className="absolute h-[78vh]
           z-20

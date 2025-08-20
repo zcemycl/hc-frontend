@@ -26,6 +26,7 @@ export const LoaderProvider = ({
   children?: React.ReactNode;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isDrawingGraph, setIsDrawingGraph] = useState(false);
   const pathname = usePathname();
   const [isPending] = useTransition();
   const prevPath = useRef(pathname);
@@ -76,6 +77,8 @@ export const LoaderProvider = ({
         loadError,
         setLoadError,
         withLoading,
+        isDrawingGraph,
+        setIsDrawingGraph,
       }}
     >
       {children}

@@ -11,7 +11,7 @@ const useDiscoveryGraph = ({
 }: {
   setPath: Dispatch<SetStateAction<string[]>>;
 }) => {
-  const { withLoading } = useLoader();
+  const { withLoading, isDrawingGraph, setIsDrawingGraph } = useLoader();
   const {
     setSelectedNodes,
     setMultiSelectNodes,
@@ -124,6 +124,9 @@ const useDiscoveryGraph = ({
     //     return !prev;
     //   })
     // });
+    network.once("stabilizationIterationsDone", () => {
+      setIsDrawingGraph(false);
+    });
     network?.on("initRedraw", (e: any) => {});
     // network?.on("beforeDrawing", (e: any) => {
     // })
@@ -136,6 +139,7 @@ const useDiscoveryGraph = ({
   useEffect(() => {
     let network_ = null;
     if (visJsRef.current && neo4jHealthMsg?.data === "True") {
+      setIsDrawingGraph(true);
       network_ = setUpNetwork();
       setPrevSignal(neo4jHealthMsg?.data);
     }

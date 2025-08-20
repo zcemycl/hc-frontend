@@ -8,7 +8,7 @@ import { useContext, useState } from "react";
 export default function FlagTab() {
   const { tab, flagAttrs, setFlagAttrs, term, setNodes, setEdges } =
     useContext(DiscoveryContext);
-  const { withLoading } = useLoader();
+  const { withLoading, setIsDrawingGraph } = useLoader();
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
   const [skip, setSkip] = useState(flagAttrs.offset);
@@ -67,6 +67,7 @@ export default function FlagTab() {
                     content-center"
           onClick={async (e) => {
             e.preventDefault();
+            setIsDrawingGraph(true);
             setFlagAttrs({
               name: tmpName,
               numNodes: limit,
