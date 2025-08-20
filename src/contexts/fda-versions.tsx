@@ -5,7 +5,7 @@ import {
   DEFAULT_FDALALBEL_SECTION_AVAILABLE_VERS,
 } from "@/constants";
 import {
-  fetchFdalabelScrapeVersions,
+  fetchFdalabelScrapeVersionsv2,
   fetchFdalabelSectionVersions,
 } from "@/http/backend";
 import { IFdaSecAvailVers, IFdaVersions, IInitialData } from "@/types";
@@ -20,6 +20,7 @@ import { useAuth } from "./auth";
 import { usePathname } from "next/navigation";
 import { setFdaVersAllCookie } from "@/http/internal";
 import { useLoader } from "./loader";
+import { useApiHandler } from "@/hooks";
 
 export const FdaVersionsContext = createContext<any>({});
 
@@ -30,6 +31,7 @@ export const FdaVersionsProvider = ({
   initialData: IInitialData;
   children?: React.ReactNode;
 }) => {
+  const { handleResponse } = useApiHandler();
   const pathname = usePathname();
   const prevPath = useRef(pathname);
   const { withLoading } = useLoader();
@@ -54,11 +56,13 @@ export const FdaVersionsProvider = ({
     async function getData() {
       const [_fdaVers, _sectionVers] = await withLoading(() =>
         Promise.all([
-          fetchFdalabelScrapeVersions(),
+          fetchFdalabelScrapeVersionsv2(),
           fetchFdalabelSectionVersions(versions.fdalabel),
         ]),
       );
-      if (!("detail" in _fdaVers)) setFdaVers([..._fdaVers]);
+      handleResponse(_fdaVers);
+      if (_fdaVers.success)
+        setFdaVers(_fdaVers.data ?? [DEFAULT_FDALABEL_VERSIONS.fdalabel]);
       if (!("detail" in _sectionVers)) setSectionVersions({ ..._sectionVers });
     }
     console.log(isLoadingAuth, isAuthenticated, pathname);
