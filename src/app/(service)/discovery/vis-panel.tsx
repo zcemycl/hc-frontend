@@ -48,11 +48,11 @@ export default function VisPanel() {
       if (!res.success) return;
       console.log(res);
       let all_nodes = [
-        ...res["ta"].map((v: INode) => ({
+        ...res?.data?.ta.map((v: INode) => ({
           ...v,
           group: "ta",
         })),
-        ...res["p"].map((v: INode) => ({
+        ...res?.data?.p.map((v: INode) => ({
           ...v,
           group: "p",
         })),
@@ -61,7 +61,7 @@ export default function VisPanel() {
         obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
       );
       setNodes(final_all_nodes);
-      setEdges([...res["links"]]);
+      setEdges([...res?.data?.links]);
     }
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps

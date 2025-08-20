@@ -84,11 +84,11 @@ export default function FlagTab() {
             if (!res.success) return;
             console.log(res);
             let all_nodes = [
-              ...res["ta"].map((v: INode) => ({
+              ...res?.data?.ta.map((v: INode) => ({
                 ...v,
                 group: "ta",
               })),
-              ...res["p"].map((v: INode) => ({
+              ...res?.data?.p.map((v: INode) => ({
                 ...v,
                 group: "p",
               })),
@@ -97,7 +97,7 @@ export default function FlagTab() {
               obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
             );
             setNodes(final_all_nodes);
-            setEdges([...res["links"]]);
+            setEdges([...res?.data?.links]);
           }}
         >
           <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />
