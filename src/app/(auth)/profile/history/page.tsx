@@ -11,14 +11,16 @@ import {
   UserHistoryCategoryEnum,
 } from "@/types";
 import {
-  fetchHistoryByUserId,
+  fetchHistoryByUserIdv2,
   fetchHistoryByUserIdCount,
   fetchUserInfoById,
 } from "@/http/backend";
 import ProfileBar from "../profile-bar";
+import { useApiHandler } from "@/hooks";
 
 export default function Page() {
   const router = useRouter();
+  const { handleResponse } = useApiHandler();
   const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
@@ -29,10 +31,11 @@ export default function Page() {
   const { setVersions } = useContext(FdaVersionsContext);
 
   const setHistoryData = useCallback(async (id: number, pageN: number) => {
-    const historyInfo = await withLoading(() =>
-      fetchHistoryByUserId(id, nPerPage * pageN, nPerPage),
+    const historyInfoRes = await withLoading(() =>
+      fetchHistoryByUserIdv2(id, nPerPage * pageN, nPerPage),
     );
-    setHistory(historyInfo);
+    handleResponse(historyInfoRes);
+    setHistory(historyInfoRes.data ?? []);
   }, []);
 
   useEffect(() => {

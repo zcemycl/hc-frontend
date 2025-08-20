@@ -3,6 +3,9 @@ import { FASTAPI_URI } from "../constants";
 import { get_token_cookie, validate_response_ok } from "../../utils-server";
 import { IHistory } from "@/types";
 
+/**
+ * @deprecated Use `fetchHistoryByUserIdv2`
+ */
 export async function fetchHistoryByUserId(
   id: number,
   offset: number = 0,

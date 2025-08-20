@@ -3,7 +3,7 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import {
   deleteBundleById,
   fetchBundlesByUserIdv2,
@@ -42,20 +42,24 @@ export default function BundleTab() {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
   }, [multiSelectNodes]);
 
+  const fetchBundlesCallback = useCallback(async () => {
+    const tmpBundlesRes = await withLoading(() =>
+      fetchBundlesByUserIdv2(userId as number, 0, 5),
+    );
+    handleResponse(tmpBundlesRes);
+    console.log(tmpBundlesRes.data ?? []);
+    setBundles(tmpBundlesRes.data ?? []);
+  }, [userId]);
+
   useEffect(() => {
-    async function getData(userId: number) {
-      const tmpBundlesRes = await withLoading(() =>
-        fetchBundlesByUserIdv2(userId, 0, 5),
-      );
-      handleResponse(tmpBundlesRes);
-      console.log(tmpBundlesRes.data ?? []);
-      setBundles(tmpBundlesRes.data ?? []);
+    async function getData() {
+      await fetchBundlesCallback();
     }
 
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
     if (!userId.toString()) return;
-    getData(userId);
+    getData();
   }, [userId]);
 
   return (
@@ -223,12 +227,7 @@ export default function BundleTab() {
                           tradenames: newTradenames as string[],
                         }),
                       );
-                      const tmpBundlesRes = await withLoading(() =>
-                        fetchBundlesByUserIdv2(userId as number, 0, 5),
-                      );
-                      handleResponse(tmpBundlesRes);
-                      console.log(tmpBundlesRes.data ?? []);
-                      setBundles(tmpBundlesRes.data ?? []);
+                      await fetchBundlesCallback();
                     }}
                   >
                     <img
@@ -262,12 +261,7 @@ export default function BundleTab() {
                   onClick={async (e) => {
                     e.preventDefault();
                     await withLoading(() => deleteBundleById(v.id));
-                    const tmpBundlesRes = await withLoading(() =>
-                      fetchBundlesByUserIdv2(userId as number, 0, 5),
-                    );
-                    handleResponse(tmpBundlesRes);
-                    console.log(tmpBundlesRes.data ?? []);
-                    setBundles(tmpBundlesRes.data ?? []);
+                    await fetchBundlesCallback();
                   }}
                 >
                   <img
@@ -315,12 +309,7 @@ export default function BundleTab() {
                               tradenames: newTradenames as string[],
                             }),
                           );
-                          const tmpBundlesRes = await withLoading(() =>
-                            fetchBundlesByUserIdv2(userId as number, 0, 5),
-                          );
-                          handleResponse(tmpBundlesRes);
-                          console.log(tmpBundlesRes.data ?? []);
-                          setBundles(tmpBundlesRes.data ?? []);
+                          await fetchBundlesCallback();
                         }}
                       >
                         <img src={MINUS_ICON_URI} />
