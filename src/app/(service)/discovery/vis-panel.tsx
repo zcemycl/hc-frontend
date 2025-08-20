@@ -73,7 +73,7 @@ export default function VisPanel() {
     setPrevSignal(neo4jHealthMsg?.data);
     // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [neo4jHealthMsg]);
+  }, []);
 
   return (
     <div id="vis-panel" className="relative rounded-lg h-[78vh]">
