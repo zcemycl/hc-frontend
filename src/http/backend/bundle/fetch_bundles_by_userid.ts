@@ -1,10 +1,8 @@
 "use server";
-import { ApiResult, IBundle } from "@/types";
+import { BundlesResult, IBundle } from "@/types";
 import { FASTAPI_URI } from "../constants";
 import { get_token_cookie } from "../../utils-server";
 import { apiFetch } from "../../utils";
-
-interface BundlesResult extends ApiResult<IBundle[]> {}
 
 export async function fetchBundlesByUserIdv2(
   id: number,

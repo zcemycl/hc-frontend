@@ -1,3 +1,4 @@
+import { ApiResult } from "./api";
 import { IFdaLabelRef } from "./fdalabel";
 
 export interface IBundleConfig {
@@ -17,3 +18,5 @@ export interface IBundleUpdate {
   description?: string;
   tradenames?: string[];
 }
+
+export interface BundlesResult extends ApiResult<IBundle[]> {}

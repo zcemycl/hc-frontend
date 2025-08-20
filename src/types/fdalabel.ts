@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { ApiResult } from "./api";
 
 export type IFdaSecAvailVers = Record<string, string[] | null>;
 
@@ -111,3 +112,5 @@ export interface IUnAnnotatedAETable {
 export interface ITherapeuticAreaGroupTables {
   [key: string]: IUnAnnotatedAETable[];
 }
+
+export interface FdalabelsResult extends ApiResult<IFdaLabel[]> {}
