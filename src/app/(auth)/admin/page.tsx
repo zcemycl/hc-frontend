@@ -5,9 +5,9 @@ import {
   fetchUserAllv2,
   createUserPostgres,
   deleteUserById,
-  fetchUserCount,
+  fetchUserCountv2,
 } from "@/http/backend";
-import { IAddUserInfo, IUser, UserRoleEnum } from "@/types";
+import { ApiResult, IAddUserInfo, IUser, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   PaginationBar,
@@ -60,7 +60,9 @@ export default function Admin() {
   }, [pageN, nPerPage]);
 
   useEffect(() => {
-    withLoading(() => fetchUserCount()).then((x: number) => setTopN(x));
+    withLoading(() => fetchUserCountv2()).then((x: ApiResult<number>) =>
+      setTopN(x.data ?? 0),
+    );
   }, []);
 
   useEffect(() => {
