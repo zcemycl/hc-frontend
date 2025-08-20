@@ -11,10 +11,12 @@ import { SortByDropdown } from "./SortByDropdown";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { FdalabelFetchService } from "@/services";
 import { useRouter } from "next/navigation";
+import { useApiHandler } from "@/hooks";
 
 export default function ComplexSearchBar() {
   const router = useRouter();
   const { setIsAuthenticated, credentials, userId } = useAuth();
+  const { handleResponse } = useApiHandler();
   const { versions } = useContext(FdaVersionsContext);
   const {
     query,

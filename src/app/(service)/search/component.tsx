@@ -16,7 +16,7 @@ import {
   DEFAULT_FDALABEL_VERSIONS,
 } from "@/constants";
 import { FdalabelFetchService } from "@/services";
-import { useHistoryToSearch, useBundleToSearch } from "@/hooks";
+import { useHistoryToSearch, useBundleToSearch, useApiHandler } from "@/hooks";
 import ExpandSearchResultItem from "./expand-search-result-item";
 import SearchResultsList from "./search-results-list";
 import ComplexSearchBar from "./complex-search-bar";
@@ -24,6 +24,7 @@ import CompareTables from "./compare-tables";
 
 export default function Search() {
   const router = useRouter();
+  const { handleResponse } = useApiHandler();
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
     SearchQueryTypeEnum.INDICATION,
@@ -98,7 +99,8 @@ export default function Search() {
         ),
       );
     }
-    setDisplayData(resp);
+    handleResponse(resp);
+    setDisplayData(resp.data ?? []);
     return resp;
   }
 

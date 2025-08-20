@@ -35,24 +35,6 @@ export async function fetchUserInfoByName(name: string): Promise<IUser> {
   return res;
 }
 
-/**
- * @deprecated Use `fetchUserAllv2` instead.
- */
-export async function fetchUserAll(offset = 0, limit = 10): Promise<IUser[]> {
-  const token = await get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/users/?offset=${offset}&limit=${limit}`;
-  const response = await fetch(API_URI, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  validate_response_ok(response);
-  const res = await response.json();
-  return res;
-}
-
 export async function deleteUserById(id: number) {
   const token = await get_token_cookie();
   const API_URI = `${FASTAPI_URI}/users/${id}`;

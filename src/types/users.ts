@@ -1,3 +1,5 @@
+import { ApiResult } from "./api";
+
 export enum UserRoleEnum {
   USER = "User",
   ADMIN = "Admin",
@@ -17,3 +19,5 @@ export interface IUser {
   ae_annotations_count: number;
   activities_count: number;
 }
+
+export interface UsersRes extends ApiResult<IUser[]> {}
