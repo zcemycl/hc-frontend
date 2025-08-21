@@ -133,7 +133,7 @@ const Table = (tabledata: IBaseTableNoHead) => {
   const isDisplayMode =
     tabledata.isSelectable === undefined
       ? true
-      : !tabledata.isSelectable?.table.flat().includes(true);
+      : !tabledata.isSelectable?.table?.flat().includes(true);
   const hasCopyBtn =
     tabledata.hasCopyBtn === undefined ? true : tabledata.hasCopyBtn;
   let drugHeading: string[] = [];
