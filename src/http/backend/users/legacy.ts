@@ -1,39 +1,8 @@
 "use server";
 
-import { IUser, UserRoleEnum } from "@/types";
+import { UserRoleEnum } from "@/types";
 import { FASTAPI_URI } from "../constants";
 import { get_token_cookie, validate_response_ok } from "../../utils-server";
-
-export async function fetchUserInfoById(id: number): Promise<IUser> {
-  const token = await get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/users/id/${id}`;
-  const response = await fetch(API_URI, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  validate_response_ok(response);
-  const res = await response.json();
-  return res;
-}
-
-export async function fetchUserInfoByName(name: string): Promise<IUser> {
-  const token = await get_token_cookie();
-  console.log("unhappy token ... ", token, name);
-  const API_URI = `${FASTAPI_URI}/users/name/${name}`;
-  const response = await fetch(API_URI, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  validate_response_ok(response);
-  const res = await response.json();
-  return res;
-}
 
 export async function deleteUserById(id: number) {
   const token = await get_token_cookie();

@@ -13,7 +13,7 @@ import {
 import {
   fetchHistoryByUserIdv2,
   fetchHistoryByUserIdCountv2,
-  fetchUserInfoById,
+  fetchUserInfoByIdv2,
 } from "@/http/backend";
 import ProfileBar from "../profile-bar";
 import { useApiHandler } from "@/hooks";
@@ -47,20 +47,14 @@ export default function Page() {
 
   useEffect(() => {
     async function getProfile(id: number) {
-      const userInfo = await fetchUserInfoById(id);
-      setProfileInfo({ ...profileInfo, ...userInfo });
+      const userInfo = await fetchUserInfoByIdv2(id);
+      handleResponse(userInfo);
+      if (userInfo.success) setProfileInfo(userInfo.data ?? null);
       const historyCount = await fetchHistoryByUserIdCountv2(id);
       handleResponse(historyCount);
       if (historyCount.success) setCountHistory(historyCount.data ?? 0);
     }
     if (isLoadingAuth) return;
-
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push(
-        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
-      );
-    }
     if (!userId) return;
     getProfile(userId as number);
   }, [isLoadingAuth, userId]);

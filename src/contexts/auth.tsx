@@ -11,14 +11,8 @@ import { defaultStorage } from "aws-amplify/utils";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
 import { useRouter, usePathname } from "next/navigation";
 
-import {
-  AuthContextType,
-  IInitialData,
-  SiteMode,
-  UserRoleEnum,
-  defaultAuthContext,
-} from "@/types";
-import { fetchUserInfoByName } from "@/http/backend";
+import { IInitialData, SiteMode, UserRoleEnum } from "@/types";
+import { fetchUserInfoByNamev2 } from "@/http/backend";
 import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 import { useCognitoAuth } from "@/hooks";
 import { setPostLogin, validateToken } from "@/http/internal";
@@ -93,27 +87,29 @@ export const AuthProvider = ({
       handleResponse(tokenResult);
       const { username } = tokenResult.data!;
       console.log(username, creds);
-      const x = await withLoading(() =>
-        fetchUserInfoByName(username as string),
+      const userInfo = await withLoading(() =>
+        fetchUserInfoByNamev2(username as string),
       );
-      setRole(x.role as UserRoleEnum);
-      setUserId(x.id);
-      console.log("tired... ", x);
+      handleResponse(userInfo);
+      if (!userInfo.success) return;
+      setRole(userInfo.data?.role as UserRoleEnum);
+      setUserId(userInfo.data?.id);
+      console.log("tired... ", userInfo);
       await withLoading(() =>
         setPostLogin(
           SiteMode.LOGIN,
-          x.email,
+          userInfo.data?.email,
           credentials!,
           "3600",
-          x.id.toString() as string,
-          x.role as UserRoleEnum,
+          userInfo.data?.id.toString() as string,
+          userInfo.data?.role as UserRoleEnum,
         ),
       );
       setUserData({
         username,
-        id: x.id,
-        role: x.role,
-        email: x.email,
+        id: userInfo.data?.id,
+        role: userInfo.data?.role,
+        email: userInfo.data?.email,
       });
       setIsAuthenticated(true);
       if (isAuthenticated) {

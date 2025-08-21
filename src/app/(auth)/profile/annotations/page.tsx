@@ -9,7 +9,7 @@ import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import {
   fetchUnannotatedAETableByUserIdv2,
   fetchUnannotatedAETableByUserIdCountv2,
-  fetchUserInfoById,
+  fetchUserInfoByIdv2,
 } from "@/http/backend";
 import { AnnotationCategoryEnum, IUnAnnotatedAETable, IUser } from "@/types";
 import { convert_datetime_to_simple } from "@/utils";
@@ -20,7 +20,7 @@ import { AnnotationTypeEnum, annotationTypeMap } from "@/constants";
 import { useApiHandler } from "@/hooks";
 
 export default function Page() {
-  const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
+  const { userId, isLoadingAuth } = useAuth();
   const { handleResponse } = useApiHandler();
   const { isLoadingv2, withLoading } = useLoader();
   const router = useRouter();
@@ -57,8 +57,9 @@ export default function Page() {
 
   useEffect(() => {
     async function getProfile(id: number) {
-      const userInfo = await withLoading(() => fetchUserInfoById(id));
-      setProfileInfo({ ...profileInfo, ...userInfo });
+      const userInfo = await withLoading(() => fetchUserInfoByIdv2(id));
+      handleResponse(userInfo);
+      if (userInfo.success) setProfileInfo(userInfo.data ?? null);
       const numberAnnotated = await withLoading(() =>
         fetchUnannotatedAETableByUserIdCountv2(
           id,
@@ -72,13 +73,6 @@ export default function Page() {
       if (numberAnnotated.success) setCountAnnotated(numberAnnotated.data ?? 0);
     }
     if (isLoadingAuth) return;
-
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push(
-        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
-      );
-    }
     if (!userId) return;
     getProfile(userId as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps
