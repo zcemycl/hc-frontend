@@ -52,10 +52,12 @@ export default function SearchResultsList() {
     }
     if (query[0] !== "") {
       pageCallback(pageN);
-      (refSearchResGroup.current as any).scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (refSearchResGroup.current) {
+        (refSearchResGroup.current as any).scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageN]);

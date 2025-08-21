@@ -73,10 +73,12 @@ export default function Page() {
     if (credentials.length === 0) return;
     if (!userId) return;
     getData(userId as number, tabName, pageN);
-    (refUnannotatedGroup.current as any).scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (refUnannotatedGroup.current) {
+      (refUnannotatedGroup.current as any).scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId]);
 

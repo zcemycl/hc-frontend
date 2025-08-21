@@ -46,10 +46,12 @@ export default function AEAnnotateListToolbar() {
         setTableData,
       ),
     );
-    (refUnannotatedGroup.current as any).scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (refUnannotatedGroup.current) {
+      (refUnannotatedGroup.current as any).scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabName, pageN, isLoadingAuth, userId]);
 
