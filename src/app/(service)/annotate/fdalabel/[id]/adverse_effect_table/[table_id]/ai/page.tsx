@@ -61,16 +61,18 @@ export default function Page({ params }: Readonly<PageProps>) {
           versions,
         ),
       );
+      console.log(res);
       handleResponse(res);
       if (res.success) setTableData(res.data);
       const res_history = await withLoading(() =>
         fetchAnnotatedTableMapByNameIdsv2(
-          res.id,
+          res.data?.id,
           AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
           true,
           versions,
         ),
       );
+      console.log(res_history);
       handleResponse(res_history);
       if (res_history.success)
         setFinalResults(res_history.data?.annotated ?? {});
