@@ -141,21 +141,21 @@ const Table = (tabledata: IBaseTableNoHead) => {
   if (tabledata.keyname === undefined) {
     return <></>;
   }
-  if (tabledata!.content[tabledata.keyname ?? "table"]!.length !== 0) {
-    drugHeading = tabledata!.content[tabledata.keyname ?? "table"][0];
+  if (tabledata!.content[tabledata.keyname ?? "table"]?.length !== 0) {
+    drugHeading = tabledata!.content[tabledata.keyname ?? "table"]?.[0];
   }
-  if (tabledata!.content[tabledata.keyname ?? "table"]!.length !== 0) {
+  if (tabledata!.content[tabledata.keyname ?? "table"]?.length !== 0) {
     for (
       let j = 0;
-      j < tabledata!.content[tabledata.keyname ?? "table"][0].length;
+      j < tabledata!.content[tabledata.keyname ?? "table"]?.[0].length;
       j++
     ) {
       if (j === 0) {
         head_colspan = [...head_colspan, 1];
       } else {
         if (
-          tabledata!.content[tabledata.keyname ?? "table"][0][j - 1] ===
-          tabledata!.content[tabledata.keyname ?? "table"][0][j]
+          tabledata!.content[tabledata.keyname ?? "table"]?.[0]?.[j - 1] ===
+          tabledata!.content[tabledata.keyname ?? "table"]?.[0]?.[j]
         ) {
           head_colspan[head_colspan.length - 1]++;
         } else {
@@ -205,7 +205,7 @@ const Table = (tabledata: IBaseTableNoHead) => {
       )}
       <table key={id} ref={tableRef}>
         <tbody key={id}>
-          {tabledata!.content[tabledata.keyname ?? "table"]!.map(
+          {tabledata!.content[tabledata.keyname ?? "table"]?.map(
             (tablerow, rowid) => {
               let group_rowcell: string[] = [];
               let group_colspan_rowcell: number[] = [];
