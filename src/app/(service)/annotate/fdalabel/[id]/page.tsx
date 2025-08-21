@@ -8,8 +8,8 @@ import {
   VerToolbar,
 } from "@/components";
 import { AnnotationTypeEnum } from "@/constants";
-import { FdaVersionsContext, useAuth } from "@/contexts";
-import { fetchAETableBySetid } from "@/http/backend";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
+import { fetchAETableBySetidv2 } from "@/http/backend";
 import { GoIcon } from "@/icons";
 import {
   AnnotationCategoryEnum,
@@ -19,6 +19,7 @@ import {
 } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useContext, useCallback } from "react";
+import { useApiHandler } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -27,27 +28,33 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
+  const { handleResponse } = useApiHandler();
   const router = useRouter();
   const { credentials, isLoadingAuth } = useAuth();
+  const { isLoadingv2, withLoading } = useLoader();
   const [tableData, setTableData] = useState<IAdverseEffectTable[]>([]);
   const [ctTableData, setCtTableData] = useState<IClinicalTrialTable[]>([]);
   const { versions } = useContext(FdaVersionsContext);
 
   const getData = useCallback(async () => {
-    const [res, res2] = await Promise.all([
-      fetchAETableBySetid(
-        params.id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        versions,
-      ),
-      fetchAETableBySetid(
-        params.id,
-        AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
-        versions,
-      ),
-    ]);
-    setTableData(res);
-    setCtTableData(res2);
+    const [res, res2] = await withLoading(() =>
+      Promise.all([
+        fetchAETableBySetidv2(
+          params.id,
+          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+          versions,
+        ),
+        fetchAETableBySetidv2(
+          params.id,
+          AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
+          versions,
+        ),
+      ]),
+    );
+    handleResponse(res);
+    handleResponse(res2);
+    if (res.success) setTableData(res.data ?? []);
+    if (res2.success) setCtTableData(res2.data ?? []);
   }, [versions]);
 
   useEffect(() => {
@@ -60,8 +67,8 @@ export default function Page({ params }: PageProps) {
   return (
     <ProtectedRoute>
       <section
-        className="text-gray-400 bg-gray-900 body-font h-[81vh] 
-        sm:h-[89vh] overflow-y-scroll"
+        className={`text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]
+        overflow-y-scroll overflow-x-hidden ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div
           className="px-2 py-24 flex flex-col justify-center items-center align-center
@@ -84,7 +91,7 @@ export default function Page({ params }: PageProps) {
                 "clinical_trial_table",
               ]}
               reloadCallback={async () => {
-                await getData();
+                await withLoading(() => getData());
               }}
             />
             <TypographyH2>Adverse Effect Tables</TypographyH2>

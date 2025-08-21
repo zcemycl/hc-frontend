@@ -4,8 +4,6 @@ on:
     branches:
       - "*"
   pull_request:
-    branches:
-      - "*"
   workflow_dispatch:
 env:
   node_version: "20.10.0"

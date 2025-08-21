@@ -12,12 +12,13 @@ import {
   GraphTypeEnum,
 } from "@/constants";
 import { Network } from "vis-network";
-import { useDbsHealth } from "@/hooks";
+import { useDbsHealth, useApiHandler } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
-import { createBundleByUserId, fetchBundlesByUserId } from "@/http/backend";
+import { createBundleByUserIdv2, fetchBundlesByUserIdv2 } from "@/http/backend";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Discovery() {
+  const { handleResponse } = useApiHandler();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { userId, isLoadingAuth, credentials, setIsAuthenticated } = useAuth();
@@ -34,6 +35,7 @@ export default function Discovery() {
     ...defaultBundleConfig,
   });
   const [bundles, setBundles] = useState<IBundle[]>([]);
+  const [term, setTerm] = useState<string>("");
   const [tab, setTab] = useState<GraphTabEnum>(
     searchParams.get("therapeutic_area")
       ? searchParams.get("product_name")
@@ -53,7 +55,7 @@ export default function Discovery() {
     name: searchParams.get("therapeutic_area")
       ? searchParams.get("therapeutic_area")!
       : "Neoplasms",
-    numNodes: 500,
+    numNodes: 200,
     offset: 0,
   });
   const [settings, defineSettings] = useState<any>({
@@ -114,6 +116,8 @@ export default function Discovery() {
           setBundleConfig,
           bundles,
           setBundles,
+          term,
+          setTerm,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
@@ -191,16 +195,19 @@ export default function Discovery() {
                       if (bundleConfig.name.trim() === "") {
                         return;
                       }
-                      await createBundleByUserId(
+                      const createBundleRes = await createBundleByUserIdv2(
                         userId as number,
                         bundleConfig,
                       );
-                      const tmpBundles = await fetchBundlesByUserId(
+                      handleResponse(createBundleRes);
+                      if (!createBundleRes.success) return;
+                      const tmpBundlesRes = await fetchBundlesByUserIdv2(
                         userId as number,
                         0,
                         5,
                       );
-                      setBundles(tmpBundles);
+                      handleResponse(tmpBundlesRes);
+                      setBundles(tmpBundlesRes.data ?? []);
                       setBundleConfig({ ...defaultBundleConfig });
                       setOpenBundleModal(false);
                     }}

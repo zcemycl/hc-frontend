@@ -42,6 +42,8 @@ function FdaLabel({
           title={"Dosage Forms And Strengths"}
           section={each.dosage_forms![0]}
           tables={[]}
+          hasCompareVer={true}
+          verToolSecs={["fdalabel", "dosage_form"]}
         />
       )}
       {/* section 6 */}

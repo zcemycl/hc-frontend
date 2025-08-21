@@ -12,26 +12,24 @@ import {
   ProtectedRoute,
   BackBtn,
 } from "@/components";
-import { useStopLoadingEarly } from "@/hooks";
 
 export default function AI() {
   const router = useRouter();
   const { setIsAuthenticated, credentials, role, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
   const isNotAdmin = role !== UserRoleEnum.ADMIN;
-  useStopLoadingEarly();
 
   return (
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh]
-        ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
-          {(isLoading || isLoadingAuth) && (
+          {isLoadingv2 && (
             <div
               role="status"
               className="absolute left-1/2 top-1/2 
@@ -114,15 +112,13 @@ export default function AI() {
                 rounded text-2xl w-full`}
               onClick={async () => {
                 console.log("Open JupyterLab");
-                setIsLoading(true);
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
                   router.push("/logout");
                 }
-                const resp = await create_presigned_url();
+                const resp = await withLoading(() => create_presigned_url());
                 setJupyterLink(resp.url);
                 setIsOpenModal(true);
-                setIsLoading(false);
               }}
             >
               <p>Jupyter Lab</p>

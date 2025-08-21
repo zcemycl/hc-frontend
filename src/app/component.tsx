@@ -1,9 +1,6 @@
 "use client";
-import { useAuth } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { IData } from "@/types";
 import {
   HomeStats,
   Spinner,
@@ -11,48 +8,20 @@ import {
   FindUsMap,
   HomeContact,
 } from "@/components";
-import { handleFetchApiRoot } from "@/services";
-import { useDbsHealth, useDummyCreds } from "@/hooks";
+import { useDbsHealth } from "@/hooks";
 import { DB_CHECK_ICON_URI, DB_X_ICON_URI } from "@/icons/bootstrap";
 
 export default function Component() {
-  const router = useRouter();
-  const { isAuthenticated, setIsAuthenticated, credentials, setRole } =
-    useAuth();
-  const [data, setData] = useState<IData>({});
-  const [prevSignal, setPrevSignal] = useState<string>("False");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { pgHealthMsg, isPGHealthy } = useDbsHealth();
-  // useDummyCreds({ prevSignal, setPrevSignal }); // only trigger when local
-
-  useEffect(() => {
-    if (credentials.length === 0) return;
-    if (prevSignal === pgHealthMsg?.data) return;
-    console.log("2 Set cookie creds");
-    async function getData(credentials: string) {
-      const credJson = JSON.parse(credentials);
-      if (!("AccessToken" in credJson)) {
-        return;
-      }
-      const resp = await handleFetchApiRoot(
-        credJson.AccessToken,
-        setIsAuthenticated,
-        router,
-      );
-      const res = await resp.json();
-      if (process.env.NEXT_PUBLIC_ENV_NAME === "local-dev") {
-        setRole(res.role);
-      }
-      setData(res);
-      setIsLoading(false);
-    }
-    getData(credentials);
-    setPrevSignal(pgHealthMsg?.data as string);
-  }, [credentials, pgHealthMsg]);
+  const { isAuthenticated, userData } = useAuth();
+  const { isPGHealthy } = useDbsHealth();
+  const { isLoadingv2 } = useLoader();
 
   return (
     <div>
-      <section className="text-gray-400 bg-gray-900 body-font">
+      <section
+        className={`text-gray-400 bg-gray-900 body-font 
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
+      >
         <div
           className="container px-5 py-24 mx-auto md:flex md:flex-between
           overflow-x-hidden"
@@ -66,13 +35,13 @@ export default function Component() {
               <h1 className="title-font font-medium text-xl mb-2 text-white">
                 Hello{" "}
                 {isAuthenticated ? (
-                  isLoading ? (
+                  isLoadingv2 ? (
                     <div>
                       <Spinner />
                       <span className="sr-only">Loading...</span>
                     </div>
                   ) : (
-                    `${data!.username}`
+                    `${userData?.username ?? ""}`
                   )
                 ) : (
                   ""

@@ -8,10 +8,9 @@ import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 
 export default function FilterTab() {
-  const { tab, visJsRef, net, nodes, visToolBarRef } =
+  const { tab, visJsRef, net, nodes, visToolBarRef, term, setTerm } =
     useContext(DiscoveryContext);
   const searchParams = useSearchParams();
-  const [term, setTerm] = useState<string>("");
   const buttonRef = useRef<HTMLDivElement>(null);
 
   const filterNodes = useMemo(() => {
@@ -101,22 +100,12 @@ export default function FilterTab() {
                     const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
                     net.moveTo({
                       position: pos,
-                      scale: 0.2,
                       offset: offset,
                       animation: {
                         duration: 800,
                       },
                     });
                     net.selectNodes([targetNodeId]);
-                    setTimeout(() => {
-                      net.focus(targetNodeId, {
-                        scale: 0.5,
-                        offset,
-                        animation: {
-                          duration: 800,
-                        },
-                      });
-                    }, 1500);
                   } catch (e) {}
                 }
               }}

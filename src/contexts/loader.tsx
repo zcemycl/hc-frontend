@@ -5,6 +5,9 @@ import React, {
   useState,
   useMemo,
   useEffect,
+  useRef,
+  useCallback,
+  useTransition,
 } from "react";
 import { booleanDummySetState, TBooleanDummySetState } from "@/types";
 import { usePathname } from "next/navigation";
@@ -15,10 +18,7 @@ interface LoaderContextType {
   setIsLoading: TBooleanDummySetState;
 }
 
-export const LoaderContext = createContext<LoaderContextType>({
-  isLoading: false,
-  setIsLoading: booleanDummySetState,
-});
+export const LoaderContext = createContext<any>({});
 
 export const LoaderProvider = ({
   children,
@@ -26,27 +26,61 @@ export const LoaderProvider = ({
   children?: React.ReactNode;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isDrawingGraph, setIsDrawingGraph] = useState(false);
   const pathname = usePathname();
+  const [isPending] = useTransition();
+  const prevPath = useRef(pathname);
+  const [loadingCountv2, setLoadingCountv2] = useState(0);
+  const isLoadingv2 = loadingCountv2 > 0;
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const withLoading = async <T,>(fn: () => Promise<T>): Promise<T> => {
+    console.log("trigger withloading increment");
+    setLoadingCountv2((c) => c + 1);
+    try {
+      return await fn();
+    } finally {
+      setLoadingCountv2((c) => c - 1); // always decrement
+      console.log("trigger withloading decrement");
+    }
+  };
 
   useEffect(() => {
-    setIsLoading(true);
+    console.log("v2", isLoadingv2, loadingCountv2);
+  }, [isLoadingv2, loadingCountv2]);
 
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, max_loading_period); // Adjust this based on real API calls
-
-    return () => clearTimeout(timeout);
+  useEffect(() => {
+    if (pathname !== prevPath.current) {
+      console.log("useloader", pathname, prevPath);
+      // setLoadingCountv2((c) => c + 1);
+      prevPath.current = pathname;
+    }
   }, [pathname]);
 
-  const LoaderProviderValue = useMemo<LoaderContextType>(() => {
-    return {
-      isLoading,
-      setIsLoading,
-    };
-  }, [isLoading, setIsLoading]);
+  useEffect(() => {
+    // startTransition kicks in when path changes
+    if (isPending) {
+      setLoadingCountv2((c) => c + 1);
+    } else {
+      setLoadingCountv2((c) => Math.max(c - 1, 0));
+    }
+  }, [isPending, pathname]);
 
   return (
-    <LoaderContext.Provider value={LoaderProviderValue}>
+    <LoaderContext.Provider
+      value={{
+        isLoading,
+        setIsLoading,
+        loadingCountv2,
+        setLoadingCountv2,
+        isLoadingv2,
+        loadError,
+        setLoadError,
+        withLoading,
+        isDrawingGraph,
+        setIsDrawingGraph,
+      }}
+    >
       {children}
     </LoaderContext.Provider>
   );

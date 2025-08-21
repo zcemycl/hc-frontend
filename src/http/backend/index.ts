@@ -1,4 +1,4 @@
-export * from "./protected";
+export * from "./fdalabel";
 export * from "./public";
 export * from "./users";
 export * from "./history";

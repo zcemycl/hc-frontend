@@ -1,5 +1,5 @@
 "use server";
-import { fetchFdalabelCount, fetchUserCount } from "@/http/backend";
+import { fetchFdalabelCountv2, fetchUserCountv2 } from "@/http/backend";
 import Component from "./component";
 import { cookies } from "next/headers";
 import { LocalGenericProvider } from "@/contexts";
@@ -14,10 +14,10 @@ export default async function Page() {
 
   const fdalabelCount = hasFdalabelCountCookie
     ? Number(drugCountCookie.value)
-    : await fetchFdalabelCount();
+    : (await fetchFdalabelCountv2()).data ?? 0;
   const userCount = hasUserCountCookie
     ? Number(userCountCookie.value)
-    : await fetchUserCount();
+    : (await fetchUserCountv2()).data ?? 0;
 
   return (
     <LocalGenericProvider

@@ -1,6 +1,7 @@
 import { IBaseTitleContent, ITableNoHead } from "@/types";
 import { Fragment, useId } from "react";
 import { Table } from "../table";
+import { VerToolbar } from "./ver-toolbar";
 
 const pattern =
   /<title>(.*?)<\/title>|<tableplaceholder\/>-(\d+)|<\/title>\n+(.*?)\n+<title>/g;
@@ -54,10 +55,14 @@ function GeneralSection({
   title,
   section,
   tables,
+  hasCompareVer = false,
+  verToolSecs = [],
 }: {
   title: string;
   section?: IBaseTitleContent;
   tables?: ITableNoHead[];
+  hasCompareVer?: boolean;
+  verToolSecs?: string[];
 }) {
   const id = useId();
   const contents_tags = splitContents(section!.content || "") || [];
@@ -68,7 +73,15 @@ function GeneralSection({
       <hr />
       <div className="flex flex-col space-y-2">
         {contents_tags.length !== 0 && (
-          <h2 className="text-xl text-emerald-200">{title}</h2>
+          <div className="flex flex-col justify-between">
+            <h2 className="text-xl text-emerald-200">{title}</h2>
+            {hasCompareVer && (
+              <VerToolbar
+                fdaSections={verToolSecs!}
+                reloadCallback={async () => {}}
+              />
+            )}
+          </div>
         )}
         {contents_tags.length !== 0 &&
           contents_tags.map((c, idx) => {
@@ -99,7 +112,7 @@ function GeneralSection({
               return (
                 <div key={`${id}-${idx}-${c[1]}`} className="flex flex-col">
                   <caption className="flex justify-start text-left text-md text-emerald-500">
-                    {idx_tables[Number(c[0])]!.caption ?? ""}
+                    {idx_tables[Number(c[0])]?.caption ?? ""}
                   </caption>
                   <div className="overflow-x-auto">
                     <Table
