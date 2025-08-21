@@ -12,7 +12,7 @@ import {
 } from "@/types";
 import {
   fetchHistoryByUserIdv2,
-  fetchHistoryByUserIdCount,
+  fetchHistoryByUserIdCountv2,
   fetchUserInfoById,
 } from "@/http/backend";
 import ProfileBar from "../profile-bar";
@@ -49,8 +49,9 @@ export default function Page() {
     async function getProfile(id: number) {
       const userInfo = await fetchUserInfoById(id);
       setProfileInfo({ ...profileInfo, ...userInfo });
-      const historyCount = await fetchHistoryByUserIdCount(id);
-      setCountHistory(historyCount);
+      const historyCount = await fetchHistoryByUserIdCountv2(id);
+      handleResponse(historyCount);
+      if (historyCount.success) setCountHistory(historyCount.data ?? 0);
     }
     if (isLoadingAuth) return;
 

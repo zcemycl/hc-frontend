@@ -6,7 +6,7 @@ import {
 } from "@/types";
 import { BaseServiceHandler } from "./utils";
 import {
-  addHistoryByUserId,
+  addHistoryByUserIdv2,
   fetchFdalabelBySetidv2,
   fetchFdalabelByIndicationv2,
   fetchFdalabelByTradenamev2,
@@ -46,7 +46,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         -1,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -81,7 +81,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         -1,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -120,7 +120,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         sortBy,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -163,7 +163,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         sortBy,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -201,7 +201,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         arrSetIdsToCompare,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {

@@ -2,10 +2,16 @@
 
 import { SearchQueryTypeEnum } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
-import { fetchHistoryById } from "@/http/backend";
-import { SearchActionEnum, UserHistoryCategoryEnum, IHistory } from "@/types";
+import { fetchHistoryByIdv2 } from "@/http/backend";
+import {
+  SearchActionEnum,
+  UserHistoryCategoryEnum,
+  IHistory,
+  HistoryResult,
+} from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect } from "react";
+import { useApiHandler } from "./useApiHandler";
 
 const useHistoryToSearch = ({
   setQueryType,
@@ -14,6 +20,7 @@ const useHistoryToSearch = ({
   setQueryType: Dispatch<SetStateAction<SearchQueryTypeEnum>>;
   setQuery: Dispatch<SetStateAction<string[]>>;
 }) => {
+  const { handleResponse } = useApiHandler();
   const searchParams = useSearchParams();
   const historyId = searchParams.get("historyId");
   const { withLoading } = useLoader();
@@ -27,12 +34,14 @@ const useHistoryToSearch = ({
       router.push("/logout");
     }
     if (historyId !== null) {
-      withLoading(() => fetchHistoryById(parseInt(historyId))).then(
-        async (history: IHistory) => {
-          if (history.category === UserHistoryCategoryEnum.SEARCH) {
-            if (history.detail.action === SearchActionEnum.SEARCH) {
-              setQueryType(history.detail.additional_settings.queryType);
-              setQuery(history.detail.query);
+      withLoading(() => fetchHistoryByIdv2(parseInt(historyId))).then(
+        async (history: HistoryResult) => {
+          handleResponse(history);
+          if (!history.success) return;
+          if (history.data?.category === UserHistoryCategoryEnum.SEARCH) {
+            if (history.data?.detail.action === SearchActionEnum.SEARCH) {
+              setQueryType(history.data?.detail.additional_settings.queryType);
+              setQuery(history.data?.detail.query);
             }
           }
         },
