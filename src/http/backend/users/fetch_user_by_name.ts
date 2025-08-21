@@ -7,7 +7,6 @@ import { apiFetch } from "../../utils";
 
 export async function fetchUserInfoByNamev2(name: string): Promise<UserResult> {
   const token = await get_token_cookie();
-  console.log("unhappy token ... ", token, name);
   const API_URI = `${FASTAPI_URI}/users/name/${name}`;
 
   return apiFetch<IUser>(API_URI, {

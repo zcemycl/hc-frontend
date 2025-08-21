@@ -3,8 +3,8 @@ import { useRef, useState, useEffect, useId, useCallback } from "react";
 import { useAuth, useLoader } from "@/contexts";
 import {
   fetchUserAllv2,
-  createUserPostgres,
-  deleteUserById,
+  createUserPostgresv2,
+  deleteUserByIdv2,
   fetchUserCountv2,
 } from "@/http/backend";
 import { ApiResult, IAddUserInfo, IUser, UserRoleEnum } from "@/types";
@@ -112,9 +112,11 @@ export default function Admin() {
                       displayData[delUserIndex].email,
                     ),
                   );
-                  await withLoading(() =>
-                    deleteUserById(displayData[delUserIndex].id),
+                  const deleteUserRes = await withLoading(() =>
+                    deleteUserByIdv2(displayData[delUserIndex].id),
                   );
+                  handleResponse(deleteUserRes);
+                  if (!deleteUserRes.success) return;
                   setIsOpenDelUserModal(false);
                   setDelUserIndex(0);
                   await fetchUsersCallback();
@@ -214,7 +216,7 @@ export default function Admin() {
                       (each: { Name: string }) => each.Name === "sub",
                     )[0].Value;
                     const final_res = await withLoading(() =>
-                      createUserPostgres(
+                      createUserPostgresv2(
                         addUserInfo.username,
                         addUserInfo.email,
                         sub,
@@ -222,7 +224,8 @@ export default function Admin() {
                         addUserInfo.role,
                       ),
                     );
-                    console.log(final_res);
+                    handleResponse(final_res);
+                    if (!final_res.success) return;
                     setIsOpenAddUserModal(false);
                     await fetchUsersCallback();
                   }}
