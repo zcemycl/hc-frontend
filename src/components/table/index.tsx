@@ -237,7 +237,8 @@ const Table = (tabledata: IBaseTableNoHead) => {
                   { length: tablerow.length },
                   () => 1,
                 );
-                group_selectable_rowcell = tabledata.isSelectable?.table[rowid];
+                group_selectable_rowcell =
+                  tabledata.isSelectable?.table?.[rowid];
               }
               let copyDrugHeading = [...drugHeading];
               let prevEle = "";
