@@ -50,21 +50,11 @@ export default function InfoTab() {
                   const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
                   net.moveTo({
                     position: pos,
-                    scale: 0.2,
                     offset: offset,
                     animation: {
                       duration: 800,
                     },
                   });
-                  setTimeout(() => {
-                    net.focus(targetNodeId, {
-                      scale: 0.5,
-                      offset,
-                      animation: {
-                        duration: 800,
-                      },
-                    });
-                  }, 1500);
                 }
               }}
             >

@@ -11,16 +11,18 @@ import {
   UserHistoryCategoryEnum,
 } from "@/types";
 import {
-  fetchHistoryByUserId,
-  fetchHistoryByUserIdCount,
-  fetchUserInfoById,
+  fetchHistoryByUserIdv2,
+  fetchHistoryByUserIdCountv2,
+  fetchUserInfoByIdv2,
 } from "@/http/backend";
 import ProfileBar from "../profile-bar";
+import { useApiHandler } from "@/hooks";
 
 export default function Page() {
   const router = useRouter();
+  const { handleResponse } = useApiHandler();
   const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [history, setHistory] = useState<IHistory[]>([]);
   const [countHistory, setCountHistory] = useState(0);
@@ -29,12 +31,11 @@ export default function Page() {
   const { setVersions } = useContext(FdaVersionsContext);
 
   const setHistoryData = useCallback(async (id: number, pageN: number) => {
-    const historyInfo = await fetchHistoryByUserId(
-      id,
-      nPerPage * pageN,
-      nPerPage,
+    const historyInfoRes = await withLoading(() =>
+      fetchHistoryByUserIdv2(id, nPerPage * pageN, nPerPage),
     );
-    setHistory(historyInfo);
+    handleResponse(historyInfoRes);
+    setHistory(historyInfoRes.data ?? []);
   }, []);
 
   useEffect(() => {
@@ -46,19 +47,14 @@ export default function Page() {
 
   useEffect(() => {
     async function getProfile(id: number) {
-      const userInfo = await fetchUserInfoById(id);
-      setProfileInfo({ ...profileInfo, ...userInfo });
-      const historyCount = await fetchHistoryByUserIdCount(id);
-      setCountHistory(historyCount);
+      const userInfo = await fetchUserInfoByIdv2(id);
+      handleResponse(userInfo);
+      if (userInfo.success) setProfileInfo(userInfo.data ?? null);
+      const historyCount = await fetchHistoryByUserIdCountv2(id);
+      handleResponse(historyCount);
+      if (historyCount.success) setCountHistory(historyCount.data ?? 0);
     }
     if (isLoadingAuth) return;
-
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push(
-        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
-      );
-    }
     if (!userId) return;
     getProfile(userId as number);
   }, [isLoadingAuth, userId]);
@@ -68,7 +64,7 @@ export default function Page() {
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div
           className="mt-[10rem] flex flex-col

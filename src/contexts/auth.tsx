@@ -11,18 +11,13 @@ import { defaultStorage } from "aws-amplify/utils";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
 import { useRouter, usePathname } from "next/navigation";
 
-import {
-  AuthContextType,
-  IInitialData,
-  SiteMode,
-  UserRoleEnum,
-  defaultAuthContext,
-} from "@/types";
-import { fetchUserInfoByName } from "@/http/backend";
-import { handleFetchApiRoot } from "@/services";
+import { IInitialData, SiteMode, UserRoleEnum } from "@/types";
+import { fetchUserInfoByNamev2 } from "@/http/backend";
 import { amplifyConfirmSignIn, amplifySignIn } from "@/utils";
 import { useCognitoAuth } from "@/hooks";
-import { setPostLogin } from "@/http/internal";
+import { setPostLogin, validateToken } from "@/http/internal";
+import { useLoader } from "./loader";
+import { useApiHandler } from "@/hooks/useApiHandler";
 
 Amplify.configure({
   Auth: {
@@ -64,6 +59,7 @@ export const AuthProvider = ({
     hasUserId,
     defaultUserId,
   } = initialData;
+  const { isLoadingv2, withLoading } = useLoader();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true); // is Window mounted?
   const [credentials, setCredentials] = useState<string | null>(
@@ -81,53 +77,39 @@ export const AuthProvider = ({
   const router = useRouter();
   const { cognitoIdentity, signIn, answerCustomChallenge } = useCognitoAuth();
   const hasAuthCookie = hasCreds && hasUsername && hasRole && hasUserId;
+  const { handleResponse } = useApiHandler();
 
   useEffect(() => {
     async function fetchIsAuthToken(creds: { AccessToken: string }) {
-      // set credential to cookie for next backend server
-      const resp = await handleFetchApiRoot(
-        creds!.AccessToken,
-        setIsAuthenticated,
-        router,
+      const tokenResult = await withLoading(() =>
+        validateToken(creds!.AccessToken),
       );
-      const res = await resp.json();
-      // If creds expired or not correct
-      if ("success" in res && !res.success) {
-        router.push(
-          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
-        );
-      }
-      let IsAuthTokenUsername = { isAuthToken: false, username: "" };
-      if ("username" in res)
-        IsAuthTokenUsername = { isAuthToken: true, username: res.username };
-      const { isAuthToken, username } = IsAuthTokenUsername;
-      console.log(isAuthToken, username);
-      console.log(creds);
-      if (!isAuthToken) {
-        setIsAuthenticated(false);
-        setCredentials("{}");
-        router.push(
-          process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
-        );
-        return;
-      }
-      const x = await fetchUserInfoByName(username as string);
-      setRole(x.role as UserRoleEnum);
-      setUserId(x.id);
-      console.log("tired... ", x);
-      await setPostLogin(
-        SiteMode.LOGIN,
-        x.email,
-        credentials!,
-        "3600",
-        x.id.toString() as string,
-        x.role as UserRoleEnum,
+      handleResponse(tokenResult);
+      const { username } = tokenResult.data!;
+      console.log(username, creds);
+      const userInfo = await withLoading(() =>
+        fetchUserInfoByNamev2(username as string),
+      );
+      handleResponse(userInfo);
+      if (!userInfo.success) return;
+      setRole(userInfo.data?.role as UserRoleEnum);
+      setUserId(userInfo.data?.id);
+      console.log("tired... ", userInfo);
+      await withLoading(() =>
+        setPostLogin(
+          SiteMode.LOGIN,
+          userInfo.data?.email,
+          credentials!,
+          "3600",
+          userInfo.data?.id.toString() as string,
+          userInfo.data?.role as UserRoleEnum,
+        ),
       );
       setUserData({
         username,
-        id: x.id,
-        role: x.role,
-        email: x.email,
+        id: userInfo.data?.id,
+        role: userInfo.data?.role,
+        email: userInfo.data?.email,
       });
       setIsAuthenticated(true);
       if (isAuthenticated) {

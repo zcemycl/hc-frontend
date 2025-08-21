@@ -2,30 +2,26 @@
 import { ProtectedRoute } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
-import { fetchUserInfoById } from "@/http/backend";
+import { fetchUserInfoByIdv2 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import { IUser } from "@/types";
 import ProfileBar from "./profile-bar";
+import { useApiHandler } from "@/hooks";
 
 export default function Profile() {
-  const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { handleResponse } = useApiHandler();
+  const { userId, isLoadingAuth } = useAuth();
+  const { isLoadingv2 } = useLoader();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
 
   useEffect(() => {
     async function getProfile(id: number) {
-      const userInfo = await fetchUserInfoById(id);
-      setProfileInfo({ ...profileInfo, ...userInfo });
+      const userInfo = await fetchUserInfoByIdv2(id);
+      handleResponse(userInfo);
+      if (userInfo.success) setProfileInfo(userInfo.data ?? null);
     }
     if (isLoadingAuth) return;
-
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push(
-        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
-      );
-    }
     if (!userId) return;
     getProfile(userId as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,7 +32,7 @@ export default function Profile() {
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div
           className="mt-[10rem] flex flex-col

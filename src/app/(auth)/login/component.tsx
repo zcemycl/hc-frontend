@@ -16,7 +16,7 @@ export default function Component() {
     setCredentials,
     isLoadingAuth,
   } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { withLoading, isLoadingv2 } = useLoader();
   const { initialData } = useContext(LocalGenericContext);
   const { urlCode, urlEmail, defaultMode, defaultEmail, cognito_user } =
     initialData;
@@ -24,24 +24,23 @@ export default function Component() {
   const [mode, setMode] = useState<SiteMode>(defaultMode);
 
   const submitCallback = async function (email: string) {
-    const resp = await signIn(email);
+    const resp = await withLoading(() => signIn(email));
     const resp_string = JSON.stringify(resp);
     await setPreLogin(SiteMode.VERIFY, email, resp_string);
     router.push("/prelogin");
   };
 
   useEffect(() => {
-    if (isLoadingAuth) return;
+    if (isLoadingv2) return;
     if (isAuthenticated) {
       console.log("logged in , redirect to home page");
       router.push("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isLoadingAuth]);
+  }, [isAuthenticated, isLoadingv2]);
 
   useEffect(() => {
     if (isLoadingAuth) return;
-    setIsLoading(true);
     async function respondAuthChallege(
       urlCode: string,
       urlEmail: string,
@@ -55,13 +54,10 @@ export default function Component() {
         mode === SiteMode.VERIFY &&
         !isAuthenticated
       ) {
-        setIsLoading(true);
         console.log("Login Verifying...");
         const sessionLoginId = cognito_user_obj.Session;
-        const resp = await answerCustomChallenge(
-          sessionLoginId,
-          urlCode,
-          urlEmail,
+        const resp = await withLoading(() =>
+          answerCustomChallenge(sessionLoginId, urlCode, urlEmail),
         );
         console.log("setting mode...");
         setMode(SiteMode.LOGIN);
@@ -73,20 +69,19 @@ export default function Component() {
       }
     }
     respondAuthChallege(urlCode, urlEmail, isAuthenticated);
-    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlCode, urlEmail, isAuthenticated, mode, isLoadingAuth]);
 
   return (
     <section
       className={`text-gray-400 bg-gray-900 body-font h-[81vh] 
-      sm:h-[89vh] ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+      sm:h-[89vh] ${isLoadingv2 ? "animate-pulse" : ""}`}
     >
       <div
         className="container px-2 py-24 mx-auto grid justify-items-center
         "
       >
-        {(isLoading || isLoadingAuth) && (
+        {isLoadingv2 && (
           <div
             role="status"
             className="absolute left-1/2 top-1/2 
@@ -121,7 +116,7 @@ export default function Component() {
             data-testid="login-email-submit-btn"
             onClick={async (e) => {
               e.preventDefault();
-              await submitCallback(email);
+              await withLoading(() => submitCallback(email));
             }}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
           >

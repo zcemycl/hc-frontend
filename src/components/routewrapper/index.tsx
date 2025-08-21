@@ -10,11 +10,11 @@ export const ProtectedRoute = ({
 }) => {
   const router = useRouter();
   const { credentials, isLoadingAuth } = useAuth();
-  const { setIsLoading } = useLoader();
+  const { isLoadingv2 } = useLoader();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (isLoadingAuth) return;
+    if (isLoadingv2) return;
 
     let authenticated = false;
     try {
@@ -34,16 +34,9 @@ export const ProtectedRoute = ({
         process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
       );
     }
-  }, [credentials, isLoadingAuth, router]);
+  }, [credentials, isLoadingv2, router]);
 
-  useEffect(() => {
-    console.log("protect", isLoadingAuth, isAuthenticated);
-    if (!isLoadingAuth && isAuthenticated) {
-      setIsLoading(false);
-    }
-  }, [isLoadingAuth, isAuthenticated]);
-
-  if (isLoadingAuth) {
+  if (isLoadingv2) {
     return children; // Or maybe a loading spinner
   }
 

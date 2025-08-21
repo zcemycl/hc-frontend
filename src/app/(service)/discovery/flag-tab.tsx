@@ -1,14 +1,16 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useLoader } from "@/contexts";
-import { fetchGraphDummy } from "@/http/backend";
+import { fetchGraphDummyv2 } from "@/http/backend";
 import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
+import { useApiHandler } from "@/hooks";
 import { INode } from "@/types";
 import { useContext, useState } from "react";
 
 export default function FlagTab() {
+  const { handleResponse } = useApiHandler();
   const { tab, flagAttrs, setFlagAttrs, term, setNodes, setEdges } =
     useContext(DiscoveryContext);
-  const { setIsLoading } = useLoader();
+  const { withLoading, setIsDrawingGraph } = useLoader();
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
   const [skip, setSkip] = useState(flagAttrs.offset);
@@ -67,6 +69,7 @@ export default function FlagTab() {
                     content-center"
           onClick={async (e) => {
             e.preventDefault();
+            setIsDrawingGraph(true);
             setFlagAttrs({
               name: tmpName,
               numNodes: limit,
@@ -74,30 +77,27 @@ export default function FlagTab() {
             });
             console.log(`${limit} ${skip} ${tmpName}`);
             if (tmpName == "") return;
-            setIsLoading(true);
-            const res = await fetchGraphDummy(
-              tmpName as string,
-              limit,
-              skip,
-              null,
+            const res = await withLoading(() =>
+              fetchGraphDummyv2(tmpName as string, limit, skip, null),
             );
+            handleResponse(res);
+            if (!res.success) return;
             console.log(res);
             let all_nodes = [
-              ...res["ta"].map((v: INode) => ({
+              ...res?.data?.ta.map((v: INode) => ({
                 ...v,
                 group: "ta",
               })),
-              ...res["p"].map((v: INode) => ({
+              ...res?.data?.p.map((v: INode) => ({
                 ...v,
                 group: "p",
               })),
             ];
             const final_all_nodes = all_nodes.map((obj) =>
-              obj.label == name ? { ...obj, fixed: true } : obj,
+              obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
             );
             setNodes(final_all_nodes);
-            setEdges([...res["links"]]);
-            setIsLoading(false);
+            setEdges([...res?.data?.links]);
           }}
         >
           <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />

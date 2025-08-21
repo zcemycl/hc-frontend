@@ -1,4 +1,4 @@
-import { NavBar, Footer, SideBar } from "@/components";
+import { NavBar, Footer, SideBar, ClientErrorBoundary } from "@/components";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import {
@@ -47,45 +47,47 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
         ></link>
       </head>
       <body className="overflow-x-hidden overflow-y-hidden">
-        <ThemeProvider attribute="class">
-          <LoaderProvider>
-            <OpenBarProvider>
-              <AuthProvider
-                initialData={{
-                  hasCreds,
-                  defaultCredentials,
-                  hasUsername,
-                  defaultUsername,
-                  hasRole,
-                  defaultRole,
-                  hasUserId,
-                  defaultUserId,
-                }}
-              >
-                <FdaVersionsProvider
+        <ClientErrorBoundary>
+          <ThemeProvider attribute="class">
+            <LoaderProvider>
+              <OpenBarProvider>
+                <AuthProvider
                   initialData={{
-                    hasDefaultVers,
-                    defaultVers,
-                    hasDefaultFdaScrapeAvailVers,
-                    defaultFdaScrapeAvailVers,
-                    hasDefaultFdaSectionScrapeAvailVers,
-                    defaultFdaSectionScrapeAvailVers,
+                    hasCreds,
+                    defaultCredentials,
+                    hasUsername,
+                    defaultUsername,
+                    hasRole,
+                    defaultRole,
+                    hasUserId,
+                    defaultUserId,
                   }}
                 >
-                  <SideBar>
-                    <TableSelectProvider>
-                      <div className="h-[100vh] overflow-y-auto">
-                        <NavBar />
-                        {children}
-                        <Footer />
-                      </div>
-                    </TableSelectProvider>
-                  </SideBar>
-                </FdaVersionsProvider>
-              </AuthProvider>
-            </OpenBarProvider>
-          </LoaderProvider>
-        </ThemeProvider>
+                  <FdaVersionsProvider
+                    initialData={{
+                      hasDefaultVers,
+                      defaultVers,
+                      hasDefaultFdaScrapeAvailVers,
+                      defaultFdaScrapeAvailVers,
+                      hasDefaultFdaSectionScrapeAvailVers,
+                      defaultFdaSectionScrapeAvailVers,
+                    }}
+                  >
+                    <SideBar>
+                      <TableSelectProvider>
+                        <div className="h-[100vh] overflow-y-auto">
+                          <NavBar />
+                          {children}
+                          <Footer />
+                        </div>
+                      </TableSelectProvider>
+                    </SideBar>
+                  </FdaVersionsProvider>
+                </AuthProvider>
+              </OpenBarProvider>
+            </LoaderProvider>
+          </ThemeProvider>
+        </ClientErrorBoundary>
       </body>
     </html>
   );

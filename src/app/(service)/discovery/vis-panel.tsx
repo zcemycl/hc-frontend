@@ -4,13 +4,14 @@ import { useAuth, useLoader, DiscoveryContext } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import { INode } from "@/types";
 import { useRouter } from "next/navigation";
-import { fetchGraphDummy } from "@/http/backend";
+import { fetchGraphDummyv2 } from "@/http/backend";
 import { Spinner } from "@/components";
-import { useDiscoveryGraph } from "@/hooks";
+import { useDiscoveryGraph, useApiHandler } from "@/hooks";
 
 export default function VisPanel() {
+  const { handleResponse } = useApiHandler();
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading, isDrawingGraph } = useLoader();
   const router = useRouter();
   const {
     setNodes,
@@ -25,6 +26,8 @@ export default function VisPanel() {
   const [prevSignal, setPrevSignal] = useState<string>("False");
   const { setUpNetwork } = useDiscoveryGraph({ setPath });
 
+  const isDiscoveryLoading = isLoadingv2 && isDrawingGraph;
+
   useEffect(() => {
     if (credentials.length === 0) return;
     if (isLoadingAuth) return;
@@ -33,30 +36,32 @@ export default function VisPanel() {
         setIsAuthenticated(false);
         router.push("/logout");
       }
-      setIsLoading(true);
-      const res = await fetchGraphDummy(
-        flagAttrs.name,
-        flagAttrs.numNodes,
-        flagAttrs.offset,
-        term == "" ? null : term,
+      const res = await withLoading(() =>
+        fetchGraphDummyv2(
+          flagAttrs.name,
+          flagAttrs.numNodes,
+          flagAttrs.offset,
+          term == "" ? null : term,
+        ),
       );
+      handleResponse(res);
+      if (!res.success) return;
       console.log(res);
       let all_nodes = [
-        ...res["ta"].map((v: INode) => ({
+        ...res?.data?.ta.map((v: INode) => ({
           ...v,
           group: "ta",
         })),
-        ...res["p"].map((v: INode) => ({
+        ...res?.data?.p.map((v: INode) => ({
           ...v,
           group: "p",
         })),
       ];
       const final_all_nodes = all_nodes.map((obj) =>
-        obj.label == name ? { ...obj, fixed: true } : obj,
+        obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
       );
       setNodes(final_all_nodes);
-      setEdges([...res["links"]]);
-      setIsLoading(false);
+      setEdges([...res?.data?.links]);
     }
     getData(credentials);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,20 +69,18 @@ export default function VisPanel() {
 
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;
-    setIsLoading(true);
     let network_ = null;
     if (visJsRef.current && neo4jHealthMsg?.data === "True") {
       network_ = setUpNetwork();
     }
-    setIsLoading(false);
     setPrevSignal(neo4jHealthMsg?.data);
     // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [neo4jHealthMsg]);
+  }, []);
 
   return (
     <div id="vis-panel" className="relative rounded-lg h-[78vh]">
-      {isLoading && (
+      {isDiscoveryLoading && (
         <div
           className="absolute h-[78vh]
           z-20

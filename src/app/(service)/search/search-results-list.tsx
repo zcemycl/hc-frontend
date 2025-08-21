@@ -1,6 +1,7 @@
 import { FdaLabelShort, PaginationBar } from "@/components";
 import { SearchQueryTypeEnum } from "@/constants";
 import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
+import { useApiHandler } from "@/hooks";
 import { IFdaLabel } from "@/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
@@ -8,6 +9,7 @@ import { useContext, useEffect } from "react";
 export default function SearchResultsList() {
   const router = useRouter();
   const { setIsAuthenticated, credentials } = useAuth();
+  const { handleResponse } = useApiHandler();
   const {
     displayData,
     displayDataIndex,
@@ -45,14 +47,17 @@ export default function SearchResultsList() {
         sortBy,
         versions,
       );
+      handleResponse(resp);
       console.log(resp);
     }
     if (query[0] !== "") {
       pageCallback(pageN);
-      (refSearchResGroup.current as any).scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (refSearchResGroup.current) {
+        (refSearchResGroup.current as any).scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageN]);

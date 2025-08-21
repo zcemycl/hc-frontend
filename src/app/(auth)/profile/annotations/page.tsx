@@ -7,20 +7,22 @@ import {
 } from "@/components";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import {
-  fetchUnannotatedAETableByUserId,
-  fetchUnannotatedAETableByUserIdCount,
-  fetchUserInfoById,
+  fetchUnannotatedAETableByUserIdv2,
+  fetchUnannotatedAETableByUserIdCountv2,
+  fetchUserInfoByIdv2,
 } from "@/http/backend";
 import { AnnotationCategoryEnum, IUnAnnotatedAETable, IUser } from "@/types";
 import { convert_datetime_to_simple } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
 import ProfileBar from "../profile-bar";
-import { AnnotationTypeEnum } from "@/constants";
+import { AnnotationTypeEnum, annotationTypeMap } from "@/constants";
+import { useApiHandler } from "@/hooks";
 
 export default function Page() {
-  const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { userId, isLoadingAuth } = useAuth();
+  const { handleResponse } = useApiHandler();
+  const { isLoadingv2, withLoading } = useLoader();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [tableData, setTableData] = useState<IUnAnnotatedAETable[]>([]);
@@ -30,17 +32,20 @@ export default function Page() {
   const { versions } = useContext(FdaVersionsContext);
 
   const setAnnotationRecord = useCallback(async (id: number, pageN: number) => {
-    const annotatedData = await fetchUnannotatedAETableByUserId(
-      id,
-      AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-      nPerPage * pageNAnnotate,
-      nPerPage,
-      true,
-      false,
-      versions,
-      true,
+    const annotatedData = await withLoading(() =>
+      fetchUnannotatedAETableByUserIdv2(
+        id,
+        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+        nPerPage * pageNAnnotate,
+        nPerPage,
+        true,
+        false,
+        versions,
+        true,
+      ),
     );
-    if (annotatedData !== undefined) setTableData(annotatedData);
+    handleResponse(annotatedData);
+    if (annotatedData.success) setTableData(annotatedData.data ?? []);
   }, []);
 
   useEffect(() => {
@@ -52,25 +57,22 @@ export default function Page() {
 
   useEffect(() => {
     async function getProfile(id: number) {
-      const userInfo = await fetchUserInfoById(id);
-      setProfileInfo({ ...profileInfo, ...userInfo });
-      const numberAnnotated = await fetchUnannotatedAETableByUserIdCount(
-        id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        true,
-        false,
-        versions,
+      const userInfo = await withLoading(() => fetchUserInfoByIdv2(id));
+      handleResponse(userInfo);
+      if (userInfo.success) setProfileInfo(userInfo.data ?? null);
+      const numberAnnotated = await withLoading(() =>
+        fetchUnannotatedAETableByUserIdCountv2(
+          id,
+          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+          true,
+          false,
+          versions,
+        ),
       );
-      setCountAnnotated(numberAnnotated);
+      handleResponse(numberAnnotated);
+      if (numberAnnotated.success) setCountAnnotated(numberAnnotated.data ?? 0);
     }
     if (isLoadingAuth) return;
-
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push(
-        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
-      );
-    }
     if (!userId) return;
     getProfile(userId as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +83,7 @@ export default function Page() {
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div
           className="mt-[10rem] flex flex-col
@@ -102,25 +104,32 @@ export default function Page() {
               reloadCallback={async () => {
                 if (isLoadingAuth) return;
                 if (!userId) return;
-                const annotatedData = await fetchUnannotatedAETableByUserId(
-                  userId,
-                  AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-                  nPerPage * pageNAnnotate,
-                  nPerPage,
-                  true,
-                  false,
-                  versions,
+                const annotatedData = await withLoading(() =>
+                  fetchUnannotatedAETableByUserIdv2(
+                    userId,
+                    AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                    nPerPage * pageNAnnotate,
+                    nPerPage,
+                    true,
+                    false,
+                    versions,
+                  ),
                 );
-                if (annotatedData !== undefined) setTableData(annotatedData);
-                const numberAnnotated =
-                  await fetchUnannotatedAETableByUserIdCount(
+                handleResponse(annotatedData);
+                if (annotatedData.success)
+                  setTableData(annotatedData.data ?? []);
+                const numberAnnotated = await withLoading(() =>
+                  fetchUnannotatedAETableByUserIdCountv2(
                     userId,
                     AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
                     true,
                     false,
                     versions,
-                  );
-                setCountAnnotated(numberAnnotated);
+                  ),
+                );
+                handleResponse(numberAnnotated);
+                if (numberAnnotated.success)
+                  setCountAnnotated(numberAnnotated.data ?? 0);
               }}
             />
             <div className="flex flex-col space-y-1">

@@ -1,7 +1,6 @@
 "use client";
-import { useAuth } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
   HomeStats,
   Spinner,
@@ -13,12 +12,16 @@ import { useDbsHealth } from "@/hooks";
 import { DB_CHECK_ICON_URI, DB_X_ICON_URI } from "@/icons/bootstrap";
 
 export default function Component() {
-  const { isAuthenticated, isLoadingAuth, userData } = useAuth();
-  const { pgHealthMsg, isPGHealthy } = useDbsHealth();
+  const { isAuthenticated, userData } = useAuth();
+  const { isPGHealthy } = useDbsHealth();
+  const { isLoadingv2 } = useLoader();
 
   return (
     <div>
-      <section className="text-gray-400 bg-gray-900 body-font">
+      <section
+        className={`text-gray-400 bg-gray-900 body-font 
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
+      >
         <div
           className="container px-5 py-24 mx-auto md:flex md:flex-between
           overflow-x-hidden"
@@ -32,7 +35,7 @@ export default function Component() {
               <h1 className="title-font font-medium text-xl mb-2 text-white">
                 Hello{" "}
                 {isAuthenticated ? (
-                  isLoadingAuth ? (
+                  isLoadingv2 ? (
                     <div>
                       <Spinner />
                       <span className="sr-only">Loading...</span>

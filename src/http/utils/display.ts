@@ -1,11 +1,3 @@
-export function pagination_uri(
-  BASE_URL: string,
-  offset: number,
-  limit: number,
-) {
-  return `${BASE_URL}&offset=${offset}&limit=${limit}`;
-}
-
 export const beautifulNumber = (value: number) => {
   let newvalue, res;
   if (value >= 1000) {

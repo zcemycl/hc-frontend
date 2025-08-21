@@ -2,8 +2,8 @@
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect, Fragment, useContext } from "react";
 import {
-  fetchAETableByIds,
-  fetchAnnotatedTableMapByNameIds,
+  fetchAETableByIdsv2,
+  fetchAnnotatedTableMapByNameIdsv2,
 } from "@/http/backend";
 import {
   AnnotationCategoryEnum,
@@ -20,7 +20,7 @@ import {
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "../questions";
-import { useTickableTableCell } from "@/hooks";
+import { useApiHandler, useTickableTableCell } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -30,8 +30,9 @@ interface PageProps {
 }
 
 export default function Page({ params }: Readonly<PageProps>) {
+  const { handleResponse } = useApiHandler();
   const { credentials, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
@@ -52,28 +53,33 @@ export default function Page({ params }: Readonly<PageProps>) {
   // set table
   useEffect(() => {
     async function getData() {
-      const res = await fetchAETableByIds(
-        params.table_id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        params.id,
-        versions,
+      const res = await withLoading(() =>
+        fetchAETableByIdsv2(
+          params.table_id,
+          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+          params.id,
+          versions,
+        ),
       );
-      setTableData(res);
-      const res_history = await fetchAnnotatedTableMapByNameIds(
-        res.id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        true,
-        versions,
+      console.log(res);
+      handleResponse(res);
+      if (res.success) setTableData(res.data);
+      const res_history = await withLoading(() =>
+        fetchAnnotatedTableMapByNameIdsv2(
+          res.data?.id,
+          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+          true,
+          versions,
+        ),
       );
-      if ("annotated" in res_history) {
-        setFinalResults(res_history["annotated"]);
-      }
+      console.log(res_history);
+      handleResponse(res_history);
+      if (res_history.success)
+        setFinalResults(res_history.data?.annotated ?? {});
     }
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
-    setIsLoading(true);
     getData();
-    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
 
@@ -134,10 +140,10 @@ export default function Page({ params }: Readonly<PageProps>) {
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]
-        overflow-y-scroll overflow-x-auto ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        overflow-y-scroll overflow-x-auto ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
-          {(isLoading || isLoadingAuth) && (
+          {isLoadingv2 && (
             <div
               className="absolute left-1/2 top-1/2 
               -translate-x-1/2 -translate-y-1/2"

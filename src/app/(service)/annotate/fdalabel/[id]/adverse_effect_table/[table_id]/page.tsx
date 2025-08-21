@@ -8,9 +8,9 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Fragment, useContext } from "react";
 import {
-  fetchAETableByIds,
-  addAnnotationByNameId,
-  fetchAnnotatedTableMapByNameIds,
+  fetchAETableByIdsv2,
+  addAnnotationByNameIdv2,
+  fetchAnnotatedTableMapByNameIdsv2,
 } from "@/http/backend";
 import {
   AnnotationCategoryEnum,
@@ -28,7 +28,7 @@ import {
 import { switch_map } from "@/utils";
 import { questions } from "./questions";
 import { AnnotationTypeEnum } from "@/constants";
-import { useTickableTableCell } from "@/hooks";
+import { useApiHandler, useTickableTableCell } from "@/hooks";
 
 interface PageProps {
   params: {
@@ -38,13 +38,14 @@ interface PageProps {
 }
 
 export default function Page({ params }: Readonly<PageProps>) {
+  const { handleResponse } = useApiHandler();
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = searchParams.has("tab")
     ? searchParams.get("tab")
     : AnnotationTypeEnum.ONGOING;
   const { credentials, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
@@ -91,30 +92,34 @@ export default function Page({ params }: Readonly<PageProps>) {
   // set table
   useEffect(() => {
     async function getData() {
-      const res = await fetchAETableByIds(
-        params.table_id,
-        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        params.id,
-        versions,
+      const res = await withLoading(() =>
+        fetchAETableByIdsv2(
+          params.table_id,
+          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+          params.id,
+          versions,
+        ),
       );
-      setTableData(res);
+      handleResponse(res);
+      if (res.success) setTableData(res.data);
       console.log(versions);
       if (tab !== AnnotationTypeEnum.ONGOING) {
-        const res_history = await fetchAnnotatedTableMapByNameIds(
-          res.id,
-          AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-          tab === AnnotationTypeEnum.AI,
-          versions,
+        const res_history = await withLoading(() =>
+          fetchAnnotatedTableMapByNameIdsv2(
+            res.data?.id!,
+            AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+            tab === AnnotationTypeEnum.AI,
+            versions,
+          ),
         );
-        if ("annotated" in res_history)
-          setFinalResults(res_history["annotated"]);
+        handleResponse(res_history);
+        if (res_history.success)
+          setFinalResults(res_history.data?.annotated ?? {});
       }
     }
     if (isLoadingAuth) return;
     if (credentials.length === 0) return;
-    setIsLoading(true);
     getData();
-    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
 
@@ -126,10 +131,6 @@ export default function Page({ params }: Readonly<PageProps>) {
     setIsCellSelected(newSelected);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableData]);
-
-  useEffect(() => {
-    console.log(finalResults);
-  }, [finalResults]);
 
   useEffect(() => {
     // get cache
@@ -166,10 +167,10 @@ export default function Page({ params }: Readonly<PageProps>) {
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]
-        overflow-y-scroll overflow-x-hidden ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        overflow-y-scroll overflow-x-hidden ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
-          {(isLoading || isLoadingAuth) && (
+          {isLoadingv2 && (
             <div
               className="absolute left-1/2 top-1/2 
               -translate-x-1/2 -translate-y-1/2"
@@ -201,7 +202,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                       className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
                       key={q.displayName}
                       onClick={async () => {
-                        const tmp = await storeCache();
+                        const tmp = await withLoading(() => storeCache());
                         setFinalResults(tmp);
                         setIsCellSelected(structuredClone(resetCellSelected));
                         setSelectedOption("");
@@ -225,15 +226,21 @@ export default function Page({ params }: Readonly<PageProps>) {
                   rounded p-2 origin-left
                   ${questionIdx === questions.length - 1 ? "scale-x-100 scale-y-100" : "scale-x-0 scale-y-0"}`}
                   onClick={async () => {
-                    const tmp = await storeCache();
+                    const tmp = await withLoading(() => storeCache());
                     setFinalResults(tmp);
                     if (credentials.length === 0) return;
-                    const _ = await addAnnotationByNameId(
-                      tableData?.id!,
-                      AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-                      tmp,
+                    console.log(tmp);
+                    const addres = await withLoading(() =>
+                      addAnnotationByNameIdv2(
+                        tableData?.id!,
+                        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                        tmp,
+                      ),
                     );
-                    router.back();
+                    handleResponse(addres);
+                    if (addres.success) {
+                      router.back();
+                    }
                   }}
                 >
                   Submit

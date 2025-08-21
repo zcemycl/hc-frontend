@@ -1,4 +1,3 @@
-export * from "./useFetchFdalabel";
 export * from "./useDiscoveryGraph";
 export * from "./useDbsHealth";
 export * from "./useCognitoAuth";
@@ -6,3 +5,4 @@ export * from "./useStopLoadingEarly";
 export * from "./useTickableTableCell";
 export * from "./useHistoryToSearch";
 export * from "./useBundleToSearch";
+export * from "./useApiHandler";

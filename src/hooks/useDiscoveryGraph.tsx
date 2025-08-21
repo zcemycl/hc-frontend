@@ -11,7 +11,7 @@ const useDiscoveryGraph = ({
 }: {
   setPath: Dispatch<SetStateAction<string[]>>;
 }) => {
-  const { isLoading, setIsLoading } = useLoader();
+  const { withLoading, isDrawingGraph, setIsDrawingGraph } = useLoader();
   const {
     setSelectedNodes,
     setMultiSelectNodes,
@@ -124,23 +124,28 @@ const useDiscoveryGraph = ({
     //     return !prev;
     //   })
     // });
-    network?.on("initRedraw", (e: any) => {
-      setIsLoading(true);
+    network.on("stabilizationProgress", (params: any) => {
+      const widthFactor = params.iterations / params.total;
+      setIsDrawingGraph(widthFactor < 1);
     });
+    network.once("stabilizationIterationsDone", () => {
+      setTimeout(function () {
+        setIsDrawingGraph(false);
+      }, 1500);
+    });
+    network?.on("initRedraw", (e: any) => {});
     // network?.on("beforeDrawing", (e: any) => {
-    //   setIsLoading(true);
     // })
-    network?.on("afterDrawing", (e: any) => {
-      setIsLoading(false);
-    });
-    setNet(network);
-    network?.fit();
+    network?.on("afterDrawing", (e: any) => {});
+    withLoading(() => setNet(network));
+    withLoading(() => network?.fit());
     return network;
   };
 
   useEffect(() => {
     let network_ = null;
-    if (visJsRef.current && neo4jHealthMsg?.data === "True") {
+    if (visJsRef.current) {
+      setIsDrawingGraph(true);
       network_ = setUpNetwork();
       setPrevSignal(neo4jHealthMsg?.data);
     }

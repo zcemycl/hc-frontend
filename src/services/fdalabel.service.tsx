@@ -6,12 +6,12 @@ import {
 } from "@/types";
 import { BaseServiceHandler } from "./utils";
 import {
-  addHistoryByUserId,
-  fetchFdalabelBySetid,
-  fetchFdalabelByIndication,
-  fetchFdalabelByTradename,
-  fetchFdalabelCompareAdverseEffects,
-  fetchFdalabelByTherapeuticArea,
+  addHistoryByUserIdv2,
+  fetchFdalabelBySetidv2,
+  fetchFdalabelByIndicationv2,
+  fetchFdalabelByTradenamev2,
+  fetchFdalabelCompareAdverseEffectsv2,
+  fetchFdalabelByTherapeuticAreav2,
 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import {
@@ -39,14 +39,14 @@ export class FdalabelFetchService extends BaseServiceHandler {
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
-      const resp = await fetchFdalabelBySetid(
+      const resp = await fetchFdalabelBySetidv2(
         query,
         this.topN,
         0,
         -1,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -60,7 +60,12 @@ export class FdalabelFetchService extends BaseServiceHandler {
       );
       return resp;
     } catch {
-      return [];
+      return {
+        success: false,
+        data: null,
+        message: "Error fetching fdalabel by setid",
+        status: 500,
+      };
     }
   }
 
@@ -69,14 +74,14 @@ export class FdalabelFetchService extends BaseServiceHandler {
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
-      const resp = await fetchFdalabelByTradename(
+      const resp = await fetchFdalabelByTradenamev2(
         query,
         this.topN,
         0,
         -1,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -90,7 +95,12 @@ export class FdalabelFetchService extends BaseServiceHandler {
       );
       return resp;
     } catch {
-      return [];
+      return {
+        success: false,
+        data: null,
+        message: "Error fetching fdalabel by tradename",
+        status: 500,
+      };
     }
   }
 
@@ -102,7 +112,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
-      const resp = await fetchFdalabelByIndication(
+      const resp = await fetchFdalabelByIndicationv2(
         query[0],
         this.topN,
         pageN * nPerPage,
@@ -110,7 +120,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         sortBy,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -128,7 +138,12 @@ export class FdalabelFetchService extends BaseServiceHandler {
       );
       return resp;
     } catch {
-      return [];
+      return {
+        success: false,
+        data: null,
+        message: "Error fetching fdalabel by indication",
+        status: 500,
+      };
     }
   }
 
@@ -140,7 +155,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
     versions: IFdaVersions = DEFAULT_FDALABEL_VERSIONS,
   ) {
     try {
-      const resp = await fetchFdalabelByTherapeuticArea(
+      const resp = await fetchFdalabelByTherapeuticAreav2(
         query[0],
         this.topN,
         pageN * nPerPage,
@@ -148,7 +163,7 @@ export class FdalabelFetchService extends BaseServiceHandler {
         sortBy,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -165,7 +180,12 @@ export class FdalabelFetchService extends BaseServiceHandler {
       );
       return resp;
     } catch {
-      return [];
+      return {
+        success: false,
+        data: null,
+        message: "Error fetching fdalabel by therapeutic area",
+        status: 500,
+      };
     }
   }
 
@@ -177,11 +197,11 @@ export class FdalabelFetchService extends BaseServiceHandler {
   ) {
     try {
       const arrSetIdsToCompare = Array.from(setIdsToCompare);
-      const resp = await fetchFdalabelCompareAdverseEffects(
+      const resp = await fetchFdalabelCompareAdverseEffectsv2(
         arrSetIdsToCompare,
         versions,
       );
-      await addHistoryByUserId(
+      const _ = await addHistoryByUserIdv2(
         this.userId as number,
         UserHistoryCategoryEnum.SEARCH,
         {
@@ -196,7 +216,12 @@ export class FdalabelFetchService extends BaseServiceHandler {
       );
       return resp;
     } catch {
-      return { table: [] };
+      return {
+        success: false,
+        data: null,
+        message: "Error fetching fdalabel compare adverse effects",
+        status: 500,
+      };
     }
   }
 }

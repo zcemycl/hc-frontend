@@ -16,7 +16,7 @@ import {
   DEFAULT_FDALABEL_VERSIONS,
 } from "@/constants";
 import { FdalabelFetchService } from "@/services";
-import { useHistoryToSearch, useBundleToSearch } from "@/hooks";
+import { useHistoryToSearch, useBundleToSearch, useApiHandler } from "@/hooks";
 import ExpandSearchResultItem from "./expand-search-result-item";
 import SearchResultsList from "./search-results-list";
 import ComplexSearchBar from "./complex-search-bar";
@@ -24,6 +24,7 @@ import CompareTables from "./compare-tables";
 
 export default function Search() {
   const router = useRouter();
+  const { handleResponse } = useApiHandler();
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
     SearchQueryTypeEnum.INDICATION,
@@ -31,7 +32,7 @@ export default function Search() {
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, userId, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -59,10 +60,6 @@ export default function Search() {
   useHistoryToSearch({ setQueryType, setQuery });
   useBundleToSearch({ setQueryType, setQuery });
 
-  useEffect(() => {
-    console.log("loading", isLoading, isLoadingAuth);
-  }, [isLoading, isLoadingAuth]);
-
   async function search_query_by_type(
     fdaservice: FdalabelFetchService,
     query: string[],
@@ -74,27 +71,36 @@ export default function Search() {
   ) {
     let resp;
     if (queryType === SearchQueryTypeEnum.SETID) {
-      resp = await fdaservice.handleFdalabelBySetid(query, versions);
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelBySetid(query, versions),
+      );
     } else if (queryType === SearchQueryTypeEnum.TRADENAME) {
-      resp = await fdaservice.handleFdalabelByTradename(query, versions);
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelByTradename(query, versions),
+      );
     } else if (queryType === SearchQueryTypeEnum.INDICATION) {
-      resp = await fdaservice.handleFdalabelByIndication(
-        query,
-        pageN,
-        nPerPage,
-        sortBy,
-        versions,
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelByIndication(
+          query,
+          pageN,
+          nPerPage,
+          sortBy,
+          versions,
+        ),
       );
     } else if (queryType === SearchQueryTypeEnum.TA) {
-      resp = await fdaservice.handleFdalabelByTherapeuticArea(
-        query,
-        pageN,
-        nPerPage,
-        sortBy,
-        versions,
+      resp = await withLoading(() =>
+        fdaservice.handleFdalabelByTherapeuticArea(
+          query,
+          pageN,
+          nPerPage,
+          sortBy,
+          versions,
+        ),
       );
     }
-    setDisplayData(resp);
+    handleResponse(resp);
+    setDisplayData(resp.data ?? []);
     return resp;
   }
 
@@ -115,7 +121,6 @@ export default function Search() {
           query,
           setQuery,
           setTopN,
-          setIsLoading,
           sortBy,
           setSortBy,
           setQueryType,
@@ -133,7 +138,7 @@ export default function Search() {
           className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh] overflow-y-auto
           overflow-x-hidden
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+          ${isLoadingv2 ? "animate-pulse" : ""}`}
           ref={refSearchResGroup}
         >
           {/* <div className="container px-2 py-24 mx-auto grid justify-items-center"> */}
@@ -141,7 +146,7 @@ export default function Search() {
             className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"
           >
-            {(isLoading || isLoadingAuth) && (
+            {isLoadingv2 && (
               <div
                 role="status"
                 className="absolute left-1/2 top-1/2 
@@ -162,14 +167,16 @@ export default function Search() {
                 fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
                 reloadCallback={async () => {
                   if (query[0] === "") return;
-                  const resp = await search_query_by_type(
-                    fdaservice,
-                    query,
-                    queryType,
-                    pageN,
-                    nPerPage,
-                    sortBy,
-                    versions,
+                  const resp = await withLoading(() =>
+                    search_query_by_type(
+                      fdaservice,
+                      query,
+                      queryType,
+                      pageN,
+                      nPerPage,
+                      sortBy,
+                      versions,
+                    ),
                   );
                   console.log(resp);
                 }}
