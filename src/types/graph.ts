@@ -17,6 +17,7 @@ export interface IFlagAttrs {
   name?: string;
   numNodes?: number;
   offset?: number;
+  maxLevel?: number;
 }
 
 export interface ITa2PGraph {

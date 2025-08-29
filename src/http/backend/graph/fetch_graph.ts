@@ -10,6 +10,7 @@ export async function fetchGraphDummyv2(
   limit: number = 50,
   offset: number = 0,
   product: string | null = null,
+  max_level: number = 5,
 ): Promise<GraphResult> {
   const cookie = cookies();
   const versions = JSON.parse(cookie.get("fda-scrape-cur-version")!.value);
@@ -19,6 +20,7 @@ export async function fetchGraphDummyv2(
   params.append("name", name);
   params.append("limit", limit.toString());
   params.append("offset", offset.toString());
+  params.append("max_level", max_level.toString());
   if (product != null) {
     params.append("product", product);
   }

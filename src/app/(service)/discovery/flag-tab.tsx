@@ -14,6 +14,7 @@ export default function FlagTab() {
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
   const [skip, setSkip] = useState(flagAttrs.offset);
+  const [maxLevel, setMaxLevel] = useState(flagAttrs.maxLevel);
   return (
     <div
       className={`absolute
@@ -59,6 +60,18 @@ export default function FlagTab() {
             setSkip(e.target.value);
           }}
         />
+        <h2 className="leading text-slate-300 font-bold">Max Level</h2>
+        <input
+          type="number"
+          value={maxLevel}
+          min={1}
+          max={5}
+          className="bg-white text-black rounded-lg h-10 p-2"
+          onChange={(e) => {
+            e.preventDefault();
+            setMaxLevel(e.target.value);
+          }}
+        />
       </div>
       <div className="basis-1/12 flex flex-row justify-end">
         <button
@@ -74,11 +87,12 @@ export default function FlagTab() {
               name: tmpName,
               numNodes: limit,
               offset: skip,
+              maxLevel: maxLevel,
             });
-            console.log(`${limit} ${skip} ${tmpName}`);
+            console.log(`${limit} ${skip} ${tmpName} ${maxLevel}`);
             if (tmpName == "") return;
             const res = await withLoading(() =>
-              fetchGraphDummyv2(tmpName as string, limit, skip, null),
+              fetchGraphDummyv2(tmpName as string, limit, skip, null, maxLevel),
             );
             handleResponse(res);
             if (!res.success) return;

@@ -42,6 +42,7 @@ export default function VisPanel() {
           flagAttrs.numNodes,
           flagAttrs.offset,
           term == "" ? null : term,
+          flagAttrs.maxLevel,
         ),
       );
       handleResponse(res);

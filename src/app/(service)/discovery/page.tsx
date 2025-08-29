@@ -57,6 +57,7 @@ export default function Discovery() {
       : "Neoplasms",
     numNodes: 200,
     offset: 0,
+    maxLevel: 5,
   });
   const [settings, defineSettings] = useState<any>({
     graph_type: GraphTypeEnum.radial,
