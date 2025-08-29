@@ -65,7 +65,7 @@ export default function FlagTab() {
           type="number"
           value={maxLevel}
           min={1}
-          max={5}
+          max={7}
           className="bg-white text-black rounded-lg h-10 p-2"
           onChange={(e) => {
             e.preventDefault();
