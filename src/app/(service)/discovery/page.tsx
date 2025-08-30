@@ -2,7 +2,7 @@
 
 import { DiscoveryContext, useAuth } from "@/contexts";
 import VisPanel from "./vis-panel";
-import { useRef, useState, useMemo, useEffect } from "react";
+import { useRef, useState } from "react";
 import { IEdge, INode, IFlagAttrs, IBundleConfig, IBundle } from "@/types";
 import { Modal, ProtectedRoute } from "@/components";
 import {
@@ -15,13 +15,12 @@ import { Network } from "vis-network";
 import { useDbsHealth, useApiHandler } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
 import { createBundleByUserIdv2, fetchBundlesByUserIdv2 } from "@/http/backend";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function Discovery() {
   const { handleResponse } = useApiHandler();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const { userId, isLoadingAuth, credentials, setIsAuthenticated } = useAuth();
+  const { userId } = useAuth();
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
   const visJsRef = useRef<HTMLDivElement>(null);
   const visToolBarRef = useRef<HTMLDivElement>(null);
@@ -65,16 +64,6 @@ export default function Discovery() {
     enabled_physics: true,
     physics_stabilisation: true,
   });
-
-  useEffect(() => {
-    if (isLoadingAuth) return;
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push(
-        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
-      );
-    }
-  }, []);
 
   return (
     <ProtectedRoute>

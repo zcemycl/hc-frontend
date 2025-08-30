@@ -1,18 +1,15 @@
 "use client";
 import React, { useEffect, useState, useContext } from "react";
-import { useAuth, useLoader, DiscoveryContext } from "@/contexts";
+import { useLoader, DiscoveryContext } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import { INode } from "@/types";
-import { useRouter } from "next/navigation";
 import { fetchGraphDummyv2 } from "@/http/backend";
 import { Spinner } from "@/components";
 import { useDiscoveryGraph, useApiHandler } from "@/hooks";
 
 export default function VisPanel() {
   const { handleResponse } = useApiHandler();
-  const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading, isDrawingGraph } = useLoader();
-  const router = useRouter();
   const {
     setNodes,
     setEdges,
@@ -29,13 +26,7 @@ export default function VisPanel() {
   const isDiscoveryLoading = isLoadingv2 && isDrawingGraph;
 
   useEffect(() => {
-    if (credentials.length === 0) return;
-    if (isLoadingAuth) return;
-    async function getData(credentials: string) {
-      if (credentials.length === 0) {
-        setIsAuthenticated(false);
-        router.push("/logout");
-      }
+    async function getData() {
       const res = await withLoading(() =>
         fetchGraphDummyv2(
           flagAttrs.name,
@@ -64,9 +55,9 @@ export default function VisPanel() {
       setNodes(final_all_nodes);
       setEdges([...res?.data?.links]);
     }
-    getData(credentials);
+    getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [credentials]);
+  }, []);
 
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;

@@ -92,7 +92,13 @@ export default function FlagTab() {
             console.log(`${limit} ${skip} ${tmpName} ${maxLevel}`);
             if (tmpName == "") return;
             const res = await withLoading(() =>
-              fetchGraphDummyv2(tmpName as string, limit, skip, null, maxLevel),
+              fetchGraphDummyv2(
+                tmpName as string,
+                limit,
+                skip,
+                term == "" ? null : term,
+                maxLevel,
+              ),
             );
             handleResponse(res);
             if (!res.success) return;
