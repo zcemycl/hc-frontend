@@ -42,6 +42,7 @@ export default function Discovery() {
         : GraphTabEnum.initialisation
       : GraphTabEnum.information,
   );
+  const [path, setPath] = useState<string[]>([]);
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [dNodes, setDNodes] = useState<any>(null);
@@ -108,6 +109,8 @@ export default function Discovery() {
           setBundles,
           term,
           setTerm,
+          path,
+          setPath,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">

@@ -3,13 +3,23 @@ import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
 import { useContext, useState, useMemo, useRef, useEffect } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
-import { INode } from "@/types";
+import { IEdge, INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 
 export default function FilterTab() {
-  const { tab, visJsRef, net, nodes, visToolBarRef, term, setTerm } =
-    useContext(DiscoveryContext);
+  const {
+    tab,
+    visJsRef,
+    net,
+    nodes,
+    visToolBarRef,
+    term,
+    setTerm,
+    edges,
+    setSelectedNodes,
+    setPath,
+  } = useContext(DiscoveryContext);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -106,7 +116,45 @@ export default function FilterTab() {
                       },
                     });
                     net.selectNodes([targetNodeId]);
-                  } catch (e) {}
+
+                    let pathEdges = [];
+                    let pathNodes = [targetNodeId];
+                    let currentNode = targetNodeId;
+
+                    while (true) {
+                      let parentEdge = edges.filter(
+                        (v: IEdge) => v.to === currentNode,
+                      )[0];
+                      if (!parentEdge) break;
+
+                      pathEdges.push(parentEdge.id);
+                      currentNode = parentEdge.from;
+                      pathNodes.push(currentNode);
+                    }
+                    setSelectedNodes(
+                      nodes.filter((v: INode) => pathNodes.includes(v.id)),
+                    );
+                    console.log(pathEdges);
+                    setPath((prev: string[]) => {
+                      console.log("prev path: ", prev);
+                      prev
+                        .filter((v) => !pathEdges.includes(v))
+                        .forEach((v) =>
+                          net.updateEdge(v, {
+                            color: "white",
+                            width: 0.5,
+                          }),
+                        );
+                      return pathEdges;
+                    });
+
+                    pathEdges.forEach((v) =>
+                      net.updateEdge(v as string, {
+                        color: "lightgreen",
+                        width: 6,
+                      }),
+                    );
+                  } catch (err) {}
                 }
               }}
             >

@@ -6,11 +6,7 @@ import { DataSet } from "vis-data";
 import { generateGraphOption } from "@/constants";
 import { IEdge, INode } from "@/types";
 
-const useDiscoveryGraph = ({
-  setPath,
-}: {
-  setPath: Dispatch<SetStateAction<string[]>>;
-}) => {
+const useDiscoveryGraph = () => {
   const { withLoading, isDrawingGraph, setIsDrawingGraph } = useLoader();
   const {
     setSelectedNodes,
@@ -27,6 +23,7 @@ const useDiscoveryGraph = ({
     neo4jHealthMsg,
     setPrevSignal,
     openToolBar,
+    setPath,
   } = useContext(DiscoveryContext);
 
   useEffect(() => {
@@ -97,7 +94,9 @@ const useDiscoveryGraph = ({
           pathNodes.push(currentNode);
         }
         setSelectedNodes(nodes.filter((v: INode) => pathNodes.includes(v.id)));
+        console.log(pathEdges);
         setPath((prev: string[]) => {
+          console.log("prev path: ", prev);
           try {
             prev
               .filter((v) => !pathEdges.includes(v))

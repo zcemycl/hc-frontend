@@ -19,9 +19,8 @@ export default function VisPanel() {
     visToolBarRef,
     term,
   } = useContext(DiscoveryContext);
-  const [path, setPath] = useState<string[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
-  const { setUpNetwork } = useDiscoveryGraph({ setPath });
+  const { setUpNetwork } = useDiscoveryGraph();
 
   const isDiscoveryLoading = isLoadingv2 && isDrawingGraph;
 
