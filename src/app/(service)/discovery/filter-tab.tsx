@@ -137,14 +137,16 @@ export default function FilterTab() {
                     console.log(pathEdges);
                     setPath((prev: string[]) => {
                       console.log("prev path: ", prev);
-                      prev
-                        .filter((v) => !pathEdges.includes(v))
-                        .forEach((v) =>
-                          net.updateEdge(v, {
-                            color: "white",
-                            width: 0.5,
-                          }),
-                        );
+                      try {
+                        prev
+                          .filter((v) => !pathEdges.includes(v))
+                          .forEach((v) =>
+                            net.updateEdge(v, {
+                              color: "white",
+                              width: 0.5,
+                            }),
+                          );
+                      } catch {}
                       return pathEdges;
                     });
 
