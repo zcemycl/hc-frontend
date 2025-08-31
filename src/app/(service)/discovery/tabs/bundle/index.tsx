@@ -19,7 +19,7 @@ import {
   X_ICON_URI,
 } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
-import { useApiHandler } from "@/hooks";
+import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
@@ -36,7 +36,11 @@ export default function BundleTab() {
     setOpenBundleModal,
     bundles,
     setBundles,
+    nodes,
+    setSelectedNodes,
   } = useContext(DiscoveryContext);
+  const { retrieve_path_nodes_edges, trace_node_path_with_color } =
+    useDiscoveryGraph();
 
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
@@ -55,12 +59,8 @@ export default function BundleTab() {
     async function getData() {
       await fetchBundlesCallback();
     }
-
-    if (isLoadingAuth) return;
-    if (credentials.length === 0) return;
-    if (!userId.toString()) return;
     getData();
-  }, [userId]);
+  }, []);
 
   return (
     <div
@@ -126,6 +126,13 @@ export default function BundleTab() {
                     offset: offset,
                     animation: true,
                   });
+                  const { pathEdges, pathNodes } =
+                    retrieve_path_nodes_edges(targetNodeId);
+                  setSelectedNodes(
+                    nodes.filter((v: INode) => pathNodes.includes(v.id)),
+                  );
+                  console.log(pathEdges);
+                  trace_node_path_with_color(pathEdges, net);
                 }}
               >
                 <div

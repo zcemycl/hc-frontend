@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { DiscoveryContext, useLoader } from "@/contexts";
 import { Network, DataInterfaceNodes, DataInterfaceEdges } from "vis-network";
 import { DataSet } from "vis-data";
@@ -25,6 +25,48 @@ const useDiscoveryGraph = () => {
     openToolBar,
     setPath,
   } = useContext(DiscoveryContext);
+
+  const retrieve_path_nodes_edges = (targetNodeId: number) => {
+    console.log("tracing path nodes edges");
+    let pathEdges = [];
+    let pathNodes = [targetNodeId];
+    let currentNode = targetNodeId;
+
+    while (true) {
+      let parentEdge = edges.filter((v: IEdge) => v.to === currentNode)[0];
+      if (!parentEdge) break;
+
+      pathEdges.push(parentEdge.id);
+      currentNode = parentEdge.from;
+      pathNodes.push(currentNode);
+    }
+    return {
+      pathEdges,
+      pathNodes,
+    };
+  };
+
+  const trace_node_path_with_color = (pathEdges: string[], net_: Network) => {
+    console.log("tracing display");
+    setPath((prev: string[]) => {
+      console.log("prev path: ", prev);
+      try {
+        prev
+          .filter((v) => !pathEdges.includes(v))
+          .forEach((v) =>
+            net_.updateEdge(v, {
+              color: "white",
+              width: 0.5,
+            }),
+          );
+      } catch {}
+      return pathEdges;
+    });
+
+    pathEdges.forEach((v) =>
+      net_.updateEdge(v as string, { color: "lightgreen", width: 6 }),
+    );
+  };
 
   useEffect(() => {
     if (net !== null) {
@@ -81,38 +123,11 @@ const useDiscoveryGraph = () => {
           animation: true, // default duration is 1000ms and default easingFunction is easeInOutQuad.
         });
 
-        let pathEdges = [];
-        let pathNodes = [nodeId];
-        let currentNode = nodeId;
+        const { pathEdges, pathNodes } = retrieve_path_nodes_edges(nodeId);
 
-        while (true) {
-          let parentEdge = edges.filter((v: IEdge) => v.to === currentNode)[0];
-          if (!parentEdge) break;
-
-          pathEdges.push(parentEdge.id);
-          currentNode = parentEdge.from;
-          pathNodes.push(currentNode);
-        }
         setSelectedNodes(nodes.filter((v: INode) => pathNodes.includes(v.id)));
         console.log(pathEdges);
-        setPath((prev: string[]) => {
-          console.log("prev path: ", prev);
-          try {
-            prev
-              .filter((v) => !pathEdges.includes(v))
-              .forEach((v) =>
-                network.updateEdge(v, {
-                  color: "white",
-                  width: 0.5,
-                }),
-              );
-          } catch {}
-          return pathEdges;
-        });
-
-        pathEdges.forEach((v) =>
-          network.updateEdge(v as string, { color: "lightgreen", width: 6 }),
-        );
+        trace_node_path_with_color(pathEdges, network);
       } else {
         net?.releaseNode();
         net?.redraw();
@@ -142,7 +157,7 @@ const useDiscoveryGraph = () => {
   };
 
   useEffect(() => {
-    let network_ = null;
+    let network_: any = null;
     if (visJsRef.current) {
       setIsDrawingGraph(true);
       network_ = setUpNetwork();
@@ -152,7 +167,11 @@ const useDiscoveryGraph = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visJsRef, nodes, edges, settings]);
 
-  return { setUpNetwork };
+  return {
+    setUpNetwork,
+    retrieve_path_nodes_edges,
+    trace_node_path_with_color,
+  };
 };
 
 export { useDiscoveryGraph };

@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 export const ProtectedRoute = ({
   children,
 }: {
-  children?: React.ReactNode;
-}) => {
+  children?: React.ReactNode | undefined;
+}): JSX.Element | null => {
   const router = useRouter();
   const { credentials, isLoadingAuth } = useAuth();
   const { isLoadingv2 } = useLoader();
@@ -37,8 +37,8 @@ export const ProtectedRoute = ({
   }, [credentials, isLoadingv2, router]);
 
   if (isLoadingv2) {
-    return children; // Or maybe a loading spinner
+    return <>{children}</>; // Or maybe a loading spinner
   }
 
-  return isAuthenticated ? children : null;
+  return isAuthenticated ? <>{children}</> : null;
 };
