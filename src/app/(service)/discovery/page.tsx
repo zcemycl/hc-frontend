@@ -2,7 +2,7 @@
 
 import { DiscoveryContext, useAuth } from "@/contexts";
 import VisPanel from "./vis-panel";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IEdge, INode, IFlagAttrs, IBundleConfig, IBundle } from "@/types";
 import { Modal, ProtectedRoute } from "@/components";
 import {
@@ -66,6 +66,24 @@ export default function Discovery() {
     enabled_physics: true,
     physics_stabilisation: true,
   });
+
+  useEffect(() => {
+    if (!net || !visToolBarRef.current) return;
+    console.log("recenter... ");
+    const pos = net.getViewPosition();
+    const { width: offsetx } = (
+      visToolBarRef.current as any
+    ).getBoundingClientRect();
+
+    const directionX = openToolBar ? -1 : 1;
+    const offset = { x: (directionX * offsetx) / 2, y: 0 };
+
+    net.moveTo({
+      position: pos,
+      offset,
+      animation: true,
+    });
+  }, [openToolBar]);
 
   return (
     <ProtectedRoute>

@@ -18,11 +18,9 @@ const useDiscoveryGraph = () => {
     settings,
     visJsRef,
     visToolBarRef,
-    net,
     setNet,
     neo4jHealthMsg,
     setPrevSignal,
-    openToolBar,
     setPath,
   } = useContext(DiscoveryContext);
 
@@ -67,22 +65,6 @@ const useDiscoveryGraph = () => {
       net_.updateEdge(v as string, { color: "lightgreen", width: 6 }),
     );
   };
-
-  useEffect(() => {
-    if (net !== null) {
-      const pos = net.getViewPosition();
-      const { width: offsetx, height: offsety } = (
-        visToolBarRef.current as any
-      ).getBoundingClientRect();
-      const directionX = openToolBar ? -1 : 1;
-      const offset = { x: (directionX * offsetx) / 2, y: 0 };
-      net.moveTo({
-        position: pos,
-        offset: offset,
-        animation: true,
-      });
-    }
-  }, [openToolBar]);
 
   const setUpNetwork = () => {
     const tmpDNodes = new DataSet(nodes);
@@ -129,8 +111,8 @@ const useDiscoveryGraph = () => {
         console.log(pathEdges);
         trace_node_path_with_color(pathEdges, network);
       } else {
-        net?.releaseNode();
-        net?.redraw();
+        // net?.releaseNode();
+        // net?.redraw();
       }
     });
     // network?.on("oncontext", (e: any) => {
