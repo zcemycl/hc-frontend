@@ -70,7 +70,9 @@ export default function AI() {
               Tools to explore, align and train our AI models.
             </p>
             <button
+              disabled={isNotAdmin}
               type="button"
+              title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
               className="text-white bg-red-500 border-0 py-3
                 flex justify-between content-center text-center
                 align-middle items-center 
@@ -128,7 +130,9 @@ export default function AI() {
               Explore new data and machine learning model.
             </p>
             <button
+              disabled={isNotAdmin}
               type="button"
+              title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
               className="text-white bg-blue-500 border-0 py-3
                 flex justify-between content-center text-center
                 align-middle items-center 
