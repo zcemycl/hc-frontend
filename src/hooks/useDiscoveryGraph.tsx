@@ -25,7 +25,6 @@ const useDiscoveryGraph = () => {
   } = useContext(DiscoveryContext);
 
   const retrieve_path_nodes_edges = (targetNodeId: number) => {
-    console.log("tracing path nodes edges");
     let pathEdges = [];
     let pathNodes = [targetNodeId];
     let currentNode = targetNodeId;
@@ -45,9 +44,7 @@ const useDiscoveryGraph = () => {
   };
 
   const trace_node_path_with_color = (pathEdges: string[], net_: Network) => {
-    console.log("tracing display");
     setPath((prev: string[]) => {
-      console.log("prev path: ", prev);
       try {
         prev
           .filter((v) => !pathEdges.includes(v))
@@ -92,7 +89,8 @@ const useDiscoveryGraph = () => {
       console.log(e);
       if (e.nodes.length >= 1) {
         setMultiSelectNodes(nodes.filter((v: INode) => e.nodes.includes(v.id)));
-        const nodeId = e.nodes[0];
+        // make sure last selected node to be center
+        const nodeId = e.nodes[e.nodes.length - 1];
 
         const { x, y } = network.getPositions([nodeId])[nodeId];
         const { width: offsetx, height: offsety } = (
