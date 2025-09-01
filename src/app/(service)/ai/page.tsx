@@ -73,11 +73,12 @@ export default function AI() {
               disabled={isNotAdmin}
               type="button"
               title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
-              className="text-white bg-red-500 border-0 py-3
+              className={`text-white border-0 py-3
                 flex justify-between content-center text-center
-                align-middle items-center 
-                px-6 focus:outline-none hover:bg-red-600 
-                rounded text-2xl w-full"
+                align-middle items-center
+                ${isNotAdmin ? "bg-slate-500" : "bg-red-500 hover:bg-red-600"}
+                px-6 focus:outline-none 
+                rounded text-2xl w-full`}
               onClick={() => router.push("/annotate")}
             >
               <p>Annotation</p>
@@ -133,11 +134,12 @@ export default function AI() {
               disabled={isNotAdmin}
               type="button"
               title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
-              className="text-white bg-blue-500 border-0 py-3
+              className={`text-white border-0 py-3
                 flex justify-between content-center text-center
-                align-middle items-center 
-                px-6 focus:outline-none hover:bg-blue-600 
-                rounded text-2xl w-full"
+                align-middle items-center
+                ${isNotAdmin ? "bg-slate-500" : "bg-blue-500 hover:bg-blue-600"}
+                px-6 focus:outline-none 
+                rounded text-2xl w-full`}
               onClick={() => router.push("/chatbot")}
             >
               <p>Chatbot</p>
