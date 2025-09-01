@@ -18,6 +18,7 @@ export default function VisPanel() {
     neo4jHealthMsg,
     visToolBarRef,
     term,
+    initTAId,
   } = useContext(DiscoveryContext);
   const [prevSignal, setPrevSignal] = useState<string>("False");
   const { setUpNetwork } = useDiscoveryGraph();
@@ -33,6 +34,7 @@ export default function VisPanel() {
           flagAttrs.offset,
           term == "" ? null : term,
           flagAttrs.maxLevel,
+          initTAId,
         ),
       );
       handleResponse(res);

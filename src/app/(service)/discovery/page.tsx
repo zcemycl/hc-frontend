@@ -59,6 +59,7 @@ export default function Discovery() {
     offset: 0,
     maxLevel: 6,
   });
+  const initTAId = searchParams.get("therapeutic_area_id") ?? null;
   const [settings, defineSettings] = useState<any>({
     graph_type: GraphTypeEnum.radial,
     graph_direction: GraphDirectionEnum.leftright,
@@ -111,6 +112,7 @@ export default function Discovery() {
           setTerm,
           path,
           setPath,
+          initTAId,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">

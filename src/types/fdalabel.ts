@@ -54,6 +54,7 @@ export interface IClinicalTrialTable extends ITableNoHead {}
 export interface IDrugInteraction extends IBaseTitleContent {}
 
 export interface ITherapeuticArea {
+  id: string;
   name: string;
   path: string;
 }

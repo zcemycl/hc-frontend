@@ -11,6 +11,7 @@ export async function fetchGraphDummyv2(
   offset: number = 0,
   product: string | null = null,
   max_level: number = 5,
+  therapeutic_area_id: string | null = null,
 ): Promise<GraphResult> {
   const cookie = cookies();
   const versions = JSON.parse(cookie.get("fda-scrape-cur-version")!.value);
@@ -21,8 +22,11 @@ export async function fetchGraphDummyv2(
   params.append("limit", limit.toString());
   params.append("offset", offset.toString());
   params.append("max_level", max_level.toString());
-  if (product != null) {
+  if (product !== null) {
     params.append("product", product);
+  }
+  if (therapeutic_area_id !== null) {
+    params.append("therapeutic_area_id", therapeutic_area_id);
   }
   const API_URI_COMPLETE = `${API_URI}/?${params}`;
 
