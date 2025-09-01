@@ -1,9 +1,9 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useState, useMemo, useRef, useEffect } from "react";
+import { useContext, useMemo, useRef } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
-import { IEdge, INode } from "@/types";
+import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 import { useDiscoveryGraph } from "@/hooks";
@@ -30,10 +30,6 @@ export default function FilterTab() {
       .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
       .slice(0, 5);
   }, [term, nodes, net]);
-
-  useEffect(() => {
-    setTerm(searchParams.get("product_name") || "");
-  }, [searchParams]);
 
   return (
     <div
