@@ -9,7 +9,8 @@ import { useDiscoveryGraph, useApiHandler } from "@/hooks";
 
 export default function VisPanel() {
   const { handleResponse } = useApiHandler();
-  const { isLoadingv2, withLoading, isDrawingGraph } = useLoader();
+  const { isLoadingv2, withLoading, isDrawingGraph, setIsDrawingGraph } =
+    useLoader();
   const {
     setNodes,
     setEdges,
@@ -20,6 +21,7 @@ export default function VisPanel() {
     term,
     initTAId,
   } = useContext(DiscoveryContext);
+  const { setUpNetwork } = useDiscoveryGraph();
   const [prevSignal, setPrevSignal] = useState<string>("False");
 
   const isDiscoveryLoading = isLoadingv2 || isDrawingGraph;
@@ -61,10 +63,15 @@ export default function VisPanel() {
 
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;
+    let network_ = null;
+    if (visJsRef.current && neo4jHealthMsg?.data === "True") {
+      setIsDrawingGraph(true);
+      network_ = setUpNetwork();
+    }
     setPrevSignal(neo4jHealthMsg?.data);
     // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [neo4jHealthMsg]);
 
   return (
     <div id="vis-panel" className="relative rounded-lg h-[78vh]">
