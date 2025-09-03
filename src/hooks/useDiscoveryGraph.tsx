@@ -141,20 +141,13 @@ const useDiscoveryGraph = () => {
 
   useEffect(() => {
     let network_: any = null;
-    if (
-      visJsRef.current &&
-      neo4jHealthMsg?.data === "True" &&
-      nodes.length > 0 &&
-      edges.length > 0 &&
-      !isLoadingv2
-    ) {
+    if (visJsRef.current && neo4jHealthMsg?.data === "True" && !isLoadingv2) {
       setIsDrawingGraph(true);
       network_ = setUpNetwork();
-      setPrevSignal(neo4jHealthMsg?.data);
     }
     return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visJsRef, nodes, edges, settings, isLoadingv2]);
+  }, [visJsRef, settings, isLoadingv2]);
 
   return {
     setUpNetwork,

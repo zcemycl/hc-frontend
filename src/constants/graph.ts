@@ -146,10 +146,11 @@ export function generateGraphOption({
     options = {
       ...options,
       layout: {
+        randomSeed: 1,
+        improvedLayout: true,
         hierarchical: {
           direction: graph_direction,
           sortMethod: "directed",
-          // sortMethod: 'hubsize',
         },
       },
     };
