@@ -135,7 +135,7 @@ const useDiscoveryGraph = () => {
     // })
     network?.on("afterDrawing", (e: any) => {});
     withLoading(() => setNet(network));
-    withLoading(() => network?.fit());
+    network.fit();
     return network;
   };
 
@@ -145,7 +145,7 @@ const useDiscoveryGraph = () => {
       setIsDrawingGraph(true);
       network_ = setUpNetwork();
     }
-    return () => network_?.destroy();
+    // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visJsRef, settings, isLoadingv2]);
 
