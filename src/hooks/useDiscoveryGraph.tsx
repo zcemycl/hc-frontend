@@ -141,7 +141,7 @@ const useDiscoveryGraph = () => {
 
   useEffect(() => {
     let network_: any = null;
-    if (visJsRef.current && neo4jHealthMsg?.data === "True" && !isLoadingv2) {
+    if (visJsRef.current && !isLoadingv2) {
       setIsDrawingGraph(true);
       network_ = setUpNetwork();
     }

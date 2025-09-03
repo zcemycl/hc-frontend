@@ -61,17 +61,17 @@ export default function VisPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (prevSignal === neo4jHealthMsg?.data) return;
-    let network_ = null;
-    if (visJsRef.current && neo4jHealthMsg?.data === "True") {
-      setIsDrawingGraph(true);
-      network_ = setUpNetwork();
-    }
-    setPrevSignal(neo4jHealthMsg?.data);
-    // return () => network_?.destroy();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [neo4jHealthMsg]);
+  // useEffect(() => {
+  //   if (prevSignal === neo4jHealthMsg?.data) return;
+  //   let network_ = null;
+  //   if (visJsRef.current && neo4jHealthMsg?.data === "True") {
+  //     setIsDrawingGraph(true);
+  //     network_ = setUpNetwork();
+  //   }
+  //   setPrevSignal(neo4jHealthMsg?.data);
+  //   // return () => network_?.destroy();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [neo4jHealthMsg]);
 
   return (
     <div id="vis-panel" className="relative rounded-lg h-[78vh]">
