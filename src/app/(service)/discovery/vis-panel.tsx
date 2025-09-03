@@ -21,9 +21,8 @@ export default function VisPanel() {
     initTAId,
   } = useContext(DiscoveryContext);
   const [prevSignal, setPrevSignal] = useState<string>("False");
-  const { setUpNetwork } = useDiscoveryGraph();
 
-  const isDiscoveryLoading = isLoadingv2 && isDrawingGraph;
+  const isDiscoveryLoading = isLoadingv2 || isDrawingGraph;
 
   useEffect(() => {
     async function getData() {
@@ -62,10 +61,6 @@ export default function VisPanel() {
 
   useEffect(() => {
     if (prevSignal === neo4jHealthMsg?.data) return;
-    let network_ = null;
-    if (visJsRef.current && neo4jHealthMsg?.data === "True") {
-      network_ = setUpNetwork();
-    }
     setPrevSignal(neo4jHealthMsg?.data);
     // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps

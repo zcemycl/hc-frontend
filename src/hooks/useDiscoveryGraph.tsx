@@ -7,7 +7,8 @@ import { generateGraphOption } from "@/constants";
 import { IEdge, INode } from "@/types";
 
 const useDiscoveryGraph = () => {
-  const { withLoading, isDrawingGraph, setIsDrawingGraph } = useLoader();
+  const { withLoading, isDrawingGraph, setIsDrawingGraph, isLoadingv2 } =
+    useLoader();
   const {
     setSelectedNodes,
     setMultiSelectNodes,
@@ -125,6 +126,8 @@ const useDiscoveryGraph = () => {
     network.once("stabilizationIterationsDone", () => {
       setTimeout(function () {
         setIsDrawingGraph(false);
+        network.setOptions({ physics: false });
+        network.stopSimulation();
       }, 1500);
     });
     network?.on("initRedraw", (e: any) => {});
@@ -138,14 +141,20 @@ const useDiscoveryGraph = () => {
 
   useEffect(() => {
     let network_: any = null;
-    if (visJsRef.current) {
+    if (
+      visJsRef.current &&
+      neo4jHealthMsg?.data === "True" &&
+      nodes.length > 0 &&
+      edges.length > 0 &&
+      !isLoadingv2
+    ) {
       setIsDrawingGraph(true);
       network_ = setUpNetwork();
       setPrevSignal(neo4jHealthMsg?.data);
     }
     return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visJsRef, nodes, edges, settings]);
+  }, [visJsRef, nodes, edges, settings, isLoadingv2]);
 
   return {
     setUpNetwork,

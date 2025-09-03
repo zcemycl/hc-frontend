@@ -12,7 +12,7 @@ import {
 } from "@/icons/bootstrap";
 
 export default function SettingsTab() {
-  const { tab } = useContext(DiscoveryContext);
+  const { tab, net } = useContext(DiscoveryContext);
   const { settings, defineSettings } = useContext(DiscoveryContext);
   const [graphType, setGraphType] = useState<GraphTypeEnum>(
     settings.graph_type,
@@ -172,6 +172,34 @@ export default function SettingsTab() {
               }}
             />
           </div>
+        </div>
+        <div className="flex flex-row space-x-2">
+          <button
+            className="p-2 
+            rounded-lg text-black
+            bg-emerald-600 hover:bg-emerald-200"
+            onClick={(e) => {
+              e.preventDefault();
+              console.log("start simulation ... ");
+              net?.setOptions({ physics: true });
+              net?.startSimulation();
+            }}
+          >
+            Start Simulation
+          </button>
+          <button
+            className="p-2 
+            rounded-lg text-black
+            bg-amber-600 hover:bg-amber-200"
+            onClick={(e) => {
+              e.preventDefault();
+              console.log("stop simulation ... ");
+              net?.setOptions({ physics: false });
+              net?.stopSimulation();
+            }}
+          >
+            Stop Simulation
+          </button>
         </div>
       </div>
       <div className="basis-1/12 flex flex-row justify-end">
