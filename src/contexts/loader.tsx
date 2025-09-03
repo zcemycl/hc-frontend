@@ -52,13 +52,14 @@ export const LoaderProvider = ({
   useEffect(() => {
     if (pathname !== prevPath.current) {
       console.log("useloader", pathname, prevPath);
-      // setLoadingCountv2((c) => c + 1);
+      setLoadingCountv2((c) => c + 1);
       prevPath.current = pathname;
     }
   }, [pathname]);
 
   useEffect(() => {
     // startTransition kicks in when path changes
+    console.log("isPending", isPending);
     if (isPending) {
       setLoadingCountv2((c) => c + 1);
     } else {
