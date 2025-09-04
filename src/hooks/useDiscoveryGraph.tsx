@@ -7,8 +7,7 @@ import { generateGraphOption } from "@/constants";
 import { IEdge, INode } from "@/types";
 
 const useDiscoveryGraph = () => {
-  const { withLoading, isDrawingGraph, setIsDrawingGraph, isLoadingv2 } =
-    useLoader();
+  const { withLoading, setIsDrawingGraph, isLoadingv2 } = useLoader();
   const {
     setSelectedNodes,
     setMultiSelectNodes,
@@ -20,8 +19,6 @@ const useDiscoveryGraph = () => {
     visJsRef,
     visToolBarRef,
     setNet,
-    neo4jHealthMsg,
-    setPrevSignal,
     setPath,
   } = useContext(DiscoveryContext);
 

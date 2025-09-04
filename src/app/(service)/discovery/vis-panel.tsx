@@ -1,28 +1,24 @@
 "use client";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { useLoader, DiscoveryContext } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import { INode } from "@/types";
 import { fetchGraphDummyv2 } from "@/http/backend";
 import { Spinner } from "@/components";
-import { useDiscoveryGraph, useApiHandler } from "@/hooks";
+import { useApiHandler } from "@/hooks";
 
 export default function VisPanel() {
   const { handleResponse } = useApiHandler();
-  const { isLoadingv2, withLoading, isDrawingGraph, setIsDrawingGraph } =
-    useLoader();
+  const { isLoadingv2, withLoading, isDrawingGraph } = useLoader();
   const {
     setNodes,
     setEdges,
     flagAttrs,
     visJsRef,
-    neo4jHealthMsg,
     visToolBarRef,
     term,
     initTAId,
   } = useContext(DiscoveryContext);
-  const { setUpNetwork } = useDiscoveryGraph();
-  const [prevSignal, setPrevSignal] = useState<string>("False");
 
   const isDiscoveryLoading = isLoadingv2 || isDrawingGraph;
 
@@ -60,18 +56,6 @@ export default function VisPanel() {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // useEffect(() => {
-  //   if (prevSignal === neo4jHealthMsg?.data) return;
-  //   let network_ = null;
-  //   if (visJsRef.current && neo4jHealthMsg?.data === "True") {
-  //     setIsDrawingGraph(true);
-  //     network_ = setUpNetwork();
-  //   }
-  //   setPrevSignal(neo4jHealthMsg?.data);
-  //   // return () => network_?.destroy();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [neo4jHealthMsg]);
 
   return (
     <div id="vis-panel" className="relative rounded-lg h-[78vh]">
