@@ -77,7 +77,8 @@ function FdaLabelShort({
             e.preventDefault();
             let redirectUrl = `/discovery`;
             const params = new URLSearchParams();
-            params.append("therapeutic_area", therapeutic_areas[0].path);
+            params.append("therapeutic_area", therapeutic_areas[0].name);
+            params.append("therapeutic_area_id", therapeutic_areas[0].id);
             params.append("product_name", tradename.toLowerCase().trim());
             redirectUrl = `${redirectUrl}?${params}`;
             router.push(redirectUrl);

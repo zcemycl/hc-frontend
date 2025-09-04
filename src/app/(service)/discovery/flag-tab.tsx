@@ -1,13 +1,20 @@
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext } from "@/contexts";
+import { DiscoveryContext, useLoader } from "@/contexts";
+import { fetchGraphDummyv2 } from "@/http/backend";
 import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
+import { useApiHandler } from "@/hooks";
+import { INode } from "@/types";
 import { useContext, useState } from "react";
 
 export default function FlagTab() {
-  const { tab, flagAttrs, setFlagAttrs } = useContext(DiscoveryContext);
+  const { handleResponse } = useApiHandler();
+  const { tab, flagAttrs, setFlagAttrs, term, setNodes, setEdges } =
+    useContext(DiscoveryContext);
+  const { withLoading, setIsDrawingGraph } = useLoader();
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
   const [skip, setSkip] = useState(flagAttrs.offset);
+  const [maxLevel, setMaxLevel] = useState(flagAttrs.maxLevel);
   return (
     <div
       className={`absolute
@@ -53,6 +60,18 @@ export default function FlagTab() {
             setSkip(e.target.value);
           }}
         />
+        <h2 className="leading text-slate-300 font-bold">Max Level</h2>
+        <input
+          type="number"
+          value={maxLevel}
+          min={1}
+          max={7}
+          className="bg-white text-black rounded-lg h-10 p-2"
+          onChange={(e) => {
+            e.preventDefault();
+            setMaxLevel(e.target.value);
+          }}
+        />
       </div>
       <div className="basis-1/12 flex flex-row justify-end">
         <button
@@ -61,14 +80,45 @@ export default function FlagTab() {
                     h-full aspect-square
                     justify-end align-middle
                     content-center"
-          onClick={(e) => {
+          onClick={async (e) => {
             e.preventDefault();
+            setIsDrawingGraph(true);
             setFlagAttrs({
               name: tmpName,
               numNodes: limit,
               offset: skip,
+              maxLevel: maxLevel,
             });
-            console.log(`${limit} ${skip} ${tmpName}`);
+            console.log(`${limit} ${skip} ${tmpName} ${maxLevel}`);
+            if (tmpName == "") return;
+            const res = await withLoading(() =>
+              fetchGraphDummyv2(
+                tmpName as string,
+                limit,
+                skip,
+                term == "" ? null : term,
+                maxLevel,
+                null,
+              ),
+            );
+            handleResponse(res);
+            if (!res.success) return;
+            console.log(res);
+            let all_nodes = [
+              ...res?.data?.ta.map((v: INode) => ({
+                ...v,
+                group: "ta",
+              })),
+              ...res?.data?.p.map((v: INode) => ({
+                ...v,
+                group: "p",
+              })),
+            ];
+            const final_all_nodes = all_nodes.map((obj) =>
+              obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
+            );
+            setNodes(final_all_nodes);
+            setEdges([...res?.data?.links]);
           }}
         >
           <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />

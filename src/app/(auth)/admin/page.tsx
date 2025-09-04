@@ -1,13 +1,13 @@
 "use client";
-import { useRef, useState, useEffect, useId } from "react";
+import { useRef, useState, useEffect, useId, useCallback } from "react";
 import { useAuth, useLoader } from "@/contexts";
 import {
-  fetchUserAll,
-  createUserPostgres,
-  deleteUserById,
-  fetchUserCount,
+  fetchUserAllv2,
+  createUserPostgresv2,
+  deleteUserByIdv2,
+  fetchUserCountv2,
 } from "@/http/backend";
-import { IAddUserInfo, IUser, UserRoleEnum } from "@/types";
+import { ApiResult, IAddUserInfo, IUser, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   PaginationBar,
@@ -28,13 +28,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { PLUS_ICON_URI, X_ICON_URI } from "@/icons/bootstrap";
+import { useApiHandler } from "@/hooks";
 
 export default function Admin() {
   const id = useId();
+  const { handleResponse } = useApiHandler();
   const refUserGroup = useRef(null);
   const router = useRouter();
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [isOpenAddUserModal, setIsOpenAddUserModal] = useState(false);
   const [isOpenDelUserModal, setIsOpenDelUserModal] = useState(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -49,8 +51,18 @@ export default function Admin() {
   const [topN, setTopN] = useState(0);
   const [nPerPage, _] = useState(10);
 
+  const fetchUsersCallback = useCallback(async () => {
+    const resp = await withLoading(() =>
+      fetchUserAllv2(pageN * nPerPage, nPerPage),
+    );
+    handleResponse(resp);
+    setDisplayData(resp.data ?? []);
+  }, [pageN, nPerPage]);
+
   useEffect(() => {
-    fetchUserCount().then((x) => setTopN(x));
+    withLoading(() => fetchUserCountv2()).then((x: ApiResult<number>) =>
+      setTopN(x.data ?? 0),
+    );
   }, []);
 
   useEffect(() => {
@@ -62,13 +74,7 @@ export default function Admin() {
       );
     }
     async function getData() {
-      const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
-      console.log(resp);
-      if ("detail" in resp) {
-        router.push("/logout");
-        return;
-      }
-      setDisplayData(resp);
+      await fetchUsersCallback();
     }
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,7 +85,7 @@ export default function Admin() {
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[81vh] 
           sm:h-[89vh] overflow-y-scroll
-          ${isLoading || isLoadingAuth ? "animate-pulse" : ""}
+          ${isLoadingv2 ? "animate-pulse" : ""}
           `}
         ref={refUserGroup}
       >
@@ -100,15 +106,20 @@ export default function Admin() {
               text-white"
                 onClick={async (e) => {
                   e.preventDefault();
-                  await delete_user(
-                    displayData[delUserIndex].username,
-                    displayData[delUserIndex].email,
+                  await withLoading(() =>
+                    delete_user(
+                      displayData[delUserIndex].username,
+                      displayData[delUserIndex].email,
+                    ),
                   );
-                  await deleteUserById(displayData[delUserIndex].id);
+                  const deleteUserRes = await withLoading(() =>
+                    deleteUserByIdv2(displayData[delUserIndex].id),
+                  );
+                  handleResponse(deleteUserRes);
+                  if (!deleteUserRes.success) return;
                   setIsOpenDelUserModal(false);
                   setDelUserIndex(0);
-                  const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
-                  setDisplayData(resp);
+                  await fetchUsersCallback();
                 }}
               >
                 YES
@@ -197,25 +208,26 @@ export default function Admin() {
                     px-6 py-3 rounded-lg"
                   onClick={async (e) => {
                     e.preventDefault();
-                    const res = await create_user(
-                      addUserInfo.username,
-                      addUserInfo.email,
+                    const res = await withLoading(() =>
+                      create_user(addUserInfo.username, addUserInfo.email),
                     );
                     console.log(res);
                     const sub = res.Attributes.filter(
                       (each: { Name: string }) => each.Name === "sub",
                     )[0].Value;
-                    const final_res = await createUserPostgres(
-                      addUserInfo.username,
-                      addUserInfo.email,
-                      sub,
-                      res.Enabled,
-                      addUserInfo.role,
+                    const final_res = await withLoading(() =>
+                      createUserPostgresv2(
+                        addUserInfo.username,
+                        addUserInfo.email,
+                        sub,
+                        res.Enabled,
+                        addUserInfo.role,
+                      ),
                     );
-                    console.log(final_res);
+                    handleResponse(final_res);
+                    if (!final_res.success) return;
                     setIsOpenAddUserModal(false);
-                    const resp = await fetchUserAll(pageN * nPerPage, nPerPage);
-                    setDisplayData(resp);
+                    await fetchUsersCallback();
                   }}
                 >
                   Submit

@@ -12,26 +12,24 @@ import {
   ProtectedRoute,
   BackBtn,
 } from "@/components";
-import { useStopLoadingEarly } from "@/hooks";
 
 export default function AI() {
   const router = useRouter();
   const { setIsAuthenticated, credentials, role, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
   const isNotAdmin = role !== UserRoleEnum.ADMIN;
-  useStopLoadingEarly();
 
   return (
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           h-[81vh] sm:h-[89vh]
-        ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
-          {(isLoading || isLoadingAuth) && (
+          {isLoadingv2 && (
             <div
               role="status"
               className="absolute left-1/2 top-1/2 
@@ -72,12 +70,15 @@ export default function AI() {
               Tools to explore, align and train our AI models.
             </p>
             <button
+              disabled={isNotAdmin}
               type="button"
-              className="text-white bg-red-500 border-0 py-3
+              title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
+              className={`text-white border-0 py-3
                 flex justify-between content-center text-center
-                align-middle items-center 
-                px-6 focus:outline-none hover:bg-red-600 
-                rounded text-2xl w-full"
+                align-middle items-center
+                ${isNotAdmin ? "bg-slate-500" : "bg-red-500 hover:bg-red-600"}
+                px-6 focus:outline-none 
+                rounded text-2xl w-full`}
               onClick={() => router.push("/annotate")}
             >
               <p>Annotation</p>
@@ -114,15 +115,13 @@ export default function AI() {
                 rounded text-2xl w-full`}
               onClick={async () => {
                 console.log("Open JupyterLab");
-                setIsLoading(true);
                 if (credentials.length === 0) {
                   setIsAuthenticated(false);
                   router.push("/logout");
                 }
-                const resp = await create_presigned_url();
+                const resp = await withLoading(() => create_presigned_url());
                 setJupyterLink(resp.url);
                 setIsOpenModal(true);
-                setIsLoading(false);
               }}
             >
               <p>Jupyter Lab</p>
@@ -132,12 +131,15 @@ export default function AI() {
               Explore new data and machine learning model.
             </p>
             <button
+              disabled={isNotAdmin}
               type="button"
-              className="text-white bg-blue-500 border-0 py-3
+              title={isNotAdmin ? "Disabled by Admin, Please contact us." : ""}
+              className={`text-white border-0 py-3
                 flex justify-between content-center text-center
-                align-middle items-center 
-                px-6 focus:outline-none hover:bg-blue-600 
-                rounded text-2xl w-full"
+                align-middle items-center
+                ${isNotAdmin ? "bg-slate-500" : "bg-blue-500 hover:bg-blue-600"}
+                px-6 focus:outline-none 
+                rounded text-2xl w-full`}
               onClick={() => router.push("/chatbot")}
             >
               <p>Chatbot</p>

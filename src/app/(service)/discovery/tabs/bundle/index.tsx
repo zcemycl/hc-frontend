@@ -1,13 +1,13 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext, useAuth } from "@/contexts";
+import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import {
-  deleteBundleById,
-  fetchBundlesByUserId,
-  patchBundleById,
+  deleteBundleByIdv2,
+  fetchBundlesByUserIdv2,
+  patchBundleByIdv2,
 } from "@/http/backend";
 import {
   ARROW_ICON_URI,
@@ -19,10 +19,13 @@ import {
   X_ICON_URI,
 } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
+import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
+  const { handleResponse } = useApiHandler();
   const router = useRouter();
+  const { withLoading } = useLoader();
   const {
     tab,
     multiSelectNodes,
@@ -33,23 +36,31 @@ export default function BundleTab() {
     setOpenBundleModal,
     bundles,
     setBundles,
+    nodes,
+    setSelectedNodes,
   } = useContext(DiscoveryContext);
+  const { retrieve_path_nodes_edges, trace_node_path_with_color } =
+    useDiscoveryGraph();
 
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
   }, [multiSelectNodes]);
 
+  const fetchBundlesCallback = useCallback(async () => {
+    const tmpBundlesRes = await withLoading(() =>
+      fetchBundlesByUserIdv2(userId as number, 0, 5),
+    );
+    handleResponse(tmpBundlesRes);
+    console.log(tmpBundlesRes.data ?? []);
+    setBundles(tmpBundlesRes.data ?? []);
+  }, [userId]);
+
   useEffect(() => {
     async function getData() {
-      const tmpBundles = await fetchBundlesByUserId(userId as number, 0, 5);
-      console.log(tmpBundles);
-      setBundles(tmpBundles);
+      await fetchBundlesCallback();
     }
-
-    if (isLoadingAuth) return;
-    if (credentials.length === 0) return;
     getData();
-  }, [userId]);
+  }, []);
 
   return (
     <div
@@ -115,6 +126,13 @@ export default function BundleTab() {
                     offset: offset,
                     animation: true,
                   });
+                  const { pathEdges, pathNodes } =
+                    retrieve_path_nodes_edges(targetNodeId);
+                  setSelectedNodes(
+                    nodes.filter((v: INode) => pathNodes.includes(v.id)),
+                  );
+                  console.log(pathEdges);
+                  trace_node_path_with_color(pathEdges, net);
                 }}
               >
                 <div
@@ -211,16 +229,14 @@ export default function BundleTab() {
                       v.fdalabels.forEach((f) => tnSet.add(f.tradename));
                       nodesToBundle.forEach((n: INode) => tnSet.add(n.label));
                       const newTradenames = Array.from(tnSet);
-                      await patchBundleById(v.id, {
-                        tradenames: newTradenames as string[],
-                      });
-                      const tmpBundles = await fetchBundlesByUserId(
-                        userId as number,
-                        0,
-                        5,
+                      const patchBundleResult = await withLoading(() =>
+                        patchBundleByIdv2(v.id, {
+                          tradenames: newTradenames as string[],
+                        }),
                       );
-                      console.log(tmpBundles);
-                      setBundles(tmpBundles);
+                      handleResponse(patchBundleResult);
+                      if (!patchBundleResult.success) return;
+                      await fetchBundlesCallback();
                     }}
                   >
                     <img
@@ -253,14 +269,12 @@ export default function BundleTab() {
                 <button
                   onClick={async (e) => {
                     e.preventDefault();
-                    await deleteBundleById(v.id);
-                    const tmpBundles = await fetchBundlesByUserId(
-                      userId as number,
-                      0,
-                      5,
+                    const deleteBundleResult = await withLoading(() =>
+                      deleteBundleByIdv2(v.id),
                     );
-                    console.log(tmpBundles);
-                    setBundles(tmpBundles);
+                    handleResponse(deleteBundleResult);
+                    if (!deleteBundleResult.success) return;
+                    await fetchBundlesCallback();
                   }}
                 >
                   <img
@@ -303,16 +317,14 @@ export default function BundleTab() {
                             )
                             .map((f_: IFdaLabelRef) => f_.tradename);
                           console.log(newTradenames);
-                          await patchBundleById(v.id, {
-                            tradenames: newTradenames as string[],
-                          });
-                          const tmpBundles = await fetchBundlesByUserId(
-                            userId as number,
-                            0,
-                            5,
+                          const patchBundleResult = await withLoading(() =>
+                            patchBundleByIdv2(v.id, {
+                              tradenames: newTradenames as string[],
+                            }),
                           );
-                          console.log(tmpBundles);
-                          setBundles(tmpBundles);
+                          handleResponse(patchBundleResult);
+                          if (!patchBundleResult.success) return;
+                          await fetchBundlesCallback();
                         }}
                       >
                         <img src={MINUS_ICON_URI} />

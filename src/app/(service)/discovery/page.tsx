@@ -2,7 +2,7 @@
 
 import { DiscoveryContext, useAuth } from "@/contexts";
 import VisPanel from "./vis-panel";
-import { useRef, useState, useMemo, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IEdge, INode, IFlagAttrs, IBundleConfig, IBundle } from "@/types";
 import { Modal, ProtectedRoute } from "@/components";
 import {
@@ -12,15 +12,15 @@ import {
   GraphTypeEnum,
 } from "@/constants";
 import { Network } from "vis-network";
-import { useDbsHealth } from "@/hooks";
+import { useDbsHealth, useApiHandler } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
-import { createBundleByUserId, fetchBundlesByUserId } from "@/http/backend";
-import { useRouter, useSearchParams } from "next/navigation";
+import { createBundleByUserIdv2, fetchBundlesByUserIdv2 } from "@/http/backend";
+import { useSearchParams } from "next/navigation";
 
 export default function Discovery() {
+  const { handleResponse } = useApiHandler();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const { userId, isLoadingAuth, credentials, setIsAuthenticated } = useAuth();
+  const { userId } = useAuth();
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
   const visJsRef = useRef<HTMLDivElement>(null);
   const visToolBarRef = useRef<HTMLDivElement>(null);
@@ -34,6 +34,9 @@ export default function Discovery() {
     ...defaultBundleConfig,
   });
   const [bundles, setBundles] = useState<IBundle[]>([]);
+  const [term, setTerm] = useState<string>(
+    searchParams.get("product_name") ?? "",
+  );
   const [tab, setTab] = useState<GraphTabEnum>(
     searchParams.get("therapeutic_area")
       ? searchParams.get("product_name")
@@ -41,6 +44,7 @@ export default function Discovery() {
         : GraphTabEnum.initialisation
       : GraphTabEnum.information,
   );
+  const [path, setPath] = useState<string[]>([]);
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [dNodes, setDNodes] = useState<any>(null);
@@ -50,12 +54,12 @@ export default function Discovery() {
   const [prevSignal, setPrevSignal] = useState<string>("False");
   const [oncePlusSignal, setOncePlusSignal] = useState<number>(0);
   const [flagAttrs, setFlagAttrs] = useState<IFlagAttrs>({
-    name: searchParams.get("therapeutic_area")
-      ? searchParams.get("therapeutic_area")!
-      : "Neoplasms",
-    numNodes: 500,
+    name: searchParams.get("therapeutic_area") ?? "Neoplasms",
+    numNodes: 100,
     offset: 0,
+    maxLevel: 6,
   });
+  const initTAId = searchParams.get("therapeutic_area_id") ?? null;
   const [settings, defineSettings] = useState<any>({
     graph_type: GraphTypeEnum.radial,
     graph_direction: GraphDirectionEnum.leftright,
@@ -64,14 +68,22 @@ export default function Discovery() {
   });
 
   useEffect(() => {
-    if (isLoadingAuth) return;
-    if (credentials.length === 0) {
-      setIsAuthenticated(false);
-      router.push(
-        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/logout" : "/",
-      );
-    }
-  }, []);
+    if (!net || !visToolBarRef.current) return;
+    console.log("recenter... ");
+    const pos = net.getViewPosition();
+    const { width: offsetx } = (
+      visToolBarRef.current as any
+    ).getBoundingClientRect();
+
+    const directionX = openToolBar ? -1 : 1;
+    const offset = { x: (directionX * offsetx) / 2, y: 0 };
+
+    net.moveTo({
+      position: pos,
+      offset,
+      animation: true,
+    });
+  }, [openToolBar]);
 
   return (
     <ProtectedRoute>
@@ -114,6 +126,11 @@ export default function Discovery() {
           setBundleConfig,
           bundles,
           setBundles,
+          term,
+          setTerm,
+          path,
+          setPath,
+          initTAId,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
@@ -191,16 +208,19 @@ export default function Discovery() {
                       if (bundleConfig.name.trim() === "") {
                         return;
                       }
-                      await createBundleByUserId(
+                      const createBundleRes = await createBundleByUserIdv2(
                         userId as number,
                         bundleConfig,
                       );
-                      const tmpBundles = await fetchBundlesByUserId(
+                      handleResponse(createBundleRes);
+                      if (!createBundleRes.success) return;
+                      const tmpBundlesRes = await fetchBundlesByUserIdv2(
                         userId as number,
                         0,
                         5,
                       );
-                      setBundles(tmpBundles);
+                      handleResponse(tmpBundlesRes);
+                      setBundles(tmpBundlesRes.data ?? []);
                       setBundleConfig({ ...defaultBundleConfig });
                       setOpenBundleModal(false);
                     }}

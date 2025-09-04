@@ -1,26 +1,29 @@
 "use client";
-import { useAuth } from "@/contexts";
-import { useDbsHealth } from "@/hooks";
-import { fetchFdalabelCount, fetchUserCount } from "@/http/backend";
+import { LocalGenericContext } from "@/contexts";
+import { setFdalabelCount, setUserCount } from "@/http/internal";
 import { beautifulNumber } from "@/http/utils";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 
 const HomeStats = () => {
-  const { isLoadingAuth } = useAuth();
-  const [fdalabelCount, setFdalabelCount] = useState(0);
-  const [userCount, setUserCount] = useState(0);
-  const [prevSignal, setPrevSignal] = useState<string>("False");
-  const { pgHealthMsg, isPGHealthy } = useDbsHealth();
+  const { initialData } = useContext(LocalGenericContext);
+  const {
+    hasFdalabelCountCookie,
+    hasUserCountCookie,
+    fdalabelCount,
+    userCount,
+  } = initialData;
 
   useEffect(() => {
-    if (isLoadingAuth) return;
-    if (prevSignal === pgHealthMsg?.data) return;
-    if (pgHealthMsg?.data == "True") {
-      fetchFdalabelCount().then((x) => setFdalabelCount(x));
-      fetchUserCount().then((x) => setUserCount(x));
+    async function setCookieSelf() {
+      if (!hasFdalabelCountCookie) {
+        await setFdalabelCount(initialData.fdalabelCount);
+      }
+      if (!hasUserCountCookie) {
+        await setUserCount(initialData.userCount);
+      }
     }
-    setPrevSignal(pgHealthMsg?.data as string);
-  }, [isLoadingAuth, pgHealthMsg]);
+    setCookieSelf();
+  }, []);
 
   return (
     <>

@@ -1,6 +1,6 @@
 "use client";
 import { VerDropdown } from "@/components";
-import { FdaVersionsContext, useAuth } from "@/contexts";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { RELOAD_ICON_URI } from "@/icons/bootstrap";
 import { formatUnderscoreString } from "@/utils";
 import { useRouter } from "next/navigation";
@@ -14,21 +14,16 @@ function VerToolbar({
   reloadCallback: () => void;
 }) {
   const router = useRouter();
-  const { sectionVersions, versions } = useContext(FdaVersionsContext);
+  const { sectionVersions } = useContext(FdaVersionsContext);
   const { setIsAuthenticated, credentials } = useAuth();
+  const { withLoading } = useLoader();
   return (
     <div className="flex flex-col space-y-1 w-full items-center">
       <div
         className="
-              flex 
-              flex-row
-              flex-wrap
-              w-full
-              space-x-0
-              space-y-1
-              align-center
-              items-center
-              justify-start"
+        flex flex-row flex-wrap
+        w-full items-center   
+        justify-start gap-2"
       >
         {fdaSections
           // .filter(v => v!== "fdalabel")
@@ -49,7 +44,7 @@ function VerToolbar({
               setIsAuthenticated(false);
               router.push("/logout");
             }
-            await reloadCallback();
+            await withLoading(() => reloadCallback());
           }}
         >
           <img

@@ -2,14 +2,14 @@
 import { Spinner, Table, ProtectedRoute, BackBtn } from "@/components";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
-import { fetchAETableByIds } from "@/http/backend";
+import { useApiHandler } from "@/hooks";
+import { fetchAETableByIdsv2 } from "@/http/backend";
 import {
   AnnotationCategoryEnum,
   IBaseTable,
   IClinicalTrialTable,
   IFdaVersions,
 } from "@/types";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface PageProps {
@@ -20,36 +20,37 @@ interface PageProps {
 }
 
 export default function Page({ params }: PageProps) {
-  const router = useRouter();
-  const { credentials, isLoadingAuth } = useAuth();
-  const { isLoading, setIsLoading } = useLoader();
+  const { handleResponse } = useApiHandler();
+  const { credentials, isLoadingAuth, isAuthenticated } = useAuth();
+  const { isLoadingv2, withLoading } = useLoader();
   const [tableData, setTableData] = useState<IClinicalTrialTable | null>(null);
 
   useEffect(() => {
     async function getData() {
-      const res = await fetchAETableByIds(
-        params.table_id,
-        AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
-        params.id,
-        DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+      const res = await withLoading(() =>
+        fetchAETableByIdsv2(
+          params.table_id,
+          AnnotationCategoryEnum.CLINICAL_TRIAL_TABLE,
+          params.id,
+          DEFAULT_FDALABEL_VERSIONS as IFdaVersions,
+        ),
       );
-      setTableData(res);
+      handleResponse(res);
+      if (res.success) setTableData(res.data);
     }
-    if (isLoadingAuth) return;
+    if (!isAuthenticated) return;
     if (credentials.length === 0) return;
-    setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, [isLoadingAuth]);
 
   return (
     <ProtectedRoute>
       <section
         className={`text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]
-        overflow-y-scroll overflow-x-hidden ${isLoading || isLoadingAuth ? "animate-pulse" : ""}`}
+        overflow-y-scroll overflow-x-hidden ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
-          {(isLoading || isLoadingAuth) && (
+          {isLoadingv2 && (
             <div
               className="absolute left-1/2 top-1/2 
               -translate-x-1/2 -translate-y-1/2"

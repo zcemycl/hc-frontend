@@ -7,13 +7,15 @@ import { UserRoleEnum } from "@/types";
 import { AdminIcon, JupyterIcon } from "@/icons";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {
-  const { role, isLoadingAuth } = useAuth();
+  const { role, isLoadingAuth, isAuthenticated } = useAuth();
   const { isSideBarOpen, setIsSideBarOpen } = useOpenBar();
   const refSideBar = useRef(null);
   const sidebar_items = [
-    ...(!isLoadingAuth && role === UserRoleEnum.ADMIN ? [] : []),
+    ...(!isLoadingAuth && isAuthenticated && role === UserRoleEnum.ADMIN
+      ? []
+      : []),
     ...sidebar_constant,
-    ...(!isLoadingAuth && role === UserRoleEnum.ADMIN
+    ...(!isLoadingAuth && isAuthenticated && role === UserRoleEnum.ADMIN
       ? [
           {
             name: "Admin Panel",

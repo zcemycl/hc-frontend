@@ -1,3 +1,5 @@
+import { ApiResult } from "./api";
+
 export enum UserHistoryCategoryEnum {
   ANNOTATION = "Annotation",
   LOGIN = "Login",
@@ -24,3 +26,8 @@ export interface IHistory {
     };
   };
 }
+
+// API Result interfaces
+export interface HistoriesResult extends ApiResult<IHistory[]> {}
+export interface HistoryResult extends ApiResult<IHistory> {}
+export interface HistoryCountResult extends ApiResult<number> {}

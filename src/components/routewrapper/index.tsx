@@ -1,27 +1,44 @@
 "use client";
+import { useAuth, useLoader } from "@/contexts";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export const ProtectedRoute = ({
   children,
 }: {
-  children?: React.ReactNode;
-}) => {
+  children?: React.ReactNode | undefined;
+}): JSX.Element | null => {
   const router = useRouter();
-  if (typeof window === "undefined") {
-    console.log("window not mounted");
-    return children;
+  const { credentials, isLoadingAuth } = useAuth();
+  const { isLoadingv2 } = useLoader();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (isLoadingv2) return;
+
+    let authenticated = false;
+    try {
+      const creds = credentials ? JSON.parse(credentials as string) : null;
+      if (creds && "AccessToken" in creds) {
+        authenticated = true;
+      }
+    } catch {
+      authenticated = false;
+    }
+
+    setIsAuthenticated(authenticated);
+
+    if (!authenticated) {
+      console.log("trigger redirect");
+      router.push(
+        process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
+      );
+    }
+  }, [credentials, isLoadingv2, router]);
+
+  if (isLoadingv2) {
+    return <>{children}</>; // Or maybe a loading spinner
   }
-  // console.log("window mounted");
-  const creds = JSON.parse(localStorage.getItem("credentials") as string);
-  let isAuthenticated = false;
-  if (!!creds) {
-    isAuthenticated = true;
-  }
-  if (!isAuthenticated) {
-    console.log("trigger redirect");
-    router.push(
-      process.env.NEXT_PUBLIC_ENV_NAME !== "local-dev" ? "/login" : "/",
-    );
-  }
-  return children;
+
+  return isAuthenticated ? <>{children}</> : null;
 };

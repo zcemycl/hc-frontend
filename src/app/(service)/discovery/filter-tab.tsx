@@ -1,17 +1,28 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useState, useMemo, useRef, useEffect } from "react";
+import { useContext, useMemo, useRef } from "react";
 import { switch_color_node, switch_hover_color_node } from "./utils";
 import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
+import { useDiscoveryGraph } from "@/hooks";
 
 export default function FilterTab() {
-  const { tab, visJsRef, net, nodes, visToolBarRef } =
-    useContext(DiscoveryContext);
+  const {
+    tab,
+    visJsRef,
+    net,
+    nodes,
+    visToolBarRef,
+    term,
+    setTerm,
+    setSelectedNodes,
+    setMultiSelectNodes,
+  } = useContext(DiscoveryContext);
+  const { retrieve_path_nodes_edges, trace_node_path_with_color } =
+    useDiscoveryGraph();
   const searchParams = useSearchParams();
-  const [term, setTerm] = useState<string>("");
   const buttonRef = useRef<HTMLDivElement>(null);
 
   const filterNodes = useMemo(() => {
@@ -19,10 +30,6 @@ export default function FilterTab() {
       .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
       .slice(0, 5);
   }, [term, nodes, net]);
-
-  useEffect(() => {
-    setTerm(searchParams.get("product_name") || "");
-  }, [searchParams]);
 
   return (
     <div
@@ -101,23 +108,23 @@ export default function FilterTab() {
                     const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
                     net.moveTo({
                       position: pos,
-                      scale: 0.2,
                       offset: offset,
                       animation: {
                         duration: 800,
                       },
                     });
                     net.selectNodes([targetNodeId]);
-                    setTimeout(() => {
-                      net.focus(targetNodeId, {
-                        scale: 0.5,
-                        offset,
-                        animation: {
-                          duration: 800,
-                        },
-                      });
-                    }, 1500);
-                  } catch (e) {}
+                    setMultiSelectNodes(
+                      nodes.filter((v_: INode) => v_.id == v.id),
+                    );
+                    const { pathEdges, pathNodes } =
+                      retrieve_path_nodes_edges(targetNodeId);
+                    setSelectedNodes(
+                      nodes.filter((v: INode) => pathNodes.includes(v.id)),
+                    );
+                    console.log(pathEdges);
+                    trace_node_path_with_color(pathEdges, net);
+                  } catch (err) {}
                 }
               }}
             >

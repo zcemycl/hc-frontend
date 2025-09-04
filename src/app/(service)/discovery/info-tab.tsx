@@ -38,7 +38,6 @@ export default function InfoTab() {
               onClick={(e) => {
                 e.preventDefault();
                 if (visJsRef.current) {
-                  net.releaseNode();
                   const targetNodeId = selectedNodes.filter(
                     (x: INode) => x.id === v.id,
                   )[0].id;
@@ -50,21 +49,11 @@ export default function InfoTab() {
                   const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
                   net.moveTo({
                     position: pos,
-                    scale: 0.2,
                     offset: offset,
                     animation: {
                       duration: 800,
                     },
                   });
-                  setTimeout(() => {
-                    net.focus(targetNodeId, {
-                      scale: 0.5,
-                      offset,
-                      animation: {
-                        duration: 800,
-                      },
-                    });
-                  }, 1500);
                 }
               }}
             >

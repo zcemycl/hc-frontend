@@ -1,4 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
+import { ApiResult } from "./api";
+
+export type IFdaSecAvailVers = Record<string, string[] | null>;
 
 export interface IFdaVersions {
   fdalabel: string;
@@ -51,6 +54,7 @@ export interface IClinicalTrialTable extends ITableNoHead {}
 export interface IDrugInteraction extends IBaseTitleContent {}
 
 export interface ITherapeuticArea {
+  id: string;
   name: string;
   path: string;
 }
@@ -109,3 +113,11 @@ export interface IUnAnnotatedAETable {
 export interface ITherapeuticAreaGroupTables {
   [key: string]: IUnAnnotatedAETable[];
 }
+
+// API Result interfaces
+export interface FdalabelsResult extends ApiResult<IFdaLabel[]> {}
+export interface FdalabelHistoryResult extends ApiResult<IFdaLabelHistory> {}
+export interface CompareAETableResult extends ApiResult<ICompareAETable> {}
+export interface FdaSecAvailVersResult extends ApiResult<IFdaSecAvailVers> {}
+export interface FdaScrapeVersRes extends ApiResult<string[]> {}
+export interface FdalabelCountResult extends ApiResult<number> {}

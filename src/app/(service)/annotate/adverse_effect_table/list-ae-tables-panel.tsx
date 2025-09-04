@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 
 export default function ListAETablesPanel() {
   const router = useRouter();
-  const { setIsLoading } = useLoader();
   const {
     tableData,
     tabName,
@@ -59,7 +58,6 @@ export default function ListAETablesPanel() {
                     }
                     onClick={(e) => {
                       e.preventDefault();
-                      setIsLoading(true);
                       const params = new URLSearchParams();
                       params.append("tab", tabName);
                       // params.append("version", version);

@@ -1,23 +1,28 @@
 import { SearchBar, TypographyH2 } from "@/components";
-import { DEFAULT_FDALABEL_VERSIONS, SearchQueryTypeEnum } from "@/constants";
-import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
+import { SearchQueryTypeEnum } from "@/constants";
+import {
+  FdaVersionsContext,
+  SearchSupportContext,
+  useAuth,
+  useLoader,
+} from "@/contexts";
 import { useContext, useMemo } from "react";
 import { SortByDropdown } from "./SortByDropdown";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
-import { IFdaVersions } from "@/types";
 import { FdalabelFetchService } from "@/services";
 import { useRouter } from "next/navigation";
+import { useApiHandler } from "@/hooks";
 
 export default function ComplexSearchBar() {
   const router = useRouter();
   const { setIsAuthenticated, credentials, userId } = useAuth();
+  const { handleResponse } = useApiHandler();
   const { versions } = useContext(FdaVersionsContext);
   const {
     query,
     setQuery,
     queryType,
     setTopN,
-    setIsLoading,
     sortBy,
     setSortBy,
     setQueryType,
@@ -32,6 +37,7 @@ export default function ComplexSearchBar() {
     setIdsToCompare,
     search_query_by_type,
   } = useContext(SearchSupportContext);
+  const { withLoading } = useLoader();
 
   const fdaservice = useMemo(
     () =>
@@ -112,7 +118,6 @@ export default function ComplexSearchBar() {
           data-testid="search-btn"
           onClick={async (e) => {
             e.preventDefault();
-            setIsLoading(true);
             setPageN(0);
             setDisplayDataIndex(null);
             setSetIdsToCompare(new Set());
@@ -121,17 +126,18 @@ export default function ComplexSearchBar() {
               setIsAuthenticated(false);
               router.push("/logout");
             }
-            const resp = await search_query_by_type(
-              fdaservice,
-              query,
-              queryType,
-              pageN,
-              nPerPage,
-              sortBy,
-              versions,
+            const resp = await withLoading(() =>
+              search_query_by_type(
+                fdaservice,
+                query,
+                queryType,
+                pageN,
+                nPerPage,
+                sortBy,
+                versions,
+              ),
             );
             console.log(resp);
-            setIsLoading(false);
           }}
           className="text-white bg-indigo-500 border-0 py-2 px-6 
         focus:outline-none hover:bg-indigo-600 rounded text-lg w-full"
@@ -142,21 +148,22 @@ export default function ComplexSearchBar() {
           <button
             onClick={async (e) => {
               e.preventDefault();
-              setIsLoading(true);
               console.log(setIdsToCompare);
               if (credentials.length === 0) {
                 setIsAuthenticated(false);
                 router.push("/logout");
               }
-              const resp = await fdaservice.handleAETablesComparison(
-                setIdsToCompare,
-                query,
-                queryType,
-                versions,
+              const resp = await withLoading(() =>
+                fdaservice.handleAETablesComparison(
+                  setIdsToCompare,
+                  query,
+                  queryType,
+                  versions,
+                ),
               );
-              setCompareTable(resp);
+              handleResponse(resp);
+              if (resp.success) setCompareTable(resp.data ?? { table: [] });
               console.log(resp);
-              setIsLoading(false);
             }}
             className={`text-black bg-green-600 
             border-0
