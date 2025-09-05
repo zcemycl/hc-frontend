@@ -8,6 +8,8 @@ import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 import { useDiscoveryGraph } from "@/hooks";
 import { ToggleBtnList } from "./toggle-btn-list";
+import { SearchFilter } from "./search-filter";
+import { NoFilterTextBox } from "./no-filter-text-box";
 
 export default function FilterTab() {
   const {
@@ -87,23 +89,11 @@ export default function FilterTab() {
                 bg-amber-500
                 "
       >
-        <div
-          className="flex flex-row justify-start
-                        text-left content-start items-start w-full"
-        >
-          <span className="text-black font-bold">Keyword</span>
-        </div>
-
-        <input
-          value={term}
-          onChange={(e) => {
-            e.preventDefault();
-            setTerm(e.target.value.toLowerCase());
+        <SearchFilter
+          {...{
+            term,
+            setTerm,
           }}
-          className={`w-full
-            p-2 bg-slate-100 text-black rounded-lg
-            `}
-          type="input"
         />
       </div>
       <hr className="mb-2" />
@@ -160,14 +150,13 @@ export default function FilterTab() {
             >
               <p
                 className="font-bold
-                                items-center content-center align-middle"
+                    items-center content-center align-middle"
               >
                 Level {v.level}: <span id={`label-${v.id}`}>{v.label} </span>
                 <button
-                  className={`content-center items-center align-middle
-                                  rounded-md ${switch_color_node(v.group!)}
-                                  z-10
-                                  h-full p-1 ${switch_hover_color_node(v.group!)}`}
+                  className={`content-center items-center align-middle z-10
+                        rounded-md ${switch_color_node(v.group!)}
+                        h-full p-1 ${switch_hover_color_node(v.group!)}`}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -184,12 +173,7 @@ export default function FilterTab() {
           );
         })
       ) : (
-        <div
-          className="font-bold bg-amber-500 
-                              text-black rounded-lg p-2"
-        >
-          No Keyword Filter...
-        </div>
+        <NoFilterTextBox />
       )}
     </div>
   );

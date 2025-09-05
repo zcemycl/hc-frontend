@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { switch_color_node, switch_hover_color_node } from "../../utils";
 
 interface IToggleOptions {
   key: string;
@@ -27,8 +27,16 @@ export const ToggleBtnList = ({
               clickCallBack(pair.key);
             }}
             className={`p-2 rounded-lg text-black
-                            font-bold
-                            ${defaultSelectedKeys.includes(pair.key) ? "bg-amber-500 hover:bg-amber-300" : "bg-slate-300"}`}
+                font-bold 
+                ${
+                  defaultSelectedKeys.includes(pair.key)
+                    ? switch_color_node(pair.key) +
+                      " " +
+                      switch_hover_color_node(pair.key) +
+                      " " +
+                      "shadow-black shadow-md"
+                    : "bg-slate-300 hover:shadow-md hover:shadow-black"
+                }`}
           >
             {pair.displayName}
           </button>
