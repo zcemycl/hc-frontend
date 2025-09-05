@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { DiscoveryContext } from "@/contexts";
 import { INode } from "@/types";
 import { GraphTabEnum } from "@/constants";
-import { switch_color_node, switch_hover_color_node } from "./utils";
+import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
 
 export default function InfoTab() {

@@ -2,7 +2,7 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
 import { useContext, useMemo, useRef } from "react";
-import { switch_color_node, switch_hover_color_node } from "./utils";
+import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
