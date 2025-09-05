@@ -1,5 +1,5 @@
 "use client";
-import { GraphTabEnum, graph_node_bg_color_enum } from "@/constants";
+import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
