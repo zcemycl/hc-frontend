@@ -62,7 +62,7 @@ export default function FilterTab() {
           toggleOptions={[
             {
               key: "p",
-              displayName: "Product",
+              displayName: "Drug",
             },
             {
               key: "ta",
