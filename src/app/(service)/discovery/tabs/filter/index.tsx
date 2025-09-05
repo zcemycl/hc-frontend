@@ -1,12 +1,13 @@
 "use client";
-import { GraphTabEnum } from "@/constants";
+import { GraphTabEnum, graph_node_bg_color_enum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode } from "@/types";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 import { useDiscoveryGraph } from "@/hooks";
+import { ToggleBtnList } from "./toggle-btn-list";
 
 export default function FilterTab() {
   const {
@@ -24,12 +25,18 @@ export default function FilterTab() {
     useDiscoveryGraph();
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
+  const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p", "ta"]);
+
+  useEffect(() => {
+    console.log(nodes);
+  }, [nodes]);
 
   const filterNodes = useMemo(() => {
     return nodes
       .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
+      .filter((v: INode) => toggleNodeTypeList.includes(v.group as string))
       .slice(0, 5);
-  }, [term, nodes, net]);
+  }, [term, nodes, net, toggleNodeTypeList]);
 
   return (
     <div
@@ -49,6 +56,29 @@ export default function FilterTab() {
                 `}
     >
       <h2 className="leading text-slate-300 font-bold">Filters</h2>
+      <div className="flex flex-row space-x-2">
+        <ToggleBtnList
+          defaultSelectedKeys={toggleNodeTypeList}
+          toggleOptions={[
+            {
+              key: "p",
+              displayName: "Product",
+            },
+            {
+              key: "ta",
+              displayName: "Therapeutic Area",
+            },
+          ]}
+          clickCallBack={(key: string) => {
+            if (toggleNodeTypeList.includes(key)) {
+              setToggleNodeTypeList((prev) => prev.filter((v) => v != key));
+            } else {
+              setToggleNodeTypeList((prev) => [...prev, key]);
+            }
+          }}
+        />
+      </div>
+
       <div
         className="flex flex-col space-y-1
                 justify-between
