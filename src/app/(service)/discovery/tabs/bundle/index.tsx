@@ -20,6 +20,7 @@ import {
 } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 import { useApiHandler, useDiscoveryGraph } from "@/hooks";
+import { switch_color_node, switch_hover_color_node } from "../../utils";
 
 export default function BundleTab() {
   const { userId, isLoadingAuth, credentials } = useAuth();
@@ -108,11 +109,12 @@ export default function BundleTab() {
             return (
               <div
                 key={`${v.label}-${v.group}`}
-                className="flex items-center rounded-lg
-                  truncate overflow-x-auto
-                  bg-purple-400 hover:bg-purple-200
+                className={`flex items-center rounded-lg
+                  truncate overflow-x-auto relative
+                  ${switch_color_node(v.group as string)}
+                  ${switch_hover_color_node(v.group as string)}
                   cursor-pointer
-                  h-8 px-3 py-1 relative"
+                  h-8 px-3 py-1`}
                 onClick={(e) => {
                   e.preventDefault();
                   const targetNodeId = v.id;
@@ -152,12 +154,6 @@ export default function BundleTab() {
                     let newMultiSelect = structuredClone(multiSelectNodes);
                     newMultiSelect.splice(idx, 1);
                     setMultiSelectNodes([...newMultiSelect]);
-                    // console.log(dNodes.get(v.id));
-                    // dNodes.update({
-                    //   id: v.id,
-                    //   label: 'hello',
-                    // })
-                    // net.unselectAll();
                     net.selectNodes(newMultiSelect.map((v: INode) => v.id));
                   }}
                 >
