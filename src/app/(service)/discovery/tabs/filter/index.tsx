@@ -1,14 +1,7 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode } from "@/types";
 import { useSearchParams } from "next/navigation";
@@ -36,12 +29,8 @@ export default function FilterTab() {
   const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p", "ta"]);
+  const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p"]);
   const nPerPage = 5;
-
-  useEffect(() => {
-    console.log(nodes);
-  }, [nodes]);
 
   const filterNodesByTypeAndTerm = useMemo(() => {
     return nodes
