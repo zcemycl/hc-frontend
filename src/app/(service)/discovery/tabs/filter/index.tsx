@@ -28,6 +28,7 @@ export default function FilterTab() {
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
   const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p", "ta"]);
+  const nPerPage = 5;
 
   useEffect(() => {
     console.log(nodes);
@@ -39,6 +40,10 @@ export default function FilterTab() {
       .filter((v: INode) => toggleNodeTypeList.includes(v.group as string))
       .slice(0, 5);
   }, [term, nodes, net, toggleNodeTypeList]);
+
+  const filterNodesNumber = useMemo(() => {
+    return filterNodes.length;
+  }, [filterNodes]);
 
   return (
     <div
@@ -161,6 +166,11 @@ export default function FilterTab() {
       ) : (
         <NoFilterTextBox />
       )}
+      <div className="flex flex-row space-x-2 w-full justify-center">
+        {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => {
+          return <button>{i}</button>;
+        })}
+      </div>
     </div>
   );
 }
