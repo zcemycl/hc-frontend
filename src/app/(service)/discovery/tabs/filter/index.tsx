@@ -115,6 +115,7 @@ export default function FilterTab() {
         pageN={pageN}
         nPerPage={nPerPage}
         setPageN={setPageN}
+        maxVisible={7}
       />
 
       {filterNodes.length !== 0 ? (

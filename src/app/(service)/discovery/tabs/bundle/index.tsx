@@ -3,7 +3,7 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   deleteBundleByIdv2,
   fetchBundlesByUserIdv2,
@@ -21,9 +21,10 @@ import {
 import { useRouter } from "next/navigation";
 import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
+import { PaginationBar2 } from "@/components";
 
 export default function BundleTab() {
-  const { userId, isLoadingAuth, credentials } = useAuth();
+  const { userId } = useAuth();
   const { handleResponse } = useApiHandler();
   const router = useRouter();
   const { withLoading } = useLoader();
@@ -42,6 +43,7 @@ export default function BundleTab() {
   } = useContext(DiscoveryContext);
   const { retrieve_path_nodes_edges, trace_node_path_with_color } =
     useDiscoveryGraph();
+  const [pageN, setPageN] = useState(0);
 
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
@@ -179,6 +181,7 @@ export default function BundleTab() {
       <div className="w-full flex flex-row justify-start space-x-2 align-middle">
         <h2 className="leading text-slate-300 font-bold">Bundles</h2>
         <button
+          className="w-5 h-5 rounded-full"
           onClick={(e) => {
             e.preventDefault();
             setOpenBundleModal(true);
@@ -333,6 +336,13 @@ export default function BundleTab() {
           );
         })
       )}
+      <PaginationBar2
+        topN={1000}
+        pageN={pageN}
+        setPageN={setPageN}
+        nPerPage={5}
+        maxVisible={5}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ interface PaginationProps {
   pageN: number;
   nPerPage: number;
   setPageN: (i: number) => void;
+  maxVisible?: number;
 }
 
 function getPagination(
@@ -82,9 +83,10 @@ const PaginationBar2: FC<PaginationProps> = ({
   pageN,
   nPerPage,
   setPageN,
+  maxVisible,
 }) => {
   const maxNPages = Math.ceil(topN / nPerPage);
-  const availableNs = getPagination(maxNPages, pageN, 7);
+  const availableNs = getPagination(maxNPages, pageN, maxVisible);
   const currentPageIndex = availableNs.indexOf(pageN);
 
   const pageBtnRef = useRef<(HTMLButtonElement | null)[]>([]);
