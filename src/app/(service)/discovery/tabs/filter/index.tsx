@@ -1,12 +1,16 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useMemo, useRef } from "react";
-import { switch_color_node, switch_hover_color_node } from "./utils";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode } from "@/types";
-import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useSearchParams } from "next/navigation";
 import { useDiscoveryGraph } from "@/hooks";
+import { ToggleBtnList } from "./toggle-btn-list";
+import { SearchFilter } from "./search-filter";
+import { NoFilterTextBox } from "./no-filter-text-box";
+import { SideCopyBtn } from "./side-copy-btn";
+import { PaginationBar2 } from "@/components";
 
 export default function FilterTab() {
   const {
@@ -22,14 +26,32 @@ export default function FilterTab() {
   } = useContext(DiscoveryContext);
   const { retrieve_path_nodes_edges, trace_node_path_with_color } =
     useDiscoveryGraph();
+  const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
+  const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p"]);
+  const nPerPage = 5;
 
-  const filterNodes = useMemo(() => {
+  const filterNodesByTypeAndTerm = useMemo(() => {
     return nodes
       .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
-      .slice(0, 5);
-  }, [term, nodes, net]);
+      .filter((v: INode) => toggleNodeTypeList.includes(v.group as string));
+  }, [term, toggleNodeTypeList, nodes, net]);
+
+  const filterNodesByTypeAndTermNumber = useMemo(() => {
+    return filterNodesByTypeAndTerm.length;
+  }, [filterNodesByTypeAndTerm]);
+
+  const filterNodes = useMemo(() => {
+    return filterNodesByTypeAndTerm.slice(
+      pageN * nPerPage,
+      (pageN + 1) * nPerPage,
+    );
+  }, [filterNodesByTypeAndTerm, pageN]);
+
+  useEffect(() => {
+    setPageN(0);
+  }, [filterNodesByTypeAndTermNumber]);
 
   return (
     <div
@@ -49,6 +71,29 @@ export default function FilterTab() {
                 `}
     >
       <h2 className="leading text-slate-300 font-bold">Filters</h2>
+      <div className="flex flex-row space-x-2">
+        <ToggleBtnList
+          defaultSelectedKeys={toggleNodeTypeList}
+          toggleOptions={[
+            {
+              key: "p",
+              displayName: "Drug",
+            },
+            {
+              key: "ta",
+              displayName: "Therapeutic Area",
+            },
+          ]}
+          clickCallBack={(key: string) => {
+            if (toggleNodeTypeList.includes(key)) {
+              setToggleNodeTypeList((prev) => prev.filter((v) => v != key));
+            } else {
+              setToggleNodeTypeList((prev) => [...prev, key]);
+            }
+          }}
+        />
+      </div>
+
       <div
         className="flex flex-col space-y-1
                 justify-between
@@ -57,26 +102,21 @@ export default function FilterTab() {
                 bg-amber-500
                 "
       >
-        <div
-          className="flex flex-row justify-start
-                        text-left content-start items-start w-full"
-        >
-          <span className="text-black font-bold">Keyword</span>
-        </div>
-
-        <input
-          value={term}
-          onChange={(e) => {
-            e.preventDefault();
-            setTerm(e.target.value.toLowerCase());
+        <SearchFilter
+          {...{
+            term,
+            setTerm,
           }}
-          className={`w-full
-            p-2 bg-slate-100 text-black rounded-lg
-            `}
-          type="input"
         />
       </div>
       <hr className="mb-2" />
+      <PaginationBar2
+        topN={filterNodesByTypeAndTermNumber}
+        pageN={pageN}
+        nPerPage={nPerPage}
+        setPageN={setPageN}
+      />
+
       {filterNodes.length !== 0 ? (
         filterNodes.map((v: INode) => {
           return (
@@ -130,36 +170,16 @@ export default function FilterTab() {
             >
               <p
                 className="font-bold
-                                items-center content-center align-middle"
+                    items-center content-center align-middle"
               >
                 Level {v.level}: <span id={`label-${v.id}`}>{v.label} </span>
-                <button
-                  className={`content-center items-center align-middle
-                                  rounded-md ${switch_color_node(v.group!)}
-                                  z-10
-                                  h-full p-1 ${switch_hover_color_node(v.group!)}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const spanEle = document.getElementById(
-                      `label-${v.id}`,
-                    )?.innerHTML;
-                    navigator.clipboard.writeText(spanEle?.trim() as string);
-                  }}
-                >
-                  <img src={COPY_ICON_URI} alt="copy" />
-                </button>
+                <SideCopyBtn v={v} />
               </p>
             </div>
           );
         })
       ) : (
-        <div
-          className="font-bold bg-amber-500 
-                              text-black rounded-lg p-2"
-        >
-          No Keyword Filter...
-        </div>
+        <NoFilterTextBox />
       )}
     </div>
   );
