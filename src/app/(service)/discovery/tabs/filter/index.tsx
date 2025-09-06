@@ -1,7 +1,14 @@
 "use client";
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode } from "@/types";
 import { useSearchParams } from "next/navigation";
@@ -10,6 +17,7 @@ import { ToggleBtnList } from "./toggle-btn-list";
 import { SearchFilter } from "./search-filter";
 import { NoFilterTextBox } from "./no-filter-text-box";
 import { SideCopyBtn } from "./side-copy-btn";
+import { PaginationBar2 } from "@/components";
 
 export default function FilterTab() {
   const {
@@ -25,6 +33,7 @@ export default function FilterTab() {
   } = useContext(DiscoveryContext);
   const { retrieve_path_nodes_edges, trace_node_path_with_color } =
     useDiscoveryGraph();
+  const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
   const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p", "ta"]);
@@ -34,16 +43,26 @@ export default function FilterTab() {
     console.log(nodes);
   }, [nodes]);
 
-  const filterNodes = useMemo(() => {
+  const filterNodesByTypeAndTerm = useMemo(() => {
     return nodes
       .filter((v: INode) => v["label"].toLowerCase().trim().includes(term))
-      .filter((v: INode) => toggleNodeTypeList.includes(v.group as string))
-      .slice(0, 5);
-  }, [term, nodes, net, toggleNodeTypeList]);
+      .filter((v: INode) => toggleNodeTypeList.includes(v.group as string));
+  }, [term, toggleNodeTypeList, nodes, net]);
 
-  const filterNodesNumber = useMemo(() => {
-    return filterNodes.length;
-  }, [filterNodes]);
+  const filterNodesByTypeAndTermNumber = useMemo(() => {
+    return filterNodesByTypeAndTerm.length;
+  }, [filterNodesByTypeAndTerm]);
+
+  const filterNodes = useMemo(() => {
+    return filterNodesByTypeAndTerm.slice(
+      pageN * nPerPage,
+      (pageN + 1) * nPerPage,
+    );
+  }, [filterNodesByTypeAndTerm, pageN]);
+
+  useEffect(() => {
+    setPageN(0);
+  }, [filterNodesByTypeAndTermNumber]);
 
   return (
     <div
@@ -102,6 +121,13 @@ export default function FilterTab() {
         />
       </div>
       <hr className="mb-2" />
+      <PaginationBar2
+        topN={filterNodesByTypeAndTermNumber}
+        pageN={pageN}
+        nPerPage={nPerPage}
+        setPageN={setPageN}
+      />
+
       {filterNodes.length !== 0 ? (
         filterNodes.map((v: INode) => {
           return (
@@ -166,11 +192,6 @@ export default function FilterTab() {
       ) : (
         <NoFilterTextBox />
       )}
-      <div className="flex flex-row space-x-2 w-full justify-center">
-        {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => {
-          return <button>{i}</button>;
-        })}
-      </div>
     </div>
   );
 }
