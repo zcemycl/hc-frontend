@@ -1,15 +1,10 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
+import { DiscoveryContext, useAuth } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import {
-  deleteBundleByIdv2,
-  fetchBundlesByUserIdv2,
-  fetchBundlesCountByUserIdv2,
-  patchBundleByIdv2,
-} from "@/http/backend";
+import { useContext, useEffect, useMemo } from "react";
+import { deleteBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
 import { ARROW_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 import { useApiHandler, useDiscoveryGraph } from "@/hooks";
