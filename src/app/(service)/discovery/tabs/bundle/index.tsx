@@ -154,13 +154,7 @@ export default function BundleTab() {
             add_callback: () => setOpenBundleModal(true),
           }}
         />
-        <PaginationBar2
-          topN={bundlesCount}
-          pageN={pageN}
-          setPageN={setPageN}
-          nPerPage={nPerPage}
-          maxVisible={5}
-        />
+
         {bundles.length === 0 ? (
           <NoBundleBox />
         ) : (
@@ -257,6 +251,13 @@ export default function BundleTab() {
             );
           })
         )}
+        <PaginationBar2
+          topN={bundlesCount}
+          pageN={pageN}
+          setPageN={setPageN}
+          nPerPage={nPerPage}
+          maxVisible={5}
+        />
       </div>
     </LoaderComponentWrapper>
   );

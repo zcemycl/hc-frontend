@@ -108,13 +108,6 @@ export default function FilterTab() {
         />
       </div>
       <hr className="mb-2" />
-      <PaginationBar2
-        topN={filterNodesByTypeAndTermNumber}
-        pageN={pageN}
-        nPerPage={nPerPage}
-        setPageN={setPageN}
-        maxVisible={7}
-      />
 
       {filterNodes.length !== 0 ? (
         filterNodes.map((v: INode) => {
@@ -185,6 +178,13 @@ export default function FilterTab() {
       ) : (
         <NoFilterTextBox />
       )}
+      <PaginationBar2
+        topN={filterNodesByTypeAndTermNumber}
+        pageN={pageN}
+        nPerPage={nPerPage}
+        setPageN={setPageN}
+        maxVisible={7}
+      />
     </div>
   );
 }
