@@ -64,7 +64,6 @@ const useDiscoveryGraph = () => {
   const trace_node_callback = (nodeid: number, net_: Network) => {
     const { pathEdges, pathNodes } = retrieve_path_nodes_edges(nodeid);
     setSelectedNodes(nodes.filter((v: INode) => pathNodes.includes(v.id)));
-    console.log(pathEdges);
     trace_node_path_with_color(pathEdges, net_);
   };
 

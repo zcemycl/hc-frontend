@@ -7,6 +7,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   deleteBundleByIdv2,
   fetchBundlesByUserIdv2,
+  fetchBundlesCountByUserIdv2,
   patchBundleByIdv2,
 } from "@/http/backend";
 import { ARROW_ICON_URI } from "@/icons/bootstrap";
@@ -24,14 +25,36 @@ import {
   NoCandidateBox,
 } from "./components";
 
+function adjustPageNAfterDelete({
+  prevPageN,
+  totalBundlesAfterDelete,
+  nPerPage,
+}: {
+  prevPageN: number;
+  totalBundlesAfterDelete: number;
+  nPerPage: number;
+}): number {
+  const totalPages = Math.ceil(totalBundlesAfterDelete / nPerPage);
+
+  // If no bundles left, reset to first page
+  if (totalBundlesAfterDelete === 0) return 0;
+
+  // Last valid page index
+  const lastPage = totalPages - 1;
+
+  // If current page becomes empty after delete, step back
+  if (prevPageN > lastPage) {
+    return lastPage;
+  }
+
+  return prevPageN;
+}
+
 export default function BundleTab() {
   const { userId } = useAuth();
   const { handleResponse } = useApiHandler();
   const router = useRouter();
-  const [loadingCountLocal, setLoadingCountLocal] = useState(0);
-  const isLoadingLocal = loadingCountLocal > 0;
 
-  const { withGenericLoading } = useLoader();
   const {
     tab,
     multiSelectNodes,
@@ -39,34 +62,26 @@ export default function BundleTab() {
     net,
     setOpenBundleModal,
     bundles,
-    setBundles,
+    bundlesCount,
+    nPerPage,
+    pageNBundles: pageN,
+    setPageNBundles: setPageN,
+    isLoadingLocal,
+    withLoadingLocal,
+    fetchBundlesCallback,
   } = useContext(DiscoveryContext);
   const { move_network, trace_node_callback } = useDiscoveryGraph();
-  const [pageN, setPageN] = useState(0);
-
-  const withLoadingLocal = async <T,>(fn: () => Promise<T>): Promise<T> => {
-    return withGenericLoading(fn, setLoadingCountLocal);
-  };
 
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");
   }, [multiSelectNodes]);
-
-  const fetchBundlesCallback = useCallback(async () => {
-    const tmpBundlesRes = await withLoadingLocal(() =>
-      fetchBundlesByUserIdv2(userId as number, 0, 5),
-    );
-    handleResponse(tmpBundlesRes);
-    console.log(tmpBundlesRes.data ?? []);
-    setBundles(tmpBundlesRes.data ?? []);
-  }, [userId]);
 
   useEffect(() => {
     async function getData() {
       await fetchBundlesCallback();
     }
     getData();
-  }, []);
+  }, [pageN]);
 
   return (
     <LoaderComponentWrapper genericIsLoading={isLoadingLocal}>
@@ -144,11 +159,17 @@ export default function BundleTab() {
             add_callback: () => setOpenBundleModal(true),
           }}
         />
-
+        <PaginationBar2
+          topN={bundlesCount}
+          pageN={pageN}
+          setPageN={setPageN}
+          nPerPage={nPerPage}
+          maxVisible={5}
+        />
         {bundles.length === 0 ? (
           <NoBundleBox />
         ) : (
-          bundles.map((v: IBundle) => {
+          bundles.map((v: IBundle, bid: number) => {
             return (
               <div
                 key={v.name}
@@ -187,6 +208,13 @@ export default function BundleTab() {
                       );
                       handleResponse(deleteBundleResult);
                       if (!deleteBundleResult.success) return;
+                      setPageN((prevPageN: number) =>
+                        adjustPageNAfterDelete({
+                          prevPageN,
+                          totalBundlesAfterDelete: bundlesCount - 1,
+                          nPerPage,
+                        }),
+                      );
                       await fetchBundlesCallback();
                     },
                   }}
@@ -234,13 +262,6 @@ export default function BundleTab() {
             );
           })
         )}
-        <PaginationBar2
-          topN={1000}
-          pageN={pageN}
-          setPageN={setPageN}
-          nPerPage={5}
-          maxVisible={5}
-        />
       </div>
     </LoaderComponentWrapper>
   );

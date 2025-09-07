@@ -22,13 +22,13 @@ export default function FilterTab() {
     setTerm,
     multiSelectNodes,
     setMultiSelectNodes,
+    nPerPage,
   } = useContext(DiscoveryContext);
   const { move_network, trace_node_callback } = useDiscoveryGraph();
   const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
   const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p"]);
-  const nPerPage = 5;
 
   const filterNodesByTypeAndTerm = useMemo(() => {
     return nodes

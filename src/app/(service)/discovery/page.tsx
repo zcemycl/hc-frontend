@@ -1,8 +1,8 @@
 "use client";
 
-import { DiscoveryContext, useAuth } from "@/contexts";
+import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import VisPanel from "./vis-panel";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IEdge, INode, IFlagAttrs, IBundleConfig, IBundle } from "@/types";
 import { Modal, ProtectedRoute } from "@/components";
 import {
@@ -14,10 +14,15 @@ import {
 import { Network } from "vis-network";
 import { useDbsHealth, useApiHandler } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
-import { createBundleByUserIdv2, fetchBundlesByUserIdv2 } from "@/http/backend";
+import {
+  createBundleByUserIdv2,
+  fetchBundlesByUserIdv2,
+  fetchBundlesCountByUserIdv2,
+} from "@/http/backend";
 import { useSearchParams } from "next/navigation";
 
 export default function Discovery() {
+  const { withGenericLoading } = useLoader();
   const { handleResponse } = useApiHandler();
   const searchParams = useSearchParams();
   const { userId } = useAuth();
@@ -30,6 +35,9 @@ export default function Discovery() {
   const [openToolBar, setOpenToolBar] = useState<boolean>(
     searchParams.get("therapeutic_area") !== undefined,
   );
+  const nPerPage = 5;
+  const [loadingCountLocal, setLoadingCountLocal] = useState(0);
+  const isLoadingLocal = loadingCountLocal > 0;
   // bundle tab
   const [openBundleModal, setOpenBundleModal] = useState<boolean>(false);
   const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
@@ -37,6 +45,7 @@ export default function Discovery() {
   });
   const [bundles, setBundles] = useState<IBundle[]>([]);
   const [bundlesCount, setBundlesCount] = useState<number>(0);
+  const [pageNBundles, setPageNBundles] = useState(0);
   // filter search term
   const [term, setTerm] = useState<string>(
     searchParams.get("product_name") ?? "",
@@ -78,6 +87,10 @@ export default function Discovery() {
     physics_stabilisation: true,
   });
 
+  const withLoadingLocal = async <T,>(fn: () => Promise<T>): Promise<T> => {
+    return withGenericLoading(fn, setLoadingCountLocal);
+  };
+
   useEffect(() => {
     if (!net || !visToolBarRef.current) return;
     console.log("recenter... ");
@@ -96,10 +109,29 @@ export default function Discovery() {
     });
   }, [openToolBar]);
 
+  const fetchBundlesCallback = useCallback(async () => {
+    const [tmpBundlesRes, tmpBundlesCount] = await withLoadingLocal(() =>
+      Promise.all([
+        fetchBundlesByUserIdv2(
+          userId as number,
+          nPerPage * pageNBundles,
+          nPerPage,
+        ),
+        fetchBundlesCountByUserIdv2(userId as number),
+      ]),
+    );
+    handleResponse(tmpBundlesRes);
+    setBundles(tmpBundlesRes.data ?? []);
+    handleResponse(tmpBundlesCount);
+    setBundlesCount(tmpBundlesCount.data ?? 0);
+    console.log("bundles", tmpBundlesRes.data ?? [], tmpBundlesCount);
+  }, [userId, pageNBundles]);
+
   return (
     <ProtectedRoute>
       <DiscoveryContext.Provider
         value={{
+          nPerPage,
           tab,
           setTab,
           openToolBar,
@@ -135,11 +167,17 @@ export default function Discovery() {
           setBundles,
           bundlesCount,
           setBundlesCount,
+          pageNBundles,
+          setPageNBundles,
           term,
           setTerm,
           path,
           setPath,
           initTAId,
+          loadingCountLocal,
+          isLoadingLocal,
+          fetchBundlesCallback,
+          withLoadingLocal,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
@@ -223,13 +261,7 @@ export default function Discovery() {
                       );
                       handleResponse(createBundleRes);
                       if (!createBundleRes.success) return;
-                      const tmpBundlesRes = await fetchBundlesByUserIdv2(
-                        userId as number,
-                        0,
-                        5,
-                      );
-                      handleResponse(tmpBundlesRes);
-                      setBundles(tmpBundlesRes.data ?? []);
+                      await fetchBundlesCallback();
                       setBundleConfig({ ...defaultBundleConfig });
                       setOpenBundleModal(false);
                     }}
