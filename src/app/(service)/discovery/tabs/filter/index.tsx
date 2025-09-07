@@ -13,19 +13,9 @@ import { SideCopyBtn } from "./side-copy-btn";
 import { PaginationBar2 } from "@/components";
 
 export default function FilterTab() {
-  const {
-    tab,
-    visJsRef,
-    net,
-    nodes,
-    visToolBarRef,
-    term,
-    setTerm,
-    setSelectedNodes,
-    setMultiSelectNodes,
-  } = useContext(DiscoveryContext);
-  const { retrieve_path_nodes_edges, trace_node_path_with_color } =
-    useDiscoveryGraph();
+  const { tab, visJsRef, net, nodes, term, setTerm, setMultiSelectNodes } =
+    useContext(DiscoveryContext);
+  const { move_network, trace_node_callback } = useDiscoveryGraph();
   const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -141,30 +131,12 @@ export default function FilterTab() {
                     const targetNodeId = filterNodes.filter(
                       (x: INode) => x.id === v.id,
                     )[0].id;
-                    //   const pos = net.getViewPosition();
-                    const pos = net.getPositions([targetNodeId])[targetNodeId];
-                    const { width: offsetx, height: offsety } = (
-                      visToolBarRef.current as any
-                    ).getBoundingClientRect();
-                    const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
-                    net.moveTo({
-                      position: pos,
-                      offset: offset,
-                      animation: {
-                        duration: 800,
-                      },
-                    });
+                    move_network(net, targetNodeId);
                     net.selectNodes([targetNodeId]);
                     setMultiSelectNodes(
                       nodes.filter((v_: INode) => v_.id == v.id),
                     );
-                    const { pathEdges, pathNodes } =
-                      retrieve_path_nodes_edges(targetNodeId);
-                    setSelectedNodes(
-                      nodes.filter((v: INode) => pathNodes.includes(v.id)),
-                    );
-                    console.log(pathEdges);
-                    trace_node_path_with_color(pathEdges, net);
+                    trace_node_callback(targetNodeId, net);
                   } catch (err) {}
                 }
               }}

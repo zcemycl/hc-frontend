@@ -32,17 +32,12 @@ export default function BundleTab() {
     tab,
     multiSelectNodes,
     setMultiSelectNodes,
-    visToolBarRef,
     net,
-    openBundleModal,
     setOpenBundleModal,
     bundles,
     setBundles,
-    nodes,
-    setSelectedNodes,
   } = useContext(DiscoveryContext);
-  const { retrieve_path_nodes_edges, trace_node_path_with_color } =
-    useDiscoveryGraph();
+  const { move_network, trace_node_callback } = useDiscoveryGraph();
   const [pageN, setPageN] = useState(0);
 
   const nodesToBundle = useMemo(() => {
@@ -120,23 +115,8 @@ export default function BundleTab() {
                 onClick={(e) => {
                   e.preventDefault();
                   const targetNodeId = v.id;
-                  const pos = net.getPositions([targetNodeId])[targetNodeId];
-                  const { width: offsetx, height: offsety } = (
-                    visToolBarRef.current as any
-                  ).getBoundingClientRect();
-                  const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
-                  net.moveTo({
-                    position: pos,
-                    offset: offset,
-                    animation: true,
-                  });
-                  const { pathEdges, pathNodes } =
-                    retrieve_path_nodes_edges(targetNodeId);
-                  setSelectedNodes(
-                    nodes.filter((v: INode) => pathNodes.includes(v.id)),
-                  );
-                  console.log(pathEdges);
-                  trace_node_path_with_color(pathEdges, net);
+                  move_network(net, targetNodeId);
+                  trace_node_callback(targetNodeId, net);
                 }}
               >
                 <div

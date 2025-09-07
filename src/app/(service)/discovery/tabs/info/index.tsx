@@ -4,10 +4,11 @@ import { INode } from "@/types";
 import { GraphTabEnum } from "@/constants";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { COPY_ICON_URI } from "@/icons/bootstrap";
+import { useDiscoveryGraph } from "@/hooks";
 
 export default function InfoTab() {
-  const { selectedNodes, tab, visJsRef, net, visToolBarRef } =
-    useContext(DiscoveryContext);
+  const { selectedNodes, tab, visJsRef, net } = useContext(DiscoveryContext);
+  const { move_network } = useDiscoveryGraph();
   return (
     <div
       className={`absolute
@@ -41,19 +42,7 @@ export default function InfoTab() {
                   const targetNodeId = selectedNodes.filter(
                     (x: INode) => x.id === v.id,
                   )[0].id;
-                  // const pos = net.getViewPosition();
-                  const pos = net.getPositions([targetNodeId])[targetNodeId];
-                  const { width: offsetx, height: offsety } = (
-                    visToolBarRef.current as any
-                  ).getBoundingClientRect();
-                  const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
-                  net.moveTo({
-                    position: pos,
-                    offset: offset,
-                    animation: {
-                      duration: 800,
-                    },
-                  });
+                  move_network(net, targetNodeId);
                 }
               }}
             >
