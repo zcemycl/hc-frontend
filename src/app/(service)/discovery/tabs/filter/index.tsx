@@ -13,8 +13,16 @@ import { SideCopyBtn } from "./side-copy-btn";
 import { PaginationBar2 } from "@/components";
 
 export default function FilterTab() {
-  const { tab, visJsRef, net, nodes, term, setTerm, setMultiSelectNodes } =
-    useContext(DiscoveryContext);
+  const {
+    tab,
+    visJsRef,
+    net,
+    nodes,
+    term,
+    setTerm,
+    multiSelectNodes,
+    setMultiSelectNodes,
+  } = useContext(DiscoveryContext);
   const { move_network, trace_node_callback } = useDiscoveryGraph();
   const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
@@ -125,18 +133,42 @@ export default function FilterTab() {
               key={v.id}
               onClick={(e) => {
                 e.preventDefault();
+                console.log(e.ctrlKey, "weird");
+
                 if (visJsRef.current) {
                   try {
                     // net.releaseNode();
-                    const targetNodeId = filterNodes.filter(
-                      (x: INode) => x.id === v.id,
-                    )[0].id;
-                    move_network(net, targetNodeId);
-                    net.selectNodes([targetNodeId]);
-                    setMultiSelectNodes(
-                      nodes.filter((v_: INode) => v_.id == v.id),
-                    );
-                    trace_node_callback(targetNodeId, net);
+                    const targetNodeId = v.id;
+                    console.log(multiSelectNodes, targetNodeId);
+                    // move_network(net, targetNodeId);
+                    // trace_node_callback(targetNodeId, net);
+                    let _nodes: INode[];
+                    if (!e.ctrlKey) {
+                      _nodes = [v];
+                    } else {
+                      if (
+                        multiSelectNodes.some(
+                          (v_: INode) => v_.id === targetNodeId,
+                        )
+                      ) {
+                        // ctrl + existing node = delete
+                        _nodes = multiSelectNodes.filter(
+                          (n: INode) => n.id !== targetNodeId,
+                        );
+                      } else {
+                        // ctrl + non selected node = add
+                        _nodes = [...multiSelectNodes, v];
+                      }
+                    }
+                    const _nodes_ids = _nodes.map((n: INode) => n.id);
+                    console.log("final: ", _nodes_ids, _nodes);
+                    net.selectNodes(_nodes_ids);
+                    setMultiSelectNodes(_nodes);
+                    if (_nodes_ids.length > 0) {
+                      const tmpL = _nodes_ids.length;
+                      move_network(net, _nodes_ids[tmpL - 1]);
+                      trace_node_callback(_nodes_ids[tmpL - 1], net);
+                    }
                   } catch (err) {}
                 }
               }}

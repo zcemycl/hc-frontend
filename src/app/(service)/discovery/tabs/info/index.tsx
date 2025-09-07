@@ -39,9 +39,7 @@ export default function InfoTab() {
               onClick={(e) => {
                 e.preventDefault();
                 if (visJsRef.current) {
-                  const targetNodeId = selectedNodes.filter(
-                    (x: INode) => x.id === v.id,
-                  )[0].id;
+                  const targetNodeId = v.id;
                   move_network(net, targetNodeId);
                 }
               }}
