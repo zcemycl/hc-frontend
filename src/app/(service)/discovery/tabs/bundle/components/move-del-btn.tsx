@@ -1,5 +1,5 @@
 import { INode } from "@/types";
-import { switch_color_node, switch_hover_color_node } from "../../utils";
+import { switch_color_node, switch_hover_color_node } from "../../../utils";
 import { X_CIRCLE_ICON_URI } from "@/icons/bootstrap";
 
 export const MoveDelBtn = ({
