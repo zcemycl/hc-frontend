@@ -24,6 +24,7 @@ import {
   Spinner,
   ProtectedRoute,
   BackBtn,
+  PaginationBar2,
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "./questions";
@@ -196,30 +197,20 @@ export default function Page({ params }: Readonly<PageProps>) {
             <div className="flex justify-between items-center">
               <div className="flex space-x-2 items-center">
                 {/* slidebar */}
-                {questions.map((q, idx) => {
-                  return (
-                    <span
-                      className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
-                      key={q.displayName}
-                      onClick={async () => {
-                        const tmp = await withLoading(() => storeCache());
-                        setFinalResults(tmp);
-                        setIsCellSelected(structuredClone(resetCellSelected));
-                        setSelectedOption("");
-                        setQuestionIdx(idx);
-                      }}
-                    >
-                      <span
-                        className={`${questionIdx === idx ? "animate-ping" : ""} absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
-                      ></span>
-                      <span
-                        className={`relative inline-flex rounded-full 
-                          hover:bg-sky-50 bg-sky-500 focus:bg-sky-950
-                          ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
-                      ></span>
-                    </span>
-                  );
-                })}
+                <PaginationBar2
+                  {...{
+                    topN: questions.length,
+                    pageN: questionIdx,
+                    nPerPage: 1,
+                    setPageN: async (i) => {
+                      const tmp = await withLoading(() => storeCache());
+                      setFinalResults(tmp);
+                      setIsCellSelected(structuredClone(resetCellSelected));
+                      setSelectedOption("");
+                      setQuestionIdx(i);
+                    },
+                  }}
+                />
                 <button
                   className={`bg-emerald-500 text-white
                   hover:bg-emerald-300 transition
