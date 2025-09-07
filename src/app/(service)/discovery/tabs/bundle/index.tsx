@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { PaginationBar2 } from "@/components";
+import { MoveDelBtn } from "./move-del-btn";
 
 export default function BundleTab() {
   const { userId } = useAuth();
@@ -104,44 +105,24 @@ export default function BundleTab() {
         ) : (
           nodesToBundle.map((v: INode, idx: number) => {
             return (
-              <div
+              <MoveDelBtn
                 key={`${v.label}-${v.group}`}
-                className={`flex items-center rounded-lg
-                  truncate overflow-x-auto relative
-                  ${switch_color_node(v.group as string)}
-                  ${switch_hover_color_node(v.group as string)}
-                  cursor-pointer
-                  h-8 px-3 py-1`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  const targetNodeId = v.id;
-                  move_network(net, targetNodeId);
-                  trace_node_callback(targetNodeId, net);
-                }}
-              >
-                <div
-                  className={`text-black font-medium whitespace-nowrap
-                  transition-transform duration-1000`}
-                >
-                  {v.label}
-                </div>
-                <button
-                  className="flex items-center justify-center
-                      absolute right-0 top-0
-                      rounded-full bg-red-400 
-                      hover:bg-red-500 transition-colors"
-                  aria-label={`Remove ${v.label}`}
-                  onClick={(e) => {
-                    e.preventDefault();
+                {...{
+                  node: v,
+                  idx,
+                  click_callback: (vid) => {
+                    const targetNodeId = vid;
+                    move_network(net, targetNodeId);
+                    trace_node_callback(targetNodeId, net);
+                  },
+                  del_callback: (vid, idx) => {
                     let newMultiSelect = structuredClone(multiSelectNodes);
                     newMultiSelect.splice(idx, 1);
                     setMultiSelectNodes([...newMultiSelect]);
-                    net.selectNodes(newMultiSelect.map((v: INode) => v.id));
-                  }}
-                >
-                  <img src={X_CIRCLE_ICON_URI} />
-                </button>
-              </div>
+                    net.selectNodes(newMultiSelect.map((v: INode) => vid));
+                  },
+                }}
+              />
             );
           })
         )}
