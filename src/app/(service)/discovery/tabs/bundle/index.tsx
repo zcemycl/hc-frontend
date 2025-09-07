@@ -105,15 +105,21 @@ export default function BundleTab() {
                     node: v,
                     idx,
                     click_callback: (vid) => {
-                      const targetNodeId = vid;
-                      move_network(net, targetNodeId);
-                      trace_node_callback(targetNodeId, net);
+                      move_network(net, vid);
+                      trace_node_callback(vid, net);
                     },
                     del_callback: (vid, idx) => {
-                      let newMultiSelect = structuredClone(multiSelectNodes);
-                      newMultiSelect.splice(idx, 1);
+                      const newMultiSelect = structuredClone(
+                        multiSelectNodes,
+                      ).filter((v: INode) => v.id !== vid);
+                      const newMultiSelectIds = newMultiSelect.map(
+                        (n: INode) => n.id,
+                      );
+                      const tmpL = newMultiSelect.length;
+                      move_network(net, newMultiSelectIds[tmpL - 1]);
+                      net.selectNodes(newMultiSelectIds);
+                      trace_node_callback(newMultiSelectIds[tmpL - 1], net);
                       setMultiSelectNodes([...newMultiSelect]);
-                      net.selectNodes(newMultiSelect.map((v: INode) => vid));
                     },
                   }}
                 />
@@ -197,6 +203,7 @@ export default function BundleTab() {
                   {v.fdalabels.map((f: IFdaLabelRef) => {
                     return (
                       <BundleBoxItem
+                        key={f.setid}
                         {...{
                           fdalabelRef: f,
                           bundle: v,

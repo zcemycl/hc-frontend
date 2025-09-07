@@ -8,8 +8,15 @@ import { useContext, useState } from "react";
 
 export default function FlagTab() {
   const { handleResponse } = useApiHandler();
-  const { tab, flagAttrs, setFlagAttrs, term, setNodes, setEdges } =
-    useContext(DiscoveryContext);
+  const {
+    tab,
+    flagAttrs,
+    setFlagAttrs,
+    term,
+    setNodes,
+    setEdges,
+    setMultiSelectNodes,
+  } = useContext(DiscoveryContext);
   const { withLoading, setIsDrawingGraph } = useLoader();
   const [tmpName, setTmpName] = useState(flagAttrs.name);
   const [limit, setLimit] = useState(flagAttrs.numNodes);
@@ -103,6 +110,7 @@ export default function FlagTab() {
             );
             handleResponse(res);
             if (!res.success) return;
+            setMultiSelectNodes([]);
             console.log(res);
             let all_nodes = [
               ...res?.data?.ta.map((v: INode) => ({

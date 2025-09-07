@@ -18,6 +18,7 @@ export default function VisPanel() {
     visToolBarRef,
     term,
     initTAId,
+    setMultiSelectNodes,
   } = useContext(DiscoveryContext);
 
   const isDiscoveryLoading = isLoadingv2 || isDrawingGraph;
@@ -36,6 +37,7 @@ export default function VisPanel() {
       );
       handleResponse(res);
       if (!res.success) return;
+      setMultiSelectNodes([]);
       console.log(res);
       let all_nodes = [
         ...res?.data?.ta.map((v: INode) => ({

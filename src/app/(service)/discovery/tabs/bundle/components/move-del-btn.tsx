@@ -40,11 +40,8 @@ export const MoveDelBtn = ({
         aria-label={`Remove ${node.label}`}
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           del_callback(node.id, idx);
-          // let newMultiSelect = structuredClone(multiSelectNodes);
-          // newMultiSelect.splice(idx, 1);
-          // setMultiSelectNodes([...newMultiSelect]);
-          // net.selectNodes(newMultiSelect.map((node: INode) => node.id));
         }}
       >
         <img src={X_CIRCLE_ICON_URI} />
