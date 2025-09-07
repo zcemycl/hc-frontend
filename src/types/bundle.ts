@@ -22,3 +22,4 @@ export interface IBundleUpdate {
 // API Result interfaces
 export interface BundlesResult extends ApiResult<IBundle[]> {}
 export interface BundleResult extends ApiResult<IBundle> {}
+export interface BundleCountResult extends ApiResult<number> {}

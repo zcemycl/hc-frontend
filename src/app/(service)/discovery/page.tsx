@@ -22,21 +22,26 @@ export default function Discovery() {
   const searchParams = useSearchParams();
   const { userId } = useAuth();
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
+  // visjs handler obects
   const visJsRef = useRef<HTMLDivElement>(null);
   const visToolBarRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
+  // graph toolbar open
   const [openToolBar, setOpenToolBar] = useState<boolean>(
     searchParams.get("therapeutic_area") !== undefined,
   );
-  const [openSearchCanvas, setOpenSearchCanvas] = useState<boolean>(false);
+  // bundle tab
   const [openBundleModal, setOpenBundleModal] = useState<boolean>(false);
   const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
     ...defaultBundleConfig,
   });
   const [bundles, setBundles] = useState<IBundle[]>([]);
+  const [bundlesCount, setBundlesCount] = useState<number>(0);
+  // filter search term
   const [term, setTerm] = useState<string>(
     searchParams.get("product_name") ?? "",
   );
+  // current tab name
   const [tab, setTab] = useState<GraphTabEnum>(
     searchParams.get("therapeutic_area")
       ? searchParams.get("product_name")
@@ -44,22 +49,28 @@ export default function Discovery() {
         : GraphTabEnum.initialisation
       : GraphTabEnum.information,
   );
+  // node path to drug
   const [path, setPath] = useState<string[]>([]);
+  // all nodes and edges from fetch graph
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [dNodes, setDNodes] = useState<any>(null);
   const [dEdges, setDEdges] = useState<any>(null);
+  // for info tab displaying chain
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
+  // for multi select nodes for drugs
   const [multiSelectNodes, setMultiSelectNodes] = useState<INode[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
-  const [oncePlusSignal, setOncePlusSignal] = useState<number>(0);
+  // for flag tab, including ta names, max no of nodes, etc.
   const [flagAttrs, setFlagAttrs] = useState<IFlagAttrs>({
     name: searchParams.get("therapeutic_area") ?? "Neoplasms",
     numNodes: 100,
     offset: 0,
     maxLevel: 6,
   });
+  // therapeutic area id for search
   const initTAId = searchParams.get("therapeutic_area_id") ?? null;
+  // for settings tab
   const [settings, defineSettings] = useState<any>({
     graph_type: GraphTypeEnum.radial,
     graph_direction: GraphDirectionEnum.leftright,
@@ -93,8 +104,6 @@ export default function Discovery() {
           setTab,
           openToolBar,
           setOpenToolBar,
-          openSearchCanvas,
-          setOpenSearchCanvas,
           selectedNodes,
           setSelectedNodes,
           multiSelectNodes,
@@ -118,14 +127,14 @@ export default function Discovery() {
           neo4jHealthMsg,
           prevSignal,
           setPrevSignal,
-          oncePlusSignal,
-          setOncePlusSignal,
           openBundleModal,
           setOpenBundleModal,
           bundleConfig,
           setBundleConfig,
           bundles,
           setBundles,
+          bundlesCount,
+          setBundlesCount,
           term,
           setTerm,
           path,

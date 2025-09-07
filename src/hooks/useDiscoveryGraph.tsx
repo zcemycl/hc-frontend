@@ -117,9 +117,6 @@ const useDiscoveryGraph = () => {
       }
     });
     // network?.on("oncontext", (e: any) => {
-    //   setOpenSearchCanvas((prev: boolean) => {
-    //     return !prev;
-    //   })
     // });
     network.on("stabilizationProgress", (params: any) => {
       const widthFactor = params.iterations / params.total;
