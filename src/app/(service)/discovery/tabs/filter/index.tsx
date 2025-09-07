@@ -161,7 +161,6 @@ export default function FilterTab() {
                       }
                     }
                     const _nodes_ids = _nodes.map((n: INode) => n.id);
-                    console.log("final: ", _nodes_ids, _nodes);
                     net.selectNodes(_nodes_ids);
                     setMultiSelectNodes(_nodes);
                     if (_nodes_ids.length > 0) {
