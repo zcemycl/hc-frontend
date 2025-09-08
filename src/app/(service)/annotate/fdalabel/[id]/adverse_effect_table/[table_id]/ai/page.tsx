@@ -1,6 +1,6 @@
 "use client";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
-import { useState, useEffect, Fragment, useContext } from "react";
+import { useState, useEffect, Fragment, useContext, useMemo } from "react";
 import {
   fetchAETableByIdsv2,
   fetchAnnotatedTableMapByNameIdsv2,
@@ -13,10 +13,10 @@ import {
 import {
   Table,
   DropDownBtn,
-  DropDownList,
   Spinner,
   ProtectedRoute,
   BackBtn,
+  PaginationBar2,
 } from "@/components";
 import { switch_map } from "@/utils";
 import { questions } from "../questions";
@@ -49,6 +49,14 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [selectedOption, setSelectedOption] = useState("");
   const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   const { versions } = useContext(FdaVersionsContext);
+
+  const filterQuestionsWithAnswers = useMemo(() => {
+    const tmp = questions.filter((q) =>
+      Object.keys(finalResults).includes(q.identifier),
+    );
+    console.log("tmp: ", tmp, questions);
+    return tmp;
+  }, [finalResults]);
 
   // set table
   useEffect(() => {
@@ -93,30 +101,20 @@ export default function Page({ params }: Readonly<PageProps>) {
   }, [tableData]);
 
   useEffect(() => {
-    const qIds = questions
-      .map((each, idx) => {
-        if (Object.keys(finalResults).includes(each.identifier)) {
-          return idx;
-        }
-      })
-      .filter((notUndefined) => notUndefined !== undefined);
-    if (qIds.length !== 0) {
-      setQuestionIdx(qIds[0] as number);
-    }
-  }, [finalResults]);
-
-  useEffect(() => {
     // get cache
     let isCacheSelected = false;
-    if (questions[questionIdx].identifier in finalResults) {
-      setIsCellSelected(finalResults[questions[questionIdx].identifier]);
-      const questionIdf = questions[questionIdx].identifier;
+    if (filterQuestionsWithAnswers[questionIdx]?.identifier in finalResults) {
+      setIsCellSelected(
+        finalResults[filterQuestionsWithAnswers[questionIdx].identifier],
+      );
+      const questionIdf = filterQuestionsWithAnswers[questionIdx].identifier;
       isCacheSelected =
         "additionalRequire" in finalResults &&
         questionIdf in finalResults.additionalRequire!;
       if (isCacheSelected) {
         const dropdownkey =
-          questions[questionIdx].additionalRequire!.dropdown.identifier;
+          filterQuestionsWithAnswers[questionIdx].additionalRequire!.dropdown
+            .identifier;
         console.log(finalResults.additionalRequire![questionIdf][dropdownkey]);
         setSelectedOption(
           finalResults.additionalRequire![questionIdf][dropdownkey],
@@ -125,12 +123,15 @@ export default function Page({ params }: Readonly<PageProps>) {
     }
     // get default from question
     if (
-      "additionalRequire" in questions[questionIdx] &&
-      "dropdown" in questions[questionIdx].additionalRequire! &&
+      filterQuestionsWithAnswers?.[questionIdx] &&
+      "additionalRequire" in filterQuestionsWithAnswers?.[questionIdx] &&
+      "dropdown" in
+        filterQuestionsWithAnswers[questionIdx].additionalRequire! &&
       !isCacheSelected
     ) {
       const newDefaultOption =
-        questions[questionIdx].additionalRequire!.dropdown.defaultOption;
+        filterQuestionsWithAnswers[questionIdx].additionalRequire!.dropdown
+          .defaultOption;
       setSelectedOption(newDefaultOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -169,85 +170,57 @@ export default function Page({ params }: Readonly<PageProps>) {
             <div className="flex justify-between items-center">
               <div className="flex space-x-2 items-center">
                 {/* slidebar */}
-                {questions.map((q, idx) => {
-                  if (!Object.keys(finalResults).includes(q.identifier)) return;
-                  return (
-                    <span
-                      className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
-                      key={q.displayName}
-                      onClick={async () => {
-                        setIsCellSelected(structuredClone(resetCellSelected));
-                        setSelectedOption("");
-                        setQuestionIdx(idx);
-                      }}
-                    >
-                      <span
-                        className={`${questionIdx === idx ? "animate-ping" : ""} absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
-                      ></span>
-                      <span
-                        className={`relative inline-flex rounded-full 
-                          hover:bg-sky-50 bg-sky-500 focus:bg-sky-950
-                          ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
-                      ></span>
-                    </span>
-                  );
-                })}
+                <PaginationBar2
+                  {...{
+                    topN: filterQuestionsWithAnswers.length,
+                    pageN: questionIdx,
+                    nPerPage: 1,
+                    setPageN: async (i) => {
+                      setIsCellSelected(structuredClone(resetCellSelected));
+                      setSelectedOption("");
+                      setQuestionIdx(i);
+                    },
+                  }}
+                />
               </div>
             </div>
             <caption className="text-left">{tableData?.caption}</caption>
             <p className="leading-none w-full text-white">
-              {questions[questionIdx].displayName}
+              {filterQuestionsWithAnswers[questionIdx]?.displayName}
             </p>
 
             <div
               className={`transition
                 origin-top
-                ${"additionalRequire" in questions[questionIdx] ? "scale-y-100" : "scale-y-0"}`}
+                ${filterQuestionsWithAnswers?.[questionIdx] && "additionalRequire" in filterQuestionsWithAnswers?.[questionIdx] ? "scale-y-100" : "scale-y-0"}`}
             >
-              {"additionalRequire" in questions[questionIdx] && (
-                <Fragment>
-                  <DropDownBtn
-                    extraClassName="justify-end w-full
+              {filterQuestionsWithAnswers?.[questionIdx] &&
+                "additionalRequire" in
+                  filterQuestionsWithAnswers?.[questionIdx] && (
+                  <Fragment>
+                    <DropDownBtn
+                      extraClassName="justify-end w-full
                   bg-blue-500 hover:bg-blue-700
                   text-black"
-                    onClick={() => {
-                      setIsOptionDropdownOpen(!isOptionDropdownOpen);
-                    }}
-                  >
-                    {
-                      questions[questionIdx].additionalRequire!.dropdown
-                        .displayName
-                    }
-                    :{" "}
-                    {
-                      questions[
-                        questionIdx
-                      ].additionalRequire!.dropdown.options.filter(
-                        (each) => each.type === selectedOption,
-                      )[0]?.displayName
-                    }
-                  </DropDownBtn>
-                  <div className="flex w-full justify-end h-0">
-                    <DropDownList
-                      selected={selectedOption}
-                      displayNameKey="displayName"
-                      selectionKey="type"
-                      allOptions={
-                        questions[questionIdx].additionalRequire!.dropdown
-                          .options
+                      onClick={() => {
+                        setIsOptionDropdownOpen(!isOptionDropdownOpen);
+                      }}
+                    >
+                      {
+                        filterQuestionsWithAnswers[questionIdx]
+                          .additionalRequire!.dropdown.displayName
                       }
-                      isOpen={isOptionDropdownOpen}
-                      setSelectionKey={(s) => {
-                        setSelectedOption(s);
-                      }}
-                      resetCallback={() => {
-                        setIsOptionDropdownOpen(false);
-                        // setAddUserInfo((prev) => ({...prev, role: UserRoleEnum.USER}))
-                      }}
-                    />
-                  </div>
-                </Fragment>
-              )}
+                      :{" "}
+                      {
+                        filterQuestionsWithAnswers[
+                          questionIdx
+                        ].additionalRequire!.dropdown.options.filter(
+                          (each) => each.type === selectedOption,
+                        )[0]?.displayName
+                      }
+                    </DropDownBtn>
+                  </Fragment>
+                )}
             </div>
 
             <div
