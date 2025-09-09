@@ -31,6 +31,8 @@ import { AnnotationTypeEnum } from "@/constants";
 import { useApiHandler, useTickableTableCell } from "@/hooks";
 import { AnnotateDropdown } from "./annotate-dropdown";
 import { PageProps } from "./props";
+import { SubmitAnnotate } from "./submit-annotate";
+import { AnnotateProgressBar } from "./annotate-progress-bar";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
@@ -39,7 +41,7 @@ export default function Page({ params }: Readonly<PageProps>) {
   const tab = searchParams.has("tab")
     ? searchParams.get("tab")
     : AnnotationTypeEnum.ONGOING;
-  const { credentials, isLoadingAuth } = useAuth();
+  const { isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
   const [questionIdx, setQuestionIdx] = useState(0);
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
@@ -112,7 +114,6 @@ export default function Page({ params }: Readonly<PageProps>) {
       }
     }
     if (isLoadingAuth) return;
-    if (credentials.length === 0) return;
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
@@ -188,35 +189,21 @@ export default function Page({ params }: Readonly<PageProps>) {
               A.E Table {params.table_id} from label {params.id}
             </p>
             <div className="flex justify-between items-center">
-              <div className="flex space-x-2 items-center">
-                {/* slidebar */}
-                <PaginationBar2
-                  {...{
-                    topN: questions.length,
-                    pageN: questionIdx,
-                    nPerPage: 1,
-                    setPageN: async (i) => {
-                      const tmp = await withLoading(() => storeCache());
-                      setFinalResults(tmp);
-                      setIsCellSelected(structuredClone(resetCellSelected));
-                      setSelectedOption("");
-                      setQuestionIdx(i);
-                    },
-                  }}
-                />
-                <button
-                  className={`bg-emerald-500 text-black font-bold
-                  hover:bg-emerald-300 transition
-                  rounded p-2 origin-left
-                  ${
-                    questionIdx === questions.length - 1
-                      ? "scale-x-100 scale-y-100"
-                      : "scale-x-0 scale-y-0"
-                  }`}
-                  onClick={async () => {
+              <AnnotateProgressBar
+                {...{
+                  questions: questions as IQuestionTemplate[],
+                  questionIdx,
+                  pageN: questionIdx,
+                  setPageN: async (i) => {
                     const tmp = await withLoading(() => storeCache());
                     setFinalResults(tmp);
-                    if (credentials.length === 0) return;
+                    setIsCellSelected(structuredClone(resetCellSelected));
+                    setSelectedOption("");
+                    setQuestionIdx(i);
+                  },
+                  submit_callback: async () => {
+                    const tmp = await withLoading(() => storeCache());
+                    setFinalResults(tmp);
                     console.log(tmp);
                     const addres = await withLoading(() =>
                       addAnnotationByNameIdv2(
@@ -229,11 +216,9 @@ export default function Page({ params }: Readonly<PageProps>) {
                     if (addres.success) {
                       router.back();
                     }
-                  }}
-                >
-                  Submit
-                </button>
-              </div>
+                  },
+                }}
+              />
             </div>
             <caption className="text-left">{tableData?.caption}</caption>
             <p className="leading-none w-full text-white">
