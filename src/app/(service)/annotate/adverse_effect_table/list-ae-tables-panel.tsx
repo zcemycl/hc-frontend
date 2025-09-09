@@ -4,7 +4,6 @@ import { GoIcon } from "@/icons";
 import { Fragment } from "react";
 import { transformData } from "@/utils";
 import { IBaseTable } from "@/types";
-import { AnnotationTypeEnum } from "@/constants";
 import { useRouter } from "next/navigation";
 
 export default function ListAETablesPanel() {
@@ -60,11 +59,7 @@ export default function ListAETablesPanel() {
                       e.preventDefault();
                       const params = new URLSearchParams();
                       params.append("tab", tabName);
-                      // params.append("version", version);
                       let redirectUrl = `/annotate/fdalabel/${data.fdalabel.setid}/adverse_effect_table/${data.idx}`;
-                      if (tabName === AnnotationTypeEnum.AI) {
-                        redirectUrl = `${redirectUrl}/ai`;
-                      }
                       redirectUrl = `${redirectUrl}?${params}`;
                       router.push(redirectUrl);
                     }}

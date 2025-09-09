@@ -46,6 +46,7 @@ export default function Page({ params }: Readonly<PageProps>) {
     selectedOption,
     setSelectedOption,
     resetCellSelected,
+    filterQuestions: filterQuestionsWithAnswers,
   } = useTableCache({
     questions: questions as IQuestionTemplate[],
     tab: tab as string,
@@ -117,32 +118,36 @@ export default function Page({ params }: Readonly<PageProps>) {
             <div className="flex justify-between items-center">
               <AnnotateProgressBar
                 {...{
-                  questions: questions as IQuestionTemplate[],
-                  questionIdx,
+                  questions: filterQuestionsWithAnswers as IQuestionTemplate[],
                   pageN: questionIdx,
                   setPageN: async (i) => {
-                    const tmp = await withLoading(() => storeCache());
-                    setFinalResults(tmp);
+                    if (tab !== "ai") {
+                      const tmp = await withLoading(() => storeCache());
+                      setFinalResults(tmp);
+                    }
                     setIsCellSelected(structuredClone(resetCellSelected));
                     setSelectedOption("");
                     setQuestionIdx(i);
                   },
-                  submit_callback: async () => {
-                    const tmp = await withLoading(() => storeCache());
-                    setFinalResults(tmp);
-                    console.log(tmp);
-                    const addres = await withLoading(() =>
-                      addAnnotationByNameIdv2(
-                        tableData?.id!,
-                        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-                        tmp,
-                      ),
-                    );
-                    handleResponse(addres);
-                    if (addres.success) {
-                      router.back();
-                    }
-                  },
+                  submit_callback:
+                    tab !== "ai"
+                      ? async () => {
+                          const tmp = await withLoading(() => storeCache());
+                          setFinalResults(tmp);
+                          console.log(tmp);
+                          const addres = await withLoading(() =>
+                            addAnnotationByNameIdv2(
+                              tableData?.id!,
+                              AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                              tmp,
+                            ),
+                          );
+                          handleResponse(addres);
+                          if (addres.success) {
+                            router.back();
+                          }
+                        }
+                      : undefined,
                 }}
               />
             </div>
@@ -152,16 +157,17 @@ export default function Page({ params }: Readonly<PageProps>) {
             </p>
             <AnnotateDropdown
               {...{
-                questions: questions as IQuestionTemplate[],
+                questions: filterQuestionsWithAnswers as IQuestionTemplate[],
                 questionIdx,
                 selectedOption,
                 setSelectedOption,
+                isEnabled: tab !== "ai",
               }}
             />
             <AnnotateTable
               {...{
                 tableData: tableData as IAdverseEffectTable,
-                mapMode: questions[questionIdx].mapMode,
+                mapMode: tab !== "ai" ? questions[questionIdx].mapMode : "none",
                 isCellSelected,
                 setIsCellSelected,
               }}
