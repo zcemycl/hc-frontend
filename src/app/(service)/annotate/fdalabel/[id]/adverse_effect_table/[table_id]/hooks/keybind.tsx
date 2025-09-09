@@ -14,14 +14,11 @@ export const useKeyBind = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      let nextActionPage = pageN;
       if (e.key === "ArrowLeft") {
-        setPageN(Math.max(0, pageN - 1)); // don’t go below 0
+        nextActionPage = Math.max(0, pageN - 1);
       } else if (e.key === "ArrowRight") {
-        if (maxPage !== undefined) {
-          setPageN(Math.min(maxPage - 1, pageN + 1)); // clamp to max
-        } else {
-          setPageN(pageN + 1); // no max, just increment
-        }
+        nextActionPage = Math.min(maxPage - 1, pageN + 1);
       } else if (/^\d$/.test(e.key)) {
         // build up buffer of digits
         bufferRef.current += e.key;
@@ -34,16 +31,19 @@ export const useKeyBind = ({
         // apply after short pause
         timeoutRef.current = window.setTimeout(() => {
           const num = parseInt(bufferRef.current, 10) - 1;
-          if (num < 0) return;
+          console.log("nn: ", num);
           if (!isNaN(num)) {
-            if (maxPage !== undefined) {
-              setPageN(Math.min(maxPage - 1, num));
-            } else {
-              setPageN(num);
+            nextActionPage = Math.min(maxPage - 1, num);
+            nextActionPage = Math.max(0, nextActionPage);
+            if (nextActionPage !== pageN) {
+              setPageN(nextActionPage);
             }
           }
           bufferRef.current = ""; // reset after use
         }, 200); // half-second delay for multi-digit input
+      }
+      if (nextActionPage !== pageN) {
+        setPageN(nextActionPage);
       }
     };
 
