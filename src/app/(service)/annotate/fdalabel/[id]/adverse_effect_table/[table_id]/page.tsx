@@ -46,7 +46,10 @@ export default function Page({ params }: Readonly<PageProps>) {
     selectedOption,
     setSelectedOption,
     resetCellSelected,
-  } = useTableCache({ questions: questions as IQuestionTemplate[] });
+  } = useTableCache({
+    questions: questions as IQuestionTemplate[],
+    tab: tab as string,
+  });
 
   // set table
   useEffect(() => {

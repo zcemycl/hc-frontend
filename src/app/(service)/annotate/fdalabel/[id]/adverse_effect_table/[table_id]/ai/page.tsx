@@ -1,6 +1,6 @@
 "use client";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
-import { useState, useEffect, useContext, useMemo } from "react";
+import { useEffect, useContext } from "react";
 import {
   fetchAETableByIdsv2,
   fetchAnnotatedTableMapByNameIdsv2,
@@ -12,36 +12,30 @@ import {
 } from "@/types";
 import { Spinner, ProtectedRoute, BackBtn, PaginationBar2 } from "@/components";
 import { questions } from "../questions";
-import { useApiHandler, useTickableTableCell } from "@/hooks";
+import { useApiHandler } from "@/hooks";
 import { AnnotateDropdown, AnnotateTable } from "../components";
 import { PageProps } from "../props";
+import { useTableCache } from "../hooks";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
-  const { credentials, isLoadingAuth } = useAuth();
+  const { isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
-  const [questionIdx, setQuestionIdx] = useState(0);
-  const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
-  const n_rows = tableData?.content.table.length ?? 0;
-  const n_cols = tableData?.content.table[0].length ?? 0;
-  const { resetCellSelected } = useTickableTableCell({
-    n_rows,
-    n_cols,
-  });
-  const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
-    structuredClone(resetCellSelected),
-  );
-  const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
-  const [selectedOption, setSelectedOption] = useState("");
   const { versions } = useContext(FdaVersionsContext);
 
-  const filterQuestionsWithAnswers = useMemo(() => {
-    const tmp = questions.filter((q) =>
-      Object.keys(finalResults).includes(q.identifier),
-    );
-    console.log("tmp: ", tmp, questions);
-    return tmp;
-  }, [finalResults]);
+  const {
+    questionIdx,
+    setQuestionIdx,
+    tableData,
+    setTableData,
+    isCellSelected,
+    setIsCellSelected,
+    setFinalResults,
+    selectedOption,
+    setSelectedOption,
+    resetCellSelected,
+    filterQuestions: filterQuestionsWithAnswers,
+  } = useTableCache({ questions: questions as IQuestionTemplate[], tab: "ai" });
 
   // set table
   useEffect(() => {
@@ -71,56 +65,9 @@ export default function Page({ params }: Readonly<PageProps>) {
         setFinalResults(res_history.data?.annotated ?? {});
     }
     if (isLoadingAuth) return;
-    if (credentials.length === 0) return;
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
-
-  // set selected table dimension when table is ready
-  useEffect(() => {
-    let newSelected = Array.from({ length: n_rows }, () =>
-      Array.from({ length: n_cols }, () => false),
-    );
-    setIsCellSelected(newSelected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableData]);
-
-  useEffect(() => {
-    // get cache
-    let isCacheSelected = false;
-    if (filterQuestionsWithAnswers[questionIdx]?.identifier in finalResults) {
-      setIsCellSelected(
-        finalResults[filterQuestionsWithAnswers[questionIdx].identifier],
-      );
-      const questionIdf = filterQuestionsWithAnswers[questionIdx].identifier;
-      isCacheSelected =
-        "additionalRequire" in finalResults &&
-        questionIdf in finalResults.additionalRequire!;
-      if (isCacheSelected) {
-        const dropdownkey =
-          filterQuestionsWithAnswers[questionIdx].additionalRequire!.dropdown
-            .identifier;
-        console.log(finalResults.additionalRequire![questionIdf][dropdownkey]);
-        setSelectedOption(
-          finalResults.additionalRequire![questionIdf][dropdownkey],
-        );
-      }
-    }
-    // get default from question
-    if (
-      filterQuestionsWithAnswers?.[questionIdx] &&
-      "additionalRequire" in filterQuestionsWithAnswers?.[questionIdx] &&
-      "dropdown" in
-        filterQuestionsWithAnswers[questionIdx].additionalRequire! &&
-      !isCacheSelected
-    ) {
-      const newDefaultOption =
-        filterQuestionsWithAnswers[questionIdx].additionalRequire!.dropdown
-          .defaultOption;
-      setSelectedOption(newDefaultOption);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionIdx, finalResults]);
 
   return (
     <ProtectedRoute>

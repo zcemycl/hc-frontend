@@ -1,11 +1,13 @@
 import { useTickableTableCell } from "@/hooks";
 import { IAdverseEffectTable, IQuestionTemplate } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const useTableCache = ({
   questions,
+  tab,
 }: {
   questions: IQuestionTemplate[];
+  tab: string;
 }) => {
   const [questionIdx, setQuestionIdx] = useState(0);
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
@@ -21,17 +23,25 @@ export const useTableCache = ({
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
 
+  const filterQuestions = useMemo(() => {
+    if (tab !== "ai") return questions;
+    const tmp = questions.filter((q) =>
+      Object.keys(finalResults).includes(q.identifier),
+    );
+    return tmp;
+  }, [finalResults]);
+
   const storeCache = async () => {
     let tmp = { ...finalResults };
-    tmp[questions[questionIdx].identifier] = isCellSelected;
+    tmp[filterQuestions[questionIdx].identifier] = isCellSelected;
     let addtmp = { ...tmp?.additionalRequire! };
     if (
-      questions?.[questionIdx] &&
-      "additionalRequire" in questions[questionIdx] &&
-      "dropdown" in questions[questionIdx].additionalRequire!
+      filterQuestions?.[questionIdx] &&
+      "additionalRequire" in filterQuestions[questionIdx] &&
+      "dropdown" in filterQuestions[questionIdx].additionalRequire!
     ) {
-      const dropdown = questions[questionIdx].additionalRequire.dropdown!;
-      addtmp[questions[questionIdx].identifier] = {
+      const dropdown = filterQuestions[questionIdx].additionalRequire.dropdown!;
+      addtmp[filterQuestions[questionIdx].identifier] = {
         [dropdown.identifier]: selectedOption,
       };
     }
@@ -51,14 +61,18 @@ export const useTableCache = ({
   useEffect(() => {
     // get cache
     let isCacheSelected = false;
-    if (questions[questionIdx].identifier in finalResults) {
-      setIsCellSelected(finalResults[questions[questionIdx].identifier]);
-      const questionIdf = questions[questionIdx].identifier;
+    if (
+      filterQuestions[questionIdx] &&
+      filterQuestions[questionIdx].identifier in finalResults
+    ) {
+      const questionIdf = filterQuestions[questionIdx].identifier;
+      setIsCellSelected(finalResults[questionIdf]);
       isCacheSelected =
         "additionalRequire" in finalResults &&
         questionIdf in finalResults.additionalRequire!;
       if (isCacheSelected) {
-        const dropdown = questions[questionIdx].additionalRequire.dropdown!;
+        const dropdown =
+          filterQuestions[questionIdx].additionalRequire.dropdown!;
         const dropdownkey = dropdown.identifier;
         console.log(finalResults.additionalRequire![questionIdf][dropdownkey]);
         setSelectedOption(
@@ -68,11 +82,12 @@ export const useTableCache = ({
     }
     // get default from question
     if (
-      "additionalRequire" in questions[questionIdx] &&
-      "dropdown" in questions[questionIdx].additionalRequire! &&
+      filterQuestions?.[questionIdx] &&
+      "additionalRequire" in filterQuestions[questionIdx] &&
+      "dropdown" in filterQuestions[questionIdx].additionalRequire! &&
       !isCacheSelected
     ) {
-      const dropdown = questions[questionIdx].additionalRequire.dropdown!;
+      const dropdown = filterQuestions[questionIdx].additionalRequire.dropdown!;
       const newDefaultOption = dropdown.defaultOption;
       setSelectedOption(newDefaultOption);
     }
@@ -92,5 +107,6 @@ export const useTableCache = ({
     selectedOption,
     setSelectedOption,
     resetCellSelected,
+    filterQuestions,
   };
 };
