@@ -16,10 +16,12 @@ import { Spinner, ProtectedRoute, BackBtn } from "@/components";
 import { questions } from "./questions";
 import { AnnotationTypeEnum } from "@/constants";
 import { useApiHandler, useTickableTableCell } from "@/hooks";
-import { AnnotateDropdown } from "./annotate-dropdown";
+import {
+  AnnotateDropdown,
+  AnnotateProgressBar,
+  AnnotateTable,
+} from "./components";
 import { PageProps } from "./props";
-import { AnnotateProgressBar } from "./annotate-progress-bar";
-import { AnnotateTable } from "./annotate-table";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();

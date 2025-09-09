@@ -8,22 +8,13 @@ import {
 import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
-  IBaseTable,
   IQuestionTemplate,
 } from "@/types";
-import {
-  Table,
-  Spinner,
-  ProtectedRoute,
-  BackBtn,
-  PaginationBar2,
-} from "@/components";
-import { switch_map } from "@/utils";
+import { Spinner, ProtectedRoute, BackBtn, PaginationBar2 } from "@/components";
 import { questions } from "../questions";
 import { useApiHandler, useTickableTableCell } from "@/hooks";
-import { AnnotateDropdown } from "../annotate-dropdown";
+import { AnnotateDropdown, AnnotateTable } from "../components";
 import { PageProps } from "../props";
-import { AnnotateTable } from "../annotate-table";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
@@ -33,11 +24,10 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
   const n_rows = tableData?.content.table.length ?? 0;
   const n_cols = tableData?.content.table[0].length ?? 0;
-  const { row_map, col_map, cell_map, none_map, resetCellSelected } =
-    useTickableTableCell({
-      n_rows,
-      n_cols,
-    });
+  const { resetCellSelected } = useTickableTableCell({
+    n_rows,
+    n_cols,
+  });
   const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
     structuredClone(resetCellSelected),
   );
