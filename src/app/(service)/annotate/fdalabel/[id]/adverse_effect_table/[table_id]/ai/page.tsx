@@ -1,6 +1,6 @@
 "use client";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
-import { useState, useEffect, Fragment, useContext, useMemo } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import {
   fetchAETableByIdsv2,
   fetchAnnotatedTableMapByNameIdsv2,
@@ -9,10 +9,10 @@ import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
   IBaseTable,
+  IQuestionTemplate,
 } from "@/types";
 import {
   Table,
-  DropDownBtn,
   Spinner,
   ProtectedRoute,
   BackBtn,
@@ -21,13 +21,8 @@ import {
 import { switch_map } from "@/utils";
 import { questions } from "../questions";
 import { useApiHandler, useTickableTableCell } from "@/hooks";
-
-interface PageProps {
-  params: {
-    id: string;
-    table_id: number;
-  };
-}
+import { AnnotateDropdown } from "../annotate-dropdown";
+import { PageProps } from "../props";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
@@ -47,7 +42,6 @@ export default function Page({ params }: Readonly<PageProps>) {
   );
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
-  const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   const { versions } = useContext(FdaVersionsContext);
 
   const filterQuestionsWithAnswers = useMemo(() => {
@@ -188,40 +182,15 @@ export default function Page({ params }: Readonly<PageProps>) {
             <p className="leading-none w-full text-white">
               {filterQuestionsWithAnswers[questionIdx]?.displayName}
             </p>
-
-            <div
-              className={`transition
-                origin-top
-                ${filterQuestionsWithAnswers?.[questionIdx] && "additionalRequire" in filterQuestionsWithAnswers?.[questionIdx] ? "scale-y-100" : "scale-y-0"}`}
-            >
-              {filterQuestionsWithAnswers?.[questionIdx] &&
-                "additionalRequire" in
-                  filterQuestionsWithAnswers?.[questionIdx] && (
-                  <Fragment>
-                    <DropDownBtn
-                      extraClassName="justify-end w-full
-                  bg-blue-500 hover:bg-blue-700
-                  text-black"
-                      onClick={() => {
-                        setIsOptionDropdownOpen(!isOptionDropdownOpen);
-                      }}
-                    >
-                      {
-                        filterQuestionsWithAnswers[questionIdx]
-                          .additionalRequire!.dropdown.displayName
-                      }
-                      :{" "}
-                      {
-                        filterQuestionsWithAnswers[
-                          questionIdx
-                        ].additionalRequire!.dropdown.options.filter(
-                          (each) => each.type === selectedOption,
-                        )[0]?.displayName
-                      }
-                    </DropDownBtn>
-                  </Fragment>
-                )}
-            </div>
+            <AnnotateDropdown
+              {...{
+                questions: filterQuestionsWithAnswers as IQuestionTemplate[],
+                questionIdx,
+                selectedOption,
+                setSelectedOption,
+                isEnabled: false,
+              }}
+            />
 
             <div
               className="overflow-x-auto 

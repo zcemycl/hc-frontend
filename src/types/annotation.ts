@@ -3,9 +3,35 @@ import {
   IAdverseEffectTable,
   ITableNoHead,
   IUnAnnotatedAETable,
-  IFdaVersions,
 } from "./fdalabel";
-import { AnnotationCategoryEnum } from "./history";
+
+export interface IDropdownOption {
+  displayName: string;
+  type: string;
+}
+
+export interface IDropdownGenericOption {
+  [x: string]: string;
+}
+
+export interface IDropdownQuestion {
+  displayName: string;
+  identifier: string;
+  type: string;
+  defaultOption: string;
+  options: IDropdownOption[];
+}
+
+export interface IAdditionalRequirementQuestion {
+  dropdown?: IDropdownQuestion;
+}
+
+export interface IQuestionTemplate {
+  displayName: string;
+  mapMode: string;
+  identifier: string;
+  additionalRequire: IAdditionalRequirementQuestion;
+}
 
 // API Result interfaces
 export interface UnannotatedAETableResult

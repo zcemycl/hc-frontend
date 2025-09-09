@@ -6,7 +6,7 @@ import {
   useLoader,
 } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, Fragment, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   fetchAETableByIdsv2,
   addAnnotationByNameIdv2,
@@ -16,11 +16,10 @@ import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
   IBaseTable,
+  IQuestionTemplate,
 } from "@/types";
 import {
   Table,
-  DropDownBtn,
-  DropDownList,
   Spinner,
   ProtectedRoute,
   BackBtn,
@@ -30,13 +29,8 @@ import { switch_map } from "@/utils";
 import { questions } from "./questions";
 import { AnnotationTypeEnum } from "@/constants";
 import { useApiHandler, useTickableTableCell } from "@/hooks";
-
-interface PageProps {
-  params: {
-    id: string;
-    table_id: number;
-  };
-}
+import { AnnotateDropdown } from "./annotate-dropdown";
+import { PageProps } from "./props";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
@@ -61,7 +55,6 @@ export default function Page({ params }: Readonly<PageProps>) {
   );
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
-  const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   const { versions } = useContext(FdaVersionsContext);
   const { handleMouseUp } = useContext(TableSelectContext);
 
@@ -212,10 +205,14 @@ export default function Page({ params }: Readonly<PageProps>) {
                   }}
                 />
                 <button
-                  className={`bg-emerald-500 text-white
+                  className={`bg-emerald-500 text-black font-bold
                   hover:bg-emerald-300 transition
                   rounded p-2 origin-left
-                  ${questionIdx === questions.length - 1 ? "scale-x-100 scale-y-100" : "scale-x-0 scale-y-0"}`}
+                  ${
+                    questionIdx === questions.length - 1
+                      ? "scale-x-100 scale-y-100"
+                      : "scale-x-0 scale-y-0"
+                  }`}
                   onClick={async () => {
                     const tmp = await withLoading(() => storeCache());
                     setFinalResults(tmp);
@@ -242,57 +239,14 @@ export default function Page({ params }: Readonly<PageProps>) {
             <p className="leading-none w-full text-white">
               {questions[questionIdx].displayName}
             </p>
-
-            <div
-              className={`transition
-                origin-top
-                ${"additionalRequire" in questions[questionIdx] ? "scale-y-100" : "scale-y-0"}`}
-            >
-              {"additionalRequire" in questions[questionIdx] && (
-                <Fragment>
-                  <DropDownBtn
-                    extraClassName="justify-end w-full
-                  bg-blue-500 hover:bg-blue-700
-                  text-black"
-                    onClick={() => {
-                      setIsOptionDropdownOpen(!isOptionDropdownOpen);
-                    }}
-                  >
-                    {
-                      questions[questionIdx].additionalRequire!.dropdown
-                        .displayName
-                    }
-                    :{" "}
-                    {
-                      questions[
-                        questionIdx
-                      ].additionalRequire!.dropdown.options.filter(
-                        (each) => each.type === selectedOption,
-                      )[0]?.displayName
-                    }
-                  </DropDownBtn>
-                  <div className="flex w-full justify-end h-0">
-                    <DropDownList
-                      selected={selectedOption}
-                      displayNameKey="displayName"
-                      selectionKey="type"
-                      allOptions={
-                        questions[questionIdx].additionalRequire!.dropdown
-                          .options
-                      }
-                      isOpen={isOptionDropdownOpen}
-                      setSelectionKey={(s) => {
-                        setSelectedOption(s);
-                      }}
-                      resetCallback={() => {
-                        setIsOptionDropdownOpen(false);
-                        // setAddUserInfo((prev) => ({...prev, role: UserRoleEnum.USER}))
-                      }}
-                    />
-                  </div>
-                </Fragment>
-              )}
-            </div>
+            <AnnotateDropdown
+              {...{
+                questions: questions as IQuestionTemplate[],
+                questionIdx,
+                selectedOption,
+                setSelectedOption,
+              }}
+            />
 
             <div
               className="overflow-x-auto 
