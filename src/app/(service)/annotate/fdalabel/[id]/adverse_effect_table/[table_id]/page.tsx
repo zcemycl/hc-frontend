@@ -1,10 +1,5 @@
 "use client";
-import {
-  FdaVersionsContext,
-  TableSelectContext,
-  useAuth,
-  useLoader,
-} from "@/contexts";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useContext } from "react";
 import {
@@ -49,7 +44,6 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
   const [selectedOption, setSelectedOption] = useState("");
   const { versions } = useContext(FdaVersionsContext);
-  const { handleMouseUp } = useContext(TableSelectContext);
 
   const storeCache = async () => {
     let tmp = { ...finalResults };
@@ -67,14 +61,6 @@ export default function Page({ params }: Readonly<PageProps>) {
     tmp["additionalRequire"] = addtmp;
     return tmp;
   };
-
-  useEffect(() => {
-    document.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.userSelect = "";
-    };
-  }, [handleMouseUp]);
 
   // set table
   useEffect(() => {

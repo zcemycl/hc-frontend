@@ -1,8 +1,10 @@
+"use client";
 import { Table } from "@/components";
+import { TableSelectContext } from "@/contexts";
 import { useTickableTableCell } from "@/hooks";
 import { IAdverseEffectTable, IBaseTable } from "@/types";
 import { switch_map } from "@/utils";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 
 export const AnnotateTable = ({
   tableData,
@@ -21,6 +23,16 @@ export const AnnotateTable = ({
     n_rows,
     n_cols,
   });
+  const { handleMouseUp } = useContext(TableSelectContext);
+
+  useEffect(() => {
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.userSelect = "";
+    };
+  }, [handleMouseUp]);
+
   return (
     <div
       className="overflow-x-auto 
