@@ -1,5 +1,5 @@
-import { ExpandableBtn, PaginationBar, Table } from "@/components";
-import { useAETableAnnotation, useAuth, useLoader } from "@/contexts";
+import { ExpandableBtn, PaginationBar2, Table } from "@/components";
+import { useAETableAnnotation } from "@/contexts";
 import { GoIcon } from "@/icons";
 import { Fragment } from "react";
 import { transformData } from "@/utils";
@@ -92,7 +92,7 @@ export default function ListAETablesPanel() {
       </div>
 
       <div className="flex justify-center space-x-1 flex-wrap">
-        <PaginationBar
+        <PaginationBar2
           topN={topN}
           pageN={pageN}
           nPerPage={nPerPage}
