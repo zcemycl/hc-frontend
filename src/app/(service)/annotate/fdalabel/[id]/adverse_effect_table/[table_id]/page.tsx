@@ -1,7 +1,7 @@
 "use client";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useCallback } from "react";
 import {
   fetchAETableByIdsv2,
   addAnnotationByNameIdv2,
@@ -22,7 +22,7 @@ import {
   AnnotateTable,
 } from "./components";
 import { PageProps } from "./props";
-import { useTableCache } from "./hooks";
+import { useTableCache, useKeyBind } from "./hooks";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
@@ -50,6 +50,23 @@ export default function Page({ params }: Readonly<PageProps>) {
   } = useTableCache({
     questions: questions as IQuestionTemplate[],
     tab: tab as string,
+  });
+  const setPageN = useCallback(
+    async (i: number) => {
+      if (tab !== "ai") {
+        const tmp = await withLoading(() => storeCache());
+        setFinalResults(tmp);
+      }
+      setIsCellSelected(structuredClone(resetCellSelected));
+      setSelectedOption("");
+      setQuestionIdx(i);
+    },
+    [resetCellSelected, storeCache],
+  );
+  useKeyBind({
+    maxPage: filterQuestionsWithAnswers.length,
+    pageN: questionIdx,
+    setPageN,
   });
 
   // set table
@@ -120,15 +137,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                 {...{
                   questions: filterQuestionsWithAnswers as IQuestionTemplate[],
                   pageN: questionIdx,
-                  setPageN: async (i) => {
-                    if (tab !== "ai") {
-                      const tmp = await withLoading(() => storeCache());
-                      setFinalResults(tmp);
-                    }
-                    setIsCellSelected(structuredClone(resetCellSelected));
-                    setSelectedOption("");
-                    setQuestionIdx(i);
-                  },
+                  setPageN,
                   submit_callback:
                     tab !== "ai"
                       ? async () => {
