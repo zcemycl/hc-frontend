@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export const useKeyBind = ({
   maxPage,
@@ -9,6 +9,9 @@ export const useKeyBind = ({
   pageN: number;
   setPageN: (i: number) => void;
 }) => {
+  const bufferRef = useRef(""); // stores digits typed
+  const timeoutRef = useRef<number>();
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
@@ -19,9 +22,28 @@ export const useKeyBind = ({
         } else {
           setPageN(pageN + 1); // no max, just increment
         }
-      }
-      if (Number(e.key) >= 1 && Number(e.key) <= maxPage) {
-        setPageN(Number(e.key) - 1);
+      } else if (/^\d$/.test(e.key)) {
+        // build up buffer of digits
+        bufferRef.current += e.key;
+
+        // clear old timeout
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        // apply after short pause
+        timeoutRef.current = window.setTimeout(() => {
+          const num = parseInt(bufferRef.current, 10) - 1;
+          if (num < 0) return;
+          if (!isNaN(num)) {
+            if (maxPage !== undefined) {
+              setPageN(Math.min(maxPage - 1, num));
+            } else {
+              setPageN(num);
+            }
+          }
+          bufferRef.current = ""; // reset after use
+        }, 200); // half-second delay for multi-digit input
       }
     };
 
