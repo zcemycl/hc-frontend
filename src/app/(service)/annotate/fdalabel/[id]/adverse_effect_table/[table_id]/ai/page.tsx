@@ -23,6 +23,7 @@ import { questions } from "../questions";
 import { useApiHandler, useTickableTableCell } from "@/hooks";
 import { AnnotateDropdown } from "../annotate-dropdown";
 import { PageProps } from "../props";
+import { AnnotateTable } from "../annotate-table";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
@@ -191,35 +192,14 @@ export default function Page({ params }: Readonly<PageProps>) {
                 isEnabled: false,
               }}
             />
-
-            <div
-              className="overflow-x-auto 
-              flex flex-col w-full"
-            >
-              {tableData && (
-                <Table
-                  {...{
-                    content: {
-                      table: tableData.content.table,
-                    } as IBaseTable,
-                    keyname: "table",
-                    isSelectable: {
-                      table: switch_map(
-                        row_map,
-                        cell_map,
-                        col_map,
-                        none_map,
-                        "none",
-                      ),
-                    },
-                    isSelected: {
-                      table: isCellSelected,
-                    },
-                    setIsCellSelected,
-                  }}
-                />
-              )}
-            </div>
+            <AnnotateTable
+              {...{
+                tableData: tableData as IAdverseEffectTable,
+                mapMode: "none",
+                isCellSelected,
+                setIsCellSelected,
+              }}
+            />
           </div>
         </div>
       </section>
