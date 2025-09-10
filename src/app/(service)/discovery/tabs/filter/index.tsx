@@ -210,12 +210,15 @@ export default function FilterTab() {
                 }
               }}
             >
-              <p
-                className="font-bold
-                    items-center content-center align-middle"
-              >
-                Level {v.level}: <span id={`label-${v.id}`}>{v.label} </span>
-                <SideCopyBtn v={v} />
+              <p className="font-bold">
+                Level {v.level}:{" "}
+                <span id={`label-${v.id}`} className="inline">
+                  {v.label}{" "}
+                </span>
+                <span className="inline-flex items-center space-x-1 align-middle">
+                  <SideCopyBtn v={v} />
+                  <VisibilityBtn isHidden={false} isShowText={false} />
+                </span>
               </p>
             </div>
           );
