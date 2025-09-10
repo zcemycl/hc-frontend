@@ -4,6 +4,7 @@ import {
   ITableNoHead,
   IUnAnnotatedAETable,
 } from "./fdalabel";
+import { AnnotationCategoryEnum } from "./history";
 
 export interface IDropdownOption {
   displayName: string;
@@ -31,6 +32,12 @@ export interface IQuestionTemplate {
   mapMode: string;
   identifier: string;
   additionalRequire: IAdditionalRequirementQuestion;
+}
+
+export interface IAnnotateAddReceipt {
+  id: number;
+  category: AnnotationCategoryEnum;
+  is_ai: boolean;
 }
 
 // API Result interfaces

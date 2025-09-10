@@ -11,6 +11,7 @@ import { SearchFilter } from "./search-filter";
 import { NoFilterTextBox } from "./no-filter-text-box";
 import { SideCopyBtn } from "./side-copy-btn";
 import { PaginationBar2 } from "@/components";
+import { EYE_ICON_URI, EYE_SLASH_ICON_URI } from "@/icons/bootstrap";
 
 export default function FilterTab() {
   const {
@@ -23,12 +24,14 @@ export default function FilterTab() {
     multiSelectNodes,
     setMultiSelectNodes,
     nPerPage,
+    dNodes,
   } = useContext(DiscoveryContext);
   const { move_network, trace_node_callback } = useDiscoveryGraph();
   const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
   const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p"]);
+  const [hiddenAll, setHiddenAll] = useState(false);
 
   const filterNodesByTypeAndTerm = useMemo(() => {
     return nodes
@@ -54,21 +57,48 @@ export default function FilterTab() {
   return (
     <div
       className={`absolute
-                left-0 right-0 top-0 bottom-0
-                self-end
-                space-y-2
-                overflow-y-auto
-                w-full h-full
-                transition
-                p-5
-                ${
-                  tab === GraphTabEnum.filters
-                    ? "opacity-100 z-10 delay-200"
-                    : "opacity-0 z-0 duration-200"
-                }
-                `}
+        left-0 right-0 top-0 bottom-0
+        self-end
+        space-y-2
+        overflow-y-auto
+        w-full h-full
+        transition
+        p-5
+        ${
+          tab === GraphTabEnum.filters
+            ? "opacity-100 z-10 delay-200"
+            : "opacity-0 z-0 duration-200"
+        }
+        `}
     >
-      <h2 className="leading text-slate-300 font-bold">Filters</h2>
+      <div className="flex flex-row justify-start space-x-2">
+        <h2 className="leading text-slate-300 font-bold">Filters</h2>
+        <button
+          className="bg-teal-700 hover:bg-teal-300
+          text-black font-bold 
+          py-0 px-2 rounded-lg
+          flex flex-row space-x-2 content-center items-center align-middle"
+          onClick={(e) => {
+            e.preventDefault();
+            dNodes.map((dn: any) => {
+              dNodes.update({ id: dn.id, hidden: !hiddenAll });
+            });
+            setHiddenAll((prev) => !prev);
+          }}
+        >
+          {hiddenAll ? (
+            <>
+              <span>Hidden</span>
+              <img src={EYE_SLASH_ICON_URI} alt="connected" />
+            </>
+          ) : (
+            <>
+              <span>Visible</span>
+              <img src={EYE_ICON_URI} alt="connected" />
+            </>
+          )}
+        </button>
+      </div>
       <div className="flex flex-row space-x-2">
         <ToggleBtnList
           defaultSelectedKeys={toggleNodeTypeList}
@@ -126,8 +156,6 @@ export default function FilterTab() {
               key={v.id}
               onClick={(e) => {
                 e.preventDefault();
-                console.log(e.ctrlKey, "weird");
-
                 if (visJsRef.current) {
                   try {
                     // net.releaseNode();

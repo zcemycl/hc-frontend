@@ -31,6 +31,8 @@ const BAG_MINUS_FILL_ICON_URI = `${BOOTSTRAP_URI}/bag-dash-fill.svg`;
 const RELOAD_ICON_URI = `${BOOTSTRAP_URI}/arrow-clockwise.svg`;
 const MINUS_ICON_URI = `${BOOTSTRAP_URI}/dash.svg`;
 const SEARCH_ICON_URI = `${BOOTSTRAP_URI}/search.svg`;
+const EYE_ICON_URI = `${BOOTSTRAP_URI}/eye.svg`;
+const EYE_SLASH_ICON_URI = `${BOOTSTRAP_URI}/eye-slash.svg`;
 
 export {
   DB_CHECK_ICON_URI,
@@ -64,4 +66,6 @@ export {
   RELOAD_ICON_URI,
   MINUS_ICON_URI,
   SEARCH_ICON_URI,
+  EYE_ICON_URI,
+  EYE_SLASH_ICON_URI,
 };
