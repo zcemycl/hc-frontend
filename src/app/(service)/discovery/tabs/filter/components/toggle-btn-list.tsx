@@ -20,6 +20,7 @@ export const ToggleBtnList = ({
       {toggleOptions.map((pair: IToggleOptions, idx: number) => {
         return (
           <TypeCheckBtn
+            key={pair.key}
             {...{
               idx,
               pair,

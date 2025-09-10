@@ -19,7 +19,6 @@ export const TypeCheckBtn = ({
 }) => {
   return (
     <button
-      key={pair.key}
       onClick={(e) => {
         e.preventDefault();
         clickCallBack(pair.key);
