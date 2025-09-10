@@ -33,6 +33,7 @@ const MINUS_ICON_URI = `${BOOTSTRAP_URI}/dash.svg`;
 const SEARCH_ICON_URI = `${BOOTSTRAP_URI}/search.svg`;
 const EYE_ICON_URI = `${BOOTSTRAP_URI}/eye.svg`;
 const EYE_SLASH_ICON_URI = `${BOOTSTRAP_URI}/eye-slash.svg`;
+const FLOWER_ICON_URI = `${BOOTSTRAP_URI}/flower2.svg`;
 
 export {
   DB_CHECK_ICON_URI,
@@ -68,4 +69,5 @@ export {
   SEARCH_ICON_URI,
   EYE_ICON_URI,
   EYE_SLASH_ICON_URI,
+  FLOWER_ICON_URI,
 };

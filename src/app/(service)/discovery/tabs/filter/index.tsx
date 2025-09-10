@@ -174,7 +174,6 @@ export default function FilterTab() {
                 if (visJsRef.current) {
                   try {
                     const targetNodeId = v.id;
-                    console.log(multiSelectNodes, targetNodeId);
                     let _nodes: INode[];
                     if (!e.ctrlKey) {
                       _nodes = [v];

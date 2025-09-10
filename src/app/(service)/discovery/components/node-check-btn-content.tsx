@@ -3,6 +3,7 @@ import { SideCopyBtn } from "./side-copy-btn";
 import { INode } from "@/types";
 import { DiscoveryContext } from "@/contexts";
 import { useContext } from "react";
+import { FLOWER_ICON_URI } from "@/icons/bootstrap";
 
 export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
   const { hiddenNodes, setHiddenNodes, dNodes } = useContext(DiscoveryContext);
@@ -16,7 +17,7 @@ export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
         <SideCopyBtn v={v} />
         <button
           className={`
-                px-1 rounded-lg shadow-md
+                p-1 rounded-lg shadow-md
                 ${
                   hiddenNodes[v.id]
                     ? "bg-teal-700 hover:bg-teal-300"
@@ -35,6 +36,17 @@ export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
           }}
         >
           <VisibilityBtn isHidden={hiddenNodes[v.id]} isShowText={false} />
+        </button>
+        <button
+          className="bg-amber-400 
+                hover:bg-amber-600 
+                rounded-lg p-1"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <img src={FLOWER_ICON_URI} />
         </button>
       </span>
     </p>
