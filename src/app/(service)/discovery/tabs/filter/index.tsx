@@ -6,10 +6,12 @@ import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { useDiscoveryGraph } from "@/hooks";
-import { ToggleBtnList } from "./toggle-btn-list";
-import { SearchFilter } from "./search-filter";
-import { NoFilterTextBox } from "./no-filter-text-box";
-import { SideCopyBtn } from "./side-copy-btn";
+import {
+  ToggleBtnList,
+  SearchFilter,
+  NoFilterTextBox,
+  SideCopyBtn,
+} from "./components";
 import { PaginationBar2, VisibilityBtn } from "@/components";
 
 const toggleOptions = [

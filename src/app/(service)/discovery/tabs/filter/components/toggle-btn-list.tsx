@@ -1,6 +1,6 @@
 "use client";
 import { VisibilityBtn } from "@/components";
-import { switch_color_node, switch_hover_color_node } from "../../utils";
+import { switch_color_node, switch_hover_color_node } from "../../../utils";
 
 interface IToggleOptions {
   key: string;
