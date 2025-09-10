@@ -1,5 +1,5 @@
 "use client";
-import { GraphTabEnum } from "@/constants";
+import { GraphTabEnum, toggleOptions } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
@@ -14,17 +14,6 @@ import {
 } from "./components";
 import { PaginationBar2, VisibilityBtn } from "@/components";
 
-const toggleOptions = [
-  {
-    key: "p",
-    displayName: "Drug",
-  },
-  {
-    key: "ta",
-    displayName: "Therapeutic Area",
-  },
-];
-
 export default function FilterTab() {
   const {
     tab,
@@ -37,16 +26,18 @@ export default function FilterTab() {
     setMultiSelectNodes,
     nPerPage,
     dNodes,
+    hiddenAll,
+    setHiddenAll,
+    hiddenType,
+    setHiddenType,
+    hiddenNodes,
+    setHiddenNodes,
   } = useContext(DiscoveryContext);
   const { move_network, trace_node_callback } = useDiscoveryGraph();
   const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
   const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p"]);
-  const [hiddenAll, setHiddenAll] = useState<boolean>(false);
-  const [hiddenType, setHiddenType] = useState<boolean[]>(
-    toggleOptions.map((v) => false),
-  );
 
   const filterNodesByTypeAndTerm = useMemo(() => {
     return nodes
@@ -104,7 +95,7 @@ export default function FilterTab() {
               dNodes.update({ id: dn.id, hidden: !hiddenAll });
             });
             setHiddenType(toggleOptions.map((_) => !hiddenAll));
-            setHiddenAll((prev) => !prev);
+            setHiddenAll((prev: boolean) => !prev);
           }}
         >
           <VisibilityBtn

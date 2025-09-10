@@ -10,6 +10,7 @@ import {
   GraphDirectionEnum,
   GraphTabEnum,
   GraphTypeEnum,
+  toggleOptions,
 } from "@/constants";
 import { Network } from "vis-network";
 import { useDbsHealth, useApiHandler } from "@/hooks";
@@ -65,6 +66,11 @@ export default function Discovery() {
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [dNodes, setDNodes] = useState<any>(null);
   const [dEdges, setDEdges] = useState<any>(null);
+  const [hiddenAll, setHiddenAll] = useState<boolean>(false);
+  const [hiddenType, setHiddenType] = useState<boolean[]>(
+    toggleOptions.map((v) => false),
+  );
+  const [hiddenNodes, setHiddenNodes] = useState<boolean[]>([false]);
   // for info tab displaying chain
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
   // for multi select nodes for drugs
@@ -178,6 +184,12 @@ export default function Discovery() {
           isLoadingLocal,
           fetchBundlesCallback,
           withLoadingLocal,
+          hiddenAll,
+          setHiddenAll,
+          hiddenType,
+          setHiddenType,
+          hiddenNodes,
+          setHiddenNodes,
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">

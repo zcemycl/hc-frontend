@@ -175,3 +175,14 @@ export function generateGraphOption({
   };
   return options;
 }
+
+export const toggleOptions = [
+  {
+    key: "p",
+    displayName: "Drug",
+  },
+  {
+    key: "ta",
+    displayName: "Therapeutic Area",
+  },
+];
