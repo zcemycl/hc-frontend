@@ -18,3 +18,4 @@ export * from "./contact";
 export * from "./routewrapper";
 export * from "./backbtn";
 export * from "./error";
+export * from "./visibilitybtn";

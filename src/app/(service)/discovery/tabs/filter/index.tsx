@@ -10,8 +10,18 @@ import { ToggleBtnList } from "./toggle-btn-list";
 import { SearchFilter } from "./search-filter";
 import { NoFilterTextBox } from "./no-filter-text-box";
 import { SideCopyBtn } from "./side-copy-btn";
-import { PaginationBar2 } from "@/components";
-import { EYE_ICON_URI, EYE_SLASH_ICON_URI } from "@/icons/bootstrap";
+import { PaginationBar2, VisibilityBtn } from "@/components";
+
+const toggleOptions = [
+  {
+    key: "p",
+    displayName: "Drug",
+  },
+  {
+    key: "ta",
+    displayName: "Therapeutic Area",
+  },
+];
 
 export default function FilterTab() {
   const {
@@ -31,7 +41,10 @@ export default function FilterTab() {
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
   const [toggleNodeTypeList, setToggleNodeTypeList] = useState(["p"]);
-  const [hiddenAll, setHiddenAll] = useState(false);
+  const [hiddenAll, setHiddenAll] = useState<boolean>(false);
+  const [hiddenType, setHiddenType] = useState<boolean[]>(
+    toggleOptions.map((v) => false),
+  );
 
   const filterNodesByTypeAndTerm = useMemo(() => {
     return nodes
@@ -74,50 +87,54 @@ export default function FilterTab() {
       <div className="flex flex-row justify-start space-x-2">
         <h2 className="leading text-slate-300 font-bold">Filters</h2>
         <button
-          className="bg-teal-700 hover:bg-teal-300
-          text-black font-bold 
+          className={`bg-teal-700 hover:bg-teal-300
+            ${
+              hiddenAll
+                ? "bg-teal-700 hover:bg-teal-300"
+                : "bg-teal-300 hover:bg-teal-700"
+            }
+          text-black font-bold
           py-0 px-2 rounded-lg
-          flex flex-row space-x-2 content-center items-center align-middle"
+          flex flex-row space-x-2 content-center items-center align-middle`}
           onClick={(e) => {
             e.preventDefault();
             dNodes.map((dn: any) => {
               dNodes.update({ id: dn.id, hidden: !hiddenAll });
             });
+            setHiddenType(toggleOptions.map((_) => !hiddenAll));
             setHiddenAll((prev) => !prev);
           }}
         >
-          {hiddenAll ? (
-            <>
-              <span>Hidden</span>
-              <img src={EYE_SLASH_ICON_URI} alt="connected" />
-            </>
-          ) : (
-            <>
-              <span>Visible</span>
-              <img src={EYE_ICON_URI} alt="connected" />
-            </>
-          )}
+          <VisibilityBtn
+            {...{
+              isHidden: hiddenAll,
+              isShowText: true,
+            }}
+          />
         </button>
       </div>
       <div className="flex flex-row space-x-2">
         <ToggleBtnList
+          visibility={hiddenType}
           defaultSelectedKeys={toggleNodeTypeList}
-          toggleOptions={[
-            {
-              key: "p",
-              displayName: "Drug",
-            },
-            {
-              key: "ta",
-              displayName: "Therapeutic Area",
-            },
-          ]}
+          toggleOptions={toggleOptions}
           clickCallBack={(key: string) => {
             if (toggleNodeTypeList.includes(key)) {
               setToggleNodeTypeList((prev) => prev.filter((v) => v != key));
             } else {
               setToggleNodeTypeList((prev) => [...prev, key]);
             }
+          }}
+          visibilityCallback={(i: number, key: string) => {
+            dNodes.map((dn: any) => {
+              if (dn.group !== key) return;
+              dNodes.update({ id: dn.id, hidden: !hiddenType[i] });
+            });
+            setHiddenType((prev: boolean[]) => {
+              let prev_copy = [...prev];
+              prev_copy[i] = !prev_copy[i];
+              return prev_copy;
+            });
           }}
         />
       </div>
