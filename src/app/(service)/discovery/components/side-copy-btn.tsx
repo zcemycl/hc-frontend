@@ -1,5 +1,5 @@
 import { COPY_ICON_URI } from "@/icons/bootstrap";
-import { switch_color_node, switch_hover_color_node } from "../../../utils";
+import { switch_color_node, switch_hover_color_node } from "../utils";
 import { INode } from "@/types";
 
 interface IProps {

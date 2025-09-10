@@ -6,13 +6,9 @@ import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { useDiscoveryGraph } from "@/hooks";
-import {
-  ToggleBtnList,
-  SearchFilter,
-  NoFilterTextBox,
-  SideCopyBtn,
-} from "./components";
+import { ToggleBtnList, SearchFilter, NoFilterTextBox } from "./components";
 import { PaginationBar2, VisibilityBtn } from "@/components";
+import { SideCopyBtn } from "../../components";
 
 export default function FilterTab() {
   const {
@@ -178,11 +174,8 @@ export default function FilterTab() {
                 e.preventDefault();
                 if (visJsRef.current) {
                   try {
-                    // net.releaseNode();
                     const targetNodeId = v.id;
                     console.log(multiSelectNodes, targetNodeId);
-                    // move_network(net, targetNodeId);
-                    // trace_node_callback(targetNodeId, net);
                     let _nodes: INode[];
                     if (!e.ctrlKey) {
                       _nodes = [v];
@@ -220,10 +213,31 @@ export default function FilterTab() {
                 </span>
                 <span className="inline-flex items-center space-x-1 align-middle">
                   <SideCopyBtn v={v} />
-                  <VisibilityBtn
-                    isHidden={hiddenNodes[v.id]}
-                    isShowText={false}
-                  />
+                  <button
+                    className={`
+                    px-1 rounded-lg shadow-md
+                    ${
+                      hiddenNodes[v.id]
+                        ? "bg-teal-700 hover:bg-teal-300"
+                        : "bg-teal-300 hover:bg-teal-700"
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const cur = hiddenNodes[v.id];
+                      dNodes.update({ id: v.id, hidden: !cur });
+                      setHiddenNodes((prev: Record<string, boolean>) => {
+                        let result = structuredClone(prev);
+                        result[v.id] = !result[v.id];
+                        return result;
+                      });
+                    }}
+                  >
+                    <VisibilityBtn
+                      isHidden={hiddenNodes[v.id]}
+                      isShowText={false}
+                    />
+                  </button>
                 </span>
               </p>
             </div>

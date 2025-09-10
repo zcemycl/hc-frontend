@@ -3,11 +3,20 @@ import { DiscoveryContext } from "@/contexts";
 import { INode } from "@/types";
 import { GraphTabEnum } from "@/constants";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
-import { COPY_ICON_URI } from "@/icons/bootstrap";
 import { useDiscoveryGraph } from "@/hooks";
+import { SideCopyBtn } from "../../components";
+import { VisibilityBtn } from "@/components";
 
 export default function InfoTab() {
-  const { selectedNodes, tab, visJsRef, net } = useContext(DiscoveryContext);
+  const {
+    selectedNodes,
+    tab,
+    visJsRef,
+    net,
+    dNodes,
+    hiddenNodes,
+    setHiddenNodes,
+  } = useContext(DiscoveryContext);
   const { move_network } = useDiscoveryGraph();
   return (
     <div
@@ -44,27 +53,39 @@ export default function InfoTab() {
                 }
               }}
             >
-              <p
-                className="font-bold
-                items-center content-center align-middle"
-              >
-                Level {v.level}: <span id={`label-${v.id}`}>{v.label} </span>
-                <button
-                  className={`content-center items-center align-middle
-                  rounded-md ${switch_color_node(v.group!)}
-                  z-10
-                  h-full p-1 ${switch_hover_color_node(v.group!)}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const spanEle = document.getElementById(
-                      `label-${v.id}`,
-                    )?.innerHTML;
-                    navigator.clipboard.writeText(spanEle?.trim() as string);
-                  }}
-                >
-                  <img src={COPY_ICON_URI} alt="copy" />
-                </button>
+              <p className="font-bold">
+                Level {v.level}:{" "}
+                <span id={`label-${v.id}`} className="inline">
+                  {v.label}{" "}
+                </span>
+                <span className="inline-flex items-center space-x-1 align-middle">
+                  <SideCopyBtn v={v} />
+                  <button
+                    className={`
+                    px-1 rounded-lg shadow-md
+                    ${
+                      hiddenNodes[v.id]
+                        ? "bg-teal-700 hover:bg-teal-300"
+                        : "bg-teal-300 hover:bg-teal-700"
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const cur = hiddenNodes[v.id];
+                      dNodes.update({ id: v.id, hidden: !cur });
+                      setHiddenNodes((prev: Record<string, boolean>) => {
+                        let result = structuredClone(prev);
+                        result[v.id] = !result[v.id];
+                        return result;
+                      });
+                    }}
+                  >
+                    <VisibilityBtn
+                      isHidden={hiddenNodes[v.id]}
+                      isShowText={false}
+                    />
+                  </button>
+                </span>
               </p>
             </div>
           );
