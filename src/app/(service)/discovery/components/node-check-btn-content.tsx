@@ -1,12 +1,13 @@
 import { VisibilityBtn } from "@/components";
 import { SideCopyBtn } from "./side-copy-btn";
-import { INode } from "@/types";
+import { IEdge, INode } from "@/types";
 import { DiscoveryContext } from "@/contexts";
 import { useContext } from "react";
 import { FLOWER_ICON_URI } from "@/icons/bootstrap";
 
 export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
-  const { hiddenNodes, setHiddenNodes, dNodes } = useContext(DiscoveryContext);
+  const { hiddenNodes, setHiddenNodes, dNodes, edges } =
+    useContext(DiscoveryContext);
   return (
     <p className="font-bold">
       Level {v.level}:{" "}
@@ -44,6 +45,18 @@ export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            const nearNodeIds = edges
+              .filter((e: IEdge) => e.from === v.id || e.to === v.id)
+              .map((e: IEdge) => {
+                if (e.to === v.id) return e.from;
+                else return e.to;
+              });
+            let tmpHiddenNodes = structuredClone(hiddenNodes);
+            nearNodeIds.forEach((i: number) => {
+              tmpHiddenNodes[i] = false;
+              dNodes.update({ id: i, hidden: false });
+            });
+            setHiddenNodes(tmpHiddenNodes);
           }}
         >
           <img src={FLOWER_ICON_URI} />
