@@ -75,12 +75,11 @@ export default function FilterTab() {
       <div className="flex flex-row justify-start space-x-2">
         <h2 className="leading text-slate-300 font-bold">Filters</h2>
         <button
-          className={`bg-teal-700 hover:bg-teal-300
-            ${
-              hiddenAll
-                ? "bg-teal-700 hover:bg-teal-300"
-                : "bg-teal-300 hover:bg-teal-700"
-            }
+          className={`${
+            hiddenAll
+              ? "bg-teal-700 hover:bg-teal-300"
+              : "bg-teal-300 hover:bg-teal-700"
+          }
           text-black font-bold
           py-0 px-2 rounded-lg
           flex flex-row space-x-2 content-center items-center align-middle`}
