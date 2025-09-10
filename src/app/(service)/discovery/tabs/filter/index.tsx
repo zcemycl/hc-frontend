@@ -93,6 +93,11 @@ export default function FilterTab() {
             e.preventDefault();
             dNodes.map((dn: any) => {
               dNodes.update({ id: dn.id, hidden: !hiddenAll });
+              setHiddenNodes((prev: Record<string, boolean>) => {
+                let result = structuredClone(prev);
+                result[dn.id] = !hiddenAll;
+                return result;
+              });
             });
             setHiddenType(toggleOptions.map((_) => !hiddenAll));
             setHiddenAll((prev: boolean) => !prev);
@@ -122,6 +127,11 @@ export default function FilterTab() {
             dNodes.map((dn: any) => {
               if (dn.group !== key) return;
               dNodes.update({ id: dn.id, hidden: !hiddenType[i] });
+              setHiddenNodes((prev: Record<string, boolean>) => {
+                let result = structuredClone(prev);
+                result[dn.id] = !hiddenType[i];
+                return result;
+              });
             });
             setHiddenType((prev: boolean[]) => {
               let prev_copy = [...prev];
@@ -210,7 +220,10 @@ export default function FilterTab() {
                 </span>
                 <span className="inline-flex items-center space-x-1 align-middle">
                   <SideCopyBtn v={v} />
-                  <VisibilityBtn isHidden={false} isShowText={false} />
+                  <VisibilityBtn
+                    isHidden={hiddenNodes[v.id]}
+                    isShowText={false}
+                  />
                 </span>
               </p>
             </div>

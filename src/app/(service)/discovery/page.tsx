@@ -70,7 +70,9 @@ export default function Discovery() {
   const [hiddenType, setHiddenType] = useState<boolean[]>(
     toggleOptions.map((v) => false),
   );
-  const [hiddenNodes, setHiddenNodes] = useState<boolean[]>([false]);
+  const [hiddenNodes, setHiddenNodes] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(nodes.map((node) => [node.id, false])),
+  );
   // for info tab displaying chain
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
   // for multi select nodes for drugs
@@ -96,6 +98,10 @@ export default function Discovery() {
   const withLoadingLocal = async <T,>(fn: () => Promise<T>): Promise<T> => {
     return withGenericLoading(fn, setLoadingCountLocal);
   };
+
+  useEffect(() => {
+    setHiddenNodes(Object.fromEntries(nodes.map((node) => [node.id, false])));
+  }, [nodes]);
 
   useEffect(() => {
     if (!net || !visToolBarRef.current) return;
