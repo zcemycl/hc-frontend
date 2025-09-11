@@ -1,5 +1,5 @@
 "use client";
-import { TypographyH2, PaginationBar, ProtectedRoute } from "@/components";
+import { TypographyH2, ProtectedRoute, PaginationBar2 } from "@/components";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect, useCallback, useContext } from "react";
 import { convert_datetime_to_simple } from "@/utils";
@@ -133,7 +133,7 @@ export default function Page() {
             </div>
             {countHistory / nPerPage > 1 && (
               <div className="flex justify-center space-x-1 flex-wrap">
-                <PaginationBar
+                <PaginationBar2
                   topN={countHistory}
                   pageN={pageNHistory}
                   nPerPage={nPerPage}
