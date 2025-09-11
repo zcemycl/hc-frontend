@@ -1,14 +1,15 @@
 import { useContext } from "react";
-import { DiscoveryContext } from "@/contexts";
+import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
 import { INode } from "@/types";
 import { GraphTabEnum } from "@/constants";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
-import { useDiscoveryGraph } from "@/hooks";
 import { NodeCheckBtnContent } from "../../components";
 
 export default function InfoTab() {
   const { selectedNodes, tab, visJsRef, net } = useContext(DiscoveryContext);
-  const { move_network } = useDiscoveryGraph();
+  const { utilities } = useContext(LocalUtilityContext);
+  const { move_network } = utilities;
+
   return (
     <div
       className={`absolute

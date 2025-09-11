@@ -1,13 +1,13 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext, useAuth } from "@/contexts";
+import { DiscoveryContext, LocalUtilityContext, useAuth } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo } from "react";
 import { deleteBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
 import { ARROW_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
-import { useApiHandler, useDiscoveryGraph } from "@/hooks";
+import { useApiHandler } from "@/hooks";
 import { PaginationBar2 } from "@/components";
 import {
   MoveDelBtn,
@@ -65,7 +65,8 @@ export default function BundleTab() {
     withLoadingLocal,
     fetchBundlesCallback,
   } = useContext(DiscoveryContext);
-  const { move_network, trace_node_callback } = useDiscoveryGraph();
+  const { utilities } = useContext(LocalUtilityContext);
+  const { move_network, trace_node_callback } = utilities;
 
   const nodesToBundle = useMemo(() => {
     return multiSelectNodes.filter((v: INode) => v.group === "p");

@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useContext } from "react";
-import { useLoader, DiscoveryContext } from "@/contexts";
+import { useLoader, DiscoveryContext, LocalUtilityProvider } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import { INode } from "@/types";
 import { fetchGraphDummyv2 } from "@/http/backend";
 import { Spinner } from "@/components";
-import { useApiHandler } from "@/hooks";
+import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
   const { handleResponse } = useApiHandler();
@@ -20,6 +20,12 @@ export default function VisPanel() {
     initTAId,
     setMultiSelectNodes,
   } = useContext(DiscoveryContext);
+  const {
+    retrieve_path_nodes_edges,
+    trace_node_path_with_color,
+    move_network,
+    trace_node_callback,
+  } = useDiscoveryGraph();
 
   const isDiscoveryLoading = isLoadingv2 || isDrawingGraph;
 
@@ -60,40 +66,50 @@ export default function VisPanel() {
   }, []);
 
   return (
-    <div id="vis-panel" className="relative rounded-lg h-[78vh]">
-      {isDiscoveryLoading && (
-        <div
-          className="absolute h-[78vh]
+    <LocalUtilityProvider
+      utilities={{
+        retrieve_path_nodes_edges,
+        trace_node_path_with_color,
+        move_network,
+        trace_node_callback,
+        a: 1,
+      }}
+    >
+      <div id="vis-panel" className="relative rounded-lg h-[78vh]">
+        {isDiscoveryLoading && (
+          <div
+            className="absolute h-[78vh]
           z-20
           flex flex-col justify-center align-middle content-center
           top-1/2 -translate-y-1/2
           left-1/2 transform -translate-x-1/2"
-        >
-          <Spinner />
-          <span className="sr-only">Loading...</span>
-        </div>
-      )}
-      <div
-        ref={visJsRef}
-        style={{ height: "78vh", width: "100%" }}
-        className="w-full h-full absolute
+          >
+            <Spinner />
+            <span className="sr-only">Loading...</span>
+          </div>
+        )}
+        <div
+          ref={visJsRef}
+          style={{ height: "78vh", width: "100%" }}
+          className="w-full h-full absolute
                 z-0
                 rounded-lg
                 border-2 border-solid
                 border-purple-700
                 left-0 right-0 top-0 bottom-0"
-      />
-      <div
-        ref={visToolBarRef}
-        id="vis-toolbar"
-        className="absolute right-0 top-0
+        />
+        <div
+          ref={visToolBarRef}
+          id="vis-toolbar"
+          className="absolute right-0 top-0
           pointer-events-none
           flex flex-col
           z-10
           space-y-2"
-      >
-        <VisToolbar />
+        >
+          <VisToolbar />
+        </div>
       </div>
-    </div>
+    </LocalUtilityProvider>
   );
 }

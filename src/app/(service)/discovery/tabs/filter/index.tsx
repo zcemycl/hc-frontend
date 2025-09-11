@@ -1,11 +1,10 @@
 "use client";
 import { GraphTabEnum, toggleOptions } from "@/constants";
-import { DiscoveryContext } from "@/contexts";
+import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
 import { INode, IVisibilityMap } from "@/types";
 import { useSearchParams } from "next/navigation";
-import { useDiscoveryGraph } from "@/hooks";
 import { ToggleBtnList, SearchFilter, NoFilterTextBox } from "./components";
 import { PaginationBar2, VisibilityBtn } from "@/components";
 import { NodeCheckBtnContent } from "../../components";
@@ -28,7 +27,8 @@ export default function FilterTab() {
     setHiddenType,
     setHiddenNodes,
   } = useContext(DiscoveryContext);
-  const { move_network, trace_node_callback } = useDiscoveryGraph();
+  const { utilities } = useContext(LocalUtilityContext);
+  const { move_network, trace_node_callback } = utilities;
   const [pageN, setPageN] = useState(0);
   const searchParams = useSearchParams();
   const buttonRef = useRef<HTMLDivElement>(null);
