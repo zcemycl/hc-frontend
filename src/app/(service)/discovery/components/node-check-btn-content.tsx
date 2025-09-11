@@ -1,13 +1,14 @@
 import { VisibilityBtn } from "@/components";
 import { SideCopyBtn } from "./side-copy-btn";
-import { IEdge, INode } from "@/types";
+import { IEdge, INode, IVisibilityMap } from "@/types";
 import { DiscoveryContext } from "@/contexts";
 import { useContext } from "react";
 import { FLOWER_ICON_URI } from "@/icons/bootstrap";
 
 export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
-  const { hiddenNodes, setHiddenNodes, dNodes, edges } =
+  const { hiddenNodes, setHiddenNodes, dNodes, edges, net } =
     useContext(DiscoveryContext);
+  // const { move_network, trace_node_callback } = useDiscoveryGraph();
   return (
     <p className="font-bold">
       Level {v.level}:{" "}
@@ -29,11 +30,12 @@ export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
             e.stopPropagation();
             const cur = hiddenNodes[v.id];
             dNodes.update({ id: v.id, hidden: !cur });
-            setHiddenNodes((prev: Record<string, boolean>) => {
+            setHiddenNodes((prev: IVisibilityMap) => {
               let result = structuredClone(prev);
               result[v.id] = !result[v.id];
               return result;
             });
+            // move_network(net, v.id)
           }}
         >
           <VisibilityBtn isHidden={hiddenNodes[v.id]} isShowText={false} />

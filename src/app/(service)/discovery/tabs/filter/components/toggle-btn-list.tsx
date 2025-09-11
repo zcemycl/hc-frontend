@@ -1,5 +1,5 @@
 "use client";
-import { IToggleOptions } from "@/types";
+import { IToggleOptions, IVisibilityMap } from "@/types";
 import { TypeCheckBtn } from "../../../components";
 
 export const ToggleBtnList = ({
@@ -9,11 +9,11 @@ export const ToggleBtnList = ({
   clickCallBack,
   visibilityCallback,
 }: {
-  visibility: boolean[];
+  visibility: IVisibilityMap;
   defaultSelectedKeys: string[];
   toggleOptions: IToggleOptions[];
   clickCallBack: (key: string) => void;
-  visibilityCallback: (idx: number, nodeTypeKey: string) => void;
+  visibilityCallback: (nodeTypeKey: string) => void;
 }) => {
   return (
     <>

@@ -3,7 +3,14 @@
 import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import VisPanel from "./vis-panel";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IEdge, INode, IFlagAttrs, IBundleConfig, IBundle } from "@/types";
+import {
+  IEdge,
+  INode,
+  IFlagAttrs,
+  IBundleConfig,
+  IBundle,
+  IVisibilityMap,
+} from "@/types";
 import { Modal, ProtectedRoute } from "@/components";
 import {
   defaultBundleConfig,
@@ -67,10 +74,10 @@ export default function Discovery() {
   const [dNodes, setDNodes] = useState<any>(null);
   const [dEdges, setDEdges] = useState<any>(null);
   const [hiddenAll, setHiddenAll] = useState<boolean>(false);
-  const [hiddenType, setHiddenType] = useState<boolean[]>(
-    toggleOptions.map((v) => false),
+  const [hiddenType, setHiddenType] = useState<IVisibilityMap>(() =>
+    Object.fromEntries(toggleOptions.map((opt) => [opt.key, false])),
   );
-  const [hiddenNodes, setHiddenNodes] = useState<Record<string, boolean>>(() =>
+  const [hiddenNodes, setHiddenNodes] = useState<IVisibilityMap>(() =>
     Object.fromEntries(nodes.map((node) => [node.id, false])),
   );
   // for info tab displaying chain
@@ -100,6 +107,12 @@ export default function Discovery() {
   };
 
   useEffect(() => {
+    setSelectedNodes([]);
+    setMultiSelectNodes([]);
+    setHiddenAll(false);
+    setHiddenType(
+      Object.fromEntries(toggleOptions.map((opt) => [opt.key, false])),
+    );
     setHiddenNodes(Object.fromEntries(nodes.map((node) => [node.id, false])));
   }, [nodes]);
 
@@ -141,6 +154,7 @@ export default function Discovery() {
 
   return (
     <ProtectedRoute>
+      {/* LocalContext */}
       <DiscoveryContext.Provider
         value={{
           nPerPage,

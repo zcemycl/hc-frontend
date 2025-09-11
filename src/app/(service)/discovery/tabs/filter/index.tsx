@@ -3,7 +3,7 @@ import { GraphTabEnum, toggleOptions } from "@/constants";
 import { DiscoveryContext } from "@/contexts";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { switch_color_node, switch_hover_color_node } from "../../utils";
-import { INode } from "@/types";
+import { INode, IVisibilityMap } from "@/types";
 import { useSearchParams } from "next/navigation";
 import { useDiscoveryGraph } from "@/hooks";
 import { ToggleBtnList, SearchFilter, NoFilterTextBox } from "./components";
@@ -85,15 +85,24 @@ export default function FilterTab() {
           flex flex-row space-x-2 content-center items-center align-middle`}
           onClick={(e) => {
             e.preventDefault();
-            dNodes.map((dn: any) => {
-              dNodes.update({ id: dn.id, hidden: !hiddenAll });
-              setHiddenNodes((prev: Record<string, boolean>) => {
-                let result = structuredClone(prev);
-                result[dn.id] = !hiddenAll;
-                return result;
-              });
+            const updateHide = nodes.map((v: INode) => {
+              return { id: v.id, hidden: !hiddenAll };
             });
-            setHiddenType(toggleOptions.map((_) => !hiddenAll));
+            dNodes.update(updateHide);
+            setHiddenNodes((prev: IVisibilityMap) => {
+              let result = structuredClone(prev);
+              updateHide.forEach((v: INode) => {
+                result[v.id] = !hiddenAll;
+              });
+              return result;
+            });
+            setHiddenType((prev: IVisibilityMap) => {
+              let result = structuredClone(prev);
+              toggleOptions.forEach((opt) => {
+                result[opt.key] = !hiddenAll;
+              });
+              return result;
+            });
             setHiddenAll((prev: boolean) => !prev);
           }}
         >
@@ -117,20 +126,24 @@ export default function FilterTab() {
               setToggleNodeTypeList((prev) => [...prev, key]);
             }
           }}
-          visibilityCallback={(i: number, key: string) => {
-            dNodes.map((dn: any) => {
-              if (dn.group !== key) return;
-              dNodes.update({ id: dn.id, hidden: !hiddenType[i] });
-              setHiddenNodes((prev: Record<string, boolean>) => {
-                let result = structuredClone(prev);
-                result[dn.id] = !hiddenType[i];
-                return result;
+          visibilityCallback={(key: string) => {
+            const updateHide = nodes
+              .filter((v: INode) => v.group === key)
+              .map((v: INode) => {
+                return { id: v.id, hidden: !hiddenType[key] };
               });
+            dNodes.update(updateHide);
+            setHiddenNodes((prev: IVisibilityMap) => {
+              let result = structuredClone(prev);
+              updateHide.forEach((v: INode) => {
+                result[v.id] = !hiddenType[key];
+              });
+              return result;
             });
-            setHiddenType((prev: boolean[]) => {
-              let prev_copy = [...prev];
-              prev_copy[i] = !prev_copy[i];
-              return prev_copy;
+            setHiddenType((prev: IVisibilityMap) => {
+              let result = structuredClone(prev);
+              result[key] = !result[key];
+              return result;
             });
           }}
         />

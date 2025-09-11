@@ -1,21 +1,19 @@
 import { VisibilityBtn } from "@/components";
 import { switch_color_node, switch_hover_color_node } from "../utils";
-import { IToggleOptions } from "@/types";
+import { IToggleOptions, IVisibilityMap } from "@/types";
 
 export const TypeCheckBtn = ({
-  idx,
   pair,
   visibility,
   isActiveFunc,
   clickCallBack,
   visibilityCallback,
 }: {
-  idx: number;
   pair: IToggleOptions;
-  visibility: boolean[];
+  visibility: IVisibilityMap;
   isActiveFunc: (i: string) => boolean;
   clickCallBack: (i: string) => void;
-  visibilityCallback: (i: number, s: string) => void;
+  visibilityCallback: (s: string) => void;
 }) => {
   return (
     <button
@@ -40,19 +38,19 @@ export const TypeCheckBtn = ({
         className={`
               px-1 rounded-lg shadow-md
               ${
-                visibility[idx]
+                visibility[pair.key]
                   ? "bg-teal-700 hover:bg-teal-300"
                   : "bg-teal-300 hover:bg-teal-700"
               }`}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          visibilityCallback(idx, pair.key);
+          visibilityCallback(pair.key);
         }}
       >
         <VisibilityBtn
           {...{
-            isHidden: visibility[idx],
+            isHidden: visibility[pair.key],
             isShowText: false,
           }}
         />
