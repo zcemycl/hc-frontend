@@ -46,3 +46,5 @@ export interface UnannotatedAETableResult
 export interface CountResult extends ApiResult<number> {}
 export interface AETableResult extends ApiResult<IAdverseEffectTable> {}
 export interface TableNoHeadResult extends ApiResult<ITableNoHead[]> {}
+export interface AnnotateAddReceiptResult
+  extends ApiResult<IAnnotateAddReceipt> {}

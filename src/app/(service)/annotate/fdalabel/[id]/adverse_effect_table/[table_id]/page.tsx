@@ -152,8 +152,12 @@ export default function Page({ params }: Readonly<PageProps>) {
                             ),
                           );
                           handleResponse(addres);
+                          console.log(addres);
                           if (addres.success) {
-                            router.back();
+                            const params_ = new URLSearchParams();
+                            params_.append("annotation_id", addres.data.id);
+                            params_.append("category", addres.data.category);
+                            router.push(`/annotate/bundle?${params_}`);
                           }
                         }
                       : undefined,
