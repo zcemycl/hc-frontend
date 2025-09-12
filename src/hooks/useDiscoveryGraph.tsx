@@ -82,6 +82,16 @@ const useDiscoveryGraph = () => {
 
   const setUpNetwork = () => {
     const tmpDNodes = new DataSet(nodes);
+    tmpDNodes.on("*", (event, properties, senderId) => {
+      console.log(
+        "event:",
+        event,
+        "properties:",
+        properties,
+        "senderId:",
+        senderId,
+      );
+    });
     const tmpDEdges = new DataSet(edges);
     setDNodes(tmpDNodes);
     setDEdges(tmpDEdges);
