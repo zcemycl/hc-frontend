@@ -11,7 +11,7 @@ import {
   IBundle,
   IVisibilityMap,
 } from "@/types";
-import { Modal, ProtectedRoute } from "@/components";
+import { EditBundleModal, Modal, ProtectedRoute } from "@/components";
 import {
   defaultBundleConfig,
   GraphDirectionEnum,
@@ -231,78 +231,29 @@ export default function Discovery() {
               </h2>
             </div>
             <VisPanel />
-            <Modal
+            <EditBundleModal
               {...{
-                title: "Add Bundle",
                 isOpenModal: openBundleModal,
                 setIsOpenModal: setOpenBundleModal,
+                title: "Add Bundle",
+                bundleConfig,
+                setBundleConfig,
+                submit_callback: async (bc: IBundleConfig) => {
+                  if (bc.name.trim() === "") {
+                    return;
+                  }
+                  const createBundleRes = await createBundleByUserIdv2(
+                    userId as number,
+                    bc,
+                  );
+                  handleResponse(createBundleRes);
+                  if (!createBundleRes.success) return;
+                  await fetchBundlesCallback();
+                  setBundleConfig({ ...defaultBundleConfig });
+                  setOpenBundleModal(false);
+                },
               }}
-            >
-              <div
-                className="flex flex-col space-y-2
-                  px-2 sm:px-5
-                  py-2 pb-5"
-              >
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-white">Name</label>
-                  <input
-                    type="text"
-                    value={bundleConfig.name}
-                    className="bg-slate-300 text-black w-full
-                          rounded-md p-2"
-                    onChange={(e) => {
-                      e.preventDefault();
-                      setBundleConfig({
-                        ...bundleConfig,
-                        name: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-white">Description</label>
-                  <textarea
-                    className="bg-slate-300 text-black w-full
-                        rounded-md p-2 min-w-20"
-                    value={bundleConfig.description}
-                    onChange={(e) => {
-                      e.preventDefault();
-                      setBundleConfig({
-                        ...bundleConfig,
-                        description: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <button
-                    className="bg-emerald-300 hover:bg-emerald-500
-                        rounded-lg
-                        px-4 py-2
-                        font-bold text-black"
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      console.log(bundleConfig);
-                      console.log(userId);
-                      if (bundleConfig.name.trim() === "") {
-                        return;
-                      }
-                      const createBundleRes = await createBundleByUserIdv2(
-                        userId as number,
-                        bundleConfig,
-                      );
-                      handleResponse(createBundleRes);
-                      if (!createBundleRes.success) return;
-                      await fetchBundlesCallback();
-                      setBundleConfig({ ...defaultBundleConfig });
-                      setOpenBundleModal(false);
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </Modal>
+            />
           </div>
         </section>
       </DiscoveryContext.Provider>

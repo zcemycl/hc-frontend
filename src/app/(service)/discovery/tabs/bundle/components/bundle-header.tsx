@@ -6,7 +6,7 @@ export const BundleHeader = ({
   add_callback: () => void;
 }) => {
   return (
-    <div className="w-full flex flex-row justify-start space-x-2 align-middle">
+    <div className="w-full flex flex-row justify-start space-x-2 align-middle items-center">
       <h2 className="leading text-slate-300 font-bold">Bundles</h2>
       <button
         className="w-5 h-5 rounded-full"

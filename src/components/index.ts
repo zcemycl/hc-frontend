@@ -5,7 +5,7 @@ export { PaginationBar, PaginationBar2 } from "./pagebar";
 export * from "./dropdown";
 export * from "./table";
 export * from "./typography";
-export { default as Modal } from "./modal";
+export { Modal, EditBundleModal } from "./modal";
 export * from "./fdalabel";
 export * from "./searchbar";
 export * from "./spinner";
