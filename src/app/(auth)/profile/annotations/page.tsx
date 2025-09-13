@@ -1,6 +1,6 @@
 "use client";
 import {
-  PaginationBar,
+  PaginationBar2,
   ProtectedRoute,
   TypographyH2,
   VerToolbar,
@@ -16,7 +16,7 @@ import { convert_datetime_to_simple } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
 import ProfileBar from "../profile-bar";
-import { AnnotationTypeEnum, annotationTypeMap } from "@/constants";
+import { AnnotationTypeEnum } from "@/constants";
 import { useApiHandler } from "@/hooks";
 
 export default function Page() {
@@ -36,7 +36,7 @@ export default function Page() {
       fetchUnannotatedAETableByUserIdv2(
         id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        nPerPage * pageNAnnotate,
+        nPerPage * pageN,
         nPerPage,
         true,
         false,
@@ -49,11 +49,9 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    if (isLoadingAuth) return;
-    if (!userId) return;
     setAnnotationRecord(userId as number, pageNAnnotate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth, userId, pageNAnnotate]);
+  }, [pageNAnnotate]);
 
   useEffect(() => {
     async function getProfile(id: number) {
@@ -168,18 +166,16 @@ export default function Page() {
                 })
               )}
             </div>
-            {countAnnotated / nPerPage > 1 && (
-              <div className="flex justify-center space-x-1 flex-wrap">
-                <PaginationBar
-                  topN={countAnnotated}
-                  pageN={pageNAnnotate}
-                  nPerPage={nPerPage}
-                  setPageN={(i: number) => {
-                    setPageNAnnotate(i);
-                  }}
-                />
-              </div>
-            )}
+            <div className="flex justify-center space-x-1 flex-wrap">
+              <PaginationBar2
+                topN={countAnnotated}
+                pageN={pageNAnnotate}
+                nPerPage={nPerPage}
+                setPageN={(i: number) => {
+                  setPageNAnnotate(i);
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>

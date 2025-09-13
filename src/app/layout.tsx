@@ -46,7 +46,7 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
           crossOrigin="anonymous"
         ></link>
       </head>
-      <body className="overflow-x-hidden overflow-y-hidden">
+      <body className="overflow-x-hidden overflow-y-hidden select-none">
         <ClientErrorBoundary>
           <ThemeProvider attribute="class">
             <LoaderProvider>

@@ -2,12 +2,8 @@
 
 import { useContext } from "react";
 import { DiscoveryContext } from "@/contexts";
-import InfoTab from "./info-tab";
-import FlagTab from "./flag-tab";
 import TabBar from "./tab-bar";
-import SettingsTab from "./settings-tab";
-import FilterTab from "./filter-tab";
-import { BundleTab } from "./tabs";
+import { BundleTab, FilterTab, InfoTab, FlagTab, SettingsTab } from "./tabs";
 import { TOOL_ICON_URI } from "@/icons/bootstrap";
 
 export default function VisToolbar() {

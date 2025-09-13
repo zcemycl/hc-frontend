@@ -18,6 +18,7 @@ const TREE_2_ICON_URI = `${BOOTSTRAP_URI}/diagram-2.svg`;
 const TREE_3_ICON_URI = `${BOOTSTRAP_URI}/diagram-3.svg`;
 const TREE_RADIO_ICON_URI = `${BOOTSTRAP_URI}/broadcast.svg`;
 const BOOKMARK_ICON_URI = `${BOOTSTRAP_URI}/journal-bookmark-fill.svg`;
+const INFO_CIRCLE_ICON_URI = `${BOOTSTRAP_URI}/info-circle.svg`;
 const INFO_CIRCLE_FILL_ICON_URI = `${BOOTSTRAP_URI}/info-circle-fill.svg`;
 const FLAG_FILL_ICON_URI = `${BOOTSTRAP_URI}/flag-fill.svg`;
 const SLIDERS_ICON_URI = `${BOOTSTRAP_URI}/sliders.svg`;
@@ -31,6 +32,9 @@ const BAG_MINUS_FILL_ICON_URI = `${BOOTSTRAP_URI}/bag-dash-fill.svg`;
 const RELOAD_ICON_URI = `${BOOTSTRAP_URI}/arrow-clockwise.svg`;
 const MINUS_ICON_URI = `${BOOTSTRAP_URI}/dash.svg`;
 const SEARCH_ICON_URI = `${BOOTSTRAP_URI}/search.svg`;
+const EYE_ICON_URI = `${BOOTSTRAP_URI}/eye.svg`;
+const EYE_SLASH_ICON_URI = `${BOOTSTRAP_URI}/eye-slash.svg`;
+const FLOWER_ICON_URI = `${BOOTSTRAP_URI}/flower2.svg`;
 
 export {
   DB_CHECK_ICON_URI,
@@ -64,4 +68,8 @@ export {
   RELOAD_ICON_URI,
   MINUS_ICON_URI,
   SEARCH_ICON_URI,
+  EYE_ICON_URI,
+  EYE_SLASH_ICON_URI,
+  FLOWER_ICON_URI,
+  INFO_CIRCLE_ICON_URI,
 };

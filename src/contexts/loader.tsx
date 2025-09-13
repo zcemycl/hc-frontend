@@ -3,20 +3,13 @@ import React, {
   createContext,
   useContext,
   useState,
-  useMemo,
   useEffect,
   useRef,
-  useCallback,
   useTransition,
+  SetStateAction,
+  Dispatch,
 } from "react";
-import { booleanDummySetState, TBooleanDummySetState } from "@/types";
 import { usePathname } from "next/navigation";
-import { max_loading_period } from "@/constants";
-
-interface LoaderContextType {
-  isLoading: boolean;
-  setIsLoading: TBooleanDummySetState;
-}
 
 export const LoaderContext = createContext<any>({});
 
@@ -34,15 +27,22 @@ export const LoaderProvider = ({
   const isLoadingv2 = loadingCountv2 > 0;
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const withLoading = async <T,>(fn: () => Promise<T>): Promise<T> => {
+  const withGenericLoading = async <T,>(
+    fn: () => Promise<T>,
+    setLoadingCountFn: Dispatch<SetStateAction<number>>,
+  ): Promise<T> => {
     console.log("trigger withloading increment");
-    setLoadingCountv2((c) => c + 1);
+    setLoadingCountFn((c) => c + 1);
     try {
       return await fn();
     } finally {
-      setLoadingCountv2((c) => c - 1); // always decrement
+      setLoadingCountFn((c) => c - 1); // always decrement
       console.log("trigger withloading decrement");
     }
+  };
+
+  const withLoading = async <T,>(fn: () => Promise<T>): Promise<T> => {
+    return withGenericLoading(fn, setLoadingCountv2);
   };
 
   useEffect(() => {
@@ -80,6 +80,7 @@ export const LoaderProvider = ({
         withLoading,
         isDrawingGraph,
         setIsDrawingGraph,
+        withGenericLoading,
       }}
     >
       {children}

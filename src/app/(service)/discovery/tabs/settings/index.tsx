@@ -173,32 +173,33 @@ export default function SettingsTab() {
             />
           </div>
         </div>
-        <div className="flex flex-row space-x-2">
+        <div className="flex flex-row space-x-2 justify-end">
           <button
-            className="p-2 
+            className={`p-2 
             rounded-lg text-black
-            bg-emerald-600 hover:bg-emerald-200"
+            shadow-md shadow-gray-500
+            hover:shadow-lg hover:shadow-gray-600
+            transition-shadow
+            ${
+              net?.physics.options.enabled
+                ? "bg-red-600 hover:bg-red-400"
+                : "bg-emerald-600 hover:bg-emerald-200"
+            }
+            `}
             onClick={(e) => {
               e.preventDefault();
-              console.log("start simulation ... ");
-              net?.setOptions({ physics: true });
-              net?.startSimulation();
+              if (net?.physics.options.enabled) {
+                console.log("stop simulation ... ");
+                net?.setOptions({ physics: false });
+                net?.stopSimulation();
+              } else {
+                console.log("start simulation ... ");
+                net?.setOptions({ physics: true });
+                net?.startSimulation();
+              }
             }}
           >
-            Start Simulation
-          </button>
-          <button
-            className="p-2 
-            rounded-lg text-black
-            bg-amber-600 hover:bg-amber-200"
-            onClick={(e) => {
-              e.preventDefault();
-              console.log("stop simulation ... ");
-              net?.setOptions({ physics: false });
-              net?.stopSimulation();
-            }}
-          >
-            Stop Simulation
+            {net?.physics.options.enabled ? "Stop" : "Start"} Simulation
           </button>
         </div>
       </div>

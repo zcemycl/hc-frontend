@@ -26,5 +26,7 @@ export interface ITa2PGraph {
   links: IEdge[];
 }
 
+export interface IVisibilityMap extends Record<string, boolean> {}
+
 // API Result interfaces
 export interface GraphResult extends ApiResult<ITa2PGraph> {}

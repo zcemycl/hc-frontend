@@ -2,6 +2,7 @@ import { ApiResult } from "./api";
 import { IFdaLabelRef } from "./fdalabel";
 
 export interface IBundleConfig {
+  id?: string;
   name: string;
   description: string;
 }
@@ -22,3 +23,4 @@ export interface IBundleUpdate {
 // API Result interfaces
 export interface BundlesResult extends ApiResult<IBundle[]> {}
 export interface BundleResult extends ApiResult<IBundle> {}
+export interface BundleCountResult extends ApiResult<number> {}

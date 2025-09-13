@@ -18,3 +18,19 @@ export const LocalGenericProvider = ({
     </LocalGenericContext.Provider>
   );
 };
+
+export const LocalUtilityContext = createContext<any>({});
+
+export const LocalUtilityProvider = ({
+  utilities,
+  children,
+}: {
+  utilities: IInitialData;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <LocalUtilityContext.Provider value={{ utilities }}>
+      {children}
+    </LocalUtilityContext.Provider>
+  );
+};

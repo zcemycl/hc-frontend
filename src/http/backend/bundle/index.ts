@@ -3,3 +3,4 @@ export * from "./fetch_bundle_by_id";
 export * from "./create_bundle";
 export * from "./delete_bundle";
 export * from "./patch_bundle";
+export * from "./fetch_count_by_userid";
