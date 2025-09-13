@@ -1,7 +1,6 @@
 "use client";
 import {
   EditBundleModal,
-  Modal,
   PaginationBar2,
   ProtectedRoute,
   TypographyH2,
@@ -14,8 +13,9 @@ import {
   fetchBundlesByUserIdv2,
   fetchBundlesCountByUserIdv2,
   fetchUserInfoByIdv2,
+  patchBundleByIdv2,
 } from "@/http/backend";
-import { IBundle, IBundleConfig, IUser } from "@/types";
+import { IBundle, IBundleConfig, IBundleUpdate, IUser } from "@/types";
 import { useApiHandler } from "@/hooks";
 import {
   INFO_CIRCLE_ICON_URI,
@@ -39,6 +39,7 @@ export default function Page() {
   const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
     ...defaultBundleConfig,
   });
+  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
 
   const fetchBundlesCallback = useCallback(async () => {
     const [tmpBundlesRes, tmpBundlesCount] = await withLoading(() =>
@@ -97,6 +98,8 @@ export default function Page() {
                   className="w-5 h-5 rounded-full"
                   onClick={(e) => {
                     e.preventDefault();
+                    setModalMode("add");
+                    setBundleConfig({ ...defaultBundleConfig });
                     setIsOpenModal((prev) => !prev);
                   }}
                 >
@@ -114,19 +117,30 @@ export default function Page() {
               {...{
                 isOpenModal,
                 setIsOpenModal,
-                title: "Add Bundle",
+                title: modalMode === "add" ? "Add Bundle" : "Edit Bundle",
                 bundleConfig,
                 setBundleConfig,
                 submit_callback: async (bc: IBundleConfig) => {
                   if (bc.name.trim() === "") {
                     return;
                   }
-                  const createBundleRes = await createBundleByUserIdv2(
-                    userId as number,
-                    bc,
-                  );
-                  handleResponse(createBundleRes);
-                  if (!createBundleRes.success) return;
+                  if (modalMode === "add") {
+                    console.log("add");
+                    const createBundleRes = await createBundleByUserIdv2(
+                      userId as number,
+                      bc,
+                    );
+                    handleResponse(createBundleRes);
+                    if (!createBundleRes.success) return;
+                  } else if (modalMode === "edit") {
+                    console.log("edit");
+                    const updateBundleRes = await patchBundleByIdv2(
+                      bundleConfig.id as string,
+                      bundleConfig as IBundleUpdate,
+                    );
+                    handleResponse(updateBundleRes);
+                    if (!updateBundleRes.success) return;
+                  }
                   await fetchBundlesCallback();
                   setBundleConfig({ ...defaultBundleConfig });
                   setIsOpenModal(false);
@@ -185,6 +199,13 @@ export default function Page() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
+                              setModalMode("edit");
+                              setIsOpenModal(true);
+                              setBundleConfig({
+                                id: b.id,
+                                name: b.name,
+                                description: b.description,
+                              });
                             }}
                           >
                             <img

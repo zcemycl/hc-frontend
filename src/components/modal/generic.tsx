@@ -20,7 +20,7 @@ const Modal: FC<ModalProps> = ({
       tabIndex={-1}
       aria-hidden="true"
       className={`fixed place-items-center transition-all
-            inset-0
+            inset-0 z-50
             z-10 justify-center items-center w-full md:inset-0 h-full 
             ${isOpenModal ? "scale-100" : "scale-0"}`}
     >

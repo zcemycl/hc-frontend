@@ -2,6 +2,7 @@ import { ApiResult } from "./api";
 import { IFdaLabelRef } from "./fdalabel";
 
 export interface IBundleConfig {
+  id?: string;
   name: string;
   description: string;
 }
