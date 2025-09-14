@@ -13,6 +13,7 @@ import {
 } from "@/types";
 import { EditBundleModal, Modal, ProtectedRoute } from "@/components";
 import {
+  BundleConnectEnum,
   defaultBundleConfig,
   GraphDirectionEnum,
   GraphTabEnum,
@@ -141,8 +142,12 @@ export default function Discovery() {
           userId as number,
           nPerPage * pageNBundles,
           nPerPage,
+          BundleConnectEnum.FDALABEL,
         ),
-        fetchBundlesCountByUserIdv2(userId as number),
+        fetchBundlesCountByUserIdv2(
+          userId as number,
+          BundleConnectEnum.FDALABEL,
+        ),
       ]),
     );
     handleResponse(tmpBundlesRes);

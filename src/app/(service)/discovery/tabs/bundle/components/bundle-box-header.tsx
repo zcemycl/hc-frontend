@@ -12,10 +12,31 @@ export const BundleBoxHeader = ({
   search_callback: (bundle: IBundle) => void;
   del_callback: (bundle: IBundle) => void;
 }) => {
+  let useFor = "Empty";
+  if (!(bundle.annotations.length === 0 && bundle.fdalabels.length === 0)) {
+    useFor = "";
+  }
   return (
     <div id="bundle-summary" className="flex flex-row justify-between">
-      <div className="flex justfiy-start space-x-2">
-        <span>{bundle.name}</span>
+      <div
+        className="flex justify-start space-x-2 basis-2/3 
+        text-clip min-w-0"
+      >
+        <span
+          className="basis-full whitespace-nowrap 
+          flex-shrink-0 min-w-0 text-ellipsis space-x-2 flex
+          items-center
+          overflow-hidden"
+        >
+          {useFor === "" ? (
+            <></>
+          ) : (
+            <span className="bg-red-500 rounded-lg px-3 py-1">{useFor}</span>
+          )}
+          <span>{bundle.name}</span>
+        </span>
+      </div>
+      <div className="flex flex-row basis-1/3 justify-end space-x-2">
         <button
           onClick={async (e) => {
             e.preventDefault();
@@ -47,19 +68,19 @@ export const BundleBoxHeader = ({
                 hover:shadow-black"
           />
         </button>
-      </div>
-      <button
-        onClick={async (e) => {
-          e.preventDefault();
-          del_callback(bundle);
-        }}
-      >
-        <img
-          src={X_ICON_URI}
-          className="rounded-full 
+        <button
+          onClick={async (e) => {
+            e.preventDefault();
+            del_callback(bundle);
+          }}
+        >
+          <img
+            src={X_ICON_URI}
+            className="rounded-full 
             bg-red-500 hover:bg-red-700"
-        />
-      </button>
+          />
+        </button>
+      </div>
     </div>
   );
 };
