@@ -19,34 +19,9 @@ import {
   CandidateHeader,
   NoCandidateBox,
 } from "./components";
-
-function adjustPageNAfterDelete({
-  prevPageN,
-  totalBundlesAfterDelete,
-  nPerPage,
-}: {
-  prevPageN: number;
-  totalBundlesAfterDelete: number;
-  nPerPage: number;
-}): number {
-  const totalPages = Math.ceil(totalBundlesAfterDelete / nPerPage);
-
-  // If no bundles left, reset to first page
-  if (totalBundlesAfterDelete === 0) return 0;
-
-  // Last valid page index
-  const lastPage = totalPages - 1;
-
-  // If current page becomes empty after delete, step back
-  if (prevPageN > lastPage) {
-    return lastPage;
-  }
-
-  return prevPageN;
-}
+import { adjustPageNAfterDelete } from "@/http/utils";
 
 export default function BundleTab() {
-  const { userId } = useAuth();
   const { handleResponse } = useApiHandler();
   const router = useRouter();
 

@@ -10,6 +10,7 @@ import ProfileBar from "../profile-bar";
 import { useCallback, useEffect, useState } from "react";
 import {
   createBundleByUserIdv2,
+  deleteBundleByIdv2,
   fetchBundlesByUserIdv2,
   fetchBundlesCountByUserIdv2,
   fetchUserInfoByIdv2,
@@ -24,6 +25,7 @@ import {
   X_ICON_URI,
 } from "@/icons/bootstrap";
 import { defaultBundleConfig } from "@/constants";
+import { adjustPageNAfterDelete } from "@/http/utils";
 
 export default function Page() {
   const { userId, isLoadingAuth } = useAuth();
@@ -217,10 +219,22 @@ export default function Page() {
                             />
                           </button>
                           <button
-                            onClick={(e) => {
+                            onClick={async (e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              console.log("bbc");
+                              const deleteBundleResult = await withLoading(() =>
+                                deleteBundleByIdv2(b.id),
+                              );
+                              handleResponse(deleteBundleResult);
+                              if (!deleteBundleResult.success) return;
+                              setPageN((prevPageN: number) =>
+                                adjustPageNAfterDelete({
+                                  prevPageN,
+                                  totalBundlesAfterDelete: bundlesCount - 1,
+                                  nPerPage,
+                                }),
+                              );
+                              await fetchBundlesCallback();
                             }}
                           >
                             <img
