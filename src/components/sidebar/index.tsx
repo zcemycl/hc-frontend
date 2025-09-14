@@ -53,7 +53,10 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
     <>
       {children}
 
-      <div className="fixed top-0 left-0 w-full mt-[4.5rem]" ref={refSideBar}>
+      <div
+        className="fixed top-0 left-0 w-full mt-[4.5rem] z-30"
+        ref={refSideBar}
+      >
         <div className="container relative items-center mx-auto">
           <div
             id="default-sidebar"
