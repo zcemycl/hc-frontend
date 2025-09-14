@@ -126,17 +126,18 @@ export default function Page() {
                   }
                   if (modalMode === "add") {
                     console.log("add");
-                    const createBundleRes = await createBundleByUserIdv2(
-                      userId as number,
-                      bc,
+                    const createBundleRes = await withLoading(() =>
+                      createBundleByUserIdv2(userId as number, bc),
                     );
                     handleResponse(createBundleRes);
                     if (!createBundleRes.success) return;
                   } else if (modalMode === "edit") {
                     console.log("edit");
-                    const updateBundleRes = await patchBundleByIdv2(
-                      bundleConfig.id as string,
-                      bundleConfig as IBundleUpdate,
+                    const updateBundleRes = await withLoading(() =>
+                      patchBundleByIdv2(
+                        bundleConfig.id as string,
+                        bundleConfig as IBundleUpdate,
+                      ),
                     );
                     handleResponse(updateBundleRes);
                     if (!updateBundleRes.success) return;

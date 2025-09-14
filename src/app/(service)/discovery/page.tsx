@@ -242,9 +242,8 @@ export default function Discovery() {
                   if (bc.name.trim() === "") {
                     return;
                   }
-                  const createBundleRes = await createBundleByUserIdv2(
-                    userId as number,
-                    bc,
+                  const createBundleRes = await withLoadingLocal(() =>
+                    createBundleByUserIdv2(userId as number, bc),
                   );
                   handleResponse(createBundleRes);
                   if (!createBundleRes.success) return;
