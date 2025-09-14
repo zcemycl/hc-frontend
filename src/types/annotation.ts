@@ -40,6 +40,12 @@ export interface IAnnotateAddReceipt {
   is_ai: boolean;
 }
 
+export interface IAnnotationRef {
+  id: number;
+  table_id: number;
+  category: AnnotationCategoryEnum;
+}
+
 // API Result interfaces
 export interface UnannotatedAETableResult
   extends ApiResult<IUnAnnotatedAETable[]> {}

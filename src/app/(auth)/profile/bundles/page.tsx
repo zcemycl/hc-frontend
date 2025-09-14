@@ -156,6 +156,20 @@ export default function Page() {
                 <p className="leading-relaxed mb-1">No Record ...</p>
               ) : (
                 bundles.map((b: IBundle, idx: number) => {
+                  let useFor: string = "Not In Use";
+                  if (b.annotations.length === 0 && b.fdalabels.length === 0) {
+                    useFor = "Not In Use";
+                  } else if (
+                    b.annotations.length === 0 &&
+                    b.fdalabels.length > 0
+                  ) {
+                    useFor = "Fdalabel";
+                  } else if (
+                    b.annotations.length > 0 &&
+                    b.fdalabels.length === 0
+                  ) {
+                    useFor = "Annotation";
+                  }
                   return (
                     <div
                       key={`${b.name}-group-btn`}
@@ -174,12 +188,23 @@ export default function Page() {
                         className="flex flex-row 
                         justify-between font-bold"
                       >
-                        <span>{b.name}</span>
+                        <div
+                          className="flex flex-row justify-start
+                          space-x-2 text-clip min-w-0 basis-2/3"
+                        >
+                          <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-shrink min-w-0">
+                            {b.name}
+                          </span>
+                          <span className="bg-amber-300 rounded-lg px-3 text-black flex-shrink-0 whitespace-nowrap">
+                            {useFor}
+                          </span>
+                        </div>
+
                         <div
                           id="sub-buttons"
                           className="
                           flex flex-row space-x-2
-                          items-center"
+                          items-center basis-1/3 justify-end"
                         >
                           <button
                             onClick={(e) => {

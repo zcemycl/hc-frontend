@@ -1,5 +1,6 @@
 import { ApiResult } from "./api";
 import { IFdaLabelRef } from "./fdalabel";
+import { IAnnotationRef } from "./annotation";
 
 export interface IBundleConfig {
   id?: string;
@@ -12,6 +13,7 @@ export interface IBundle {
   name: string;
   description: string;
   fdalabels: IFdaLabelRef[];
+  annotations: IAnnotationRef[];
 }
 
 export interface IBundleUpdate {
