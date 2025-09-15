@@ -8,8 +8,11 @@ import { useRouter } from "next/navigation";
 const Handler500 = () => {
   return (
     <>
-      <span>Oopss... Something went wrong.</span>
-      <span>If the issue persists, please contact us.</span>
+      <span>Oops… Something went wrong on our side.</span>
+      <span>Please try again in a moment. </span>
+      <span>
+        If the problem continues, contact us and we’ll look into it right away.
+      </span>
     </>
   );
 };
@@ -17,10 +20,11 @@ const Handler500 = () => {
 const Handler404 = () => {
   return (
     <>
-      <span>The content you are searching are not available.</span>
-      <span>Please search another term.</span>
+      <span>We couldn’t find the content you’re looking for.</span>
+      <span>Try searching with a different term.</span>
       <span>
-        Otherwise, contact us, we would love to enhance our product with you.
+        If you still can’t find it, contact us — we’d love your feedback to
+        improve our product.
       </span>
     </>
   );
@@ -30,8 +34,8 @@ const Handler403 = () => {
   const router = useRouter();
   return (
     <>
-      <span>Oh no, your login session has expired.</span>
-      <span>Click the button below to sign out, and log in again.</span>
+      <span className="font-semibold">Your session has expired.</span>
+      <span>Please log in again to continue.</span>
       <button
         className="bg-red-500 hover:bg-red-600
             p-2 rounded-lg text-white"
