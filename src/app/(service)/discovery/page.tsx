@@ -11,7 +11,11 @@ import {
   IBundle,
   IVisibilityMap,
 } from "@/types";
-import { EditBundleModal, Modal, ProtectedRoute } from "@/components";
+import {
+  EditBundleModal,
+  HandleNotOKResponseModal,
+  ProtectedRoute,
+} from "@/components";
 import {
   BundleConnectEnum,
   defaultBundleConfig,
@@ -150,9 +154,9 @@ export default function Discovery() {
         ),
       ]),
     );
-    handleResponse(tmpBundlesRes);
+    if (!tmpBundlesRes.success) handleResponse(tmpBundlesRes);
     setBundles(tmpBundlesRes.data ?? []);
-    handleResponse(tmpBundlesCount);
+    if (!tmpBundlesCount) handleResponse(tmpBundlesCount);
     setBundlesCount(tmpBundlesCount.data ?? 0);
     console.log("bundles", tmpBundlesRes.data ?? [], tmpBundlesCount);
   }, [userId, pageNBundles]);
@@ -218,6 +222,7 @@ export default function Discovery() {
         }}
       >
         <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
+          <HandleNotOKResponseModal />
           <div className="flex flex-col container pt-24 mx-auto px-10">
             <div className="sm:w-1/2 flex flex-col w-screen space-y-2">
               <h2 className="text-white text-lg mb-1 font-medium title-font space-x-1 flex flex-row">
@@ -250,7 +255,7 @@ export default function Discovery() {
                   const createBundleRes = await withLoadingLocal(() =>
                     createBundleByUserIdv2(userId as number, bc),
                   );
-                  handleResponse(createBundleRes);
+                  if (!createBundleRes) handleResponse(createBundleRes);
                   if (!createBundleRes.success) return;
                   await fetchBundlesCallback();
                   setBundleConfig({ ...defaultBundleConfig });

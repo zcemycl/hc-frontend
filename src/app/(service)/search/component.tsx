@@ -7,7 +7,12 @@ import {
   useLoader,
 } from "@/contexts";
 import { useRouter } from "next/navigation";
-import { Spinner, ProtectedRoute, VerToolbar } from "@/components";
+import {
+  Spinner,
+  ProtectedRoute,
+  VerToolbar,
+  HandleNotOKResponseModal,
+} from "@/components";
 import { IFdaLabel, ICompareAETable, IFdaVersions } from "@/types";
 import {
   SortByEnum,
@@ -141,7 +146,7 @@ export default function Search() {
           ${isLoadingv2 ? "animate-pulse" : ""}`}
           ref={refSearchResGroup}
         >
-          {/* <div className="container px-2 py-24 mx-auto grid justify-items-center"> */}
+          <HandleNotOKResponseModal />
           <div
             className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"

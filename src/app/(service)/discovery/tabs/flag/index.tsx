@@ -108,8 +108,10 @@ export default function FlagTab() {
                 null,
               ),
             );
-            handleResponse(res);
-            if (!res.success) return;
+            if (!res.success) {
+              handleResponse(res);
+              return;
+            }
             setMultiSelectNodes([]);
             console.log(res);
             let all_nodes = [

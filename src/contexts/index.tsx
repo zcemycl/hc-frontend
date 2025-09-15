@@ -17,3 +17,7 @@ export {
   LocalUtilityContext,
   LocalUtilityProvider,
 } from "./generic-local";
+export {
+  ApiErrResponseProvider,
+  ApiErrResponseContext,
+} from "./api-err-response";
