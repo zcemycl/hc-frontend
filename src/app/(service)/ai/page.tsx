@@ -2,16 +2,10 @@
 import { useAuth, useLoader } from "@/contexts";
 import { create_presigned_url } from "@/http/internal";
 import { JupyterIcon, ChatbotIcon, AnnotateIcon, DiscoveryIcon } from "@/icons";
-import { redirect, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { UserRoleEnum } from "@/types/users";
-import {
-  Modal,
-  Spinner,
-  TypographyH2,
-  ProtectedRoute,
-  BackBtn,
-} from "@/components";
+import { Modal, TypographyH2, ProtectedRoute, BackBtn } from "@/components";
 
 export default function AI() {
   const router = useRouter();
@@ -29,16 +23,6 @@ export default function AI() {
         ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
-          {isLoadingv2 && (
-            <div
-              role="status"
-              className="absolute left-1/2 top-1/2 
-            -translate-x-1/2 -translate-y-1/2"
-            >
-              <Spinner />
-              <span className="sr-only">Loading...</span>
-            </div>
-          )}
           <Modal
             title="Jupyter Lab Link"
             isOpenModal={isOpenModal}

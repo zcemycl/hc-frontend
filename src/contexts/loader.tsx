@@ -10,6 +10,7 @@ import React, {
   Dispatch,
 } from "react";
 import { usePathname } from "next/navigation";
+import { LoaderComponentWrapper } from "@/components";
 
 export const LoaderContext = createContext<any>({});
 
@@ -26,6 +27,12 @@ export const LoaderProvider = ({
   const [loadingCountv2, setLoadingCountv2] = useState(0);
   const isLoadingv2 = loadingCountv2 > 0;
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  const loadingStateMap: Record<string, boolean> = {
+    "/discovery": isDrawingGraph,
+  };
+
+  const genericIsLoading = loadingStateMap[pathname] ?? isLoadingv2;
 
   const withGenericLoading = async <T,>(
     fn: () => Promise<T>,
@@ -83,7 +90,13 @@ export const LoaderProvider = ({
         withGenericLoading,
       }}
     >
-      {children}
+      <LoaderComponentWrapper
+        {...{
+          genericIsLoading,
+        }}
+      >
+        {children}
+      </LoaderComponentWrapper>
     </LoaderContext.Provider>
   );
 };

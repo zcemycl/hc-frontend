@@ -1,5 +1,5 @@
 "use client";
-import { Spinner, Table, ProtectedRoute, BackBtn } from "@/components";
+import { Table, ProtectedRoute, BackBtn } from "@/components";
 import { DEFAULT_FDALABEL_VERSIONS } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
 import { useApiHandler } from "@/hooks";
@@ -50,15 +50,6 @@ export default function Page({ params }: PageProps) {
         overflow-y-scroll overflow-x-hidden ${isLoadingv2 ? "animate-pulse" : ""}`}
       >
         <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
-          {isLoadingv2 && (
-            <div
-              className="absolute left-1/2 top-1/2 
-              -translate-x-1/2 -translate-y-1/2"
-            >
-              <Spinner />
-              <span className="sr-only">Loading...</span>
-            </div>
-          )}
           <div
             className="flex flex-col mt-8 
             sm:w-2/3 w-screen

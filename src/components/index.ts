@@ -19,3 +19,4 @@ export * from "./routewrapper";
 export * from "./backbtn";
 export * from "./error";
 export * from "./visibilitybtn";
+export * from "./loader";

@@ -4,7 +4,6 @@ import { useLoader, DiscoveryContext, LocalUtilityProvider } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import { INode } from "@/types";
 import { fetchGraphDummyv2 } from "@/http/backend";
-import { Spinner } from "@/components";
 import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
@@ -78,18 +77,6 @@ export default function VisPanel() {
       }}
     >
       <div id="vis-panel" className="relative rounded-lg h-[78vh]">
-        {isDiscoveryLoading && (
-          <div
-            className="absolute h-[78vh]
-          z-20
-          flex flex-col justify-center align-middle content-center
-          top-1/2 -translate-y-1/2
-          left-1/2 transform -translate-x-1/2"
-          >
-            <Spinner />
-            <span className="sr-only">Loading...</span>
-          </div>
-        )}
         <div
           ref={visJsRef}
           style={{ height: "78vh", width: "100%" }}

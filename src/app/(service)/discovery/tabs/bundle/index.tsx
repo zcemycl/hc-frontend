@@ -1,18 +1,17 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext, LocalUtilityContext, useAuth } from "@/contexts";
+import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
 import { IBundle, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo } from "react";
 import { deleteBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
 import { ARROW_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 import { useApiHandler } from "@/hooks";
-import { PaginationBar2 } from "@/components";
+import { PaginationBar2, LoaderComponentWrapper } from "@/components";
 import {
   MoveDelBtn,
   BundleBoxHeader,
-  LoaderComponentWrapper,
   BundleBoxItem,
   NoBundleBox,
   BundleHeader,

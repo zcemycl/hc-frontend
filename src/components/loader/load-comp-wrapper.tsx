@@ -1,4 +1,4 @@
-import { Spinner } from "@/components";
+import { Spinner } from "../spinner";
 
 export const LoaderComponentWrapper = ({
   genericIsLoading,
