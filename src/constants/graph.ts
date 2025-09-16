@@ -90,13 +90,13 @@ export const drug_product_group_graph_style = {
 export const bundle_group_graph_style = {
   color: graph_node_bg_color_enum.b,
   // shape: "box",
+  shape: "dot",
+  // shape: "database",
   level: 11,
-  shape: "database",
-  size: 70,
+  size: 50,
   font: {
-    color: "black",
+    color: "white",
     size: 40,
-    vadjust: 40,
   },
 };
 

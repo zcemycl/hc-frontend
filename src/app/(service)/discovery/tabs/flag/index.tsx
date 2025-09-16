@@ -3,7 +3,7 @@ import { DiscoveryContext, useLoader } from "@/contexts";
 import { fetchGraphByAreav2 } from "@/http/backend";
 import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
 import { useApiHandler } from "@/hooks";
-import { INode } from "@/types";
+import { IEdge, INode } from "@/types";
 import { useContext, useState } from "react";
 
 export default function FlagTab() {
@@ -128,7 +128,15 @@ export default function FlagTab() {
               obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
             );
             setNodes(final_all_nodes);
-            setEdges([...res?.data?.links]);
+            setEdges([
+              ...res?.data?.links.map((e_: IEdge) => {
+                return {
+                  from: e_.from,
+                  to: e_.to,
+                  id: `from-${e_.from}-to-${e_.to}`,
+                };
+              }),
+            ]);
           }}
         >
           <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />

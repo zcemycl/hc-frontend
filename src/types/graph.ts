@@ -10,7 +10,7 @@ export interface INode {
 export interface IEdge {
   from: number | string;
   to: number | string;
-  id?: string;
+  id?: string | string;
 }
 
 export interface IFlagAttrs {

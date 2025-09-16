@@ -2,9 +2,13 @@
 
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
-import { IBundle, IFdaLabelRef, INode } from "@/types";
+import { IBundle, IEdge, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo } from "react";
-import { deleteBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
+import {
+  deleteBundleByIdv2,
+  fetchGraphByProductsv2,
+  patchBundleByIdv2,
+} from "@/http/backend";
 import { ARROW_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 import { useApiHandler } from "@/hooks";
@@ -38,8 +42,11 @@ export default function BundleTab() {
     isLoadingLocal,
     withLoadingLocal,
     fetchBundlesCallback,
+    flagAttrs,
     nodes,
+    edges,
     dNodes,
+    dEdges,
   } = useContext(DiscoveryContext);
   const { utilities } = useContext(LocalUtilityContext);
   const { move_network, trace_node_callback } = utilities;
@@ -184,23 +191,75 @@ export default function BundleTab() {
                       await fetchBundlesCallback();
                     },
                     expand_callback: async (bundle) => {
-                      let bundleNodes = [
+                      let bundleNodes: INode[];
+                      let bundleLinks: IEdge[];
+                      const resProductsTaIds = await fetchGraphByProductsv2(
+                        bundle.fdalabels.map((f_: IFdaLabelRef) =>
+                          f_.tradename.toLowerCase(),
+                        ),
+                        flagAttrs.maxLevel,
+                      );
+                      if (!resProductsTaIds.success) return;
+                      console.log(resProductsTaIds);
+                      const tanodes: INode[] = resProductsTaIds.data!.ta.map(
+                        (v_: INode) => {
+                          return {
+                            id: v_.id,
+                            label: v_.label,
+                            level: v_.level as number,
+                            group: "ta",
+                          };
+                        },
+                      );
+                      const pnodes: INode[] = resProductsTaIds.data!.p.map(
+                        (v_: INode) => {
+                          return {
+                            id: v_.id,
+                            label: v_.label,
+                            level: v_.level as number,
+                            group: "p",
+                          };
+                        },
+                      );
+                      bundleNodes = [
                         {
                           group: "b",
                           label: bundle.name,
                           id: bundle.id,
                         },
-                      ] as INode[];
-                      // console.log(nodes)
-                      // bundle.fdalabels.forEach((f: IFdaLabelRef) => {
-                      //   bundleNodes.push({
-                      //     group: "p",
-                      //     label: f.tradename,
-                      //     id: f.id as number,
-                      //   })
-                      // })
-                      // console.log(bundleNodes)
+                        ...tanodes,
+                        ...pnodes,
+                      ];
+                      const normalLinks = resProductsTaIds.data!.links.map(
+                        (e_: IEdge) => {
+                          return {
+                            from: e_.from,
+                            to: e_.to,
+                            id: `from-${e_.from}-to-${e_.to}`,
+                          };
+                        },
+                      );
+                      console.log(edges);
+                      console.log(normalLinks);
+                      bundleLinks = [
+                        ...normalLinks,
+                        ...resProductsTaIds.data!.p.map((v_: INode) => {
+                          return {
+                            from: v_.id,
+                            to: bundle.id,
+                            id: `from-${v_.id}-to-${bundle.id}`,
+                          };
+                        }),
+                      ];
+
                       dNodes.update(bundleNodes);
+                      dEdges.update(bundleLinks);
+                      net.setOptions({ physics: true });
+                      net.startSimulation();
+                      setTimeout(() => {
+                        net.setOptions({ physics: false });
+                        net.stopSimulation();
+                      }, 1500);
                     },
                   }}
                 />
