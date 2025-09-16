@@ -84,7 +84,7 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <PulseTemplate refSection={refUnannotatedGroup}>
+      <PulseTemplate refSection={refUnannotatedGroup} overflowY={true}>
         <div
           className="px-2 py-24 flex flex-col justify-center 
           items-center align-center w-full"

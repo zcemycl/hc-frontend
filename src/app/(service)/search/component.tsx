@@ -139,7 +139,7 @@ export default function Search() {
           refSearchResGroup,
         }}
       >
-        <PulseTemplate refSection={refSearchResGroup}>
+        <PulseTemplate refSection={refSearchResGroup} overflowY={true}>
           <div className="overflow-x-hidden">
             <HandleNotOKResponseModal />
             <div

@@ -83,7 +83,7 @@ export default function Admin() {
 
   return (
     <ProtectedRoute>
-      <PulseTemplate refSection={refUserGroup}>
+      <PulseTemplate refSection={refUserGroup} overflowY={true}>
         <div
           className="flex flex-col mt-[7rem] 
           content-center items-center space-y-3"

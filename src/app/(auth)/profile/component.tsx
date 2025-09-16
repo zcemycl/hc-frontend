@@ -28,7 +28,7 @@ export default function Profile() {
 
   return (
     <ProtectedRoute>
-      <PulseTemplate>
+      <PulseTemplate overflowY={true}>
         <div
           className="mt-[10rem] flex flex-col
            content-center items-center

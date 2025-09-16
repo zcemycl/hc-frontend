@@ -67,7 +67,7 @@ export default function Page({ params }: PageProps) {
 
   return (
     <ProtectedRoute>
-      <PulseTemplate>
+      <PulseTemplate overflowY={true}>
         <div className="overflow-x-hidden">
           <div
             className="px-2 py-24 flex flex-col justify-center items-center align-center
