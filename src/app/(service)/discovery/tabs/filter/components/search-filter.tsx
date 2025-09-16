@@ -9,7 +9,7 @@ export const SearchFilter = ({
     <>
       <div
         className="flex flex-row justify-start
-                        text-left content-start items-start w-full"
+        text-left content-start items-start w-full"
       >
         <span className="text-black font-bold">Keyword</span>
       </div>

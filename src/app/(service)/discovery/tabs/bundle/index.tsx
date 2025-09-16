@@ -1,10 +1,14 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
-import { IBundle, IFdaLabelRef, INode } from "@/types";
+import { DiscoveryContext, LocalUtilityContext, useLoader } from "@/contexts";
+import { IBundle, IEdge, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo } from "react";
-import { deleteBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
+import {
+  deleteBundleByIdv2,
+  fetchGraphByProductsv2,
+  patchBundleByIdv2,
+} from "@/http/backend";
 import { ARROW_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 import { useApiHandler } from "@/hooks";
@@ -22,6 +26,7 @@ import { adjustPageNAfterDelete } from "@/http/utils";
 
 export default function BundleTab() {
   const { handleResponse } = useApiHandler();
+  const { isDrawingGraph, setIsDrawingGraph } = useLoader();
   const router = useRouter();
 
   const {
@@ -38,6 +43,13 @@ export default function BundleTab() {
     isLoadingLocal,
     withLoadingLocal,
     fetchBundlesCallback,
+    flagAttrs,
+    nodes,
+    edges,
+    setNodes,
+    setEdges,
+    dNodes,
+    dEdges,
   } = useContext(DiscoveryContext);
   const { utilities } = useContext(LocalUtilityContext);
   const { move_network, trace_node_callback } = utilities;
@@ -138,13 +150,20 @@ export default function BundleTab() {
               <div
                 key={v.name}
                 className="content-start
-              flex flex-col
-              bg-amber-500 hover:bg-amber-300
-              rounded-lg group
-              p-2 text-black font-bold
-              hover:shadow-md
-              hover:shadow-black
+                  flex flex-col
+                  bg-amber-500 hover:bg-amber-300
+                  rounded-lg group
+                  p-2 text-black font-bold
+                  hover:shadow-md
+                  hover:shadow-black
+                  cursor-pointer
               "
+                onClick={(e) => {
+                  e.preventDefault();
+                  const findNode = dNodes.get(v.id);
+                  if (findNode === null) return;
+                  move_network(net, v.id);
+                }}
               >
                 <BundleBoxHeader
                   {...{
@@ -180,6 +199,94 @@ export default function BundleTab() {
                         }),
                       );
                       await fetchBundlesCallback();
+                    },
+                    expand_callback: async (bundle) => {
+                      let bundleNodes: INode[];
+                      let bundleLinks: IEdge[];
+                      try {
+                        setIsDrawingGraph(true);
+                        const resProductsTaIds = await withLoadingLocal(() =>
+                          fetchGraphByProductsv2(
+                            bundle.fdalabels.map((f_: IFdaLabelRef) =>
+                              f_.tradename.toLowerCase(),
+                            ),
+                            flagAttrs.maxLevel,
+                          ),
+                        );
+                        if (!resProductsTaIds.success) {
+                          handleResponse(resProductsTaIds);
+                          return;
+                        }
+                        const tanodes: INode[] = resProductsTaIds.data!.ta.map(
+                          (v_: INode) => {
+                            return {
+                              id: v_.id,
+                              label: v_.label,
+                              level: v_.level as number,
+                              group: "ta",
+                            };
+                          },
+                        );
+                        const pnodes: INode[] = resProductsTaIds.data!.p.map(
+                          (v_: INode) => {
+                            return {
+                              id: v_.id,
+                              label: v_.label,
+                              level: v_.level as number,
+                              group: "p",
+                            };
+                          },
+                        );
+                        bundleNodes = [
+                          {
+                            group: "b",
+                            label: bundle.name,
+                            id: bundle.id,
+                          },
+                          ...tanodes,
+                          ...pnodes,
+                        ];
+                        const normalLinks = resProductsTaIds.data!.links.map(
+                          (e_: IEdge) => {
+                            return {
+                              from: e_.from,
+                              to: e_.to,
+                              id: `from-${e_.from}-to-${e_.to}`,
+                            };
+                          },
+                        );
+                        console.log(edges);
+                        console.log(normalLinks);
+                        bundleLinks = [
+                          ...normalLinks,
+                          ...resProductsTaIds.data!.p.map((v_: INode) => {
+                            return {
+                              from: v_.id,
+                              to: bundle.id,
+                              id: `from-${v_.id}-to-${bundle.id}`,
+                            };
+                          }),
+                        ];
+                        dNodes.update(bundleNodes);
+                        dEdges.update(bundleLinks);
+                        net.setOptions({ physics: true });
+                        net.startSimulation();
+                        setTimeout(() => {
+                          net.setOptions({ physics: false });
+                          net.stopSimulation();
+                          move_network(net, bundle.id);
+                          const refreshNodes = dNodes.get({
+                            fields: ["id", "group", "label", "level"],
+                          });
+                          setNodes(refreshNodes);
+                          const refreshEdges = dEdges.get({
+                            fields: ["to", "from", "id"],
+                          });
+                          setEdges(refreshEdges);
+                        }, 1500);
+                      } finally {
+                        setIsDrawingGraph(false);
+                      }
                     },
                   }}
                 />

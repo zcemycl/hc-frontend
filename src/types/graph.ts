@@ -4,13 +4,13 @@ export interface INode {
   level?: number;
   group?: string;
   label: string;
-  id: number;
+  id: number | string;
 }
 
 export interface IEdge {
-  from: number;
-  to: number;
-  id?: string;
+  from: number | string;
+  to: number | string;
+  id?: string | string;
 }
 
 export interface IFlagAttrs {

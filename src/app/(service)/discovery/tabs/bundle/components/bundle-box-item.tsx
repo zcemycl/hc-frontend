@@ -26,6 +26,7 @@ export const BundleBoxItem = ({
                 bg-red-500 hover:bg-red-300"
         onClick={async (e) => {
           e.preventDefault();
+          e.stopPropagation();
           await del_callback(fdalabelRef, bundle);
         }}
       >
