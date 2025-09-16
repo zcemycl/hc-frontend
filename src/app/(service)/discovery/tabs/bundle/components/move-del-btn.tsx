@@ -10,8 +10,8 @@ export const MoveDelBtn = ({
 }: {
   node: INode;
   idx: number;
-  click_callback: (vid: number) => void;
-  del_callback: (vid: number, idx: number) => void;
+  click_callback: (vid: number | string) => void;
+  del_callback: (vid: number | string, idx: number) => void;
 }) => {
   return (
     <div

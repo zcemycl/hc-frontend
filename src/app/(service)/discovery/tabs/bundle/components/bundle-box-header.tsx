@@ -1,4 +1,9 @@
-import { PLUS_ICON_URI, SEARCH_ICON_URI, X_ICON_URI } from "@/icons/bootstrap";
+import {
+  FLOWER_ICON_URI,
+  PLUS_ICON_URI,
+  SEARCH_ICON_URI,
+  X_ICON_URI,
+} from "@/icons/bootstrap";
 import { IBundle } from "@/types";
 
 export const BundleBoxHeader = ({
@@ -6,11 +11,13 @@ export const BundleBoxHeader = ({
   add_callback,
   search_callback,
   del_callback,
+  expand_callback,
 }: {
   bundle: IBundle;
   add_callback: (bundle: IBundle) => void;
   search_callback: (bundle: IBundle) => void;
   del_callback: (bundle: IBundle) => void;
+  expand_callback: (bundle: IBundle) => void;
 }) => {
   let useFor = "Empty";
   if (!(bundle.annotations.length === 0 && bundle.fdalabels.length === 0)) {
@@ -37,6 +44,21 @@ export const BundleBoxHeader = ({
         </span>
       </div>
       <div className="flex flex-row basis-1/3 justify-end space-x-2">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            expand_callback(bundle);
+          }}
+        >
+          <img
+            src={FLOWER_ICON_URI}
+            className="rounded-full border
+              hover:bg-amber-200
+              bg-amber-600
+              border-transparent
+            "
+          />
+        </button>
         <button
           onClick={async (e) => {
             e.preventDefault();

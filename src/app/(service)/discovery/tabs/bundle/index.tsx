@@ -38,6 +38,8 @@ export default function BundleTab() {
     isLoadingLocal,
     withLoadingLocal,
     fetchBundlesCallback,
+    nodes,
+    dNodes,
   } = useContext(DiscoveryContext);
   const { utilities } = useContext(LocalUtilityContext);
   const { move_network, trace_node_callback } = utilities;
@@ -180,6 +182,25 @@ export default function BundleTab() {
                         }),
                       );
                       await fetchBundlesCallback();
+                    },
+                    expand_callback: async (bundle) => {
+                      let bundleNodes = [
+                        {
+                          group: "b",
+                          label: bundle.name,
+                          id: bundle.id,
+                        },
+                      ] as INode[];
+                      // console.log(nodes)
+                      // bundle.fdalabels.forEach((f: IFdaLabelRef) => {
+                      //   bundleNodes.push({
+                      //     group: "p",
+                      //     label: f.tradename,
+                      //     id: f.id as number,
+                      //   })
+                      // })
+                      // console.log(bundleNodes)
+                      dNodes.update(bundleNodes);
                     },
                   }}
                 />

@@ -87,6 +87,19 @@ export const drug_product_group_graph_style = {
   },
 };
 
+export const bundle_group_graph_style = {
+  color: graph_node_bg_color_enum.b,
+  // shape: "box",
+  level: 11,
+  shape: "database",
+  size: 70,
+  font: {
+    color: "black",
+    size: 40,
+    vadjust: 40,
+  },
+};
+
 export const global_graph_node_style = {
   borderWidth: 2,
 };
@@ -127,6 +140,7 @@ const defaultOptions = {
   groups: {
     ta: therapeutic_area_group_graph_style,
     p: drug_product_group_graph_style,
+    b: bundle_group_graph_style,
   },
 };
 
