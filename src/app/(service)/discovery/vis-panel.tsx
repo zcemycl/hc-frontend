@@ -2,9 +2,8 @@
 import React, { useEffect, useContext } from "react";
 import { useLoader, DiscoveryContext, LocalUtilityProvider } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
-import { INode } from "@/types";
-import { fetchGraphDummyv2 } from "@/http/backend";
-import { Spinner } from "@/components";
+import { IEdge, INode } from "@/types";
+import { fetchGraphByAreav2 } from "@/http/backend";
 import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
@@ -32,7 +31,7 @@ export default function VisPanel() {
   useEffect(() => {
     async function getData() {
       const res = await withLoading(() =>
-        fetchGraphDummyv2(
+        fetchGraphByAreav2(
           flagAttrs.name,
           flagAttrs.numNodes,
           flagAttrs.offset,
@@ -41,8 +40,10 @@ export default function VisPanel() {
           initTAId,
         ),
       );
-      handleResponse(res);
-      if (!res.success) return;
+      if (!res.success) {
+        handleResponse(res);
+        return;
+      }
       setMultiSelectNodes([]);
       console.log(res);
       let all_nodes = [
@@ -59,7 +60,15 @@ export default function VisPanel() {
         obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
       );
       setNodes(final_all_nodes);
-      setEdges([...res?.data?.links]);
+      setEdges([
+        ...res?.data?.links.map((e_: IEdge) => {
+          return {
+            from: e_.from,
+            to: e_.to,
+            id: `from-${e_.from}-to-${e_.to}`,
+          };
+        }),
+      ]);
     }
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,18 +85,6 @@ export default function VisPanel() {
       }}
     >
       <div id="vis-panel" className="relative rounded-lg h-[78vh]">
-        {isDiscoveryLoading && (
-          <div
-            className="absolute h-[78vh]
-          z-20
-          flex flex-col justify-center align-middle content-center
-          top-1/2 -translate-y-1/2
-          left-1/2 transform -translate-x-1/2"
-          >
-            <Spinner />
-            <span className="sr-only">Loading...</span>
-          </div>
-        )}
         <div
           ref={visJsRef}
           style={{ height: "78vh", width: "100%" }}

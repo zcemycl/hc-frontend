@@ -69,7 +69,7 @@ function GeneralSection({
   const idx_tables = rearrangeTables(tables || []) || {};
 
   return (
-    <Fragment key={id}>
+    <Fragment>
       <hr />
       <div className="flex flex-col space-y-2">
         {contents_tags.length !== 0 && (

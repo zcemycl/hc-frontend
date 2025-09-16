@@ -4,7 +4,7 @@ import { sidebar_constant } from "@/constants";
 import { useAuth, useOpenBar } from "@/contexts";
 import Link from "next/link";
 import { UserRoleEnum } from "@/types";
-import { AdminIcon, JupyterIcon } from "@/icons";
+import { AdminIcon } from "@/icons";
 
 export default function SideBar({ children }: { children?: React.ReactNode }) {
   const { role, isLoadingAuth, isAuthenticated } = useAuth();
@@ -61,7 +61,7 @@ export default function SideBar({ children }: { children?: React.ReactNode }) {
           <div
             id="default-sidebar"
             className={`flex absolute z-30 w-64 right-0 
-              transition-transform ${isSideBarOpen ? "" : "translate-y-full"}`}
+              transition-transform ${isAuthenticated && isSideBarOpen ? "" : "translate-y-full"}`}
             aria-label="Sidebar"
           >
             <div className="min-h-screen z-30 px-3 py-4 w-64 bg-gray-50 dark:bg-gray-800">

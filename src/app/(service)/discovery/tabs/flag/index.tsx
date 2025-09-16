@@ -1,9 +1,9 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useLoader } from "@/contexts";
-import { fetchGraphDummyv2 } from "@/http/backend";
+import { fetchGraphByAreav2 } from "@/http/backend";
 import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
 import { useApiHandler } from "@/hooks";
-import { INode } from "@/types";
+import { IEdge, INode } from "@/types";
 import { useContext, useState } from "react";
 
 export default function FlagTab() {
@@ -99,7 +99,7 @@ export default function FlagTab() {
             console.log(`${limit} ${skip} ${tmpName} ${maxLevel}`);
             if (tmpName == "") return;
             const res = await withLoading(() =>
-              fetchGraphDummyv2(
+              fetchGraphByAreav2(
                 tmpName as string,
                 limit,
                 skip,
@@ -108,8 +108,10 @@ export default function FlagTab() {
                 null,
               ),
             );
-            handleResponse(res);
-            if (!res.success) return;
+            if (!res.success) {
+              handleResponse(res);
+              return;
+            }
             setMultiSelectNodes([]);
             console.log(res);
             let all_nodes = [
@@ -126,7 +128,15 @@ export default function FlagTab() {
               obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
             );
             setNodes(final_all_nodes);
-            setEdges([...res?.data?.links]);
+            setEdges([
+              ...res?.data?.links.map((e_: IEdge) => {
+                return {
+                  from: e_.from,
+                  to: e_.to,
+                  id: `from-${e_.from}-to-${e_.to}`,
+                };
+              }),
+            ]);
           }}
         >
           <img src={PLAY_FILL_ICON_URI} className="w-full" alt="submit" />

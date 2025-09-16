@@ -5,31 +5,18 @@ import { apiFetch } from "../../utils";
 import { FASTAPI_URI } from "../constants";
 import { ITa2PGraph, GraphResult } from "@/types";
 
-export async function fetchGraphByAreav2(
-  name: string = "Neoplasms",
-  limit: number = 50,
-  offset: number = 0,
-  product: string | null = null,
+export async function fetchGraphByProductsv2(
+  tradename: string[],
   max_level: number = 5,
-  therapeutic_area_id: string | null = null,
 ): Promise<GraphResult> {
   const cookie = cookies();
   const versions = JSON.parse(cookie.get("fda-scrape-cur-version")!.value);
   const token = await get_token_cookie();
-  const API_URI = `${FASTAPI_URI}/graph`;
+  const API_URI = `${FASTAPI_URI}/graph/get_products_tas_ids`;
+  let tradenames_param = tradename.join("&tradename=");
   const params = new URLSearchParams();
-  params.append("name", name);
-  params.append("limit", limit.toString());
-  params.append("offset", offset.toString());
   params.append("max_level", max_level.toString());
-  if (product !== null) {
-    params.append("product", product);
-  }
-  if (therapeutic_area_id !== null) {
-    params.append("therapeutic_area_id", therapeutic_area_id);
-  }
-  const API_URI_COMPLETE = `${API_URI}/?${params}`;
-
+  const API_URI_COMPLETE = `${API_URI}?tradename=${tradenames_param}&${params}`;
   return apiFetch<ITa2PGraph>(API_URI_COMPLETE, {
     method: "POST",
     headers: {

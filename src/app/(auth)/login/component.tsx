@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LocalGenericContext, useAuth, useLoader } from "@/contexts";
 import { SiteMode } from "@/types";
-import { Spinner } from "@/components";
 import { setPreLogin } from "@/http/internal";
 
 export default function Component() {
@@ -81,16 +80,6 @@ export default function Component() {
         className="container px-2 py-24 mx-auto grid justify-items-center
         "
       >
-        {isLoadingv2 && (
-          <div
-            role="status"
-            className="absolute left-1/2 top-1/2 
-            -translate-x-1/2 -translate-y-1/2"
-          >
-            <Spinner />
-            <span className="sr-only">Loading...</span>
-          </div>
-        )}
         <div className="sm:w-1/2 flex flex-col mt-8 w-screen p-10">
           <h2 className="text-white text-lg mb-1 font-medium title-font">
             Login

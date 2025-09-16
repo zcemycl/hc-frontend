@@ -5,18 +5,44 @@ import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
 import { useContext } from "react";
 import { FLOWER_ICON_URI } from "@/icons/bootstrap";
 
+const NormalNodeLabel = ({ v }: { v: INode }) => {
+  return (
+    <>
+      <span id={`label-${v.id}`} className="inline">
+        {v.label}{" "}
+      </span>
+    </>
+  );
+};
+
+const LevelNodeLabel = ({ v }: { v: INode }) => {
+  return (
+    <>
+      Level {v.level}: <NormalNodeLabel v={v} />
+    </>
+  );
+};
+
 export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
   const { hiddenNodes, setHiddenNodes, dNodes, edges, net } =
     useContext(DiscoveryContext);
   const { utilities } = useContext(LocalUtilityContext);
   const { move_network, trace_node_callback } = utilities;
 
+  const labelComp = (v: INode) => {
+    switch (v.group) {
+      case "p":
+        return <NormalNodeLabel v={v} />;
+      case "b":
+        return <NormalNodeLabel v={v} />;
+      case "ta":
+        return <LevelNodeLabel v={v} />;
+    }
+  };
+
   return (
     <p className="font-bold">
-      Level {v.level}:{" "}
-      <span id={`label-${v.id}`} className="inline">
-        {v.label}{" "}
-      </span>
+      {labelComp(v)}
       <span className="inline-flex items-center space-x-1 align-middle">
         <SideCopyBtn v={v} />
         <button

@@ -39,6 +39,7 @@ function FdaLabel({
       {/* section 3 */}
       {each.dosage_forms!.length === 1 && (
         <GeneralSection
+          key={"s3"}
           title={"Dosage Forms And Strengths"}
           section={each.dosage_forms![0]}
           tables={[]}
@@ -56,6 +57,7 @@ function FdaLabel({
         <DrugInteractionSection drug_interactions={each.drug_interactions!} />
       ) : (
         <GeneralSection
+          key={"s7"}
           title={"Drug Interactions"}
           section={each.drug_interactions![0]}
           tables={[]}
@@ -69,6 +71,7 @@ function FdaLabel({
         />
       ) : (
         <GeneralSection
+          key={"s14"}
           title={"Clinical Trial"}
           section={each.clinical_trials![0]}
           tables={each.clinical_trial_tables!}

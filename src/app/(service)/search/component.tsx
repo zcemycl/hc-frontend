@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useMemo, useContext, useEffect } from "react";
+import { useState, useRef, useMemo, useContext } from "react";
 import {
   FdaVersionsContext,
   SearchSupportContext,
@@ -7,7 +7,11 @@ import {
   useLoader,
 } from "@/contexts";
 import { useRouter } from "next/navigation";
-import { Spinner, ProtectedRoute, VerToolbar } from "@/components";
+import {
+  ProtectedRoute,
+  VerToolbar,
+  HandleNotOKResponseModal,
+} from "@/components";
 import { IFdaLabel, ICompareAETable, IFdaVersions } from "@/types";
 import {
   SortByEnum,
@@ -31,7 +35,7 @@ export default function Search() {
   );
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
-  const { setIsAuthenticated, userId, isLoadingAuth } = useAuth();
+  const { setIsAuthenticated, userId } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
@@ -141,21 +145,11 @@ export default function Search() {
           ${isLoadingv2 ? "animate-pulse" : ""}`}
           ref={refSearchResGroup}
         >
-          {/* <div className="container px-2 py-24 mx-auto grid justify-items-center"> */}
+          <HandleNotOKResponseModal />
           <div
             className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"
           >
-            {isLoadingv2 && (
-              <div
-                role="status"
-                className="absolute left-1/2 top-1/2 
-            -translate-x-1/2 -translate-y-1/2"
-              >
-                <Spinner />
-                <span className="sr-only">Loading...</span>
-              </div>
-            )}
             <ComplexSearchBar />
             <div
               className="flex flex-col

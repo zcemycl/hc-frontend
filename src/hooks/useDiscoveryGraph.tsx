@@ -22,7 +22,7 @@ const useDiscoveryGraph = () => {
     setPath,
   } = useContext(DiscoveryContext);
 
-  const retrieve_path_nodes_edges = (targetNodeId: number) => {
+  const retrieve_path_nodes_edges = (targetNodeId: number | string) => {
     let pathEdges = [];
     let pathNodes = [targetNodeId];
     let currentNode = targetNodeId;
@@ -61,13 +61,13 @@ const useDiscoveryGraph = () => {
     );
   };
 
-  const trace_node_callback = (nodeid: number, net_: Network) => {
+  const trace_node_callback = (nodeid: number | string, net_: Network) => {
     const { pathEdges, pathNodes } = retrieve_path_nodes_edges(nodeid);
     setSelectedNodes(nodes.filter((v: INode) => pathNodes.includes(v.id)));
     trace_node_path_with_color(pathEdges, net_);
   };
 
-  const move_network = (net_: Network, nodeid: number) => {
+  const move_network = (net_: Network, nodeid: number | string) => {
     const pos = net_.getPositions([nodeid])[nodeid];
     const { width: offsetx, height: offsety } = (
       visToolBarRef.current as any
