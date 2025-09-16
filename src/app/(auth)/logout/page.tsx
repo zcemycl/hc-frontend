@@ -1,5 +1,5 @@
 "use client";
-import { ProtectedRoute, TypographyH2 } from "@/components";
+import { ProtectedRoute, PulseTemplate, TypographyH2 } from "@/components";
 import { useAuth, useLoader, useOpenBar } from "@/contexts";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -25,7 +25,7 @@ export default function Logout() {
   }, []);
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
+      <PulseTemplate>
         <div
           className="container px-2 py-24 mx-auto grid justify-items-center
     "
@@ -45,7 +45,7 @@ export default function Logout() {
             </p>
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

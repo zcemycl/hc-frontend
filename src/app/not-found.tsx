@@ -1,6 +1,8 @@
+import { PulseTemplate } from "@/components";
+
 export default function NotFound() {
   return (
-    <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
+    <PulseTemplate>
       <div
         className="container px-2 py-24 mx-auto grid justify-items-center
       "
@@ -11,6 +13,6 @@ export default function NotFound() {
           </h2>
         </div>
       </div>
-    </section>
+    </PulseTemplate>
   );
 }

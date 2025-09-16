@@ -1,11 +1,11 @@
 "use client";
 
-import { TypographyH2, ProtectedRoute } from "@/components";
+import { TypographyH2, ProtectedRoute, PulseTemplate } from "@/components";
 
 export default function Feedback() {
   return (
     <ProtectedRoute>
-      <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh] overflow-y-scroll">
+      <PulseTemplate overflowY={true}>
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <div className="sm:w-1/2 flex flex-col mt-8 w-screen px-10 pt-10 pb-5">
             <div className="flex justify-between">
@@ -13,7 +13,7 @@ export default function Feedback() {
             </div>
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

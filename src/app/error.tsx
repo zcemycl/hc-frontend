@@ -1,15 +1,13 @@
 "use client";
 
+import { PulseTemplate } from "@/components";
 import { ARROW_ICON_URI } from "@/icons/bootstrap";
 import { useRouter } from "next/navigation";
 
 export default function Error() {
   const router = useRouter();
   return (
-    <section
-      className="text-gray-400 bg-gray-900 body-font 
-      h-[81vh] sm:h-[89vh] overflow-hidden"
-    >
+    <PulseTemplate>
       <div
         className="container px-2 py-24 mx-auto grid justify-items-center
       "
@@ -47,6 +45,6 @@ export default function Error() {
           </ol>
         </div>
       </div>
-    </section>
+    </PulseTemplate>
   );
 }

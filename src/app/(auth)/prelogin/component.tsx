@@ -1,4 +1,5 @@
 "use client";
+import { PulseTemplate } from "@/components";
 import { LocalGenericContext } from "@/contexts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,7 +18,7 @@ export default function Component() {
   }, []);
 
   return (
-    <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
+    <PulseTemplate>
       <div
         className="container px-2 py-24 mx-auto grid justify-items-center
         "
@@ -36,6 +37,6 @@ export default function Component() {
           </p>
         </div>
       </div>
-    </section>
+    </PulseTemplate>
   );
 }

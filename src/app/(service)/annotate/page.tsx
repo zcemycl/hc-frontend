@@ -1,5 +1,10 @@
 "use client";
-import { TypographyH2, ProtectedRoute, BackBtn } from "@/components";
+import {
+  TypographyH2,
+  ProtectedRoute,
+  BackBtn,
+  PulseTemplate,
+} from "@/components";
 import { AnnotatePageNameLinkPairs } from "@/constants";
 import { useRouter } from "next/navigation";
 
@@ -7,10 +12,7 @@ export default function Annotate() {
   const router = useRouter();
   return (
     <ProtectedRoute>
-      <section
-        className="text-gray-400 bg-gray-900 body-font
-        h-[81vh] sm:h-[89vh]"
-      >
+      <PulseTemplate>
         <div
           className="container px-2 py-24 mx-auto grid justify-items-center
     "
@@ -57,7 +59,7 @@ export default function Annotate() {
             </div>
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

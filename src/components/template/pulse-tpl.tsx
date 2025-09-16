@@ -17,7 +17,7 @@ export const PulseTemplate = ({
   return (
     <section
       className={`text-gray-400 bg-gray-900 body-font 
-        h-[88vh] sm:h-[95vh] overflow-y-auto
+        h-[85vh] sm:h-[91vh]
         ${overflowX ? "overflow-x-auto" : "overflow-x-hidden"}
         ${overflowY ? "overflow-y-auto" : "overflow-y-hidden"}
         ${isLoadingv2 ? "animate-pulse" : ""}`}
