@@ -5,18 +5,58 @@ import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
 import { useContext } from "react";
 import { FLOWER_ICON_URI } from "@/icons/bootstrap";
 
+const ProductNodeLabel = ({ v }: { v: INode }) => {
+  return (
+    <>
+      Level {v.level}:{" "}
+      <span id={`label-${v.id}`} className="inline">
+        {v.label}{" "}
+      </span>
+    </>
+  );
+};
+
+const TherapeuticAreaNodeLabel = ({ v }: { v: INode }) => {
+  return (
+    <>
+      Level {v.level}:{" "}
+      <span id={`label-${v.id}`} className="inline">
+        {v.label}{" "}
+      </span>
+    </>
+  );
+};
+
+const BundleNodeLabel = ({ v }: { v: INode }) => {
+  return (
+    <>
+      <span id={`label-${v.id}`} className="inline">
+        {v.label}{" "}
+      </span>
+    </>
+  );
+};
+
 export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
   const { hiddenNodes, setHiddenNodes, dNodes, edges, net } =
     useContext(DiscoveryContext);
   const { utilities } = useContext(LocalUtilityContext);
   const { move_network, trace_node_callback } = utilities;
 
+  const labelComp = (v: INode) => {
+    switch (v.group) {
+      case "p":
+        return <ProductNodeLabel v={v} />;
+      case "b":
+        return <BundleNodeLabel v={v} />;
+      case "ta":
+        return <TherapeuticAreaNodeLabel v={v} />;
+    }
+  };
+
   return (
     <p className="font-bold">
-      Level {v.level}:{" "}
-      <span id={`label-${v.id}`} className="inline">
-        {v.label}{" "}
-      </span>
+      {labelComp(v)}
       <span className="inline-flex items-center space-x-1 align-middle">
         <SideCopyBtn v={v} />
         <button
