@@ -1,6 +1,6 @@
 "use client";
-import { ProtectedRoute } from "@/components";
-import { useAuth, useLoader } from "@/contexts";
+import { ProtectedRoute, PulseTemplate } from "@/components";
+import { useAuth } from "@/contexts";
 import { useState, useEffect } from "react";
 import { fetchUserInfoByIdv2 } from "@/http/backend";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,6 @@ import { useApiHandler } from "@/hooks";
 export default function Profile() {
   const { handleResponse } = useApiHandler();
   const { userId, isLoadingAuth } = useAuth();
-  const { isLoadingv2 } = useLoader();
   const router = useRouter();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
 
@@ -29,11 +28,7 @@ export default function Profile() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-          h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
+      <PulseTemplate>
         <div
           className="mt-[10rem] flex flex-col
            content-center items-center
@@ -104,7 +99,7 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

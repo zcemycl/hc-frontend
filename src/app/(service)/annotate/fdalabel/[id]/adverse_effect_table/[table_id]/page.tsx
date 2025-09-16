@@ -12,7 +12,7 @@ import {
   IAdverseEffectTable,
   IQuestionTemplate,
 } from "@/types";
-import { ProtectedRoute, BackBtn } from "@/components";
+import { ProtectedRoute, BackBtn, PulseTemplate } from "@/components";
 import { questions } from "./questions";
 import { AnnotationTypeEnum } from "@/constants";
 import { useApiHandler } from "@/hooks";
@@ -104,81 +104,82 @@ export default function Page({ params }: Readonly<PageProps>) {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]
-        overflow-y-scroll overflow-x-hidden ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
-        <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
-          <div
-            className="flex flex-col mt-8 
+      <PulseTemplate>
+        <div className="overflow-x-hidden">
+          <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
+            <div
+              className="flex flex-col mt-8 
             sm:w-2/3 w-screen
             p-10 space-y-2"
-          >
-            <div className="flex justify-between">
-              <h2 className="text-white text-lg mb-1 font-medium title-font">
-                AE Table Annotation
-              </h2>
-              <BackBtn />
-            </div>
-            <p className="leading-relaxed w-full">
-              A.E Table {params.table_id} from label {params.id}
-            </p>
-            <div className="flex justify-between items-center">
-              <AnnotateProgressBar
+            >
+              <div className="flex justify-between">
+                <h2 className="text-white text-lg mb-1 font-medium title-font">
+                  AE Table Annotation
+                </h2>
+                <BackBtn />
+              </div>
+              <p className="leading-relaxed w-full">
+                A.E Table {params.table_id} from label {params.id}
+              </p>
+              <div className="flex justify-between items-center">
+                <AnnotateProgressBar
+                  {...{
+                    questions:
+                      filterQuestionsWithAnswers as IQuestionTemplate[],
+                    pageN: questionIdx,
+                    setPageN,
+                    submit_callback:
+                      tab !== "ai"
+                        ? async () => {
+                            const tmp = await withLoading(() => storeCache());
+                            setFinalResults(tmp);
+                            console.log(tmp);
+                            const addres = await withLoading(() =>
+                              addAnnotationByNameIdv2(
+                                tableData?.id!,
+                                AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                                tmp,
+                              ),
+                            );
+                            handleResponse(addres);
+                            console.log(addres);
+                            if (addres.success) {
+                              const params_ = new URLSearchParams();
+                              params_.append("annotation_id", addres.data.id);
+                              params_.append("category", addres.data.category);
+                              router.push(`/annotate/bundle?${params_}`);
+                            }
+                          }
+                        : undefined,
+                  }}
+                />
+              </div>
+              <caption className="text-left">{tableData?.caption}</caption>
+              <p className="leading-none w-full text-white">
+                {questions[questionIdx].displayName}
+              </p>
+              <AnnotateDropdown
                 {...{
                   questions: filterQuestionsWithAnswers as IQuestionTemplate[],
-                  pageN: questionIdx,
-                  setPageN,
-                  submit_callback:
-                    tab !== "ai"
-                      ? async () => {
-                          const tmp = await withLoading(() => storeCache());
-                          setFinalResults(tmp);
-                          console.log(tmp);
-                          const addres = await withLoading(() =>
-                            addAnnotationByNameIdv2(
-                              tableData?.id!,
-                              AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-                              tmp,
-                            ),
-                          );
-                          handleResponse(addres);
-                          console.log(addres);
-                          if (addres.success) {
-                            const params_ = new URLSearchParams();
-                            params_.append("annotation_id", addres.data.id);
-                            params_.append("category", addres.data.category);
-                            router.push(`/annotate/bundle?${params_}`);
-                          }
-                        }
-                      : undefined,
+                  questionIdx,
+                  selectedOption,
+                  setSelectedOption,
+                  isEnabled: tab !== "ai",
+                }}
+              />
+              <AnnotateTable
+                {...{
+                  tableData: tableData as IAdverseEffectTable,
+                  mapMode:
+                    tab !== "ai" ? questions[questionIdx].mapMode : "none",
+                  isCellSelected,
+                  setIsCellSelected,
                 }}
               />
             </div>
-            <caption className="text-left">{tableData?.caption}</caption>
-            <p className="leading-none w-full text-white">
-              {questions[questionIdx].displayName}
-            </p>
-            <AnnotateDropdown
-              {...{
-                questions: filterQuestionsWithAnswers as IQuestionTemplate[],
-                questionIdx,
-                selectedOption,
-                setSelectedOption,
-                isEnabled: tab !== "ai",
-              }}
-            />
-            <AnnotateTable
-              {...{
-                tableData: tableData as IAdverseEffectTable,
-                mapMode: tab !== "ai" ? questions[questionIdx].mapMode : "none",
-                isCellSelected,
-                setIsCellSelected,
-              }}
-            />
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

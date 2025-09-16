@@ -20,3 +20,4 @@ export * from "./backbtn";
 export * from "./error";
 export * from "./visibilitybtn";
 export * from "./loader";
+export * from "./template";

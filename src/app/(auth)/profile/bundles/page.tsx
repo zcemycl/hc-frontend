@@ -3,6 +3,7 @@ import {
   EditBundleModal,
   PaginationBar2,
   ProtectedRoute,
+  PulseTemplate,
   TypographyH2,
 } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
@@ -29,7 +30,7 @@ import { adjustPageNAfterDelete } from "@/http/utils";
 
 export default function Page() {
   const { userId, isLoadingAuth } = useAuth();
-  const { isLoadingv2, withLoading } = useLoader();
+  const { withLoading } = useLoader();
   const { handleResponse } = useApiHandler();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [bundles, setBundles] = useState<IBundle[]>([]);
@@ -75,11 +76,7 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-              h-[81vh] sm:h-[89vh] overflow-y-scroll
-              ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
+      <PulseTemplate>
         <div
           className="mt-[10rem] flex flex-col
                content-center items-center
@@ -291,7 +288,7 @@ export default function Page() {
             />
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

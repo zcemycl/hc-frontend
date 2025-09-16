@@ -1,5 +1,10 @@
 "use client";
-import { TypographyH2, ProtectedRoute, PaginationBar2 } from "@/components";
+import {
+  TypographyH2,
+  ProtectedRoute,
+  PaginationBar2,
+  PulseTemplate,
+} from "@/components";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect, useCallback, useContext } from "react";
 import { convert_datetime_to_simple } from "@/utils";
@@ -21,8 +26,8 @@ import { useApiHandler } from "@/hooks";
 export default function Page() {
   const router = useRouter();
   const { handleResponse } = useApiHandler();
-  const { userId, credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoadingv2, withLoading } = useLoader();
+  const { userId, isLoadingAuth } = useAuth();
+  const { withLoading } = useLoader();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [history, setHistory] = useState<IHistory[]>([]);
   const [countHistory, setCountHistory] = useState(0);
@@ -61,11 +66,7 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-          h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
+      <PulseTemplate>
         <div
           className="mt-[10rem] flex flex-col
            content-center items-center
@@ -145,7 +146,7 @@ export default function Page() {
             )}
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

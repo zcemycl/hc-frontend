@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LocalGenericContext, useAuth, useLoader } from "@/contexts";
 import { SiteMode } from "@/types";
 import { setPreLogin } from "@/http/internal";
+import { PulseTemplate } from "@/components";
 
 export default function Component() {
   const router = useRouter();
@@ -72,10 +73,7 @@ export default function Component() {
   }, [urlCode, urlEmail, isAuthenticated, mode, isLoadingAuth]);
 
   return (
-    <section
-      className={`text-gray-400 bg-gray-900 body-font h-[81vh] 
-      sm:h-[89vh] ${isLoadingv2 ? "animate-pulse" : ""}`}
-    >
+    <PulseTemplate>
       <div
         className="container px-2 py-24 mx-auto grid justify-items-center
         "
@@ -117,6 +115,6 @@ export default function Component() {
           </p>
         </div>
       </div>
-    </section>
+    </PulseTemplate>
   );
 }

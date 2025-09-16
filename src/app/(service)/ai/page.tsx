@@ -5,23 +5,25 @@ import { JupyterIcon, ChatbotIcon, AnnotateIcon, DiscoveryIcon } from "@/icons";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UserRoleEnum } from "@/types/users";
-import { Modal, TypographyH2, ProtectedRoute, BackBtn } from "@/components";
+import {
+  Modal,
+  TypographyH2,
+  ProtectedRoute,
+  BackBtn,
+  PulseTemplate,
+} from "@/components";
 
 export default function AI() {
   const router = useRouter();
-  const { setIsAuthenticated, credentials, role, isLoadingAuth } = useAuth();
-  const { isLoadingv2, withLoading } = useLoader();
+  const { setIsAuthenticated, credentials, role } = useAuth();
+  const { withLoading } = useLoader();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [jupyterLink, setJupyterLink] = useState("");
   const isNotAdmin = role !== UserRoleEnum.ADMIN;
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-          h-[81vh] sm:h-[89vh]
-        ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
+      <PulseTemplate>
         <div className="container px-2 py-24 mx-auto grid justify-items-center">
           <Modal
             title="Jupyter Lab Link"
@@ -134,7 +136,7 @@ export default function AI() {
             </p>
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

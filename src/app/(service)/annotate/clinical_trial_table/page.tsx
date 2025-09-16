@@ -7,6 +7,7 @@ import {
   PaginationBar,
   ProtectedRoute,
   BackBtn,
+  PulseTemplate,
 } from "@/components";
 import { AnnotationTypeEnum } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
@@ -83,12 +84,7 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-        h-[81vh] sm:h-[89vh] overflow-y-scroll
-        ${isLoadingv2 ? "animate-pulse" : ""}`}
-        ref={refUnannotatedGroup}
-      >
+      <PulseTemplate refSection={refUnannotatedGroup}>
         <div
           className="px-2 py-24 flex flex-col justify-center 
           items-center align-center w-full"
@@ -178,7 +174,7 @@ export default function Page() {
             />
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }
