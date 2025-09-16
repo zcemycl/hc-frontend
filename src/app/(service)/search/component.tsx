@@ -11,6 +11,7 @@ import {
   ProtectedRoute,
   VerToolbar,
   HandleNotOKResponseModal,
+  PulseTemplate,
 } from "@/components";
 import { IFdaLabel, ICompareAETable, IFdaVersions } from "@/types";
 import {
@@ -36,7 +37,7 @@ export default function Search() {
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, userId } = useAuth();
-  const { isLoadingv2, withLoading } = useLoader();
+  const { withLoading } = useLoader();
   const [setIdsToCompare, setSetIdsToCompare] = useState<Set<string>>(
     new Set(),
   );
@@ -138,51 +139,47 @@ export default function Search() {
           refSearchResGroup,
         }}
       >
-        <section
-          className={`text-gray-400 bg-gray-900 body-font 
-          h-[81vh] sm:h-[89vh] overflow-y-auto
-          overflow-x-hidden
-          ${isLoadingv2 ? "animate-pulse" : ""}`}
-          ref={refSearchResGroup}
-        >
-          <HandleNotOKResponseModal />
-          <div
-            className="flex flex-col px-10 sm:px-5 py-24
-            items-center align-middle"
-          >
-            <ComplexSearchBar />
+        <PulseTemplate refSection={refSearchResGroup}>
+          <div className="overflow-x-hidden">
+            <HandleNotOKResponseModal />
             <div
-              className="flex flex-col
+              className="flex flex-col px-10 sm:px-5 py-24
+            items-center align-middle"
+            >
+              <ComplexSearchBar />
+              <div
+                className="flex flex-col
                   w-full sm:w-11/12 md:w-8/12
                   space-y-0 sm:space-y-1
                   px-0 sm:px-10"
-            >
-              <VerToolbar
-                fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
-                reloadCallback={async () => {
-                  if (query[0] === "") return;
-                  const resp = await withLoading(() =>
-                    search_query_by_type(
-                      fdaservice,
-                      query,
-                      queryType,
-                      pageN,
-                      nPerPage,
-                      sortBy,
-                      versions,
-                    ),
-                  );
-                  console.log(resp);
-                }}
-              />
+              >
+                <VerToolbar
+                  fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
+                  reloadCallback={async () => {
+                    if (query[0] === "") return;
+                    const resp = await withLoading(() =>
+                      search_query_by_type(
+                        fdaservice,
+                        query,
+                        queryType,
+                        pageN,
+                        nPerPage,
+                        sortBy,
+                        versions,
+                      ),
+                    );
+                    console.log(resp);
+                  }}
+                />
+              </div>
+
+              <CompareTables />
+
+              <ExpandSearchResultItem />
+              <SearchResultsList />
             </div>
-
-            <CompareTables />
-
-            <ExpandSearchResultItem />
-            <SearchResultsList />
           </div>
-        </section>
+        </PulseTemplate>
       </SearchSupportContext.Provider>
     </ProtectedRoute>
   );

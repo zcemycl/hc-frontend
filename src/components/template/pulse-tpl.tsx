@@ -13,7 +13,7 @@ export const PulseTemplate = ({
   return (
     <section
       className={`text-gray-400 bg-gray-900 body-font 
-        h-[81vh] sm:h-[89vh] overflow-y-scroll
+        h-[81vh] sm:h-[89vh] overflow-y-auto
         ${isLoadingv2 ? "animate-pulse" : ""}`}
       ref={refSection}
     >
