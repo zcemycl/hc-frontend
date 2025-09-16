@@ -1,9 +1,10 @@
 "use client";
 import {
   EditBundleModal,
+  ListPageTemplate,
   PaginationBar2,
   ProtectedRoute,
-  PulseTemplate,
+  Spinner,
   TypographyH2,
 } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
@@ -30,7 +31,7 @@ import { adjustPageNAfterDelete } from "@/http/utils";
 
 export default function Page() {
   const { userId, isLoadingAuth } = useAuth();
-  const { withLoading } = useLoader();
+  const { isLoadingv2, withLoading } = useLoader();
   const { handleResponse } = useApiHandler();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
   const [bundles, setBundles] = useState<IBundle[]>([]);
@@ -76,219 +77,209 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <PulseTemplate overflowY={true}>
-        <div
-          className="mt-[10rem] flex flex-col
-               content-center items-center
-            "
-        >
-          <div className="w-11/12 sm:w-7/12 flex flex-col space-y-3">
-            <ProfileBar
-              {...{
-                username: profileInfo?.username! as string,
-                role: profileInfo?.role!,
+      <ListPageTemplate>
+        {isLoadingv2 ? (
+          <Spinner />
+        ) : (
+          <ProfileBar
+            {...{
+              username: profileInfo?.username! as string,
+              role: profileInfo?.role!,
+            }}
+          />
+        )}
+        <hr className="mb-2" />
+        <div className="flex flex-row justify-between">
+          <TypographyH2>Bundles X{bundlesCount}</TypographyH2>
+          <div className="flex flex-row space-x-1 items-center">
+            <button
+              className="w-5 h-5 rounded-full"
+              onClick={(e) => {
+                e.preventDefault();
+                setModalMode("add");
+                setBundleConfig({ ...defaultBundleConfig });
+                setIsOpenModal((prev) => !prev);
               }}
-            />
-            <hr className="mb-2" />
-            <div className="flex flex-row justify-between">
-              <TypographyH2>Bundles X{bundlesCount}</TypographyH2>
-              <div className="flex flex-row space-x-1 items-center">
-                <button
-                  className="w-5 h-5 rounded-full"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setModalMode("add");
-                    setBundleConfig({ ...defaultBundleConfig });
-                    setIsOpenModal((prev) => !prev);
-                  }}
-                >
-                  <img
-                    className="w-5 h-5 
-                      bg-emerald-300 rounded-full
-                      hover:bg-emerald-500
-                      "
-                    src={PLUS_ICON_URI}
-                  />
-                </button>
-              </div>
-            </div>
-            <EditBundleModal
-              {...{
-                isOpenModal,
-                setIsOpenModal,
-                title: modalMode === "add" ? "Add Bundle" : "Edit Bundle",
-                bundleConfig,
-                setBundleConfig,
-                submit_callback: async (bc: IBundleConfig) => {
-                  if (bc.name.trim() === "") {
-                    return;
-                  }
-                  if (modalMode === "add") {
-                    console.log("add");
-                    const createBundleRes = await withLoading(() =>
-                      createBundleByUserIdv2(userId as number, bc),
-                    );
-                    handleResponse(createBundleRes);
-                    if (!createBundleRes.success) return;
-                  } else if (modalMode === "edit") {
-                    console.log("edit");
-                    const updateBundleRes = await withLoading(() =>
-                      patchBundleByIdv2(
-                        bundleConfig.id as string,
-                        bundleConfig as IBundleUpdate,
-                      ),
-                    );
-                    handleResponse(updateBundleRes);
-                    if (!updateBundleRes.success) return;
-                  }
-                  await fetchBundlesCallback();
-                  setBundleConfig({ ...defaultBundleConfig });
-                  setIsOpenModal(false);
-                },
-              }}
-            />
-
-            <div className="flex flex-col space-y-1">
-              {bundles.length === 0 ? (
-                <p className="leading-relaxed mb-1">No Record ...</p>
-              ) : (
-                bundles.map((b: IBundle, idx: number) => {
-                  let useFor: string = "Not In Use";
-                  if (b.annotations.length === 0 && b.fdalabels.length === 0) {
-                    useFor = "Not In Use";
-                  } else if (
-                    b.annotations.length === 0 &&
-                    b.fdalabels.length > 0
-                  ) {
-                    useFor = "Fdalabel";
-                  } else if (
-                    b.annotations.length > 0 &&
-                    b.fdalabels.length === 0
-                  ) {
-                    useFor = "Annotation";
-                  }
-                  return (
-                    <div
-                      key={`${b.name}-group-btn`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        console.log("abc");
-                      }}
-                      className="px-3 py-2 text-clip
-                        flex rounded-lg border-emerald-200 border-2
-                        text-white cursor-pointer
-                        hover:bg-emerald-500 hover:text-black
-                        justify-between flex-col
-                      "
-                    >
-                      <div
-                        className="flex flex-row 
-                        justify-between font-bold"
-                      >
-                        <div
-                          className="flex flex-row justify-start
-                          space-x-2 text-clip min-w-0 basis-2/3"
-                        >
-                          <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-shrink min-w-0">
-                            {b.name}
-                          </span>
-                          <span className="bg-amber-300 rounded-lg px-3 text-black flex-shrink-0 whitespace-nowrap">
-                            {useFor}
-                          </span>
-                        </div>
-
-                        <div
-                          id="sub-buttons"
-                          className="
-                          flex flex-row space-x-2
-                          items-center basis-1/3 justify-end"
-                        >
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setShowContents((prev: boolean[]) => {
-                                let copy = [...prev];
-                                copy[idx] = !copy[idx];
-                                return copy;
-                              });
-                            }}
-                          >
-                            <img
-                              src={INFO_CIRCLE_ICON_URI}
-                              className="rounded-full 
-                              bg-sky-300 hover:bg-sky-700"
-                            />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setModalMode("edit");
-                              setIsOpenModal(true);
-                              setBundleConfig({
-                                id: b.id,
-                                name: b.name,
-                                description: b.description,
-                              });
-                            }}
-                          >
-                            <img
-                              src={PEN_ICON_URI}
-                              className="
-                              rounded-full bg-purple-400
-                              hover:bg-purple-600"
-                            />
-                          </button>
-                          <button
-                            onClick={async (e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const deleteBundleResult = await withLoading(() =>
-                                deleteBundleByIdv2(b.id),
-                              );
-                              handleResponse(deleteBundleResult);
-                              if (!deleteBundleResult.success) return;
-                              setPageN((prevPageN: number) =>
-                                adjustPageNAfterDelete({
-                                  prevPageN,
-                                  totalBundlesAfterDelete: bundlesCount - 1,
-                                  nPerPage,
-                                }),
-                              );
-                              await fetchBundlesCallback();
-                            }}
-                          >
-                            <img
-                              src={X_ICON_URI}
-                              className="rounded-full 
-                                bg-red-500 hover:bg-red-700"
-                            />
-                          </button>
-                        </div>
-                      </div>
-                      <div
-                        id="hide-ele"
-                        className={`transition-all
-                        origin-top overflow-hidden duration-150
-                        ${showContents[idx] ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
-                      >
-                        {b.description}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-            <PaginationBar2
-              pageN={pageN}
-              setPageN={setPageN}
-              topN={bundlesCount}
-              nPerPage={nPerPage}
-            />
+            >
+              <img
+                className="w-5 h-5 
+                  bg-emerald-300 rounded-full
+                  hover:bg-emerald-500
+                  "
+                src={PLUS_ICON_URI}
+              />
+            </button>
           </div>
         </div>
-      </PulseTemplate>
+        <EditBundleModal
+          {...{
+            isOpenModal,
+            setIsOpenModal,
+            title: modalMode === "add" ? "Add Bundle" : "Edit Bundle",
+            bundleConfig,
+            setBundleConfig,
+            submit_callback: async (bc: IBundleConfig) => {
+              if (bc.name.trim() === "") {
+                return;
+              }
+              if (modalMode === "add") {
+                console.log("add");
+                const createBundleRes = await withLoading(() =>
+                  createBundleByUserIdv2(userId as number, bc),
+                );
+                handleResponse(createBundleRes);
+                if (!createBundleRes.success) return;
+              } else if (modalMode === "edit") {
+                console.log("edit");
+                const updateBundleRes = await withLoading(() =>
+                  patchBundleByIdv2(
+                    bundleConfig.id as string,
+                    bundleConfig as IBundleUpdate,
+                  ),
+                );
+                handleResponse(updateBundleRes);
+                if (!updateBundleRes.success) return;
+              }
+              await fetchBundlesCallback();
+              setBundleConfig({ ...defaultBundleConfig });
+              setIsOpenModal(false);
+            },
+          }}
+        />
+
+        <div className="flex flex-col space-y-1">
+          {bundles.length === 0 ? (
+            <p className="leading-relaxed mb-1">No Record ...</p>
+          ) : (
+            bundles.map((b: IBundle, idx: number) => {
+              let useFor: string = "Not In Use";
+              if (b.annotations.length === 0 && b.fdalabels.length === 0) {
+                useFor = "Not In Use";
+              } else if (b.annotations.length === 0 && b.fdalabels.length > 0) {
+                useFor = "Fdalabel";
+              } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
+                useFor = "Annotation";
+              }
+              return (
+                <div
+                  key={`${b.name}-group-btn`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    console.log("abc");
+                  }}
+                  className="px-3 py-2 text-clip
+                    flex rounded-lg border-emerald-200 border-2
+                    text-white cursor-pointer
+                    hover:bg-emerald-500 hover:text-black
+                    justify-between flex-col
+                  "
+                >
+                  <div
+                    className="flex flex-row 
+                    justify-between font-bold"
+                  >
+                    <div
+                      className="flex flex-row justify-start
+                      space-x-2 text-clip min-w-0 basis-2/3"
+                    >
+                      <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-shrink min-w-0">
+                        {b.name}
+                      </span>
+                      <span className="bg-amber-300 rounded-lg px-3 text-black flex-shrink-0 whitespace-nowrap">
+                        {useFor}
+                      </span>
+                    </div>
+
+                    <div
+                      id="sub-buttons"
+                      className="
+                      flex flex-row space-x-2
+                      items-center basis-1/3 justify-end"
+                    >
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowContents((prev: boolean[]) => {
+                            let copy = [...prev];
+                            copy[idx] = !copy[idx];
+                            return copy;
+                          });
+                        }}
+                      >
+                        <img
+                          src={INFO_CIRCLE_ICON_URI}
+                          className="rounded-full 
+                          bg-sky-300 hover:bg-sky-700"
+                        />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setModalMode("edit");
+                          setIsOpenModal(true);
+                          setBundleConfig({
+                            id: b.id,
+                            name: b.name,
+                            description: b.description,
+                          });
+                        }}
+                      >
+                        <img
+                          src={PEN_ICON_URI}
+                          className="
+                          rounded-full bg-purple-400
+                          hover:bg-purple-600"
+                        />
+                      </button>
+                      <button
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const deleteBundleResult = await withLoading(() =>
+                            deleteBundleByIdv2(b.id),
+                          );
+                          handleResponse(deleteBundleResult);
+                          if (!deleteBundleResult.success) return;
+                          setPageN((prevPageN: number) =>
+                            adjustPageNAfterDelete({
+                              prevPageN,
+                              totalBundlesAfterDelete: bundlesCount - 1,
+                              nPerPage,
+                            }),
+                          );
+                          await fetchBundlesCallback();
+                        }}
+                      >
+                        <img
+                          src={X_ICON_URI}
+                          className="rounded-full 
+                            bg-red-500 hover:bg-red-700"
+                        />
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    id="hide-ele"
+                    className={`transition-all
+                    origin-top overflow-hidden duration-150
+                    ${showContents[idx] ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
+                  >
+                    {b.description}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+        <PaginationBar2
+          pageN={pageN}
+          setPageN={setPageN}
+          topN={bundlesCount}
+          nPerPage={nPerPage}
+        />
+      </ListPageTemplate>
     </ProtectedRoute>
   );
 }
