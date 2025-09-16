@@ -5,10 +5,9 @@ import { DiscoveryContext, LocalUtilityContext } from "@/contexts";
 import { useContext } from "react";
 import { FLOWER_ICON_URI } from "@/icons/bootstrap";
 
-const ProductNodeLabel = ({ v }: { v: INode }) => {
+const NormalNodeLabel = ({ v }: { v: INode }) => {
   return (
     <>
-      Level {v.level}:{" "}
       <span id={`label-${v.id}`} className="inline">
         {v.label}{" "}
       </span>
@@ -16,23 +15,10 @@ const ProductNodeLabel = ({ v }: { v: INode }) => {
   );
 };
 
-const TherapeuticAreaNodeLabel = ({ v }: { v: INode }) => {
+const LevelNodeLabel = ({ v }: { v: INode }) => {
   return (
     <>
-      Level {v.level}:{" "}
-      <span id={`label-${v.id}`} className="inline">
-        {v.label}{" "}
-      </span>
-    </>
-  );
-};
-
-const BundleNodeLabel = ({ v }: { v: INode }) => {
-  return (
-    <>
-      <span id={`label-${v.id}`} className="inline">
-        {v.label}{" "}
-      </span>
+      Level {v.level}: <NormalNodeLabel v={v} />
     </>
   );
 };
@@ -46,11 +32,11 @@ export const NodeCheckBtnContent = ({ v }: { v: INode }) => {
   const labelComp = (v: INode) => {
     switch (v.group) {
       case "p":
-        return <ProductNodeLabel v={v} />;
+        return <NormalNodeLabel v={v} />;
       case "b":
-        return <BundleNodeLabel v={v} />;
+        return <NormalNodeLabel v={v} />;
       case "ta":
-        return <TherapeuticAreaNodeLabel v={v} />;
+        return <LevelNodeLabel v={v} />;
     }
   };
 
