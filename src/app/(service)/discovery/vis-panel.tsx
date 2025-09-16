@@ -3,7 +3,7 @@ import React, { useEffect, useContext } from "react";
 import { useLoader, DiscoveryContext, LocalUtilityProvider } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
 import { INode } from "@/types";
-import { fetchGraphDummyv2 } from "@/http/backend";
+import { fetchGraphByAreav2 } from "@/http/backend";
 import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
@@ -31,7 +31,7 @@ export default function VisPanel() {
   useEffect(() => {
     async function getData() {
       const res = await withLoading(() =>
-        fetchGraphDummyv2(
+        fetchGraphByAreav2(
           flagAttrs.name,
           flagAttrs.numNodes,
           flagAttrs.offset,

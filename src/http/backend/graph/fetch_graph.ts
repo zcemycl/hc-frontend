@@ -5,7 +5,7 @@ import { apiFetch } from "../../utils";
 import { FASTAPI_URI } from "../constants";
 import { ITa2PGraph, GraphResult } from "@/types";
 
-export async function fetchGraphDummyv2(
+export async function fetchGraphByAreav2(
   name: string = "Neoplasms",
   limit: number = 50,
   offset: number = 0,

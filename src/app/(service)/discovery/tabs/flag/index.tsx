@@ -1,6 +1,6 @@
 import { GraphTabEnum } from "@/constants";
 import { DiscoveryContext, useLoader } from "@/contexts";
-import { fetchGraphDummyv2 } from "@/http/backend";
+import { fetchGraphByAreav2 } from "@/http/backend";
 import { PLAY_FILL_ICON_URI } from "@/icons/bootstrap";
 import { useApiHandler } from "@/hooks";
 import { INode } from "@/types";
@@ -99,7 +99,7 @@ export default function FlagTab() {
             console.log(`${limit} ${skip} ${tmpName} ${maxLevel}`);
             if (tmpName == "") return;
             const res = await withLoading(() =>
-              fetchGraphDummyv2(
+              fetchGraphByAreav2(
                 tmpName as string,
                 limit,
                 skip,
