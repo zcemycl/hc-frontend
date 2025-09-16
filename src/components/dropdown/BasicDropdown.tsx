@@ -11,7 +11,7 @@ const DropDownBtn: FC<{
     <button
       ref={forwardRef}
       className={`inline-flex items-center 
-            border-2
+            border-2 z-20
             border-indigo-900
             p-2 w-auto h-10 mr-1 justify-center 
             text-sm text-white rounded-lg 
