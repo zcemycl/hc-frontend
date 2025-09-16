@@ -47,6 +47,7 @@ export const BundleBoxHeader = ({
         <button
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             expand_callback(bundle);
           }}
         >
@@ -62,6 +63,7 @@ export const BundleBoxHeader = ({
         <button
           onClick={async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             add_callback(bundle);
           }}
         >
@@ -78,6 +80,7 @@ export const BundleBoxHeader = ({
         <button
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             search_callback(bundle);
           }}
         >
@@ -93,6 +96,7 @@ export const BundleBoxHeader = ({
         <button
           onClick={async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             del_callback(bundle);
           }}
         >

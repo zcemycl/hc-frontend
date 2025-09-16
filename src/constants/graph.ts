@@ -199,4 +199,8 @@ export const toggleOptions = [
     key: "ta",
     displayName: "Therapeutic Area",
   },
+  {
+    key: "b",
+    displayName: "Bundle",
+  },
 ];
