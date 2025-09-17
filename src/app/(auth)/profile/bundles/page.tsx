@@ -3,12 +3,12 @@ import {
   EditBundleModal,
   ListPageTemplate,
   PaginationBar2,
+  ProfileBar,
   ProtectedRoute,
   Spinner,
   TypographyH2,
 } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
-import ProfileBar from "../profile-bar";
 import { useCallback, useEffect, useState } from "react";
 import {
   createBundleByUserIdv2,

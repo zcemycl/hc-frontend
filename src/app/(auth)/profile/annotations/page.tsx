@@ -2,6 +2,7 @@
 import {
   ListPageTemplate,
   PaginationBar2,
+  ProfileBar,
   ProtectedRoute,
   Spinner,
   TypographyH2,
@@ -17,7 +18,6 @@ import { AnnotationCategoryEnum, IUnAnnotatedAETable, IUser } from "@/types";
 import { convert_datetime_to_simple } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
-import ProfileBar from "../profile-bar";
 import { AnnotationTypeEnum } from "@/constants";
 import { useApiHandler } from "@/hooks";
 

@@ -21,3 +21,4 @@ export * from "./error";
 export * from "./visibilitybtn";
 export * from "./loader";
 export * from "./template";
+export * from "./profilebar";

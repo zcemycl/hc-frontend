@@ -2,7 +2,7 @@
 import { useSearchParams } from "next/navigation";
 import { PageProps } from "./props";
 import { useEffect } from "react";
-import { ProtectedRoute, PulseTemplate } from "@/components";
+import { ListPageTemplate, ProfileBar, ProtectedRoute } from "@/components";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const searchParams = useSearchParams();
@@ -11,9 +11,9 @@ export default function Page({ params }: Readonly<PageProps>) {
   }, []);
   return (
     <ProtectedRoute>
-      <PulseTemplate overflowY={true}>
-        <></>
-      </PulseTemplate>
+      <ListPageTemplate>
+        <ProfileBar title={"Add Annotation to Bundle"} />
+      </ListPageTemplate>
     </ProtectedRoute>
   );
 }

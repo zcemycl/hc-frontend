@@ -1,8 +1,8 @@
 "use client";
 import {
   ListPageTemplate,
+  ProfileBar,
   ProtectedRoute,
-  PulseTemplate,
   Spinner,
 } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { fetchUserInfoByIdv2 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import { IUser } from "@/types";
-import ProfileBar from "./profile-bar";
 import { useApiHandler } from "@/hooks";
 
 export default function Profile() {

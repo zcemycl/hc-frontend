@@ -5,6 +5,7 @@ import {
   PaginationBar2,
   ListPageTemplate,
   Spinner,
+  ProfileBar,
 } from "@/components";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useState, useEffect, useCallback, useContext } from "react";
@@ -21,7 +22,6 @@ import {
   fetchHistoryByUserIdCountv2,
   fetchUserInfoByIdv2,
 } from "@/http/backend";
-import ProfileBar from "../profile-bar";
 import { useApiHandler } from "@/hooks";
 
 export default function Page() {
