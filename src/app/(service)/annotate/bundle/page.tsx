@@ -13,6 +13,7 @@ export default function Page({ params }: Readonly<PageProps>) {
     <ProtectedRoute>
       <ListPageTemplate>
         <ProfileBar title={"Add Annotation to Bundle"} />
+        <hr className="mb-2" />
       </ListPageTemplate>
     </ProtectedRoute>
   );
