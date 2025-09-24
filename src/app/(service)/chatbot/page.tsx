@@ -70,7 +70,7 @@ export default function Chatbot() {
               title: `Chatbot vs ${userData?.username}`,
             }}
           />
-          <hr className="mb-2" />
+          <hr className="my-2" />
 
           {/* Chat Messages Area - Takes remaining space and scrolls */}
           <div
