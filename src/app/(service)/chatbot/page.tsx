@@ -4,6 +4,7 @@ import {
   ProfileBar,
   ProtectedRoute,
   Spinner,
+  TypingAnimation,
 } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { IChatMessage } from "@/types";
@@ -24,6 +25,9 @@ export default function Chatbot() {
   const [chatHistories, setChatHistories] = useState<IChatMessage[]>(messages);
   const [text, setText] = useState("");
   const [loadingCountLocal, setLoadingCountLocal] = useState(0);
+  const [typingMessageIndex, setTypingMessageIndex] = useState<number | null>(
+    null,
+  );
   const { handleResponse } = useApiHandler();
   const isLoadingLocal = loadingCountLocal > 0;
   const { withGenericLoading } = useLoader();
@@ -42,7 +46,13 @@ export default function Chatbot() {
         handleResponse(replyRes);
         if (!replyRes.success) return;
         setChatHistories((prev: IChatMessage[]) => {
-          return replyRes.data ? [...prev, replyRes.data] : prev;
+          if (replyRes.data) {
+            const newMessages = [...prev, replyRes.data];
+            // Set the last AI message to show typing animation
+            setTypingMessageIndex(newMessages.length - 1);
+            return newMessages;
+          }
+          return prev;
         });
       }
     }
@@ -95,7 +105,15 @@ export default function Chatbot() {
                     }
                   `}
                   >
-                    {msg.content}
+                    {msg.type === "ai" && typingMessageIndex === index ? (
+                      <TypingAnimation
+                        text={msg.content}
+                        speed={30}
+                        onComplete={() => setTypingMessageIndex(null)}
+                      />
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                   {msg.type === "human" && (
                     <span className="text-sm text-gray-400 mb-1 font-medium">
