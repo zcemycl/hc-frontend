@@ -1,12 +1,8 @@
 "use client";
 import { ListPageTemplate, ProfileBar, ProtectedRoute } from "@/components";
 import { useAuth } from "@/contexts";
+import { IChatMessage } from "@/types";
 import { useEffect, useId, useState } from "react";
-
-interface IChatMessage {
-  content: string;
-  type: string;
-}
 
 const messages = [
   {
