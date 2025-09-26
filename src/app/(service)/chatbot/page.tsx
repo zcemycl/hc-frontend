@@ -8,7 +8,7 @@ import {
 } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { IChatMessage } from "@/types";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { chatAIv2 } from "@/http/backend";
 import { useApiHandler } from "@/hooks";
 
@@ -28,12 +28,17 @@ export default function Chatbot() {
   const [typingMessageIndex, setTypingMessageIndex] = useState<number | null>(
     null,
   );
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { handleResponse } = useApiHandler();
   const isLoadingLocal = loadingCountLocal > 0;
   const { withGenericLoading } = useLoader();
 
   const withLoadingLocal = async <T,>(fn: () => Promise<T>): Promise<T> => {
     return withGenericLoading(fn, setLoadingCountLocal);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -59,6 +64,11 @@ export default function Chatbot() {
     chatAIReply();
 
     console.log("abc", sessId);
+  }, [chatHistories]);
+
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    scrollToBottom();
   }, [chatHistories]);
 
   return (
@@ -110,6 +120,7 @@ export default function Chatbot() {
                         text={msg.content}
                         speed={30}
                         onComplete={() => setTypingMessageIndex(null)}
+                        onCharacterTyped={scrollToBottom}
                       />
                     ) : (
                       msg.content
@@ -144,6 +155,7 @@ export default function Chatbot() {
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Area - Fixed at bottom */}

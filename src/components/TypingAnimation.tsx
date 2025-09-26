@@ -5,12 +5,14 @@ interface TypingAnimationProps {
   text: string;
   speed?: number; // milliseconds per character
   onComplete?: () => void;
+  onCharacterTyped?: () => void; // Called after each character is typed
 }
 
 export const TypingAnimation: React.FC<TypingAnimationProps> = ({
   text,
   speed = 50,
   onComplete,
+  onCharacterTyped,
 }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,13 +22,17 @@ export const TypingAnimation: React.FC<TypingAnimationProps> = ({
       const timer = setTimeout(() => {
         setDisplayedText((prev) => prev + text[currentIndex]);
         setCurrentIndex((prev) => prev + 1);
+        // Call onCharacterTyped after each character is added
+        if (onCharacterTyped) {
+          onCharacterTyped();
+        }
       }, speed);
 
       return () => clearTimeout(timer);
     } else if (currentIndex === text.length && onComplete) {
       onComplete();
     }
-  }, [currentIndex, text, speed, onComplete]);
+  }, [currentIndex, text, speed, onComplete, onCharacterTyped]);
 
   // Reset when text changes
   useEffect(() => {
