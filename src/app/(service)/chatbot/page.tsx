@@ -1,48 +1,19 @@
 "use client";
-import { ListPageTemplate, ProfileBar, ProtectedRoute } from "@/components";
-import { useAuth } from "@/contexts";
+import {
+  ListPageTemplate,
+  ProfileBar,
+  ProtectedRoute,
+  Spinner,
+} from "@/components";
+import { useAuth, useLoader } from "@/contexts";
 import { IChatMessage } from "@/types";
 import { useEffect, useId, useState } from "react";
+import { chatAIv2 } from "@/http/backend";
+import { useApiHandler } from "@/hooks";
 
 const messages = [
   {
     content: "Hi! I'm your AI assistant. How can I help you today?",
-    type: "ai",
-  },
-  {
-    content: "Find drugs for HIV",
-    type: "human",
-  },
-  {
-    content:
-      "I can help you find information about HIV medications. Here are some commonly prescribed antiretroviral drugs: Tenofovir disoproxil fumarate (TDF), Emtricitabine (FTC), Efavirenz (EFV), Dolutegravir (DTG), Raltegravir (RAL), Darunavir (DRV), Atazanavir (ATV), and many others. These drugs work by targeting different stages of the HIV replication cycle to prevent the virus from multiplying and damaging the immune system.",
-    type: "ai",
-  },
-  {
-    content: "What are the side effects of these medications?",
-    type: "human",
-  },
-  {
-    content:
-      "Common side effects of antiretroviral medications can include nausea, diarrhea, headache, fatigue, and rash. More serious side effects may include liver problems, kidney issues, bone density loss, and changes in body fat distribution. It's important to work closely with your healthcare provider to monitor for these effects and adjust treatment as needed.",
-    type: "ai",
-  },
-  {
-    content: "How long do I need to take these medications?",
-    type: "human",
-  },
-  {
-    content:
-      "HIV medications are typically taken for life. The goal of antiretroviral therapy is to suppress the virus to undetectable levels, which helps maintain your immune system and prevents transmission to others. Stopping treatment can lead to viral rebound and potential resistance to medications. It's crucial to maintain adherence to your prescribed regimen.",
-    type: "ai",
-  },
-  {
-    content: "Thank you for the information!",
-    type: "human",
-  },
-  {
-    content:
-      "You're welcome! Remember to always consult with your healthcare provider for personalized medical advice. If you have any other questions about HIV treatment or medications, feel free to ask.",
     type: "ai",
   },
 ] as IChatMessage[];
@@ -52,10 +23,33 @@ export default function Chatbot() {
   const { userData } = useAuth();
   const [chatHistories, setChatHistories] = useState<IChatMessage[]>(messages);
   const [text, setText] = useState("");
+  const [loadingCountLocal, setLoadingCountLocal] = useState(0);
+  const { handleResponse } = useApiHandler();
+  const isLoadingLocal = loadingCountLocal > 0;
+  const { withGenericLoading } = useLoader();
+
+  const withLoadingLocal = async <T,>(fn: () => Promise<T>): Promise<T> => {
+    return withGenericLoading(fn, setLoadingCountLocal);
+  };
 
   useEffect(() => {
+    async function chatAIReply() {
+      const L = chatHistories.length;
+      if (chatHistories[L - 1].type === "human") {
+        const replyRes = await withLoadingLocal(() =>
+          chatAIv2(chatHistories[L - 1].content),
+        );
+        handleResponse(replyRes);
+        if (!replyRes.success) return;
+        setChatHistories((prev: IChatMessage[]) => {
+          return replyRes.data ? [...prev, replyRes.data] : prev;
+        });
+      }
+    }
+    chatAIReply();
+
     console.log("abc", sessId);
-  }, []);
+  }, [chatHistories]);
 
   return (
     <ProtectedRoute>
@@ -111,6 +105,27 @@ export default function Chatbot() {
                 </div>
               );
             })}
+            {isLoadingLocal && (
+              <div
+                className={`
+                flex w-full space-x-2 items-end
+                flex-wrap justify-start`}
+              >
+                <span className="text-sm text-gray-400 mb-1 font-medium">
+                  AI
+                </span>
+                <div
+                  className={`bg-gray-700 text-gray-100
+                p-3
+                rounded-lg font-medium
+                break-words overflow-wrap-anywhere
+                rounded-bl-none
+              `}
+                >
+                  <Spinner />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Input Area - Fixed at bottom */}
@@ -153,7 +168,7 @@ export default function Chatbot() {
               font-medium w-fit rounded-lg hover:bg-purple-700
               disabled:opacity-50 disabled:cursor-not-allowed
               transition-colors duration-200"
-              disabled={!text.trim()}
+              disabled={!text.trim() || isLoadingLocal}
               onClick={(e) => {
                 e.preventDefault();
                 if (text.trim()) {
