@@ -5,6 +5,7 @@ import {
   ProtectedRoute,
   Spinner,
   TypingAnimation,
+  HTMLTypingAnimation,
 } from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { IChatMessage } from "@/types";
@@ -14,7 +15,7 @@ import { useApiHandler } from "@/hooks";
 
 const messages = [
   {
-    content: "Hi! I'm your AI assistant. How can I help you today?",
+    content: "<p>Hi! I'm your AI assistant. How can I help you today?</p>",
     type: "ai",
   },
 ] as IChatMessage[];
@@ -116,14 +117,14 @@ export default function Chatbot() {
                   `}
                   >
                     {msg.type === "ai" && typingMessageIndex === index ? (
-                      <TypingAnimation
-                        text={msg.content}
-                        speed={30}
+                      <HTMLTypingAnimation
+                        html={msg.content}
+                        speed={5}
                         onComplete={() => setTypingMessageIndex(null)}
                         onCharacterTyped={scrollToBottom}
                       />
                     ) : (
-                      msg.content
+                      <div dangerouslySetInnerHTML={{ __html: msg.content }} />
                     )}
                   </div>
                   {msg.type === "human" && (
@@ -183,7 +184,7 @@ export default function Chatbot() {
                       return [
                         ...prev,
                         {
-                          content: text.trim(),
+                          content: `<p>${text.trim()}</p>`,
                           type: "human",
                         },
                       ];
@@ -206,7 +207,7 @@ export default function Chatbot() {
                     return [
                       ...prev,
                       {
-                        content: text.trim(),
+                        content: `<p>${text.trim()}</p>`,
                         type: "human",
                       },
                     ];

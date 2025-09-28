@@ -1,7 +1,7 @@
 import { ApiResult } from "./api";
 
 export interface IChatMessage {
-  content: string;
+  content: string; // HTML content from backend
   type: string;
 }
 

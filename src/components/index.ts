@@ -23,3 +23,4 @@ export * from "./loader";
 export * from "./template";
 export * from "./profilebar";
 export { TypingAnimation } from "./TypingAnimation";
+export { HTMLTypingAnimation } from "./HTMLTypingAnimation";
