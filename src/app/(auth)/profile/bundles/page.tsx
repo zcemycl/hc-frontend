@@ -272,6 +272,7 @@ export default function Page() {
                     <div className="flex flex-row gap-2 flex-wrap">
                       {b.fdalabels.map((subf) => (
                         <div
+                          key={subf.tradename}
                           className="px-2 bg-emerald-400 rounded
                             text-black font-semibold"
                         >
