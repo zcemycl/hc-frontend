@@ -4,6 +4,7 @@ import { PageProps } from "./props";
 import { useCallback, useEffect, useState } from "react";
 import {
   ListPageTemplate,
+  Modal,
   PaginationBar2,
   ProfileBar,
   ProtectedRoute,
@@ -19,7 +20,11 @@ import { BundleConnectEnum } from "@/constants";
 import { IBundle } from "@/types";
 import { useApiHandler } from "@/hooks";
 import { adjustPageNAfterDelete } from "@/http/utils";
-import { INFO_CIRCLE_ICON_URI, X_ICON_URI } from "@/icons/bootstrap";
+import {
+  INFO_CIRCLE_ICON_URI,
+  PLUS_ICON_URI,
+  X_ICON_URI,
+} from "@/icons/bootstrap";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const searchParams = useSearchParams();
@@ -30,7 +35,9 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [pageN, setPageN] = useState(0);
   const [bundles, setBundles] = useState<IBundle[]>([]);
   const [bundlesCount, setBundlesCount] = useState(0);
+  const [targetBundleName, setTargetBundleName] = useState("");
   const [showContents, setShowContents] = useState<boolean[]>([false]);
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const fetchBundlesCallback = useCallback(async () => {
     const [tmpBundlesRes, tmpBundlesCount] = await withLoading(() =>
@@ -60,6 +67,7 @@ export default function Page({ params }: Readonly<PageProps>) {
     if (isLoadingAuth) return;
     fetchBundlesCallback();
   }, [isLoadingAuth, userId, pageN]);
+
   return (
     <ProtectedRoute>
       <ListPageTemplate>
@@ -68,6 +76,15 @@ export default function Page({ params }: Readonly<PageProps>) {
         <div className="flex flex-row justify-between">
           <TypographyH2>Bundles X{bundlesCount}</TypographyH2>
         </div>
+        <Modal
+          {...{
+            title: `Add to this bundle -- ${targetBundleName}? `,
+            isOpenModal,
+            setIsOpenModal,
+          }}
+        >
+          <></>
+        </Modal>
         <div className="flex flex-col space-y-1">
           {bundles.length === 0 ? (
             <p className="leading-relaxed mb-1">No Record ...</p>
@@ -132,6 +149,21 @@ export default function Page({ params }: Readonly<PageProps>) {
                           src={INFO_CIRCLE_ICON_URI}
                           className="rounded-full 
                           bg-sky-300 hover:bg-sky-700"
+                        />
+                      </button>
+                      <button
+                        className="leading-[0px] m-0
+                        text-black"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          setIsOpenModal(true);
+                          setTargetBundleName(b.name);
+                        }}
+                      >
+                        <img
+                          src={PLUS_ICON_URI}
+                          className="w-5 h-5 rounded-full 
+                          hover:bg-green-500 bg-green-300"
                         />
                       </button>
                       <button

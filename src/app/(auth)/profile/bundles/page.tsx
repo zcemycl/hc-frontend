@@ -160,6 +160,7 @@ export default function Page() {
               } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
                 useFor = "Annotation";
               }
+              console.log(b.fdalabels);
               return (
                 <div
                   key={`${b.name}-group-btn`}
@@ -264,9 +265,20 @@ export default function Page() {
                     id="hide-ele"
                     className={`transition-all
                     origin-top overflow-hidden duration-150
+                    flex flex-col space-y-1
                     ${showContents[idx] ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
                   >
-                    {b.description}
+                    <span>{b.description}</span>
+                    <div className="flex flex-row gap-2 flex-wrap">
+                      {b.fdalabels.map((subf) => (
+                        <div
+                          className="px-2 bg-emerald-400 rounded
+                            text-black font-semibold"
+                        >
+                          {subf.tradename}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );
