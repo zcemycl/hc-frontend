@@ -15,6 +15,7 @@ import {
   deleteBundleByIdv2,
   fetchBundlesByUserIdv2,
   fetchBundlesCountByUserIdv2,
+  patchBundleByIdv2,
 } from "@/http/backend";
 import { BundleConnectEnum } from "@/constants";
 import { IBundle } from "@/types";
@@ -28,6 +29,7 @@ import {
 
 export default function Page({ params }: Readonly<PageProps>) {
   const searchParams = useSearchParams();
+  const annotation_id = searchParams.get("annotation_id");
   const { isLoadingv2, withLoading, isLoadingAuth } = useLoader();
   const { handleResponse } = useApiHandler();
   const { userId } = useAuth();
@@ -156,8 +158,18 @@ export default function Page({ params }: Readonly<PageProps>) {
                         text-black"
                         onClick={async (e) => {
                           e.preventDefault();
-                          setIsOpenModal(true);
-                          setTargetBundleName(b.name);
+                          const aSet = new Set();
+                          b.annotations.forEach((ann) => aSet.add(ann.id));
+                          aSet.add(annotation_id);
+                          console.log(aSet);
+                          const patchBundleResult = await withLoading(() =>
+                            patchBundleByIdv2(b.id, {
+                              annotation_ids: Array.from(aSet) as number[],
+                            }),
+                          );
+                          handleResponse(patchBundleResult);
+                          if (!patchBundleResult.success) return;
+                          await fetchBundlesCallback();
                         }}
                       >
                         <img
@@ -197,9 +209,32 @@ export default function Page({ params }: Readonly<PageProps>) {
                     id="hide-ele"
                     className={`transition-all
                     origin-top overflow-hidden duration-150
+                    flex flex-col space-y-1
                     ${showContents[idx] ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
                   >
-                    {b.description}
+                    <span>{b.description}</span>
+                    <div className="flex flex-row gap-2 flex-wrap">
+                      {b.fdalabels.map((subf) => (
+                        <div
+                          key={subf.tradename}
+                          className="px-2 bg-emerald-400 rounded
+                            text-black font-semibold"
+                        >
+                          {subf.tradename}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex flex-row gap-2 flex-wrap">
+                      {b.annotations.map((suba) => (
+                        <div
+                          key={`bann-${suba.id}`}
+                          className="px-2 bg-emerald-400 rounded
+                            text-black font-semibold"
+                        >
+                          {suba.category} - {suba.table_id} - {suba.id}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );

@@ -280,6 +280,17 @@ export default function Page() {
                         </div>
                       ))}
                     </div>
+                    <div className="flex flex-row gap-2 flex-wrap">
+                      {b.annotations.map((suba) => (
+                        <div
+                          key={`bann-${suba.id}`}
+                          className="px-2 bg-emerald-400 rounded
+                            text-black font-semibold"
+                        >
+                          {suba.category} - {suba.table_id} - {suba.id}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );

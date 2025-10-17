@@ -20,6 +20,7 @@ export interface IBundleUpdate {
   name?: string;
   description?: string;
   tradenames?: string[];
+  annotation_ids?: number[];
 }
 
 // API Result interfaces
