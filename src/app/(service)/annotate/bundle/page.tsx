@@ -1,5 +1,5 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PageProps } from "./props";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -29,6 +29,7 @@ import {
 
 export default function Page({ params }: Readonly<PageProps>) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const annotation_id = searchParams.get("annotation_id");
   const { isLoadingv2, withLoading, isLoadingAuth } = useLoader();
   const { handleResponse } = useApiHandler();
@@ -77,6 +78,17 @@ export default function Page({ params }: Readonly<PageProps>) {
         <hr className="mb-2" />
         <div className="flex flex-row justify-between">
           <TypographyH2>Bundles X{bundlesCount}</TypographyH2>
+          <button
+            className="px-2 bg-emerald-500 
+            hover:bg-emerald-300
+            rounded-lg text-black font-semibold"
+            onClick={(e) => {
+              e.preventDefault();
+              window.history.go(-2);
+            }}
+          >
+            Back to Annotations List Page
+          </button>
         </div>
         <Modal
           {...{
@@ -117,6 +129,12 @@ export default function Page({ params }: Readonly<PageProps>) {
                   <div
                     className="flex flex-row 
                     justify-between font-bold"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const params = new URLSearchParams();
+                      params.append("id", b.id);
+                      router.push(`/bundle?${params}`);
+                    }}
                   >
                     <div
                       className="flex flex-row justify-start
@@ -158,6 +176,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                         text-black"
                         onClick={async (e) => {
                           e.preventDefault();
+                          e.stopPropagation();
                           const aSet = new Set();
                           b.annotations.forEach((ann) => aSet.add(ann.id));
                           aSet.add(annotation_id);

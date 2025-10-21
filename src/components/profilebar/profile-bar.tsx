@@ -6,11 +6,13 @@ export const ProfileBar = ({
   username,
   role,
   children,
+  backCallBack,
 }: {
   title?: string;
   username?: string;
   role?: string;
   children?: React.ReactNode;
+  backCallBack?: () => void;
 }) => {
   return (
     <div className="flex flex-col space-y-1">
@@ -32,7 +34,11 @@ export const ProfileBar = ({
             </span>
           )}
         </div>
-        <BackBtn />
+        <BackBtn
+          {...{
+            customCallBack: backCallBack,
+          }}
+        />
       </div>
       {children}
     </div>
