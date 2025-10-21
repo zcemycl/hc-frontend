@@ -149,7 +149,7 @@ export default function Page() {
           }}
         />
 
-        <div className="flex flex-col space-y-1 overflow-y-auto">
+        <div className="flex flex-col space-y-1">
           {bundles.length === 0 ? (
             <p className="leading-relaxed mb-1">No Record ...</p>
           ) : (
