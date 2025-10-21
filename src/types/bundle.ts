@@ -1,6 +1,7 @@
 import { ApiResult } from "./api";
 import { IFdaLabelRef } from "./fdalabel";
 import { IAnnotationRef } from "./annotation";
+import { IUserRef } from "./users";
 
 export interface IBundleConfig {
   id?: string;
@@ -14,6 +15,7 @@ export interface IBundle {
   description: string;
   fdalabels: IFdaLabelRef[];
   annotations: IAnnotationRef[];
+  users: IUserRef[];
 }
 
 export interface IBundleUpdate {
@@ -21,6 +23,7 @@ export interface IBundleUpdate {
   description?: string;
   tradenames?: string[];
   annotation_ids?: number[];
+  emails?: string[];
 }
 
 // API Result interfaces

@@ -117,7 +117,9 @@ export default function Page({ params }: Readonly<PageProps>) {
                   key={`${b.name}-group-btn`}
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log("abc");
+                    const params = new URLSearchParams();
+                    params.append("id", b.id);
+                    router.push(`/bundle?${params}`);
                   }}
                   className="px-3 py-2 text-clip
                     flex rounded-lg border-emerald-200 border-2
@@ -129,12 +131,6 @@ export default function Page({ params }: Readonly<PageProps>) {
                   <div
                     className="flex flex-row 
                     justify-between font-bold"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const params = new URLSearchParams();
-                      params.append("id", b.id);
-                      router.push(`/bundle?${params}`);
-                    }}
                   >
                     <div
                       className="flex flex-row justify-start

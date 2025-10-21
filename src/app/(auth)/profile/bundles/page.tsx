@@ -28,9 +28,11 @@ import {
 } from "@/icons/bootstrap";
 import { defaultBundleConfig } from "@/constants";
 import { adjustPageNAfterDelete } from "@/http/utils";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const { userId, isLoadingAuth } = useAuth();
+  const router = useRouter();
   const { isLoadingv2, withLoading } = useLoader();
   const { handleResponse } = useApiHandler();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
@@ -147,7 +149,7 @@ export default function Page() {
           }}
         />
 
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col space-y-1 overflow-y-auto">
           {bundles.length === 0 ? (
             <p className="leading-relaxed mb-1">No Record ...</p>
           ) : (
@@ -166,7 +168,9 @@ export default function Page() {
                   key={`${b.name}-group-btn`}
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log("abc");
+                    const params = new URLSearchParams();
+                    params.append("id", b.id);
+                    router.push(`/bundle?${params}`);
                   }}
                   className="px-3 py-2 text-clip
                     flex rounded-lg border-emerald-200 border-2
