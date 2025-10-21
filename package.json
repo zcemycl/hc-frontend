@@ -29,6 +29,7 @@
     "dotenv": "^16.4.5",
     "jose": "^5.2.3",
     "jwk-to-pem": "^2.0.5",
+    "lucide-react": "^0.546.0",
     "next": "14.2.26",
     "next-auth": "^4.24.11",
     "next-themes": "^0.3.0",
