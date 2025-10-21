@@ -112,7 +112,7 @@ export default function Page() {
               className="flex flex-row justify-start gap-2
                 flex-wrap"
             >
-              <span>Drugs: </span>
+              <span>Annotations: </span>
               {bundle?.annotations.map((ann: IAnnotationRef) => (
                 <span
                   className="px-2 bg-emerald-400 
