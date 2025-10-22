@@ -1,12 +1,7 @@
 "use client";
-import {
-  INFO_CIRCLE_ICON_URI,
-  PEN_ICON_URI,
-  PLUS_ICON_URI,
-  X_ICON_URI,
-} from "@/icons/bootstrap";
 import { IBundle } from "@/types";
 import { useRouter } from "next/navigation";
+import { Plus, X, Info, Pen } from "lucide-react";
 
 const BundleListItem = ({
   b,
@@ -78,10 +73,11 @@ const BundleListItem = ({
                 await expandInfoCallback!();
               }}
             >
-              <img
-                src={INFO_CIRCLE_ICON_URI}
+              <Info
                 className="rounded-full 
-                          bg-sky-300 hover:bg-sky-700"
+                  bg-sky-300 hover:bg-sky-700
+                  text-black
+                  hover:text-white"
               />
             </button>
           )}
@@ -95,10 +91,11 @@ const BundleListItem = ({
                 await addCallback!();
               }}
             >
-              <img
-                src={PLUS_ICON_URI}
-                className="w-5 h-5 rounded-full 
-              hover:bg-green-500 bg-green-300"
+              <Plus
+                className="rounded-lg
+                hover:bg-green-500 bg-green-300
+                text-black
+                hover:text-white"
               />
             </button>
           )}
@@ -110,11 +107,12 @@ const BundleListItem = ({
                 await editCallback!();
               }}
             >
-              <img
-                src={PEN_ICON_URI}
-                className="
-                          rounded-full bg-purple-400
-                          hover:bg-purple-600"
+              <Pen
+                className="p-1
+                  rounded-lg bg-purple-400
+                  hover:bg-purple-600
+                  text-black
+                  hover:text-white"
               />
             </button>
           )}
@@ -126,10 +124,12 @@ const BundleListItem = ({
                 await delCallback!();
               }}
             >
-              <img
-                src={X_ICON_URI}
-                className="rounded-full 
-                            bg-red-500 hover:bg-red-700"
+              <X
+                className="rounded-lg
+                bg-red-500
+                hover:bg-red-700
+                text-black
+                hover:text-white"
               />
             </button>
           )}
