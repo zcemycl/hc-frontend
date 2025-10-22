@@ -7,11 +7,11 @@ import {
 } from "@/components";
 import { useLoader } from "@/contexts";
 import { useApiHandler } from "@/hooks";
-import { fetchBundleByIdv2 } from "@/http/backend";
+import { fetchBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
 import { IAnnotationRef, IBundle, IFdaLabelRef, IUserRef } from "@/types";
 import { Plus, SendHorizontal } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -22,15 +22,16 @@ export default function Page() {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [email, setEmail] = useState("");
 
+  const getData = useCallback(async () => {
+    const resBundle = await withLoading(() =>
+      fetchBundleByIdv2(bundle_id as string),
+    );
+    console.log(resBundle);
+    if (!resBundle.success) handleResponse(resBundle);
+    setBundle(resBundle.data || null);
+  }, [bundle_id]);
+
   useEffect(() => {
-    const getData = async () => {
-      const resBundle = await withLoading(() =>
-        fetchBundleByIdv2(bundle_id as string),
-      );
-      console.log(resBundle);
-      if (!resBundle.success) handleResponse(resBundle);
-      setBundle(resBundle.data || null);
-    };
     getData();
   }, [bundle_id]);
 
@@ -179,6 +180,17 @@ export default function Page() {
                           font-bold text-black"
                   onClick={async (e) => {
                     e.preventDefault();
+                    const eSet = new Set();
+                    bundle?.users.forEach((em) => eSet.add(em.email));
+                    eSet.add(email);
+                    const patchBundleResult = await withLoading(() =>
+                      patchBundleByIdv2(bundle?.id as string, {
+                        emails: Array.from(eSet) as string[],
+                      }),
+                    );
+                    if (!patchBundleResult.success)
+                      handleResponse(patchBundleResult);
+                    await getData();
                     setEmail("");
                     setIsOpenModal(false);
                   }}
