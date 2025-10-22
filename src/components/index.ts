@@ -9,7 +9,7 @@ export { Modal, EditBundleModal, HandleNotOKResponseModal } from "./modal";
 export * from "./fdalabel";
 export * from "./searchbar";
 export * from "./spinner";
-export * from "./expandablebtn";
+export * from "./button";
 export * from "./toggle";
 export * from "./statsbar";
 export * from "./form";
