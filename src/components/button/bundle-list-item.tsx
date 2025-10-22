@@ -1,12 +1,28 @@
+"use client";
 import {
   INFO_CIRCLE_ICON_URI,
   PEN_ICON_URI,
+  PLUS_ICON_URI,
   X_ICON_URI,
 } from "@/icons/bootstrap";
 import { IBundle } from "@/types";
 import { useRouter } from "next/navigation";
 
-const BundleListItem = ({ b, isExpand }: { b: IBundle; isExpand: boolean }) => {
+const BundleListItem = ({
+  b,
+  isExpand,
+  expandInfoCallback,
+  editCallback,
+  delCallback,
+  addCallback,
+}: {
+  b: IBundle;
+  isExpand: boolean;
+  expandInfoCallback?: () => void;
+  editCallback?: () => void;
+  delCallback?: () => void;
+  addCallback?: () => void;
+}) => {
   const router = useRouter();
   let useFor: string = "Not In Use";
   if (b.annotations.length === 0 && b.fdalabels.length === 0) {
@@ -16,7 +32,6 @@ const BundleListItem = ({ b, isExpand }: { b: IBundle; isExpand: boolean }) => {
   } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
     useFor = "Annotation";
   }
-  console.log(b.fdalabels);
   return (
     <div
       key={`${b.name}-group-btn`}
@@ -55,43 +70,69 @@ const BundleListItem = ({ b, isExpand }: { b: IBundle; isExpand: boolean }) => {
                       flex flex-row space-x-2
                       items-center basis-1/3 justify-end"
         >
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-          >
-            <img
-              src={INFO_CIRCLE_ICON_URI}
-              className="rounded-full 
+          {expandInfoCallback && (
+            <button
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                await expandInfoCallback!();
+              }}
+            >
+              <img
+                src={INFO_CIRCLE_ICON_URI}
+                className="rounded-full 
                           bg-sky-300 hover:bg-sky-700"
-            />
-          </button>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-          >
-            <img
-              src={PEN_ICON_URI}
-              className="
+              />
+            </button>
+          )}
+          {addCallback && (
+            <button
+              className="leading-[0px] m-0
+            text-black"
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                await addCallback!();
+              }}
+            >
+              <img
+                src={PLUS_ICON_URI}
+                className="w-5 h-5 rounded-full 
+              hover:bg-green-500 bg-green-300"
+              />
+            </button>
+          )}
+          {editCallback && (
+            <button
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                await editCallback!();
+              }}
+            >
+              <img
+                src={PEN_ICON_URI}
+                className="
                           rounded-full bg-purple-400
                           hover:bg-purple-600"
-            />
-          </button>
-          <button
-            onClick={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-          >
-            <img
-              src={X_ICON_URI}
-              className="rounded-full 
+              />
+            </button>
+          )}
+          {delCallback && (
+            <button
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                await delCallback!();
+              }}
+            >
+              <img
+                src={X_ICON_URI}
+                className="rounded-full 
                             bg-red-500 hover:bg-red-700"
-            />
-          </button>
+              />
+            </button>
+          )}
         </div>
       </div>
       <div
