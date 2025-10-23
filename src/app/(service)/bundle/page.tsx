@@ -162,13 +162,32 @@ export default function Page() {
             >
               <span>Drugs: </span>
               {bundle?.fdalabels.map((f: IFdaLabelRef) => (
-                <span
+                <div
                   className="px-2 bg-emerald-400 
                         rounded-lg font-semibold text-black"
                   key={`bundle-drug-${f.setid}`}
                 >
-                  {f.tradename}
-                </span>
+                  <CompositeCorner
+                    {...{
+                      label: f.tradename,
+                      click_callback: () => {},
+                      del_callback: async () => {
+                        const fdaAfterDel = bundle.fdalabels
+                          .filter((f_) => f_.id !== f.id)
+                          .map((f_) => f_.tradename);
+                        console.log(fdaAfterDel);
+                        const patchBundleResult = await withLoading(() =>
+                          patchBundleByIdv2(bundle.id, {
+                            tradenames: fdaAfterDel,
+                          }),
+                        );
+                        handleResponse(patchBundleResult);
+                        if (!patchBundleResult.success) return;
+                        await getData();
+                      },
+                    }}
+                  />
+                </div>
               ))}
             </div>
           )}
@@ -179,13 +198,32 @@ export default function Page() {
             >
               <span>Annotations: </span>
               {bundle?.annotations.map((ann: IAnnotationRef) => (
-                <span
+                <div
                   className="px-2 bg-emerald-400 
                         rounded-lg font-semibold text-black"
                   key={`bundle-annotation-${ann.id}`}
                 >
-                  {ann.category} - {ann.table_id} - {ann.id}
-                </span>
+                  <CompositeCorner
+                    {...{
+                      label: `${ann.category} - ${ann.table_id} - ${ann.id}`,
+                      click_callback: () => {},
+                      del_callback: async () => {
+                        const bundlesAfterDel = bundle.annotations
+                          .filter((ann_) => ann_.id !== ann.id)
+                          .map((ann_) => ann_.id);
+                        console.log(bundlesAfterDel);
+                        const patchBundleResult = await withLoading(() =>
+                          patchBundleByIdv2(bundle.id, {
+                            annotation_ids: bundlesAfterDel,
+                          }),
+                        );
+                        handleResponse(patchBundleResult);
+                        if (!patchBundleResult.success) return;
+                        await getData();
+                      },
+                    }}
+                  />
+                </div>
               ))}
             </div>
           )}
