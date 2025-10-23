@@ -16,7 +16,7 @@ function FdaLabel({
 }: {
   each: IFdaLabel;
   displayDataIndex: number | null;
-  back_btn_callback: (s: any) => void;
+  back_btn_callback?: (s: any) => void;
   versions: IFdaVersions;
 }) {
   return (
