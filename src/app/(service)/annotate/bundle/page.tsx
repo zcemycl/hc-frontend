@@ -19,7 +19,7 @@ import {
   patchBundleByIdv2,
 } from "@/http/backend";
 import { BundleConnectEnum } from "@/constants";
-import { IBundle } from "@/types";
+import { IBundle, UserRoleEnum } from "@/types";
 import { useApiHandler } from "@/hooks";
 import { adjustPageNAfterDelete } from "@/http/utils";
 
@@ -28,7 +28,7 @@ export default function Page({ params }: Readonly<PageProps>) {
   const annotation_id = searchParams.get("annotation_id");
   const { isLoadingv2, withLoading, isLoadingAuth } = useLoader();
   const { handleResponse } = useApiHandler();
-  const { userId } = useAuth();
+  const { userId, userData } = useAuth();
   const nPerPage = 10;
   const [pageN, setPageN] = useState(0);
   const [bundles, setBundles] = useState<IBundle[]>([]);
@@ -99,6 +99,7 @@ export default function Page({ params }: Readonly<PageProps>) {
             <p className="leading-relaxed mb-1">No Record ...</p>
           ) : (
             bundles.map((b: IBundle, idx: number) => {
+              const bundle = b;
               let useFor: string = "Not In Use";
               if (b.annotations.length === 0 && b.fdalabels.length === 0) {
                 useFor = "Not In Use";
@@ -107,6 +108,10 @@ export default function Page({ params }: Readonly<PageProps>) {
               } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
                 useFor = "Annotation";
               }
+              const myRole2Bundle = bundle?.user_links?.find(
+                (link) => link.user_id === userData.id,
+              )?.role;
+              const isHidden = myRole2Bundle !== UserRoleEnum.ADMIN;
               return (
                 <BundleListItem
                   key={`${b.name}-group-btn`}
@@ -134,21 +139,23 @@ export default function Page({ params }: Readonly<PageProps>) {
                       if (!patchBundleResult.success) return;
                       await fetchBundlesCallback();
                     },
-                    delCallback: async () => {
-                      const deleteBundleResult = await withLoading(() =>
-                        deleteBundleByIdv2(b.id),
-                      );
-                      handleResponse(deleteBundleResult);
-                      if (!deleteBundleResult.success) return;
-                      setPageN((prevPageN: number) =>
-                        adjustPageNAfterDelete({
-                          prevPageN,
-                          totalBundlesAfterDelete: bundlesCount - 1,
-                          nPerPage,
-                        }),
-                      );
-                      await fetchBundlesCallback();
-                    },
+                    delCallback: isHidden
+                      ? undefined
+                      : async () => {
+                          const deleteBundleResult = await withLoading(() =>
+                            deleteBundleByIdv2(b.id),
+                          );
+                          handleResponse(deleteBundleResult);
+                          if (!deleteBundleResult.success) return;
+                          setPageN((prevPageN: number) =>
+                            adjustPageNAfterDelete({
+                              prevPageN,
+                              totalBundlesAfterDelete: bundlesCount - 1,
+                              nPerPage,
+                            }),
+                          );
+                          await fetchBundlesCallback();
+                        },
                   }}
                 />
               );

@@ -24,6 +24,7 @@ export interface IUserRef {
   id: number;
   username: string;
   email: string;
+  role: UserRoleEnum;
 }
 
 // API Result interfaces

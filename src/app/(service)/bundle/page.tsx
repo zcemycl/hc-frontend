@@ -1,14 +1,21 @@
 "use client";
 import {
+  CompositeCorner,
   ListPageTemplate,
   Modal,
   ProfileBar,
   ProtectedRoute,
 } from "@/components";
-import { useLoader } from "@/contexts";
+import { useAuth, useLoader } from "@/contexts";
 import { useApiHandler } from "@/hooks";
 import { fetchBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
-import { IAnnotationRef, IBundle, IFdaLabelRef, IUserRef } from "@/types";
+import {
+  IAnnotationRef,
+  IBundle,
+  IFdaLabelRef,
+  IUserRef,
+  UserRoleEnum,
+} from "@/types";
 import { Plus, SendHorizontal } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -21,6 +28,7 @@ export default function Page() {
   const { handleResponse } = useApiHandler();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [email, setEmail] = useState("");
+  const { userData } = useAuth();
 
   const getData = useCallback(async () => {
     const resBundle = await withLoading(() =>
@@ -33,6 +41,7 @@ export default function Page() {
 
   useEffect(() => {
     getData();
+    console.log(userData);
   }, [bundle_id]);
 
   const useFor = useMemo<string>(() => {
@@ -88,15 +97,48 @@ export default function Page() {
                 flex-wrap items-center"
             >
               <span>Owners: </span>
-              {bundle?.users.map((u: IUserRef) => (
-                <span
-                  className="px-2 bg-emerald-400 
+              {bundle?.users.map((u: IUserRef) => {
+                const myRole2Bundle = bundle?.user_links?.find(
+                  (link) => link.user_id === userData.id,
+                )?.role;
+                const curEmailRole2Bundle = bundle?.user_links?.find(
+                  (link) => link.user_id === u.id,
+                )?.role;
+                // curEmailRole = ADMIN -> false else true to prevent creator of bundle
+                // cmyRole2Bundle = USER -> false else true to prevent user of bundle to delete
+                let isHidden = false;
+                isHidden = curEmailRole2Bundle === UserRoleEnum.ADMIN;
+                if (myRole2Bundle === UserRoleEnum.USER) isHidden = true;
+                return (
+                  <div
+                    className="px-2 bg-emerald-400
                         rounded-lg font-semibold text-black"
-                  key={`bundle-user-${u.email}`}
-                >
-                  {u.email}
-                </span>
-              ))}
+                    key={`bundle-user-${u.email}`}
+                  >
+                    <CompositeCorner
+                      {...{
+                        label: u.email,
+                        click_callback: () => {},
+                        del_callback: isHidden
+                          ? undefined
+                          : async () => {
+                              const emailsAfterDel = bundle?.users
+                                .filter((em) => em.email !== u.email)
+                                .map((em) => em.email);
+                              const patchBundleResult = await withLoading(() =>
+                                patchBundleByIdv2(bundle?.id as string, {
+                                  emails: emailsAfterDel,
+                                }),
+                              );
+                              if (!patchBundleResult.success)
+                                handleResponse(patchBundleResult);
+                              await getData();
+                            },
+                      }}
+                    />
+                  </div>
+                );
+              })}
               <button
                 onClick={(e) => {
                   e.preventDefault();

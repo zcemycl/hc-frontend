@@ -19,7 +19,13 @@ import {
   fetchUserInfoByIdv2,
   patchBundleByIdv2,
 } from "@/http/backend";
-import { IBundle, IBundleConfig, IBundleUpdate, IUser } from "@/types";
+import {
+  IBundle,
+  IBundleConfig,
+  IBundleUpdate,
+  IUser,
+  UserRoleEnum,
+} from "@/types";
 import { useApiHandler } from "@/hooks";
 import { PLUS_ICON_URI } from "@/icons/bootstrap";
 import { defaultBundleConfig } from "@/constants";
@@ -27,7 +33,7 @@ import { adjustPageNAfterDelete } from "@/http/utils";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
-  const { userId, isLoadingAuth } = useAuth();
+  const { userId, isLoadingAuth, userData } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
   const { handleResponse } = useApiHandler();
   const [profileInfo, setProfileInfo] = useState<IUser | null>(null);
@@ -149,6 +155,7 @@ export default function Page() {
             <p className="leading-relaxed mb-1">No Record ...</p>
           ) : (
             bundles.map((b: IBundle, idx: number) => {
+              const bundle = b;
               let useFor: string = "Not In Use";
               if (b.annotations.length === 0 && b.fdalabels.length === 0) {
                 useFor = "Not In Use";
@@ -157,7 +164,10 @@ export default function Page() {
               } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
                 useFor = "Annotation";
               }
-              console.log(b.fdalabels);
+              const myRole2Bundle = bundle?.user_links?.find(
+                (link) => link.user_id === userData.id,
+              )?.role;
+              const isHidden = myRole2Bundle !== UserRoleEnum.ADMIN;
               return (
                 <BundleListItem
                   key={`${b.name}-group-btn`}
@@ -171,30 +181,34 @@ export default function Page() {
                         return copy;
                       });
                     },
-                    editCallback: async () => {
-                      setModalMode("edit");
-                      setIsOpenModal(true);
-                      setBundleConfig({
-                        id: b.id,
-                        name: b.name,
-                        description: b.description,
-                      });
-                    },
-                    delCallback: async () => {
-                      const deleteBundleResult = await withLoading(() =>
-                        deleteBundleByIdv2(b.id),
-                      );
-                      handleResponse(deleteBundleResult);
-                      if (!deleteBundleResult.success) return;
-                      setPageN((prevPageN: number) =>
-                        adjustPageNAfterDelete({
-                          prevPageN,
-                          totalBundlesAfterDelete: bundlesCount - 1,
-                          nPerPage,
-                        }),
-                      );
-                      await fetchBundlesCallback();
-                    },
+                    editCallback: isHidden
+                      ? undefined
+                      : async () => {
+                          setModalMode("edit");
+                          setIsOpenModal(true);
+                          setBundleConfig({
+                            id: b.id,
+                            name: b.name,
+                            description: b.description,
+                          });
+                        },
+                    delCallback: isHidden
+                      ? undefined
+                      : async () => {
+                          const deleteBundleResult = await withLoading(() =>
+                            deleteBundleByIdv2(b.id),
+                          );
+                          handleResponse(deleteBundleResult);
+                          if (!deleteBundleResult.success) return;
+                          setPageN((prevPageN: number) =>
+                            adjustPageNAfterDelete({
+                              prevPageN,
+                              totalBundlesAfterDelete: bundlesCount - 1,
+                              nPerPage,
+                            }),
+                          );
+                          await fetchBundlesCallback();
+                        },
                   }}
                 />
               );
