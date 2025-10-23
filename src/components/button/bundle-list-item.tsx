@@ -2,6 +2,7 @@
 import { IBundle } from "@/types";
 import { useRouter } from "next/navigation";
 import { Plus, X, Info, Pen } from "lucide-react";
+import { CompositeCorner } from "./composite-corner";
 
 const BundleListItem = ({
   b,
@@ -10,6 +11,10 @@ const BundleListItem = ({
   editCallback,
   delCallback,
   addCallback,
+  fdaClickCallback,
+  fdaDelCallback,
+  annotationClickCallback,
+  annotationDelCallback,
 }: {
   b: IBundle;
   isExpand: boolean;
@@ -17,6 +22,10 @@ const BundleListItem = ({
   editCallback?: () => void;
   delCallback?: () => void;
   addCallback?: () => void;
+  fdaClickCallback?: () => void;
+  fdaDelCallback?: () => void;
+  annotationClickCallback?: () => void;
+  annotationDelCallback?: () => void;
 }) => {
   const router = useRouter();
   let useFor: string = "Not In Use";
@@ -37,24 +46,30 @@ const BundleListItem = ({
         router.push(`/bundle?${params}`);
       }}
       className="px-3 py-2 text-clip
-                    flex rounded-lg border-emerald-200 border-2
-                    text-white cursor-pointer
-                    hover:bg-emerald-500 hover:text-black
-                    justify-between flex-col
-                  "
+        flex rounded-lg border-emerald-200 border-2
+        text-white cursor-pointer
+        hover:bg-emerald-500 hover:text-black
+        justify-between flex-col
+      "
     >
       <div
         className="flex flex-row 
-                    justify-between font-bold"
+        justify-between font-bold"
       >
         <div
           className="flex flex-row justify-start
-                      space-x-2 text-clip min-w-0 basis-2/3"
+          space-x-2 text-clip min-w-0 basis-2/3"
         >
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-shrink min-w-0">
+          <span
+            className="overflow-hidden text-ellipsis 
+            whitespace-nowrap flex-shrink min-w-0"
+          >
             {b.name}
           </span>
-          <span className="bg-amber-300 rounded-lg px-3 text-black flex-shrink-0 whitespace-nowrap">
+          <span
+            className="bg-amber-300 rounded-lg px-3 text-black 
+            flex-shrink-0 whitespace-nowrap"
+          >
             {useFor}
           </span>
         </div>
@@ -62,8 +77,8 @@ const BundleListItem = ({
         <div
           id="sub-buttons"
           className="
-                      flex flex-row space-x-2
-                      items-center basis-1/3 justify-end"
+            flex flex-row space-x-2
+            items-center basis-1/3 justify-end"
         >
           {expandInfoCallback && (
             <button
@@ -147,10 +162,22 @@ const BundleListItem = ({
           {b.fdalabels.map((subf) => (
             <div
               key={subf.tradename}
-              className="px-2 bg-emerald-400 rounded
-                            text-black font-semibold"
+              className="px-2 rounded
+                text-black font-semibold
+                bg-emerald-400 hover:bg-emerald-600
+                hover:scale-105 transition-all duration-200"
             >
-              {subf.tradename}
+              <CompositeCorner
+                {...{
+                  label: subf.tradename,
+                  click_callback: fdaClickCallback
+                    ? () => fdaClickCallback!()
+                    : () => {},
+                  del_callback: fdaDelCallback
+                    ? () => fdaDelCallback!()
+                    : undefined,
+                }}
+              />
             </div>
           ))}
         </div>

@@ -14,6 +14,7 @@ const CompositeCorner = ({
       className="relative w-full"
       onClick={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         click_callback();
       }}
     >
