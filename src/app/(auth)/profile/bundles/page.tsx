@@ -33,6 +33,7 @@ import { adjustPageNAfterDelete } from "@/http/utils";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
   const { userId, isLoadingAuth, userData } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
   const { handleResponse } = useApiHandler();
@@ -209,6 +210,9 @@ export default function Page() {
                           );
                           await fetchBundlesCallback();
                         },
+                    fdaClickCallback: async (fid: string) => {
+                      router.push(`/fdalabel?fdalabel_id=${fid}`);
+                    },
                   }}
                 />
               );

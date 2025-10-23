@@ -22,8 +22,8 @@ const BundleListItem = ({
   editCallback?: () => void;
   delCallback?: () => void;
   addCallback?: () => void;
-  fdaClickCallback?: () => void;
-  fdaDelCallback?: () => void;
+  fdaClickCallback?: (s: string) => void;
+  fdaDelCallback?: (s: string) => void;
   annotationClickCallback?: () => void;
   annotationDelCallback?: () => void;
 }) => {
@@ -171,10 +171,10 @@ const BundleListItem = ({
                 {...{
                   label: subf.tradename,
                   click_callback: fdaClickCallback
-                    ? () => fdaClickCallback!()
+                    ? () => fdaClickCallback!(subf.setid as string)
                     : () => {},
                   del_callback: fdaDelCallback
-                    ? () => fdaDelCallback!()
+                    ? () => fdaDelCallback!(subf.setid as string)
                     : undefined,
                 }}
               />
