@@ -1,4 +1,4 @@
-import { FeedbackIcon, LogoutIcon, ProfileIcon } from "@/icons";
+import { FeedbackIcon, LogoutIcon } from "@/icons";
 import { User } from "lucide-react";
 
 export const sidebar_constant = [
