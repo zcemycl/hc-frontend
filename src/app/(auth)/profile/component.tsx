@@ -11,6 +11,7 @@ import { fetchUserInfoByIdv2 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import { IUser } from "@/types";
 import { useApiHandler } from "@/hooks";
+import { History, Boxes, FilePenLine } from "lucide-react";
 
 export default function Profile() {
   const { handleResponse } = useApiHandler();
@@ -59,14 +60,27 @@ export default function Profile() {
                 "
         >
           {[
-            ["History", "Browse your search history.", "/history"],
             [
-              "Annotation",
+              <>
+                <span>History</span>
+                <History />
+              </>,
+              "Browse your search history.",
+              "/history",
+            ],
+            [
+              <>
+                <span>Annotation</span>
+                <FilePenLine />
+              </>,
               "View your supports in building robust AI models",
               "/annotations",
             ],
             [
-              "Bundle",
+              <>
+                <span>Bundle</span>
+                <Boxes />
+              </>,
               "Group your medicines of interest to compare, and let the system learn your preference.",
               "/bundles",
             ],
@@ -84,7 +98,8 @@ export default function Profile() {
                         text-black font-bold
                         text-md
                         hover:bg-emerald-500
-                        bg-emerald-300"
+                        bg-emerald-300
+                        flex flex-row space-x-2 justify-center"
                   onClick={() => router.push(`profile${v[2]}`)}
                 >
                   {v[0]}
