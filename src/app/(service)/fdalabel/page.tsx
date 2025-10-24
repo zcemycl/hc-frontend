@@ -41,14 +41,16 @@ export default function Page() {
             title: "",
           }}
         />
-        {displayData.length > 0 && (
-          <FdaLabel
-            each={displayData?.[0]}
-            displayDataIndex={0}
-            back_btn_callback={undefined}
-            versions={versions}
-          />
-        )}
+        <div className="pb-10">
+          {displayData.length > 0 && (
+            <FdaLabel
+              each={displayData?.[0]}
+              displayDataIndex={0}
+              back_btn_callback={undefined}
+              versions={versions}
+            />
+          )}
+        </div>
       </ListPageTemplate>
     </ProtectedRoute>
   );

@@ -17,7 +17,7 @@ import {
   UserRoleEnum,
 } from "@/types";
 import { Plus, SendHorizontal } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function Page() {
@@ -29,6 +29,7 @@ export default function Page() {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [email, setEmail] = useState("");
   const { userData } = useAuth();
+  const router = useRouter();
 
   const getData = useCallback(async () => {
     const resBundle = await withLoading(() =>
@@ -164,13 +165,19 @@ export default function Page() {
               {bundle?.fdalabels.map((f: IFdaLabelRef) => (
                 <div
                   className="px-2 bg-emerald-400 
-                        rounded-lg font-semibold text-black"
+                        rounded-lg font-semibold 
+                        text-black
+                        hover:bg-emerald-600
+                        hover:scale-105 duration-200
+                        transition-all cursor-pointer"
                   key={`bundle-drug-${f.setid}`}
                 >
                   <CompositeCorner
                     {...{
                       label: f.tradename,
-                      click_callback: () => {},
+                      click_callback: () => {
+                        router.push(`/fdalabel?fdalabel_id=${f.setid}`);
+                      },
                       del_callback: async () => {
                         const fdaAfterDel = bundle.fdalabels
                           .filter((f_) => f_.id !== f.id)
