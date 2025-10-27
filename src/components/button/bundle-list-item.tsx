@@ -1,12 +1,18 @@
 "use client";
-import { IBundle, IFdaLabelRef } from "@/types";
+import {
+  AnnotationCategoryEnum,
+  IAnnotationSourceMap,
+  IBundle,
+  IFdaLabelRef,
+} from "@/types";
 import { useRouter } from "next/navigation";
 import { Plus, X, Info, Pen } from "lucide-react";
-import { CompositeCorner } from "./composite-corner";
 import { BundleFdalabelSubItem } from "./bundle-fdalabel-subitem";
+import { BundleAnnotationSubItem } from "./bundle-annotation-subitem";
 
 const BundleListItem = ({
   b,
+  annSource,
   isExpand,
   expandInfoCallback,
   editCallback,
@@ -18,6 +24,7 @@ const BundleListItem = ({
   annotationDelCallback,
 }: {
   b: IBundle;
+  annSource: IAnnotationSourceMap;
   isExpand: boolean;
   expandInfoCallback?: () => void;
   editCallback?: () => void;
@@ -25,7 +32,11 @@ const BundleListItem = ({
   addCallback?: () => void;
   fdaClickCallback?: (s: string) => void;
   fdaDelCallback?: (s: string) => void;
-  annotationClickCallback?: () => void;
+  annotationClickCallback?: (
+    setid: string,
+    category: AnnotationCategoryEnum,
+    table_id: number | string,
+  ) => void;
   annotationDelCallback?: () => void;
 }) => {
   const router = useRouter();
@@ -173,13 +184,15 @@ const BundleListItem = ({
         </div>
         <div className="flex flex-row gap-2 flex-wrap">
           {b.annotations.map((suba) => (
-            <div
-              key={`bann-${suba.id}`}
-              className="px-2 bg-emerald-400 rounded
-                            text-black font-semibold"
-            >
-              {suba.category} - {suba.table_id} - {suba.id}
-            </div>
+            <BundleAnnotationSubItem
+              key={`bundle-annotation-${suba.id}`}
+              {...{
+                ann: suba,
+                annSource,
+                annotationClickCallback,
+                annotationDelCallback,
+              }}
+            />
           ))}
         </div>
       </div>

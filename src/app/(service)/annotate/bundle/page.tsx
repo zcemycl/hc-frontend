@@ -1,7 +1,7 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PageProps } from "./props";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   BundleListItem,
   ListPageTemplate,
@@ -11,19 +11,27 @@ import {
   ProtectedRoute,
   TypographyH2,
 } from "@/components";
-import { useAuth, useLoader } from "@/contexts";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import {
   deleteBundleByIdv2,
+  fetchAnnotateSourcev2,
   fetchBundlesByUserIdv2,
   fetchBundlesCountByUserIdv2,
   patchBundleByIdv2,
 } from "@/http/backend";
-import { BundleConnectEnum } from "@/constants";
-import { IBundle, UserRoleEnum } from "@/types";
+import { AnnotationTypeEnum, BundleConnectEnum } from "@/constants";
+import {
+  AnnotationCategoryEnum,
+  IAnnotationRef,
+  IAnnotationSourceMap,
+  IBundle,
+  UserRoleEnum,
+} from "@/types";
 import { useApiHandler } from "@/hooks";
 import { adjustPageNAfterDelete } from "@/http/utils";
 
 export default function Page({ params }: Readonly<PageProps>) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const annotation_id = searchParams.get("annotation_id");
   const { isLoadingv2, withLoading, isLoadingAuth } = useLoader();
@@ -36,6 +44,8 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [targetBundleName, setTargetBundleName] = useState("");
   const [showContents, setShowContents] = useState<boolean[]>([false]);
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const { versions } = useContext(FdaVersionsContext);
+  const [annSource, setAnnSource] = useState<IAnnotationSourceMap>({});
 
   const fetchBundlesCallback = useCallback(async () => {
     const [tmpBundlesRes, tmpBundlesCount] = await withLoading(() =>
@@ -59,6 +69,24 @@ export default function Page({ params }: Readonly<PageProps>) {
     setBundlesCount(tmpBundlesCount.data ?? 0);
     console.log("bundles", tmpBundlesRes.data ?? [], tmpBundlesCount);
   }, [userId, pageN]);
+
+  const fetchAnnSrcFromIdsCallback = useCallback(
+    async (ann_ids: number[]) => {
+      if (ann_ids.length === 0) return;
+      const restmp = await withLoading(() =>
+        fetchAnnotateSourcev2(ann_ids, versions),
+      );
+      console.log(restmp);
+      if (!restmp.success) handleResponse(restmp);
+      setAnnSource((prev: IAnnotationSourceMap) => {
+        return {
+          ...restmp.data,
+          ...prev,
+        };
+      });
+    },
+    [versions],
+  );
 
   useEffect(() => {
     console.log(searchParams);
@@ -117,6 +145,7 @@ export default function Page({ params }: Readonly<PageProps>) {
                   key={`${b.name}-group-btn`}
                   {...{
                     b,
+                    annSource,
                     isExpand: showContents[idx],
                     expandInfoCallback: async () => {
                       setShowContents((prev: boolean[]) => {
@@ -124,16 +153,27 @@ export default function Page({ params }: Readonly<PageProps>) {
                         copy[idx] = !copy[idx];
                         return copy;
                       });
+                      const ann_ids = b.annotations
+                        .map((v: IAnnotationRef) => v.id)
+                        .filter(
+                          (vid: number) =>
+                            !Object.keys(annSource).includes(String(vid)),
+                        );
+                      await fetchAnnSrcFromIdsCallback(ann_ids);
                     },
                     addCallback: async () => {
                       const aSet = new Set();
                       b.annotations.forEach((ann) => aSet.add(ann.id));
                       aSet.add(annotation_id);
                       console.log(aSet);
+                      const aArr = Array.from(aSet) as number[];
                       const patchBundleResult = await withLoading(() =>
                         patchBundleByIdv2(b.id, {
-                          annotation_ids: Array.from(aSet) as number[],
+                          annotation_ids: aArr as number[],
                         }),
+                      );
+                      await fetchAnnSrcFromIdsCallback(
+                        aArr.filter((vid: number) => !(vid in annSource)),
                       );
                       handleResponse(patchBundleResult);
                       if (!patchBundleResult.success) return;
@@ -156,6 +196,15 @@ export default function Page({ params }: Readonly<PageProps>) {
                           );
                           await fetchBundlesCallback();
                         },
+                    annotationClickCallback: (
+                      setid: string,
+                      category: AnnotationCategoryEnum,
+                      table_id: number | string,
+                    ) => {
+                      router.push(
+                        `/annotate/fdalabel/${setid}/${category}/${table_id}?tab=${AnnotationTypeEnum.COMPLETE}`,
+                      );
+                    },
                   }}
                 />
               );

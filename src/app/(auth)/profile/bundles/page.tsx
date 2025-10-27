@@ -9,17 +9,21 @@ import {
   Spinner,
   TypographyH2,
 } from "@/components";
-import { useAuth, useLoader } from "@/contexts";
-import { useCallback, useEffect, useState } from "react";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   createBundleByUserIdv2,
   deleteBundleByIdv2,
+  fetchAnnotateSourcev2,
   fetchBundlesByUserIdv2,
   fetchBundlesCountByUserIdv2,
   fetchUserInfoByIdv2,
   patchBundleByIdv2,
 } from "@/http/backend";
 import {
+  AnnotationCategoryEnum,
+  IAnnotationRef,
+  IAnnotationSourceMap,
   IBundle,
   IBundleConfig,
   IBundleUpdate,
@@ -28,7 +32,7 @@ import {
 } from "@/types";
 import { useApiHandler } from "@/hooks";
 import { PLUS_ICON_URI } from "@/icons/bootstrap";
-import { defaultBundleConfig } from "@/constants";
+import { AnnotationTypeEnum, defaultBundleConfig } from "@/constants";
 import { adjustPageNAfterDelete } from "@/http/utils";
 import { useRouter } from "next/navigation";
 
@@ -47,6 +51,8 @@ export default function Page() {
   const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
     ...defaultBundleConfig,
   });
+  const [annSource, setAnnSource] = useState<IAnnotationSourceMap>({});
+  const { versions } = useContext(FdaVersionsContext);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
 
   const fetchBundlesCallback = useCallback(async () => {
@@ -174,12 +180,30 @@ export default function Page() {
                   key={`${b.name}-group-btn`}
                   {...{
                     b,
+                    annSource,
                     isExpand: showContents[idx],
                     expandInfoCallback: async () => {
                       setShowContents((prev: boolean[]) => {
                         let copy = [...prev];
                         copy[idx] = !copy[idx];
                         return copy;
+                      });
+                      const ann_ids = b.annotations
+                        .map((v: IAnnotationRef) => v.id)
+                        .filter(
+                          (vid: number) =>
+                            !Object.keys(annSource).includes(String(vid)),
+                        );
+                      if (ann_ids.length === 0) return;
+                      const restmp = await withLoading(() =>
+                        fetchAnnotateSourcev2(ann_ids, versions),
+                      );
+                      if (!restmp.success) handleResponse(restmp);
+                      setAnnSource((prev: IAnnotationSourceMap) => {
+                        return {
+                          ...restmp.data,
+                          ...prev,
+                        };
                       });
                     },
                     editCallback: isHidden
@@ -212,6 +236,15 @@ export default function Page() {
                         },
                     fdaClickCallback: async (fid: string) => {
                       router.push(`/fdalabel?fdalabel_id=${fid}`);
+                    },
+                    annotationClickCallback: (
+                      setid: string,
+                      category: AnnotationCategoryEnum,
+                      table_id: number | string,
+                    ) => {
+                      router.push(
+                        `/annotate/fdalabel/${setid}/${category}/${table_id}?tab=${AnnotationTypeEnum.COMPLETE}`,
+                      );
                     },
                   }}
                 />

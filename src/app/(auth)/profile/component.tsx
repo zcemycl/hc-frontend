@@ -67,6 +67,7 @@ export default function Profile() {
               </>,
               "Browse your search history.",
               "/history",
+              "history",
             ],
             [
               <>
@@ -75,6 +76,7 @@ export default function Profile() {
               </>,
               "View your supports in building robust AI models",
               "/annotations",
+              "annotations",
             ],
             [
               <>
@@ -83,13 +85,14 @@ export default function Profile() {
               </>,
               "Group your medicines of interest to compare, and let the system learn your preference.",
               "/bundles",
+              "bundles",
             ],
           ].map((v) => (
             <div
               className="flex flex-col w-full
                                     h-fit
                                 "
-              key={`btn-group-${v[0]}`}
+              key={`btn-group-${v[3]}`}
             >
               <div className="group flex flex-col">
                 <button

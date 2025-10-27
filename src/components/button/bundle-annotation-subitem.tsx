@@ -21,9 +21,10 @@ const BundleAnnotationSubItem = ({
   ) => void;
   annotationDelCallback?: () => void;
 }) => {
-  const source = annSource[ann.id];
+  const source = useMemo(() => {
+    return annSource[ann.id];
+  }, [annSource]);
   const showText = useMemo(() => {
-    console.log(source);
     let showText_ = `${ann.category} - ${ann.table_id} - ${ann.id}`;
     if (source !== undefined) {
       if (source.category === AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE) {
@@ -31,7 +32,7 @@ const BundleAnnotationSubItem = ({
       }
     }
     return showText_;
-  }, [ann, annSource]);
+  }, [ann, source]);
   return (
     <div
       className="px-2 bg-emerald-400 
