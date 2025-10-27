@@ -12,7 +12,8 @@ export const ListPageTemplate = ({
     <PulseTemplate overflowY={true}>
       <div
         className="mt-[10rem] flex flex-col
-                    content-center items-center"
+                    content-center items-center
+                    pb-10"
       >
         <div className="w-11/12 sm:w-7/12 flex flex-col space-y-3">
           {children}
