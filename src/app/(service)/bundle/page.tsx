@@ -7,6 +7,8 @@ import {
   ProtectedRoute,
   BundleFdalabelSubItem,
 } from "@/components";
+import { BundleAnnotationSubItem } from "@/components/button/bundle-annotation-subitem";
+import { AnnotationTypeEnum } from "@/constants";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useApiHandler } from "@/hooks";
 import {
@@ -78,8 +80,6 @@ export default function Page() {
     }
     return useFor;
   }, [bundle]);
-
-  const annotationSrc = useMemo(() => {}, []);
 
   return (
     <ProtectedRoute>
@@ -219,44 +219,37 @@ export default function Page() {
             >
               <span>Annotations: </span>
               {bundle?.annotations.map((ann: IAnnotationRef) => {
-                const source = annSource[ann.id];
-                console.log(source);
-                let showText = `${ann.category} - ${ann.table_id} - ${ann.id}`;
-                if (source !== undefined) {
-                  if (
-                    source.category ===
-                    AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE
-                  ) {
-                    showText = `${source.fdalabel.tradename} - ${source.category} - Table ${source.relative_id}`;
-                  }
-                }
                 return (
-                  <div
-                    className="px-2 bg-emerald-400 
-                        rounded-lg font-semibold text-black"
+                  <BundleAnnotationSubItem
                     key={`bundle-annotation-${ann.id}`}
-                  >
-                    <CompositeCorner
-                      {...{
-                        label: showText,
-                        click_callback: () => {},
-                        del_callback: async () => {
-                          const bundlesAfterDel = bundle.annotations
-                            .filter((ann_) => ann_.id !== ann.id)
-                            .map((ann_) => ann_.id);
-                          console.log(bundlesAfterDel);
-                          const patchBundleResult = await withLoading(() =>
-                            patchBundleByIdv2(bundle.id, {
-                              annotation_ids: bundlesAfterDel,
-                            }),
-                          );
-                          handleResponse(patchBundleResult);
-                          if (!patchBundleResult.success) return;
-                          await getData();
-                        },
-                      }}
-                    />
-                  </div>
+                    {...{
+                      ann,
+                      annSource,
+                      annotationClickCallback: (
+                        setid: string,
+                        category: AnnotationCategoryEnum,
+                        table_id: number | string,
+                      ) => {
+                        router.push(
+                          `/annotate/fdalabel/${setid}/${category}/${table_id}?tab=${AnnotationTypeEnum.COMPLETE}`,
+                        );
+                      },
+                      annotationDelCallback: async () => {
+                        const bundlesAfterDel = bundle.annotations
+                          .filter((ann_) => ann_.id !== ann.id)
+                          .map((ann_) => ann_.id);
+                        console.log(bundlesAfterDel);
+                        const patchBundleResult = await withLoading(() =>
+                          patchBundleByIdv2(bundle.id, {
+                            annotation_ids: bundlesAfterDel,
+                          }),
+                        );
+                        handleResponse(patchBundleResult);
+                        if (!patchBundleResult.success) return;
+                        await getData();
+                      },
+                    }}
+                  />
                 );
               })}
             </div>
