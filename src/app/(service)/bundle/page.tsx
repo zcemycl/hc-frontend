@@ -97,7 +97,13 @@ export default function Page() {
             text-black flex-shrink-0 whitespace-nowrap
             font-semibold"
             >
-              {bundle?.id}
+              <CompositeCorner
+                {...{
+                  label: bundle?.id as string,
+                  click_callback: () => {},
+                  enable_copy: true,
+                }}
+              />
             </span>
           </div>
           <div className="flex flex-row justify-start space-x-2">
