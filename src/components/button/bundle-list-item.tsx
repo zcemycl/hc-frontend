@@ -1,8 +1,9 @@
 "use client";
-import { IBundle } from "@/types";
+import { IBundle, IFdaLabelRef } from "@/types";
 import { useRouter } from "next/navigation";
 import { Plus, X, Info, Pen } from "lucide-react";
 import { CompositeCorner } from "./composite-corner";
+import { BundleFdalabelSubItem } from "./bundle-fdalabel-subitem";
 
 const BundleListItem = ({
   b,
@@ -159,26 +160,15 @@ const BundleListItem = ({
       >
         <span>{b.description}</span>
         <div className="flex flex-row gap-2 flex-wrap">
-          {b.fdalabels.map((subf) => (
-            <div
-              key={subf.tradename}
-              className="px-2 rounded
-                text-black font-semibold
-                bg-emerald-400 hover:bg-emerald-600
-                hover:scale-105 transition-all duration-200"
-            >
-              <CompositeCorner
-                {...{
-                  label: subf.tradename,
-                  click_callback: fdaClickCallback
-                    ? () => fdaClickCallback!(subf.setid as string)
-                    : () => {},
-                  del_callback: fdaDelCallback
-                    ? () => fdaDelCallback!(subf.setid as string)
-                    : undefined,
-                }}
-              />
-            </div>
+          {b.fdalabels.map((f: IFdaLabelRef) => (
+            <BundleFdalabelSubItem
+              key={`bundle-drug-${f.setid}`}
+              {...{
+                f,
+                fdaClickCallback,
+                fdaDelCallback,
+              }}
+            />
           ))}
         </div>
         <div className="flex flex-row gap-2 flex-wrap">

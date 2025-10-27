@@ -5,6 +5,7 @@ import {
   Modal,
   ProfileBar,
   ProtectedRoute,
+  BundleFdalabelSubItem,
 } from "@/components";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useApiHandler } from "@/hooks";
@@ -14,7 +15,9 @@ import {
   patchBundleByIdv2,
 } from "@/http/backend";
 import {
+  AnnotationCategoryEnum,
   IAnnotationRef,
+  IAnnotationSourceMap,
   IBundle,
   IFdaLabelRef,
   IUserRef,
@@ -35,18 +38,27 @@ export default function Page() {
   const { userData } = useAuth();
   const router = useRouter();
   const { versions } = useContext(FdaVersionsContext);
+  const [annSource, setAnnSource] = useState<IAnnotationSourceMap>({});
 
   const getData = useCallback(async () => {
     const resBundle = await withLoading(() =>
       fetchBundleByIdv2(bundle_id as string),
     );
-    const restmp = await withLoading(() =>
-      fetchAnnotateSourcev2([4017, 4015], versions),
-    );
     console.log(resBundle);
-    console.log(restmp);
     if (!resBundle.success) handleResponse(resBundle);
     setBundle(resBundle.data || null);
+    const ann_ids = resBundle.data.annotations.map((v: IAnnotationRef) => v.id);
+    const restmp = await withLoading(() =>
+      fetchAnnotateSourcev2(ann_ids, versions),
+    );
+    if (!restmp.success) handleResponse(restmp);
+    setAnnSource((prev: IAnnotationSourceMap) => {
+      return {
+        ...restmp.data,
+        ...prev,
+      };
+    });
+    console.log(restmp);
   }, [bundle_id]);
 
   useEffect(() => {
@@ -66,6 +78,8 @@ export default function Page() {
     }
     return useFor;
   }, [bundle]);
+
+  const annotationSrc = useMemo(() => {}, []);
 
   return (
     <ProtectedRoute>
@@ -172,38 +186,29 @@ export default function Page() {
             >
               <span>Drugs: </span>
               {bundle?.fdalabels.map((f: IFdaLabelRef) => (
-                <div
-                  className="px-2 bg-emerald-400 
-                        rounded-lg font-semibold 
-                        text-black
-                        hover:bg-emerald-600
-                        hover:scale-105 duration-200
-                        transition-all cursor-pointer"
+                <BundleFdalabelSubItem
                   key={`bundle-drug-${f.setid}`}
-                >
-                  <CompositeCorner
-                    {...{
-                      label: f.tradename,
-                      click_callback: () => {
-                        router.push(`/fdalabel?fdalabel_id=${f.setid}`);
-                      },
-                      del_callback: async () => {
-                        const fdaAfterDel = bundle.fdalabels
-                          .filter((f_) => f_.id !== f.id)
-                          .map((f_) => f_.tradename);
-                        console.log(fdaAfterDel);
-                        const patchBundleResult = await withLoading(() =>
-                          patchBundleByIdv2(bundle.id, {
-                            tradenames: fdaAfterDel,
-                          }),
-                        );
-                        handleResponse(patchBundleResult);
-                        if (!patchBundleResult.success) return;
-                        await getData();
-                      },
-                    }}
-                  />
-                </div>
+                  {...{
+                    f,
+                    fdaClickCallback: (s: string) => {
+                      router.push(`/fdalabel?fdalabel_id=${s}`);
+                    },
+                    fdaDelCallback: async (s: string) => {
+                      const fdaAfterDel = bundle.fdalabels
+                        .filter((f_) => f_.id !== f.id)
+                        .map((f_) => f_.tradename);
+                      console.log(fdaAfterDel);
+                      const patchBundleResult = await withLoading(() =>
+                        patchBundleByIdv2(bundle.id, {
+                          tradenames: fdaAfterDel,
+                        }),
+                      );
+                      handleResponse(patchBundleResult);
+                      if (!patchBundleResult.success) return;
+                      await getData();
+                    },
+                  }}
+                />
               ))}
             </div>
           )}
@@ -213,34 +218,47 @@ export default function Page() {
                 flex-wrap"
             >
               <span>Annotations: </span>
-              {bundle?.annotations.map((ann: IAnnotationRef) => (
-                <div
-                  className="px-2 bg-emerald-400 
+              {bundle?.annotations.map((ann: IAnnotationRef) => {
+                const source = annSource[ann.id];
+                console.log(source);
+                let showText = `${ann.category} - ${ann.table_id} - ${ann.id}`;
+                if (source !== undefined) {
+                  if (
+                    source.category ===
+                    AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE
+                  ) {
+                    showText = `${source.fdalabel.tradename} - ${source.category} - Table ${source.relative_id}`;
+                  }
+                }
+                return (
+                  <div
+                    className="px-2 bg-emerald-400 
                         rounded-lg font-semibold text-black"
-                  key={`bundle-annotation-${ann.id}`}
-                >
-                  <CompositeCorner
-                    {...{
-                      label: `${ann.category} - ${ann.table_id} - ${ann.id}`,
-                      click_callback: () => {},
-                      del_callback: async () => {
-                        const bundlesAfterDel = bundle.annotations
-                          .filter((ann_) => ann_.id !== ann.id)
-                          .map((ann_) => ann_.id);
-                        console.log(bundlesAfterDel);
-                        const patchBundleResult = await withLoading(() =>
-                          patchBundleByIdv2(bundle.id, {
-                            annotation_ids: bundlesAfterDel,
-                          }),
-                        );
-                        handleResponse(patchBundleResult);
-                        if (!patchBundleResult.success) return;
-                        await getData();
-                      },
-                    }}
-                  />
-                </div>
-              ))}
+                    key={`bundle-annotation-${ann.id}`}
+                  >
+                    <CompositeCorner
+                      {...{
+                        label: showText,
+                        click_callback: () => {},
+                        del_callback: async () => {
+                          const bundlesAfterDel = bundle.annotations
+                            .filter((ann_) => ann_.id !== ann.id)
+                            .map((ann_) => ann_.id);
+                          console.log(bundlesAfterDel);
+                          const patchBundleResult = await withLoading(() =>
+                            patchBundleByIdv2(bundle.id, {
+                              annotation_ids: bundlesAfterDel,
+                            }),
+                          );
+                          handleResponse(patchBundleResult);
+                          if (!patchBundleResult.success) return;
+                          await getData();
+                        },
+                      }}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
