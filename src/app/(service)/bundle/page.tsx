@@ -6,9 +6,13 @@ import {
   ProfileBar,
   ProtectedRoute,
 } from "@/components";
-import { useAuth, useLoader } from "@/contexts";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useApiHandler } from "@/hooks";
-import { fetchBundleByIdv2, patchBundleByIdv2 } from "@/http/backend";
+import {
+  fetchAnnotateSourcev2,
+  fetchBundleByIdv2,
+  patchBundleByIdv2,
+} from "@/http/backend";
 import {
   IAnnotationRef,
   IBundle,
@@ -18,7 +22,7 @@ import {
 } from "@/types";
 import { Plus, SendHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -30,12 +34,17 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const { userData } = useAuth();
   const router = useRouter();
+  const { versions } = useContext(FdaVersionsContext);
 
   const getData = useCallback(async () => {
     const resBundle = await withLoading(() =>
       fetchBundleByIdv2(bundle_id as string),
     );
+    const restmp = await withLoading(() =>
+      fetchAnnotateSourcev2([4017, 4015], versions),
+    );
     console.log(resBundle);
+    console.log(restmp);
     if (!resBundle.success) handleResponse(resBundle);
     setBundle(resBundle.data || null);
   }, [bundle_id]);
