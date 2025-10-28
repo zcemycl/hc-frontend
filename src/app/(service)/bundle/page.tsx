@@ -28,6 +28,7 @@ import {
 import { Plus, SendHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import WordCloud from "./WordCloud";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -80,6 +81,14 @@ export default function Page() {
     }
     return useFor;
   }, [bundle]);
+
+  const allWords = useMemo(() => {
+    const words_: string[] = [];
+    Object.keys(annSource).forEach((k: string) => {
+      words_.push(annSource[k].adverse_effect_table?.caption as string);
+    });
+    return words_.join(" ");
+  }, [annSource]);
 
   return (
     <ProtectedRoute>
@@ -315,6 +324,8 @@ export default function Page() {
             </div>
           </div>
         </Modal>
+        <hr className="mb-2" />
+        {bundle?.annotations.length !== 0 && <WordCloud text={allWords} />}
       </ListPageTemplate>
     </ProtectedRoute>
   );

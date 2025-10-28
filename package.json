@@ -26,10 +26,13 @@
     "@xyflow/react": "^12.5.3",
     "autoprefixer": "^10.4.19",
     "aws-amplify": "^6.0.21",
+    "d3": "^7.9.0",
+    "d3-cloud": "^1.2.7",
     "dotenv": "^16.4.5",
     "jose": "^5.2.3",
     "jwk-to-pem": "^2.0.5",
     "lucide-react": "^0.546.0",
+    "natural": "^8.1.0",
     "next": "14.2.26",
     "next-auth": "^4.24.11",
     "next-themes": "^0.3.0",
@@ -58,6 +61,8 @@
     ]
   },
   "devDependencies": {
+    "@types/d": "^1.0.4",
+    "@types/d3-cloud": "^1.2.9",
     "@types/jsdom": "^21.1.6",
     "@types/jwk-to-pem": "^2.0.3",
     "@types/node": "^20",
