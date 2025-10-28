@@ -8,7 +8,6 @@ import {
   IAnnotationSourceMap,
   IBundle,
 } from "@/types";
-import { AnnotationTypeEnum } from "@/constants";
 import { PaginationBar2, Table } from "@/components";
 
 const tabOptions = [
@@ -19,6 +18,14 @@ const tabOptions = [
   {
     key: "word",
     displayName: "Word Bubble",
+  },
+  {
+    key: "training",
+    displayName: "Training",
+  },
+  {
+    key: "audit",
+    displayName: "Performance Auditing",
   },
 ];
 
