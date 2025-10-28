@@ -28,7 +28,7 @@ import {
 import { Plus, SendHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import WordCloud from "./WordCloud";
+import { AnnotationContent } from "./annotation-content";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -332,7 +332,15 @@ export default function Page() {
           </div>
         </Modal>
         <hr className="mb-2" />
-        {bundle?.annotations.length !== 0 && <WordCloud text={allWords} />}
+        {bundle?.annotations.length !== 0 && (
+          <AnnotationContent
+            {...{
+              allWords,
+              annSource,
+              bundle,
+            }}
+          />
+        )}
       </ListPageTemplate>
     </ProtectedRoute>
   );

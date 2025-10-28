@@ -175,7 +175,7 @@ const Table = (tabledata: IBaseTableNoHead) => {
         <button
           className="p-3 rounded-lg 
       bg-sky-300 hover:bg-sky-600
-      font-bold text-black"
+      font-bold text-black w-fit"
           onClick={(e) => {
             e.preventDefault();
             const table = document.querySelector("table"); // Get table
