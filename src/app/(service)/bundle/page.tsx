@@ -65,6 +65,7 @@ export default function Page() {
   const [annSource, setAnnSource] = useState<IAnnotationSourceMap>({});
 
   const visJsRef = useRef<HTMLDivElement>(null);
+  const visToolBarRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
   // node path to drug
   const [path, setPath] = useState<string[]>([]);
@@ -171,6 +172,7 @@ export default function Page() {
           flagAttrs,
           setFlagAttrs,
           visJsRef,
+          visToolBarRef,
         }}
       >
         <ListPageTemplate>

@@ -14,9 +14,12 @@ const FdalabelContent = ({ bundle }: { bundle: IBundle | null }) => {
 
   useEffect(() => {
     async function getData() {
-      const tradenames = bundle?.fdalabels.map((f: IFdaLabelRef) =>
-        f.tradename.toLowerCase(),
-      ) as string[];
+      const tradenames = Array.from(
+        (bundle?.fdalabels.map((f: IFdaLabelRef) =>
+          f.tradename.toLowerCase(),
+        ) as string[]) || [],
+      );
+      if (tradenames.length === 0) return;
       const res = await withLoading(() => fetchGraphByProductsv2(tradenames));
       if (!res.success) handleResponse(res);
       let all_nodes = [
