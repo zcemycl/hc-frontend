@@ -69,10 +69,13 @@ const useDiscoveryGraph = () => {
 
   const move_network = (net_: Network, nodeid: number | string) => {
     const pos = net_.getPositions([nodeid])[nodeid];
-    const { width: offsetx, height: offsety } = (
-      visToolBarRef.current as any
-    ).getBoundingClientRect();
-    const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
+    let offset = { x: 0, y: 0 };
+    if (visToolBarRef !== null || visToolBarRef !== undefined) {
+      const { width: offsetx, height: offsety } = (
+        visToolBarRef.current as any
+      ).getBoundingClientRect();
+      offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
+    }
     net_?.moveTo({
       position: pos,
       offset: offset,

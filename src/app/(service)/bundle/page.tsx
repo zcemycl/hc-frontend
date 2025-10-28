@@ -12,7 +12,6 @@ import {
   AnnotationTypeEnum,
   GraphDirectionEnum,
   GraphTypeEnum,
-  toggleOptions,
 } from "@/constants";
 import {
   DiscoveryContext,
@@ -36,7 +35,6 @@ import {
   IFlagAttrs,
   INode,
   IUserRef,
-  IVisibilityMap,
   UserRoleEnum,
 } from "@/types";
 import { Plus, SendHorizontal } from "lucide-react";
