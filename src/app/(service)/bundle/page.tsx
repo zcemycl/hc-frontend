@@ -87,7 +87,14 @@ export default function Page() {
     Object.keys(annSource).forEach((k: string) => {
       words_.push(annSource[k].adverse_effect_table?.caption as string);
     });
-    return words_.join(" ");
+    const final = words_
+      .join(" ")
+      .replace("\n", " ")
+      .replace("-", " ")
+      .replace(/[-–—−]/g, " ")
+      .replace(/\s+/g, " ") // normalize multiple spaces
+      .trim();
+    return final;
   }, [annSource]);
 
   return (
