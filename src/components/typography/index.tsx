@@ -8,9 +8,9 @@ const TypographyH2: FC<{
   return (
     <h2
       className={`
-      text-lg mb-1 font-medium
+      text-lg font-medium
       align-middle content-center
-      text-wrap
+      text-wrap text-center
       title-font
       ${extraClass ? extraClass : "text-white"}`}
     >

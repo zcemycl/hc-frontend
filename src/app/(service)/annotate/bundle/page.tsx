@@ -4,6 +4,7 @@ import { PageProps } from "./props";
 import { useCallback, useContext, useEffect, useState } from "react";
 import {
   BundleListItem,
+  EditBundleModal,
   ListPageTemplate,
   Modal,
   PaginationBar2,
@@ -13,22 +14,29 @@ import {
 } from "@/components";
 import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import {
+  createBundleByUserIdv2,
   deleteBundleByIdv2,
   fetchAnnotateSourcev2,
   fetchBundlesByUserIdv2,
   fetchBundlesCountByUserIdv2,
   patchBundleByIdv2,
 } from "@/http/backend";
-import { AnnotationTypeEnum, BundleConnectEnum } from "@/constants";
+import {
+  AnnotationTypeEnum,
+  BundleConnectEnum,
+  defaultBundleConfig,
+} from "@/constants";
 import {
   AnnotationCategoryEnum,
   IAnnotationRef,
   IAnnotationSourceMap,
   IBundle,
+  IBundleConfig,
   UserRoleEnum,
 } from "@/types";
 import { useApiHandler } from "@/hooks";
 import { adjustPageNAfterDelete } from "@/http/utils";
+import { ArrowBigLeft, Plus } from "lucide-react";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const router = useRouter();
@@ -41,11 +49,13 @@ export default function Page({ params }: Readonly<PageProps>) {
   const [pageN, setPageN] = useState(0);
   const [bundles, setBundles] = useState<IBundle[]>([]);
   const [bundlesCount, setBundlesCount] = useState(0);
-  const [targetBundleName, setTargetBundleName] = useState("");
   const [showContents, setShowContents] = useState<boolean[]>([false]);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const { versions } = useContext(FdaVersionsContext);
   const [annSource, setAnnSource] = useState<IAnnotationSourceMap>({});
+  const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
+    ...defaultBundleConfig,
+  });
 
   const fetchBundlesCallback = useCallback(async () => {
     const [tmpBundlesRes, tmpBundlesCount] = await withLoading(() =>
@@ -99,21 +109,43 @@ export default function Page({ params }: Readonly<PageProps>) {
       <ListPageTemplate>
         <ProfileBar title={"Add Annotation to Bundle"} />
         <hr className="mb-2" />
-        <div className="flex flex-row justify-between">
-          <TypographyH2>Bundles X{bundlesCount}</TypographyH2>
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-start gap-2 items-center">
+            <TypographyH2>Bundles X{bundlesCount}</TypographyH2>
+            <button
+              className="leading-[0px] m-0
+              text-black"
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsOpenModal((prev) => !prev);
+              }}
+            >
+              <Plus
+                className="rounded-lg
+                hover:bg-green-500 bg-green-300
+                text-black
+                hover:text-white"
+              />
+            </button>
+          </div>
+
           <button
             className="px-2 bg-emerald-500 
             hover:bg-emerald-300
-            rounded-lg text-black font-semibold"
+            rounded-lg text-black font-semibold
+            flex flex-row gap-2 flex-wrap items-center
+            text-center"
             onClick={(e) => {
               e.preventDefault();
               window.history.go(-2);
             }}
           >
-            Back to Annotations List Page
+            <span className="text-center">Back to Annotations List Page</span>
+            <ArrowBigLeft className="w-4 h-4" />
           </button>
         </div>
-        <Modal
+        {/* <Modal
           {...{
             title: `Add to this bundle -- ${targetBundleName}? `,
             isOpenModal,
@@ -121,7 +153,29 @@ export default function Page({ params }: Readonly<PageProps>) {
           }}
         >
           <></>
-        </Modal>
+        </Modal> */}
+        <EditBundleModal
+          {...{
+            isOpenModal,
+            setIsOpenModal,
+            title: "Add Bundle",
+            bundleConfig,
+            setBundleConfig,
+            submit_callback: async (bc: IBundleConfig) => {
+              if (bc.name.trim() === "") {
+                return;
+              }
+              const createBundleRes = await withLoading(() =>
+                createBundleByUserIdv2(userId as number, bc),
+              );
+              handleResponse(createBundleRes);
+              if (!createBundleRes.success) return;
+              await fetchBundlesCallback();
+              setBundleConfig({ ...defaultBundleConfig });
+              setIsOpenModal(false);
+            },
+          }}
+        />
         <div className="flex flex-col space-y-1">
           {bundles.length === 0 ? (
             <p className="leading-relaxed mb-1">No Record ...</p>
