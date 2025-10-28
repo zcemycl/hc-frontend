@@ -10,7 +10,7 @@ const TypographyH2: FC<{
       className={`
       text-lg font-medium
       align-middle content-center
-      text-wrap text-center
+      text-wrap text-start
       title-font
       ${extraClass ? extraClass : "text-white"}`}
     >
