@@ -41,6 +41,7 @@ const AnnotationContent = ({
   const [tabName, setTabName] = useState("raw");
   const adverse_effect_tables = useMemo<IAnnotationSource[]>(() => {
     if (bundle === null) return [];
+    if (bundle.annotations.length === 0) return [];
     const aet_: IAnnotationSource[] = [];
     bundle.annotations.forEach((a) => {
       if (a.category !== AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE) return;
@@ -72,12 +73,12 @@ const AnnotationContent = ({
             <button
               key={topt.key}
               className={`rounded-full
-                                text-black basis-full
-                                ${
-                                  topt.key === tabName
-                                    ? "bg-white font-semibold"
-                                    : "bg-gray-400"
-                                }`}
+                text-black basis-full
+                ${
+                  topt.key === tabName
+                    ? "bg-white font-semibold"
+                    : "bg-gray-400"
+                }`}
               onClick={(e) => {
                 e.preventDefault();
                 setTabName(topt.key);
