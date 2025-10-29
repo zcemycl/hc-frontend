@@ -15,7 +15,7 @@ import { useApiHandler } from "@/hooks";
 
 export default function ComplexSearchBar() {
   const router = useRouter();
-  const { setIsAuthenticated, credentials, userId } = useAuth();
+  const { setIsAuthenticated, userId } = useAuth();
   const { handleResponse } = useApiHandler();
   const { versions } = useContext(FdaVersionsContext);
   const {
@@ -122,10 +122,6 @@ export default function ComplexSearchBar() {
             setDisplayDataIndex(null);
             setSetIdsToCompare(new Set());
             setCompareTable({ table: [] });
-            if (credentials.length === 0) {
-              setIsAuthenticated(false);
-              router.push("/logout");
-            }
             const resp = await withLoading(() =>
               search_query_by_type(
                 fdaservice,
@@ -149,10 +145,6 @@ export default function ComplexSearchBar() {
             onClick={async (e) => {
               e.preventDefault();
               console.log(setIdsToCompare);
-              if (credentials.length === 0) {
-                setIsAuthenticated(false);
-                router.push("/logout");
-              }
               const resp = await withLoading(() =>
                 fdaservice.handleAETablesComparison(
                   setIdsToCompare,
