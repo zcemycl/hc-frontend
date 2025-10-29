@@ -34,8 +34,9 @@ function FdaLabelShort({
   const router = useRouter();
   return (
     <div
-      className="flex flex-col p-10
-      w-screen sm:w-11/12 md:w-8/12"
+      className={`flex flex-col px-10 py-5
+      w-screen sm:w-11/12 md:w-8/12 rounded-lg
+      ${showCheckbox ? "border-2 border-white" : ""}`}
       key={setid}
     >
       <div className="flex justify-between">
@@ -99,7 +100,7 @@ function FdaLabelShort({
       >
         View more...
       </button>
-      <hr />
+      {!showCheckbox && <hr />}
     </div>
   );
 }

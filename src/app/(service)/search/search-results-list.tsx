@@ -1,4 +1,4 @@
-import { FdaLabelShort, PaginationBar } from "@/components";
+import { FdaLabelShort, PaginationBar, PaginationBar2 } from "@/components";
 import { SearchQueryTypeEnum } from "@/constants";
 import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
 import { useApiHandler } from "@/hooks";
@@ -67,7 +67,7 @@ export default function SearchResultsList() {
       {displayData.length > 0 && displayDataIndex === null && (
         <div
           className="flex flex-col justify-center
-            content-center items-center"
+            content-center items-center space-y-1"
         >
           {(queryType === SearchQueryTypeEnum.INDICATION
             ? displayData
@@ -107,7 +107,7 @@ export default function SearchResultsList() {
             );
           })}
           <div className="flex justify-center space-x-1">
-            <PaginationBar
+            <PaginationBar2
               topN={
                 queryType === SearchQueryTypeEnum.INDICATION
                   ? topN
