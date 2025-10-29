@@ -8,7 +8,7 @@ export default function CompareTables() {
     useContext(SearchSupportContext);
   return (
     <div
-      className="sm:w-8/12 w-full overflow-x-auto 
+      className="overflow-x-auto 
         flex flex-col space-y-2"
     >
       {Object.keys(compareTable).map((tabletype) => {

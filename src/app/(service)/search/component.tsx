@@ -172,8 +172,9 @@ export default function Search() {
                   }}
                 />
               </div>
-
-              <CompareTables />
+              <div className="sm:w-8/12 w-full">
+                <CompareTables />
+              </div>
 
               <ExpandSearchResultItem />
               <SearchResultsList />
