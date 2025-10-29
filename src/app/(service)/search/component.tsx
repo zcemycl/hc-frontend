@@ -26,10 +26,23 @@ import ExpandSearchResultItem from "./expand-search-result-item";
 import SearchResultsList from "./search-results-list";
 import ComplexSearchBar from "./complex-search-bar";
 import CompareTables from "./compare-tables";
+import { ListRestart, RefreshCcw } from "lucide-react";
+
+const searchPageOpts = [
+  {
+    key: "search",
+    displayName: "Search",
+  },
+  {
+    key: "compare",
+    displayName: "Compare",
+  },
+];
 
 export default function Search() {
   const router = useRouter();
   const { handleResponse } = useApiHandler();
+  const [tabName, setTabName] = useState("search");
   const [query, setQuery] = useState<string[]>([""]);
   const [queryType, setQueryType] = useState<SearchQueryTypeEnum>(
     SearchQueryTypeEnum.INDICATION,
@@ -159,6 +172,45 @@ export default function Search() {
               className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"
             >
+              <div
+                className="flex flex-col
+                w-screen sm:w-11/12 md:w-8/12 pt-10 pb-3 px-6 sm:px-10"
+              >
+                <div
+                  className="p-1 flex flex-row gap-2 rounded-lg
+                  w-fit bg-slate-500"
+                >
+                  {searchPageOpts.map((v) => {
+                    return (
+                      <div
+                        key={`tab-${v.key}`}
+                        className={`p-1 text-center text-black
+                            rounded-lg flex flex-row gap-1 flex-wrap
+                            items-center
+                            ${
+                              tabName === v.key
+                                ? "bg-indigo-500 font-semibold shadow-sm shadow-indigo-800"
+                                : "bg-transparent shadow-md shadow-black cursor-pointer"
+                            }`}
+                      >
+                        <span>{v.displayName}</span>
+                        <button
+                          className="rounded-full 
+                              bg-emerald-300 hover:bg-emerald-500 
+                              p-1"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          <RefreshCcw className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               {!(displayData.length > 0 && displayDataIndex != null) && (
                 <>
                   <ComplexSearchBar />

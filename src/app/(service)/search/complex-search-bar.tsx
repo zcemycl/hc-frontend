@@ -54,9 +54,9 @@ export default function ComplexSearchBar() {
     <div
       className="flex flex-col
             w-screen sm:w-11/12 md:w-8/12
-            py-10 px-6 sm:px-10"
+            pb-10 px-6 sm:px-10"
     >
-      <TypographyH2>Search</TypographyH2>
+      {/* <TypographyH2>Search</TypographyH2> */}
       <p className="leading-relaxed mb-5">Please enter your query.</p>
       <SearchBar
         query={query}
