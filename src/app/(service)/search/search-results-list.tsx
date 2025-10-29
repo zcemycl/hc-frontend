@@ -1,14 +1,11 @@
-import { FdaLabelShort, PaginationBar, PaginationBar2 } from "@/components";
+import { FdaLabelShort, PaginationBar2 } from "@/components";
 import { SearchQueryTypeEnum } from "@/constants";
-import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
+import { FdaVersionsContext, SearchSupportContext } from "@/contexts";
 import { useApiHandler } from "@/hooks";
 import { IFdaLabel } from "@/types";
-import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 export default function SearchResultsList() {
-  const router = useRouter();
-  const { setIsAuthenticated, credentials } = useAuth();
   const { handleResponse } = useApiHandler();
   const {
     displayData,
@@ -27,6 +24,7 @@ export default function SearchResultsList() {
     query,
     sortBy,
     refSearchResGroup,
+    setPrevScroll,
   } = useContext(SearchSupportContext);
   const { versions } = useContext(FdaVersionsContext);
 
@@ -34,10 +32,6 @@ export default function SearchResultsList() {
     async function pageCallback(pageN: number) {
       setDisplayDataIndex(null);
       setCompareTable({ table: [] });
-      if (credentials.length === 0) {
-        setIsAuthenticated(false);
-        router.push("/logout");
-      }
       const resp = await search_query_by_type(
         fdaservice,
         query,
@@ -101,7 +95,11 @@ export default function SearchResultsList() {
                       );
                     }
                   },
-                  clickExpandCallback: () => setDisplayDataIndex(idx),
+                  clickExpandCallback: () => {
+                    const el = refSearchResGroup.current;
+                    setPrevScroll(el?.scrollTop as number);
+                    setDisplayDataIndex(idx);
+                  },
                 }}
               />
             );

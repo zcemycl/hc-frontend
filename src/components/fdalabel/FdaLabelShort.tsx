@@ -110,7 +110,9 @@ function FdaLabelShort({
       <button
         className="w-full animate-none
           bg-slate-500 text-black
-          rounded-lg
+          rounded-lg hover:shadow-lg
+          hover:border-2 hover:border-slate-700
+          hover:shadow-black
           hover:animate-pulse"
         onClick={(e) => {
           e.preventDefault();

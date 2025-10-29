@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useMemo, useContext } from "react";
+import { useState, useRef, useMemo, useContext, useEffect } from "react";
 import {
   FdaVersionsContext,
   SearchSupportContext,
@@ -50,7 +50,8 @@ export default function Search() {
   const [topN, setTopN] = useState(30);
   const [pageN, setPageN] = useState(0);
   const [nPerPage, _] = useState(10);
-  const refSearchResGroup = useRef(null);
+  const refSearchResGroup = useRef<HTMLElement>(null);
+  const [prevScroll, setPrevScroll] = useState<number | null>(null);
   const { versions } = useContext(FdaVersionsContext);
   const fdaservice = useMemo(
     () =>
@@ -109,6 +110,16 @@ export default function Search() {
     return resp;
   }
 
+  useEffect(() => {
+    const el = refSearchResGroup.current;
+    if (displayDataIndex === null) {
+      el?.scrollTo({ top: prevScroll as number, behavior: "smooth" });
+      setPrevScroll(null);
+    } else {
+      el?.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [displayDataIndex]);
+
   return (
     <ProtectedRoute>
       <SearchSupportContext.Provider
@@ -137,6 +148,8 @@ export default function Search() {
           search_query_by_type,
           fdaservice,
           refSearchResGroup,
+          prevScroll,
+          setPrevScroll,
         }}
       >
         <PulseTemplate refSection={refSearchResGroup} overflowY={true}>
@@ -146,35 +159,39 @@ export default function Search() {
               className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"
             >
-              <ComplexSearchBar />
-              <div
-                className="flex flex-col
+              {!(displayData.length > 0 && displayDataIndex != null) && (
+                <>
+                  <ComplexSearchBar />
+                  <div
+                    className="flex flex-col
                   w-full sm:w-11/12 md:w-8/12
                   space-y-0 sm:space-y-1
                   px-0 sm:px-10"
-              >
-                <VerToolbar
-                  fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
-                  reloadCallback={async () => {
-                    if (query[0] === "") return;
-                    const resp = await withLoading(() =>
-                      search_query_by_type(
-                        fdaservice,
-                        query,
-                        queryType,
-                        pageN,
-                        nPerPage,
-                        sortBy,
-                        versions,
-                      ),
-                    );
-                    console.log(resp);
-                  }}
-                />
-              </div>
-              <div className="sm:w-8/12 w-full">
-                <CompareTables />
-              </div>
+                  >
+                    <VerToolbar
+                      fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
+                      reloadCallback={async () => {
+                        if (query[0] === "") return;
+                        const resp = await withLoading(() =>
+                          search_query_by_type(
+                            fdaservice,
+                            query,
+                            queryType,
+                            pageN,
+                            nPerPage,
+                            sortBy,
+                            versions,
+                          ),
+                        );
+                        console.log(resp);
+                      }}
+                    />
+                  </div>
+                  <div className="sm:w-8/12 w-full">
+                    <CompareTables />
+                  </div>
+                </>
+              )}
 
               <ExpandSearchResultItem />
               <SearchResultsList />
