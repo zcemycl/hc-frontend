@@ -177,21 +177,27 @@ export default function Search() {
                 w-screen sm:w-11/12 md:w-8/12 pt-10 pb-3 px-6 sm:px-10"
               >
                 <div
-                  className="p-1 flex flex-row gap-2 rounded-lg
-                  w-fit bg-slate-500"
+                  className="py-1 flex flex-row gap-2 rounded-lg
+                  w-fit bg-gray-900"
                 >
                   {searchPageOpts.map((v) => {
                     return (
                       <div
                         key={`tab-${v.key}`}
-                        className={`p-1 text-center text-black
+                        className={`px-2 py-1 text-center text-black
                             rounded-lg flex flex-row gap-1 flex-wrap
                             items-center
                             ${
                               tabName === v.key
-                                ? "bg-indigo-500 font-semibold shadow-sm shadow-indigo-800"
-                                : "bg-transparent shadow-md shadow-black cursor-pointer"
+                                ? `bg-indigo-500 font-semibold 
+                                  shadow-md shadow-indigo-950 text-white`
+                                : `bg-slate-500 shadow-md 
+                                  shadow-black cursor-pointer hover:text-white`
                             }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setTabName(v.key);
+                        }}
                       >
                         <span>{v.displayName}</span>
                         <button
@@ -203,7 +209,7 @@ export default function Search() {
                             e.stopPropagation();
                           }}
                         >
-                          <RefreshCcw className="w-4 h-4" />
+                          <RefreshCcw className="w-4 h-4 text-black" />
                         </button>
                       </div>
                     );
