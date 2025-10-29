@@ -70,7 +70,11 @@ const useDiscoveryGraph = () => {
   const move_network = (net_: Network, nodeid: number | string) => {
     const pos = net_.getPositions([nodeid])[nodeid];
     let offset = { x: 0, y: 0 };
-    if (visToolBarRef !== null || visToolBarRef !== undefined) {
+    if (
+      visToolBarRef !== null &&
+      visToolBarRef.current !== null &&
+      visToolBarRef !== undefined
+    ) {
       const { width: offsetx, height: offsety } = (
         visToolBarRef.current as any
       ).getBoundingClientRect();
@@ -116,7 +120,6 @@ const useDiscoveryGraph = () => {
       });
     });
     network?.on("click", (e: any) => {
-      console.log(e);
       if (e.nodes.length >= 1) {
         setMultiSelectNodes(nodes.filter((v: INode) => e.nodes.includes(v.id)));
         // make sure last selected node to be center

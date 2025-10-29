@@ -101,6 +101,7 @@ export default function Page() {
     if (!resBundle.success) handleResponse(resBundle);
     setBundle(resBundle.data || null);
     const ann_ids = resBundle.data.annotations.map((v: IAnnotationRef) => v.id);
+    if (ann_ids.length === 0) return;
     const restmp = await withLoading(() =>
       fetchAnnotateSourcev2(ann_ids, versions),
     );

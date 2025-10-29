@@ -9,6 +9,7 @@ import {
   IBundle,
 } from "@/types";
 import { PaginationBar2, Table } from "@/components";
+import { SmallTabBar } from "./small-tabbar";
 
 const tabOptions = [
   {
@@ -41,7 +42,7 @@ const AnnotationContent = ({
   const [tabName, setTabName] = useState("raw");
   const adverse_effect_tables = useMemo<IAnnotationSource[]>(() => {
     if (bundle === null) return [];
-    if (bundle.annotations.length === 0) return [];
+    if (bundle?.annotations.length === 0) return [];
     const aet_: IAnnotationSource[] = [];
     bundle.annotations.forEach((a) => {
       if (a.category !== AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE) return;
@@ -63,32 +64,13 @@ const AnnotationContent = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <div
-        id="tab-bar-bundle-annotation"
-        className="rounded-full p-1 bg-gray-400
-                    flex flex-row gap-2"
-      >
-        {tabOptions.map((topt) => {
-          return (
-            <button
-              key={topt.key}
-              className={`rounded-full
-                text-black basis-full
-                ${
-                  topt.key === tabName
-                    ? "bg-white font-semibold"
-                    : "bg-gray-400"
-                }`}
-              onClick={(e) => {
-                e.preventDefault();
-                setTabName(topt.key);
-              }}
-            >
-              {topt.displayName}
-            </button>
-          );
-        })}
-      </div>
+      <SmallTabBar
+        {...{
+          tabName,
+          setTabName,
+          options: tabOptions,
+        }}
+      />
       {tabName === "raw" && (
         <div className="flex flex-col gap-2">
           <div className="content-start w-fit">
