@@ -154,6 +154,24 @@ const FdalabelContent = ({ bundle }: { bundle: IBundle | null }) => {
             <CompareTables />
           </div>
         )}
+        {tabName === "more" && (
+          <div className="flex flex-col basis-full">
+            <div className="flex flex-row gap-2 items-center">
+              <span>Search the relevant information here, </span>
+              <button
+                className="w-fit px-2 py-1
+                  bg-purple-400 hover:bg-purple-600
+                  text-black rounded-lg text-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(`/search?bundleId=${bundle?.id}`);
+                }}
+              >
+                Search This Bundle
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </SearchSupportContext.Provider>
   );
