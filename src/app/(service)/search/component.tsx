@@ -20,6 +20,7 @@ import {
   SearchQueryTypeEnum,
   AETableTypeEnum,
   DEFAULT_FDALABEL_VERSIONS,
+  BundleConnectEnum,
 } from "@/constants";
 import { FdalabelFetchService } from "@/services";
 import { useHistoryToSearch, useBundleToSearch, useApiHandler } from "@/hooks";
@@ -28,6 +29,7 @@ import SearchResultsList from "./search-results-list";
 import ComplexSearchBar from "./complex-search-bar";
 import CompareTables from "./compare-tables";
 import { RefreshCcw } from "lucide-react";
+import { BundleTabContent } from "./bundle-tab-content";
 
 export default function Search() {
   const router = useRouter();
@@ -367,7 +369,19 @@ export default function Search() {
                   )}
                 </>
               )}
-              {tabName === "bundle" && <></>}
+              {tabName === "bundle" && (
+                <div
+                  className={`
+                  ${tabName === "bundle" ? "" : "hidden"}
+                `}
+                >
+                  <BundleTabContent
+                    {...{
+                      mode: BundleConnectEnum.FDALABEL,
+                    }}
+                  />
+                </div>
+              )}
               {tabName === "search" && (
                 <>
                   <ExpandSearchResultItem />
