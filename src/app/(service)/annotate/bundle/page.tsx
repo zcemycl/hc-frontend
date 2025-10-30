@@ -36,6 +36,7 @@ import {
 import { useApiHandler } from "@/hooks";
 import { adjustPageNAfterDelete } from "@/http/utils";
 import { ArrowBigLeft, Plus } from "lucide-react";
+import { confirm_bundle_purpose } from "@/utils";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const router = useRouter();
@@ -172,14 +173,6 @@ export default function Page({ params }: Readonly<PageProps>) {
           ) : (
             bundles.map((b: IBundle, idx: number) => {
               const bundle = b;
-              let useFor: string = "Not In Use";
-              if (b.annotations.length === 0 && b.fdalabels.length === 0) {
-                useFor = "Not In Use";
-              } else if (b.annotations.length === 0 && b.fdalabels.length > 0) {
-                useFor = "Fdalabel";
-              } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
-                useFor = "Annotation";
-              }
               const myRole2Bundle = bundle?.user_links?.find(
                 (link) => link.user_id === userData.id,
               )?.role;

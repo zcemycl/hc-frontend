@@ -30,6 +30,7 @@ import {
   IBundleConfig,
   UserRoleEnum,
 } from "@/types";
+import { confirm_bundle_purpose } from "@/utils";
 import { ArrowBigLeft, Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -127,20 +128,22 @@ const BundleTabContent = ({
           </button>
         </div>
 
-        <button
-          className="px-2 bg-emerald-500 
+        {mode === BundleConnectEnum.ANNOTATION && (
+          <button
+            className="px-2 bg-emerald-500 
             hover:bg-emerald-300
             rounded-lg text-black font-semibold
             flex flex-row gap-2 flex-wrap items-center
             text-center"
-          onClick={(e) => {
-            e.preventDefault();
-            window.history.go(-2);
-          }}
-        >
-          <span className="text-center">Back to Annotations List Page</span>
-          <ArrowBigLeft className="w-4 h-4" />
-        </button>
+            onClick={(e) => {
+              e.preventDefault();
+              window.history.go(-2);
+            }}
+          >
+            <span className="text-center">Back to Annotations List Page</span>
+            <ArrowBigLeft className="w-4 h-4" />
+          </button>
+        )}
       </div>
       <EditBundleModal
         {...{
@@ -170,14 +173,6 @@ const BundleTabContent = ({
         ) : (
           bundles.map((b: IBundle, idx: number) => {
             const bundle = b;
-            let useFor: string = "Not In Use";
-            if (b.annotations.length === 0 && b.fdalabels.length === 0) {
-              useFor = "Not In Use";
-            } else if (b.annotations.length === 0 && b.fdalabels.length > 0) {
-              useFor = "Fdalabel";
-            } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
-              useFor = "Annotation";
-            }
             const myRole2Bundle = bundle?.user_links?.find(
               (link) => link.user_id === userData.id,
             )?.role;

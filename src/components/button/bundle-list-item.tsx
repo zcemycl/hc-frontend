@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { Plus, X, Info, Pen } from "lucide-react";
 import { BundleFdalabelSubItem } from "./bundle-fdalabel-subitem";
 import { BundleAnnotationSubItem } from "./bundle-annotation-subitem";
+import { confirm_bundle_purpose } from "@/utils";
+import { useMemo } from "react";
 
 const BundleListItem = ({
   b,
@@ -40,14 +42,7 @@ const BundleListItem = ({
   annotationDelCallback?: () => void;
 }) => {
   const router = useRouter();
-  let useFor: string = "Not In Use";
-  if (b.annotations.length === 0 && b.fdalabels.length === 0) {
-    useFor = "Not In Use";
-  } else if (b.annotations.length === 0 && b.fdalabels.length > 0) {
-    useFor = "Fdalabel";
-  } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
-    useFor = "Annotation";
-  }
+  const useFor = useMemo(() => confirm_bundle_purpose(b as IBundle), [b]);
   return (
     <div
       key={`${b.name}-group-btn`}
