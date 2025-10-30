@@ -1,7 +1,12 @@
 "use client";
 
 import { GraphTabEnum } from "@/constants";
-import { DiscoveryContext, LocalUtilityContext, useLoader } from "@/contexts";
+import {
+  DiscoveryContext,
+  FdaVersionsContext,
+  LocalUtilityContext,
+  useLoader,
+} from "@/contexts";
 import { IBundle, IEdge, IFdaLabelRef, INode } from "@/types";
 import { useContext, useEffect, useMemo } from "react";
 import {
@@ -28,6 +33,7 @@ export default function BundleTab() {
   const { handleResponse } = useApiHandler();
   const { isDrawingGraph, setIsDrawingGraph } = useLoader();
   const router = useRouter();
+  const { versions } = useContext(FdaVersionsContext);
 
   const {
     tab,
@@ -174,9 +180,13 @@ export default function BundleTab() {
                       nodesToBundle.forEach((n: INode) => tnSet.add(n.label));
                       const newTradenames = Array.from(tnSet);
                       const patchBundleResult = await withLoadingLocal(() =>
-                        patchBundleByIdv2(v.id, {
-                          tradenames: newTradenames as string[],
-                        }),
+                        patchBundleByIdv2(
+                          v.id,
+                          {
+                            tradenames: newTradenames as string[],
+                          },
+                          versions,
+                        ),
                       );
                       handleResponse(patchBundleResult);
                       if (!patchBundleResult.success) return;
@@ -316,9 +326,13 @@ export default function BundleTab() {
                             console.log(newTradenames);
                             const patchBundleResult = await withLoadingLocal(
                               () =>
-                                patchBundleByIdv2(bref.id, {
-                                  tradenames: newTradenames as string[],
-                                }),
+                                patchBundleByIdv2(
+                                  bref.id,
+                                  {
+                                    tradenames: newTradenames as string[],
+                                  },
+                                  versions,
+                                ),
                             );
                             handleResponse(patchBundleResult);
                             if (!patchBundleResult.success) return;

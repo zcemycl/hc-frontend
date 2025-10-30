@@ -35,6 +35,7 @@ import { PLUS_ICON_URI } from "@/icons/bootstrap";
 import { AnnotationTypeEnum, defaultBundleConfig } from "@/constants";
 import { adjustPageNAfterDelete } from "@/http/utils";
 import { useRouter } from "next/navigation";
+import { confirm_bundle_purpose } from "@/utils";
 
 export default function Page() {
   const router = useRouter();
@@ -145,6 +146,7 @@ export default function Page() {
                   patchBundleByIdv2(
                     bundleConfig.id as string,
                     bundleConfig as IBundleUpdate,
+                    versions,
                   ),
                 );
                 handleResponse(updateBundleRes);
@@ -163,14 +165,6 @@ export default function Page() {
           ) : (
             bundles.map((b: IBundle, idx: number) => {
               const bundle = b;
-              let useFor: string = "Not In Use";
-              if (b.annotations.length === 0 && b.fdalabels.length === 0) {
-                useFor = "Not In Use";
-              } else if (b.annotations.length === 0 && b.fdalabels.length > 0) {
-                useFor = "Fdalabel";
-              } else if (b.annotations.length > 0 && b.fdalabels.length === 0) {
-                useFor = "Annotation";
-              }
               const myRole2Bundle = bundle?.user_links?.find(
                 (link) => link.user_id === userData.id,
               )?.role;

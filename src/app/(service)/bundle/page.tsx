@@ -50,6 +50,7 @@ import {
 import { AnnotationContent } from "./annotation-content";
 import { FdalabelContent } from "./fdalabel-content";
 import { Network } from "vis-network";
+import { confirm_bundle_purpose } from "@/utils";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -121,16 +122,7 @@ export default function Page() {
   }, [bundle_id]);
 
   const useFor = useMemo<string>(() => {
-    if (bundle === null) return "Not In Use";
-    let useFor: string = "Not In Use";
-    if (bundle.annotations.length === 0 && bundle.fdalabels.length === 0) {
-      useFor = "Not In Use";
-    } else if (bundle.annotations.length === 0 && bundle.fdalabels.length > 0) {
-      useFor = "Fdalabel";
-    } else if (bundle.annotations.length > 0 && bundle.fdalabels.length === 0) {
-      useFor = "Annotation";
-    }
-    return useFor;
+    return confirm_bundle_purpose(bundle as IBundle);
   }, [bundle]);
 
   const allWords = useMemo(() => {
@@ -250,9 +242,13 @@ export default function Page() {
                                   .map((em) => em.email);
                                 const patchBundleResult = await withLoading(
                                   () =>
-                                    patchBundleByIdv2(bundle?.id as string, {
-                                      emails: emailsAfterDel,
-                                    }),
+                                    patchBundleByIdv2(
+                                      bundle?.id as string,
+                                      {
+                                        emails: emailsAfterDel,
+                                      },
+                                      versions,
+                                    ),
                                 );
                                 if (!patchBundleResult.success)
                                   handleResponse(patchBundleResult);
@@ -299,9 +295,13 @@ export default function Page() {
                           .map((f_) => f_.tradename);
                         console.log(fdaAfterDel);
                         const patchBundleResult = await withLoading(() =>
-                          patchBundleByIdv2(bundle.id, {
-                            tradenames: fdaAfterDel,
-                          }),
+                          patchBundleByIdv2(
+                            bundle.id,
+                            {
+                              tradenames: fdaAfterDel,
+                            },
+                            versions,
+                          ),
                         );
                         handleResponse(patchBundleResult);
                         if (!patchBundleResult.success) return;
@@ -340,9 +340,13 @@ export default function Page() {
                             .map((ann_) => ann_.id);
                           console.log(bundlesAfterDel);
                           const patchBundleResult = await withLoading(() =>
-                            patchBundleByIdv2(bundle.id, {
-                              annotation_ids: bundlesAfterDel,
-                            }),
+                            patchBundleByIdv2(
+                              bundle.id,
+                              {
+                                annotation_ids: bundlesAfterDel,
+                              },
+                              versions,
+                            ),
                           );
                           handleResponse(patchBundleResult);
                           if (!patchBundleResult.success) return;
@@ -391,9 +395,13 @@ export default function Page() {
                       bundle?.users.forEach((em) => eSet.add(em.email));
                       eSet.add(email);
                       const patchBundleResult = await withLoading(() =>
-                        patchBundleByIdv2(bundle?.id as string, {
-                          emails: Array.from(eSet) as string[],
-                        }),
+                        patchBundleByIdv2(
+                          bundle?.id as string,
+                          {
+                            emails: Array.from(eSet) as string[],
+                          },
+                          versions,
+                        ),
                       );
                       if (!patchBundleResult.success)
                         handleResponse(patchBundleResult);
