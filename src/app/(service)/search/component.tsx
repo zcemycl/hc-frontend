@@ -172,19 +172,21 @@ export default function Search() {
               className="flex flex-col px-10 sm:px-5 py-24
             items-center align-middle"
             >
-              <div
-                className="flex flex-col
+              {!(displayData.length > 0 && displayDataIndex != null) && (
+                <>
+                  <div
+                    className="flex flex-col
                 w-screen sm:w-11/12 md:w-8/12 pt-10 pb-3 px-6 sm:px-10"
-              >
-                <div
-                  className="py-1 flex flex-row gap-2 rounded-lg
+                  >
+                    <div
+                      className="py-1 flex flex-row gap-2 rounded-lg
                   w-fit bg-gray-900"
-                >
-                  {searchPageOpts.map((v) => {
-                    return (
-                      <div
-                        key={`tab-${v.key}`}
-                        className={`px-2 py-1 text-center text-black
+                    >
+                      {searchPageOpts.map((v) => {
+                        return (
+                          <div
+                            key={`tab-${v.key}`}
+                            className={`px-2 py-1 text-center text-black
                             rounded-lg flex flex-row gap-1 flex-wrap
                             items-center
                             ${
@@ -194,31 +196,28 @@ export default function Search() {
                                 : `bg-slate-500 shadow-md 
                                   shadow-black cursor-pointer hover:text-white`
                             }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setTabName(v.key);
-                        }}
-                      >
-                        <span>{v.displayName}</span>
-                        <button
-                          className="rounded-full 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setTabName(v.key);
+                            }}
+                          >
+                            <span>{v.displayName}</span>
+                            <button
+                              className="rounded-full 
                               bg-emerald-300 hover:bg-emerald-500 
                               p-1"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }}
-                        >
-                          <RefreshCcw className="w-4 h-4 text-black" />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {!(displayData.length > 0 && displayDataIndex != null) && (
-                <>
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                            >
+                              <RefreshCcw className="w-4 h-4 text-black" />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                   <ComplexSearchBar />
                   <div
                     className="flex flex-col
