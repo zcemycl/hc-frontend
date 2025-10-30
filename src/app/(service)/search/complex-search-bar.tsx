@@ -11,12 +11,10 @@ import { SortByDropdown } from "./SortByDropdown";
 import { QueryTypeDropdown } from "./QueryTypeDropdown";
 import { FdalabelFetchService } from "@/services";
 import { useRouter } from "next/navigation";
-import { useApiHandler } from "@/hooks";
 
 export default function ComplexSearchBar() {
   const router = useRouter();
   const { setIsAuthenticated, userId } = useAuth();
-  const { handleResponse } = useApiHandler();
   const { versions } = useContext(FdaVersionsContext);
   const {
     query,
@@ -56,7 +54,6 @@ export default function ComplexSearchBar() {
             w-screen sm:w-11/12 md:w-8/12
             pb-10 px-6 sm:px-10"
     >
-      {/* <TypographyH2>Search</TypographyH2> */}
       <p className="leading-relaxed mb-5">Please enter your query.</p>
       <SearchBar
         query={query}
@@ -140,50 +137,6 @@ export default function ComplexSearchBar() {
         >
           Submit
         </button>
-        <div className={`flex flex-row space-x-1`}>
-          <button
-            onClick={async (e) => {
-              e.preventDefault();
-              console.log(setIdsToCompare);
-              const resp = await withLoading(() =>
-                fdaservice.handleAETablesComparison(
-                  setIdsToCompare,
-                  query,
-                  queryType,
-                  versions,
-                ),
-              );
-              handleResponse(resp);
-              if (resp.success) setCompareTable(resp.data ?? { table: [] });
-              console.log(resp);
-            }}
-            className={`text-black bg-green-600 
-            border-0
-            focus:outline-none hover:bg-green-700 
-            transition-all duration-200 ease-in-out
-            rounded
-            w-3/4
-            ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6 text-lg" : "h-0 text-[0px]"}`}
-          >
-            Compare Adverse Effects
-          </button>
-          <button
-            className={`
-            bg-red-600 
-            hover:bg-red-700
-            transition-all duration-200 ease-in-out
-            text-white
-            ${Array.from(setIdsToCompare).length > 1 ? "h-full py-2 px-6 w-1/4 text-lg" : "w-0 h-0 text-[0px]"}
-            rounded
-            border-0`}
-            onClick={() => {
-              setCompareTable({ table: [] });
-              setSetIdsToCompare(new Set());
-            }}
-          >
-            Reset
-          </button>
-        </div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import {
   VerToolbar,
   HandleNotOKResponseModal,
   PulseTemplate,
+  CompositeCorner,
 } from "@/components";
 import { IFdaLabel, ICompareAETable, IFdaVersions } from "@/types";
 import {
@@ -26,18 +27,7 @@ import ExpandSearchResultItem from "./expand-search-result-item";
 import SearchResultsList from "./search-results-list";
 import ComplexSearchBar from "./complex-search-bar";
 import CompareTables from "./compare-tables";
-import { ListRestart, RefreshCcw } from "lucide-react";
-
-const searchPageOpts = [
-  {
-    key: "search",
-    displayName: "Search",
-  },
-  {
-    key: "compare",
-    displayName: "Compare",
-  },
-];
+import { RefreshCcw } from "lucide-react";
 
 export default function Search() {
   const router = useRouter();
@@ -66,6 +56,25 @@ export default function Search() {
   const refSearchResGroup = useRef<HTMLElement>(null);
   const [prevScroll, setPrevScroll] = useState<number | null>(null);
   const { versions } = useContext(FdaVersionsContext);
+  const setIdsToCompareLength = useMemo(() => {
+    return Array.from(setIdsToCompare).length;
+  }, [setIdsToCompare]);
+  const searchPageOpts = useMemo(() => {
+    return [
+      {
+        key: "search",
+        displayName: "Search",
+        count: null,
+        hasResetBtn: true,
+      },
+      {
+        key: "compare",
+        displayName: "Compare",
+        count: setIdsToCompareLength,
+        hasResetBtn: true,
+      },
+    ];
+  }, [setIdsToCompareLength]);
   const fdaservice = useMemo(
     () =>
       new FdalabelFetchService(
@@ -149,7 +158,7 @@ export default function Search() {
       setCompareTable(resp.data ?? { table: [] });
     };
     compareData(setIdsToCompare);
-  }, [tabName]);
+  }, [tabName, setIdsToCompare]);
 
   return (
     <ProtectedRoute>
@@ -220,56 +229,142 @@ export default function Search() {
                             }}
                           >
                             <span>{v.displayName}</span>
-                            <button
-                              className="rounded-full 
+                            {v.count !== null && (
+                              <span
+                                className="flex items-center justify-center
+                                  rounded-md bg-slate-300 text-black
+                                  font-semibold w-5 aspect-square"
+                              >
+                                {v.count}
+                              </span>
+                            )}
+                            {v.hasResetBtn && (
+                              <button
+                                className="rounded-full 
                               bg-emerald-300 hover:bg-emerald-500 
                               p-1"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
-                            >
-                              <RefreshCcw className="w-4 h-4 text-black" />
-                            </button>
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  if (v.key === "search") {
+                                    setDisplayDataIndex(null);
+                                    setDisplayData([]);
+                                    setQueryType(
+                                      SearchQueryTypeEnum.INDICATION,
+                                    );
+                                    setQuery([""]);
+                                  } else if (v.key === "compare") {
+                                    setSetIdsToCompare(new Set());
+                                  }
+                                }}
+                              >
+                                <RefreshCcw className="w-4 h-4 text-black" />
+                              </button>
+                            )}
                           </div>
                         );
                       })}
                     </div>
                   </div>
-                  <ComplexSearchBar />
-                  <div
-                    className="flex flex-col
+                  {tabName === "search" && (
+                    <>
+                      <ComplexSearchBar />
+                      <div
+                        className="flex flex-col
                   w-full sm:w-11/12 md:w-8/12
                   space-y-0 sm:space-y-1
                   px-0 sm:px-10"
-                  >
-                    <VerToolbar
-                      fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
-                      reloadCallback={async () => {
-                        if (query[0] === "") return;
-                        const resp = await withLoading(() =>
-                          search_query_by_type(
-                            fdaservice,
-                            query,
-                            queryType,
-                            pageN,
-                            nPerPage,
-                            sortBy,
-                            versions,
-                          ),
-                        );
-                        console.log(resp);
-                      }}
-                    />
-                  </div>
-                  <div className="sm:w-8/12 w-full">
-                    <CompareTables />
-                  </div>
+                      >
+                        <VerToolbar
+                          fdaSections={Object.keys(DEFAULT_FDALABEL_VERSIONS)}
+                          reloadCallback={async () => {
+                            if (query[0] === "") return;
+                            const resp = await withLoading(() =>
+                              search_query_by_type(
+                                fdaservice,
+                                query,
+                                queryType,
+                                pageN,
+                                nPerPage,
+                                sortBy,
+                                versions,
+                              ),
+                            );
+                            console.log(resp);
+                          }}
+                        />
+                      </div>
+                    </>
+                  )}
+                  {tabName === "compare" && (
+                    <div
+                      className="
+                  sm:w-8/12 w-full"
+                    >
+                      <div
+                        className="flex flex-col
+            w-full
+            pb-10 px-6 sm:px-10"
+                      >
+                        {setIdsToCompareLength !== 0 ? (
+                          <p
+                            className="leading-relaxed mb-5 flex flex-row gap-2 flex-wrap
+          items-center"
+                          >
+                            <span>
+                              Comparing {setIdsToCompareLength} drugs, including{" "}
+                            </span>
+                            {displayData
+                              .filter((d) =>
+                                Array.from(setIdsToCompare).includes(
+                                  d.setid as string,
+                                ),
+                              )
+                              .map((d) => {
+                                return (
+                                  <div
+                                    key={`compare-${d.setid}`}
+                                    className="bg-emerald-400 rounded-lg px-2"
+                                  >
+                                    <CompositeCorner
+                                      {...{
+                                        label: d.tradename,
+                                        click_callback: () => {},
+                                        del_callback: () => {
+                                          setSetIdsToCompare(
+                                            (prev: Set<string>) =>
+                                              new Set(
+                                                Array.from(prev).filter(
+                                                  (x) => x != d.setid,
+                                                ),
+                                              ),
+                                          );
+                                        },
+                                      }}
+                                    />
+                                  </div>
+                                );
+                              })}
+                          </p>
+                        ) : (
+                          <p className="leading-relaxed mb-5">
+                            No drugs to compare, please search and select drugs
+                            for comparison.
+                          </p>
+                        )}
+
+                        <CompareTables />
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
-
-              <ExpandSearchResultItem />
-              <SearchResultsList />
+              {tabName === "search" && (
+                <>
+                  <ExpandSearchResultItem />
+                  <SearchResultsList />
+                </>
+              )}
             </div>
           </div>
         </PulseTemplate>
