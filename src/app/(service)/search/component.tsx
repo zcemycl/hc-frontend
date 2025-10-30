@@ -73,6 +73,12 @@ export default function Search() {
         count: setIdsToCompareLength,
         hasResetBtn: true,
       },
+      {
+        key: "bundle",
+        displayName: "Bundle",
+        count: setIdsToCompareLength,
+        hasResetBtn: true,
+      },
     ];
   }, [setIdsToCompareLength]);
   const fdaservice = useMemo(
@@ -231,9 +237,10 @@ export default function Search() {
                             <span>{v.displayName}</span>
                             {v.count !== null && (
                               <span
-                                className="flex items-center justify-center
+                                className={`flex items-center justify-center
                                   rounded-md bg-slate-300 text-black
-                                  font-semibold w-5 aspect-square"
+                                  font-semibold w-5 aspect-square
+                                  ${v.count > 0 ? "animate-pulse" : ""}`}
                               >
                                 {v.count}
                               </span>
@@ -253,7 +260,10 @@ export default function Search() {
                                       SearchQueryTypeEnum.INDICATION,
                                     );
                                     setQuery([""]);
-                                  } else if (v.key === "compare") {
+                                  } else if (
+                                    v.key === "compare" ||
+                                    v.key === "bundle"
+                                  ) {
                                     setSetIdsToCompare(new Set());
                                   }
                                 }}
@@ -297,19 +307,17 @@ export default function Search() {
                     </>
                   )}
                   {tabName === "compare" && (
-                    <div
-                      className="
-                  sm:w-8/12 w-full"
-                    >
+                    <div className="sm:w-8/12 w-full">
                       <div
                         className="flex flex-col
-            w-full
-            pb-10 px-6 sm:px-10"
+                          w-full
+                          pb-10 px-6 sm:px-10"
                       >
                         {setIdsToCompareLength !== 0 ? (
                           <p
-                            className="leading-relaxed mb-5 flex flex-row gap-2 flex-wrap
-          items-center"
+                            className="leading-relaxed mb-5 
+                              flex flex-row gap-2 flex-wrap
+                              items-center"
                           >
                             <span>
                               Comparing {setIdsToCompareLength} drugs, including{" "}
@@ -359,6 +367,7 @@ export default function Search() {
                   )}
                 </>
               )}
+              {tabName === "bundle" && <></>}
               {tabName === "search" && (
                 <>
                   <ExpandSearchResultItem />

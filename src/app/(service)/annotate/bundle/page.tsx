@@ -6,7 +6,6 @@ import {
   BundleListItem,
   EditBundleModal,
   ListPageTemplate,
-  Modal,
   PaginationBar2,
   ProfileBar,
   ProtectedRoute,
@@ -145,15 +144,6 @@ export default function Page({ params }: Readonly<PageProps>) {
             <ArrowBigLeft className="w-4 h-4" />
           </button>
         </div>
-        {/* <Modal
-          {...{
-            title: `Add to this bundle -- ${targetBundleName}? `,
-            isOpenModal,
-            setIsOpenModal,
-          }}
-        >
-          <></>
-        </Modal> */}
         <EditBundleModal
           {...{
             isOpenModal,
