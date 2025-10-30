@@ -133,6 +133,24 @@ export default function Search() {
     }
   }, [displayDataIndex]);
 
+  useEffect(() => {
+    if (tabName !== "compare") return;
+    if (Array.from(setIdsToCompare).length === 0) return;
+    const compareData = async (setIdsToCompare: Set<string>) => {
+      const resp = await withLoading(() =>
+        fdaservice.handleAETablesComparison(
+          setIdsToCompare,
+          query,
+          queryType,
+          versions,
+        ),
+      );
+      if (!resp.success) handleResponse(resp);
+      setCompareTable(resp.data ?? { table: [] });
+    };
+    compareData(setIdsToCompare);
+  }, [tabName]);
+
   return (
     <ProtectedRoute>
       <SearchSupportContext.Provider
