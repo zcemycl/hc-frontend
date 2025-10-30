@@ -30,9 +30,8 @@ import {
   IBundleConfig,
   UserRoleEnum,
 } from "@/types";
-import { confirm_bundle_purpose } from "@/utils";
 import { ArrowBigLeft, Plus } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 const BundleTabContent = ({
@@ -105,7 +104,7 @@ const BundleTabContent = ({
 
   return (
     <>
-      <ProfileBar title={"Add Annotation to Bundle"} />
+      <ProfileBar title={`Add ${mode} to Bundle`} />
       <hr className="mb-2" />
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row justify-start gap-2 items-center">
@@ -199,19 +198,33 @@ const BundleTabContent = ({
                     await fetchAnnSrcFromIdsCallback(ann_ids);
                   },
                   addCallback: async () => {
-                    const aSet = new Set();
-                    b.annotations.forEach((ann) => aSet.add(ann.id));
-                    aSet.add(annotation_id);
-                    console.log(aSet);
-                    const aArr = Array.from(aSet) as number[];
-                    const patchBundleResult = await withLoading(() =>
-                      patchBundleByIdv2(b.id, {
-                        annotation_ids: aArr as number[],
-                      }),
-                    );
-                    await fetchAnnSrcFromIdsCallback(
-                      aArr.filter((vid: number) => !(vid in annSource)),
-                    );
+                    let patchBundleResult;
+                    if (mode === null) return;
+                    if (mode === BundleConnectEnum.ANNOTATION) {
+                      const aSet = new Set();
+                      b.annotations.forEach((ann) => aSet.add(ann.id));
+                      aSet.add(annotation_id);
+                      const aArr = Array.from(aSet) as number[];
+                      patchBundleResult = await withLoading(() =>
+                        patchBundleByIdv2(b.id, {
+                          annotation_ids: aArr as number[],
+                        }),
+                      );
+                      await fetchAnnSrcFromIdsCallback(
+                        aArr.filter((vid: number) => !(vid in annSource)),
+                      );
+                    } else if (mode === BundleConnectEnum.FDALABEL) {
+                      const tSet = new Set();
+                      b.fdalabels.forEach((f) => tSet.add(f.tradename));
+                      if (tradenames?.length === 0) return;
+                      tradenames?.forEach((t) => tSet.add(t));
+                      const tArr = Array.from(tSet) as string[];
+                      patchBundleResult = await withLoading(() =>
+                        patchBundleByIdv2(b.id, {
+                          tradenames: tArr as string[],
+                        }),
+                      );
+                    }
                     handleResponse(patchBundleResult);
                     if (!patchBundleResult.success) return;
                     await fetchBundlesCallback();
@@ -233,6 +246,9 @@ const BundleTabContent = ({
                         );
                         await fetchBundlesCallback();
                       },
+                  fdaClickCallback: (setid: string) => {
+                    router.push(`/fdalabel?fdalabel_id=${setid}`);
+                  },
                   annotationClickCallback: (
                     setid: string,
                     category: AnnotationCategoryEnum,

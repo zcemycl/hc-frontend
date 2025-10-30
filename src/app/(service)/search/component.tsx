@@ -372,12 +372,22 @@ export default function Search() {
               {tabName === "bundle" && (
                 <div
                   className={`
+                  flex flex-col w-screen sm:w-11/12 
+                  md:w-8/12 pb-3 px-6 sm:px-10
+                  space-y-2
                   ${tabName === "bundle" ? "" : "hidden"}
                 `}
                 >
                   <BundleTabContent
                     {...{
                       mode: BundleConnectEnum.FDALABEL,
+                      tradenames: displayData
+                        .filter((f) =>
+                          Array.from(setIdsToCompare).includes(
+                            f.setid as string,
+                          ),
+                        )
+                        .map((f) => f.tradename),
                     }}
                   />
                 </div>
