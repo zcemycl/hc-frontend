@@ -205,9 +205,13 @@ export default function Page({ params }: Readonly<PageProps>) {
                       console.log(aSet);
                       const aArr = Array.from(aSet) as number[];
                       const patchBundleResult = await withLoading(() =>
-                        patchBundleByIdv2(b.id, {
-                          annotation_ids: aArr as number[],
-                        }),
+                        patchBundleByIdv2(
+                          b.id,
+                          {
+                            annotation_ids: aArr as number[],
+                          },
+                          versions,
+                        ),
                       );
                       await fetchAnnSrcFromIdsCallback(
                         aArr.filter((vid: number) => !(vid in annSource)),

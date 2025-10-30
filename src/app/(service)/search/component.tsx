@@ -40,6 +40,9 @@ export default function Search() {
     SearchQueryTypeEnum.INDICATION,
   );
   const [displayData, setDisplayData] = useState<IFdaLabel[]>([]);
+  const [displaySnapshotData, setDisplaySnapshotData] = useState<IFdaLabel[]>(
+    [],
+  );
   const [displayDataIndex, setDisplayDataIndex] = useState<number | null>(null);
   const { setIsAuthenticated, userId } = useAuth();
   const { withLoading } = useLoader();
@@ -151,6 +154,15 @@ export default function Search() {
   }, [displayDataIndex]);
 
   useEffect(() => {
+    const merged = [...displaySnapshotData, ...displayData];
+    const distinct = Array.from(
+      new Map(merged.map((item) => [item.id, item])).values(),
+    );
+    setDisplaySnapshotData(distinct);
+    // console.log(distinct)
+  }, [displayData]);
+
+  useEffect(() => {
     if (tabName !== "compare") return;
     if (Array.from(setIdsToCompare).length === 0) return;
     const compareData = async (setIdsToCompare: Set<string>) => {
@@ -173,6 +185,7 @@ export default function Search() {
       <SearchSupportContext.Provider
         value={{
           displayData,
+          displaySnapshotData,
           displayDataIndex,
           setDisplayDataIndex,
           queryType,
@@ -189,6 +202,7 @@ export default function Search() {
           setSortBy,
           setQueryType,
           setDisplayData,
+          setDisplaySnapshotData,
           compareTable,
           setCompareTable,
           openCollapseCompSection,
@@ -324,7 +338,7 @@ export default function Search() {
                             <span>
                               Comparing {setIdsToCompareLength} drugs, including{" "}
                             </span>
-                            {displayData
+                            {displaySnapshotData
                               .filter((d) =>
                                 Array.from(setIdsToCompare).includes(
                                   d.setid as string,
@@ -378,10 +392,56 @@ export default function Search() {
                   ${tabName === "bundle" ? "" : "hidden"}
                 `}
                 >
+                  {setIdsToCompareLength !== 0 ? (
+                    <p
+                      className="leading-relaxed
+                              flex flex-row gap-2 flex-wrap
+                              items-center"
+                    >
+                      <span>
+                        Adding {setIdsToCompareLength} drugs, including{" "}
+                      </span>
+                      {displaySnapshotData
+                        .filter((d) =>
+                          Array.from(setIdsToCompare).includes(
+                            d.setid as string,
+                          ),
+                        )
+                        .map((d) => {
+                          return (
+                            <div
+                              key={`compare-${d.setid}`}
+                              className="bg-emerald-400 rounded-lg px-2"
+                            >
+                              <CompositeCorner
+                                {...{
+                                  label: d.tradename,
+                                  click_callback: () => {},
+                                  del_callback: () => {
+                                    setSetIdsToCompare(
+                                      (prev: Set<string>) =>
+                                        new Set(
+                                          Array.from(prev).filter(
+                                            (x) => x != d.setid,
+                                          ),
+                                        ),
+                                    );
+                                  },
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                    </p>
+                  ) : (
+                    <p className="leading-relaxed">
+                      No drugs to add to bundle.
+                    </p>
+                  )}
                   <BundleTabContent
                     {...{
                       mode: BundleConnectEnum.FDALABEL,
-                      tradenames: displayData
+                      tradenames: displaySnapshotData
                         .filter((f) =>
                           Array.from(setIdsToCompare).includes(
                             f.setid as string,

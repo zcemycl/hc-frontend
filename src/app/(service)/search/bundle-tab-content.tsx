@@ -206,9 +206,13 @@ const BundleTabContent = ({
                       aSet.add(annotation_id);
                       const aArr = Array.from(aSet) as number[];
                       patchBundleResult = await withLoading(() =>
-                        patchBundleByIdv2(b.id, {
-                          annotation_ids: aArr as number[],
-                        }),
+                        patchBundleByIdv2(
+                          b.id,
+                          {
+                            annotation_ids: aArr as number[],
+                          },
+                          versions,
+                        ),
                       );
                       await fetchAnnSrcFromIdsCallback(
                         aArr.filter((vid: number) => !(vid in annSource)),
@@ -218,11 +222,16 @@ const BundleTabContent = ({
                       b.fdalabels.forEach((f) => tSet.add(f.tradename));
                       if (tradenames?.length === 0) return;
                       tradenames?.forEach((t) => tSet.add(t));
+                      console.log(tradenames);
                       const tArr = Array.from(tSet) as string[];
                       patchBundleResult = await withLoading(() =>
-                        patchBundleByIdv2(b.id, {
-                          tradenames: tArr as string[],
-                        }),
+                        patchBundleByIdv2(
+                          b.id,
+                          {
+                            tradenames: tArr as string[],
+                          },
+                          versions,
+                        ),
                       );
                     }
                     handleResponse(patchBundleResult);
