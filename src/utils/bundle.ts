@@ -2,6 +2,7 @@ import { IBundle } from "@/types";
 
 const confirm_bundle_purpose = (bundle: IBundle) => {
   let useFor: string = "Not In Use";
+  if (bundle === null) return useFor;
   if (bundle.annotations.length === 0 && bundle.fdalabels.length === 0) {
     useFor = "Not In Use";
   } else if (bundle.annotations.length === 0 && bundle.fdalabels.length > 0) {
