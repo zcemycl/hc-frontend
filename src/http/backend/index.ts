@@ -6,3 +6,4 @@ export * from "./annotation";
 export * from "./graph";
 export * from "./bundle";
 export * from "./versions";
+export * from "./chat";

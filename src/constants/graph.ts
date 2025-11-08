@@ -87,6 +87,19 @@ export const drug_product_group_graph_style = {
   },
 };
 
+export const bundle_group_graph_style = {
+  color: graph_node_bg_color_enum.b,
+  // shape: "box",
+  shape: "dot",
+  // shape: "database",
+  level: 11,
+  size: 50,
+  font: {
+    color: "white",
+    size: 40,
+  },
+};
+
 export const global_graph_node_style = {
   borderWidth: 2,
 };
@@ -127,6 +140,7 @@ const defaultOptions = {
   groups: {
     ta: therapeutic_area_group_graph_style,
     p: drug_product_group_graph_style,
+    b: bundle_group_graph_style,
   },
 };
 
@@ -175,3 +189,18 @@ export function generateGraphOption({
   };
   return options;
 }
+
+export const toggleOptions = [
+  {
+    key: "p",
+    displayName: "Drug",
+  },
+  {
+    key: "ta",
+    displayName: "Therapeutic Area",
+  },
+  {
+    key: "b",
+    displayName: "Bundle",
+  },
+];

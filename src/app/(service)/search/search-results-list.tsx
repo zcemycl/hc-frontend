@@ -1,14 +1,11 @@
-import { FdaLabelShort, PaginationBar } from "@/components";
+import { FdaLabelShort, PaginationBar2 } from "@/components";
 import { SearchQueryTypeEnum } from "@/constants";
-import { FdaVersionsContext, SearchSupportContext, useAuth } from "@/contexts";
+import { FdaVersionsContext, SearchSupportContext } from "@/contexts";
 import { useApiHandler } from "@/hooks";
 import { IFdaLabel } from "@/types";
-import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 export default function SearchResultsList() {
-  const router = useRouter();
-  const { setIsAuthenticated, credentials } = useAuth();
   const { handleResponse } = useApiHandler();
   const {
     displayData,
@@ -27,6 +24,7 @@ export default function SearchResultsList() {
     query,
     sortBy,
     refSearchResGroup,
+    setPrevScroll,
   } = useContext(SearchSupportContext);
   const { versions } = useContext(FdaVersionsContext);
 
@@ -34,10 +32,6 @@ export default function SearchResultsList() {
     async function pageCallback(pageN: number) {
       setDisplayDataIndex(null);
       setCompareTable({ table: [] });
-      if (credentials.length === 0) {
-        setIsAuthenticated(false);
-        router.push("/logout");
-      }
       const resp = await search_query_by_type(
         fdaservice,
         query,
@@ -67,7 +61,7 @@ export default function SearchResultsList() {
       {displayData.length > 0 && displayDataIndex === null && (
         <div
           className="flex flex-col justify-center
-            content-center items-center"
+            content-center items-center space-y-1"
         >
           {(queryType === SearchQueryTypeEnum.INDICATION
             ? displayData
@@ -101,13 +95,17 @@ export default function SearchResultsList() {
                       );
                     }
                   },
-                  clickExpandCallback: () => setDisplayDataIndex(idx),
+                  clickExpandCallback: () => {
+                    const el = refSearchResGroup.current;
+                    setPrevScroll(el?.scrollTop as number);
+                    setDisplayDataIndex(idx);
+                  },
                 }}
               />
             );
           })}
           <div className="flex justify-center space-x-1">
-            <PaginationBar
+            <PaginationBar2
               topN={
                 queryType === SearchQueryTypeEnum.INDICATION
                   ? topN

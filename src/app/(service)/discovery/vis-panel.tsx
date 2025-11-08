@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useContext } from "react";
-import { useLoader, DiscoveryContext } from "@/contexts";
+import { useLoader, DiscoveryContext, LocalUtilityProvider } from "@/contexts";
 import VisToolbar from "./vis-toolbar";
-import { INode } from "@/types";
-import { fetchGraphDummyv2 } from "@/http/backend";
-import { Spinner } from "@/components";
-import { useApiHandler } from "@/hooks";
+import { IEdge, INode } from "@/types";
+import { fetchGraphByAreav2 } from "@/http/backend";
+import { useApiHandler, useDiscoveryGraph } from "@/hooks";
 
 export default function VisPanel() {
   const { handleResponse } = useApiHandler();
@@ -18,14 +17,21 @@ export default function VisPanel() {
     visToolBarRef,
     term,
     initTAId,
+    setMultiSelectNodes,
   } = useContext(DiscoveryContext);
+  const {
+    retrieve_path_nodes_edges,
+    trace_node_path_with_color,
+    move_network,
+    trace_node_callback,
+  } = useDiscoveryGraph();
 
   const isDiscoveryLoading = isLoadingv2 || isDrawingGraph;
 
   useEffect(() => {
     async function getData() {
       const res = await withLoading(() =>
-        fetchGraphDummyv2(
+        fetchGraphByAreav2(
           flagAttrs.name,
           flagAttrs.numNodes,
           flagAttrs.offset,
@@ -34,8 +40,11 @@ export default function VisPanel() {
           initTAId,
         ),
       );
-      handleResponse(res);
-      if (!res.success) return;
+      if (!res.success) {
+        handleResponse(res);
+        return;
+      }
+      setMultiSelectNodes([]);
       console.log(res);
       let all_nodes = [
         ...res?.data?.ta.map((v: INode) => ({
@@ -51,47 +60,53 @@ export default function VisPanel() {
         obj.label == flagAttrs.name ? { ...obj, fixed: true } : obj,
       );
       setNodes(final_all_nodes);
-      setEdges([...res?.data?.links]);
+      setEdges([
+        ...res?.data?.links.map((e_: IEdge) => {
+          return {
+            from: e_.from,
+            to: e_.to,
+            id: `from-${e_.from}-to-${e_.to}`,
+          };
+        }),
+      ]);
     }
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div id="vis-panel" className="relative rounded-lg h-[78vh]">
-      {isDiscoveryLoading && (
+    <LocalUtilityProvider
+      utilities={{
+        retrieve_path_nodes_edges,
+        trace_node_path_with_color,
+        move_network,
+        trace_node_callback,
+        a: 1,
+      }}
+    >
+      <div id="vis-panel" className="relative rounded-lg h-[78vh]">
         <div
-          className="absolute h-[78vh]
-          z-20
-          flex flex-col justify-center align-middle content-center
-          top-1/2 -translate-y-1/2
-          left-1/2 transform -translate-x-1/2"
-        >
-          <Spinner />
-          <span className="sr-only">Loading...</span>
-        </div>
-      )}
-      <div
-        ref={visJsRef}
-        style={{ height: "78vh", width: "100%" }}
-        className="w-full h-full absolute
+          ref={visJsRef}
+          style={{ height: "78vh", width: "100%" }}
+          className="w-full h-full absolute
                 z-0
                 rounded-lg
                 border-2 border-solid
                 border-purple-700
                 left-0 right-0 top-0 bottom-0"
-      />
-      <div
-        ref={visToolBarRef}
-        id="vis-toolbar"
-        className="absolute right-0 top-0
+        />
+        <div
+          ref={visToolBarRef}
+          id="vis-toolbar"
+          className="absolute right-0 top-0
           pointer-events-none
           flex flex-col
           z-10
           space-y-2"
-      >
-        <VisToolbar />
+        >
+          <VisToolbar />
+        </div>
       </div>
-    </div>
+    </LocalUtilityProvider>
   );
 }

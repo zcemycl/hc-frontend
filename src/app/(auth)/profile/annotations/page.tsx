@@ -1,7 +1,10 @@
 "use client";
 import {
-  PaginationBar,
+  ListPageTemplate,
+  PaginationBar2,
+  ProfileBar,
   ProtectedRoute,
+  Spinner,
   TypographyH2,
   VerToolbar,
 } from "@/components";
@@ -15,8 +18,7 @@ import { AnnotationCategoryEnum, IUnAnnotatedAETable, IUser } from "@/types";
 import { convert_datetime_to_simple } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
-import ProfileBar from "../profile-bar";
-import { AnnotationTypeEnum, annotationTypeMap } from "@/constants";
+import { AnnotationTypeEnum } from "@/constants";
 import { useApiHandler } from "@/hooks";
 
 export default function Page() {
@@ -36,7 +38,7 @@ export default function Page() {
       fetchUnannotatedAETableByUserIdv2(
         id,
         AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-        nPerPage * pageNAnnotate,
+        nPerPage * pageN,
         nPerPage,
         true,
         false,
@@ -49,11 +51,9 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    if (isLoadingAuth) return;
-    if (!userId) return;
     setAnnotationRecord(userId as number, pageNAnnotate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingAuth, userId, pageNAnnotate]);
+  }, [pageNAnnotate]);
 
   useEffect(() => {
     async function getProfile(id: number) {
@@ -80,109 +80,96 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-          h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
-        <div
-          className="mt-[10rem] flex flex-col
-           content-center items-center
-        "
-        >
-          <div className="w-11/12 sm:w-7/12 flex flex-col space-y-3">
-            <ProfileBar
-              {...{
-                username: profileInfo?.username! as string,
-                role: profileInfo?.role!,
-              }}
-            />
-            <hr className="mb-2" />
-            <TypographyH2>Annotation X{countAnnotated}</TypographyH2>
-            <VerToolbar
-              fdaSections={["fdalabel", "adverse_effect_table"]}
-              reloadCallback={async () => {
-                if (isLoadingAuth) return;
-                if (!userId) return;
-                const annotatedData = await withLoading(() =>
-                  fetchUnannotatedAETableByUserIdv2(
-                    userId,
-                    AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-                    nPerPage * pageNAnnotate,
-                    nPerPage,
-                    true,
-                    false,
-                    versions,
-                  ),
-                );
-                handleResponse(annotatedData);
-                if (annotatedData.success)
-                  setTableData(annotatedData.data ?? []);
-                const numberAnnotated = await withLoading(() =>
-                  fetchUnannotatedAETableByUserIdCountv2(
-                    userId,
-                    AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-                    true,
-                    false,
-                    versions,
-                  ),
-                );
-                handleResponse(numberAnnotated);
-                if (numberAnnotated.success)
-                  setCountAnnotated(numberAnnotated.data ?? 0);
-              }}
-            />
-            <div className="flex flex-col space-y-1">
-              {tableData.length === 0 ? (
-                <p className="leading-relaxed mb-1">No Record ...</p>
-              ) : (
-                tableData.map((x, idx) => {
-                  return (
-                    <button
-                      key={`history-annotation-${idx}`}
-                      className="hover:bg-green-200 
+      <ListPageTemplate>
+        {isLoadingv2 ? (
+          <Spinner />
+        ) : (
+          <ProfileBar
+            {...{
+              username: profileInfo?.username! as string,
+              role: profileInfo?.role!,
+            }}
+          />
+        )}
+        <hr className="mb-2" />
+        <TypographyH2>Annotation X{countAnnotated}</TypographyH2>
+        <VerToolbar
+          fdaSections={["fdalabel", "adverse_effect_table"]}
+          reloadCallback={async () => {
+            if (isLoadingAuth) return;
+            if (!userId) return;
+            const annotatedData = await withLoading(() =>
+              fetchUnannotatedAETableByUserIdv2(
+                userId,
+                AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                nPerPage * pageNAnnotate,
+                nPerPage,
+                true,
+                false,
+                versions,
+              ),
+            );
+            handleResponse(annotatedData);
+            if (annotatedData.success) setTableData(annotatedData.data ?? []);
+            const numberAnnotated = await withLoading(() =>
+              fetchUnannotatedAETableByUserIdCountv2(
+                userId,
+                AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                true,
+                false,
+                versions,
+              ),
+            );
+            handleResponse(numberAnnotated);
+            if (numberAnnotated.success)
+              setCountAnnotated(numberAnnotated.data ?? 0);
+          }}
+        />
+        <div className="flex flex-col space-y-1">
+          {tableData.length === 0 ? (
+            <p className="leading-relaxed mb-1">No Record ...</p>
+          ) : (
+            tableData.map((x, idx) => {
+              return (
+                <button
+                  key={`history-annotation-${idx}`}
+                  className="hover:bg-green-200 
                         text-clip overflow-clip
                         focus:bg-blue-200 transition
                         justify-start content-start
                         rounded px-2 hover:text-black"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const params = new URLSearchParams();
-                        params.append("tab", AnnotationTypeEnum.COMPLETE);
-                        let redirectUrl = `/annotate/fdalabel/${x.fdalabel.setid}/adverse_effect_table/${x.idx}`;
-                        redirectUrl = `${redirectUrl}?${params}`;
-                        router.push(redirectUrl);
-                      }}
-                    >
-                      <div className="flex justify-between">
-                        <p className="leading-relaxed">
-                          {convert_datetime_to_simple(x.created_date as string)}
-                        </p>
-                        <p className="leading-relaxed">
-                          {x.fdalabel.tradename}
-                        </p>
-                        <p className="leading-relaxed">Table {x.idx}</p>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
-            </div>
-            {countAnnotated / nPerPage > 1 && (
-              <div className="flex justify-center space-x-1 flex-wrap">
-                <PaginationBar
-                  topN={countAnnotated}
-                  pageN={pageNAnnotate}
-                  nPerPage={nPerPage}
-                  setPageN={(i: number) => {
-                    setPageNAnnotate(i);
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const params = new URLSearchParams();
+                    params.append("tab", AnnotationTypeEnum.COMPLETE);
+                    let redirectUrl = `/annotate/fdalabel/${x.fdalabel.setid}/adverse_effect_table/${x.idx}`;
+                    redirectUrl = `${redirectUrl}?${params}`;
+                    router.push(redirectUrl);
                   }}
-                />
-              </div>
-            )}
-          </div>
+                >
+                  <div className="flex justify-between">
+                    <p className="leading-relaxed">
+                      {convert_datetime_to_simple(x.created_date as string)}
+                    </p>
+                    <p className="leading-relaxed">{x.fdalabel.tradename}</p>
+                    <p className="leading-relaxed">Table {x.idx}</p>
+                  </div>
+                </button>
+              );
+            })
+          )}
         </div>
-      </section>
+        <div className="flex justify-center space-x-1 flex-wrap">
+          <PaginationBar2
+            topN={countAnnotated}
+            pageN={pageNAnnotate}
+            nPerPage={nPerPage}
+            setPageN={(i: number) => {
+              setPageNAnnotate(i);
+            }}
+          />
+        </div>
+      </ListPageTemplate>
     </ProtectedRoute>
   );
 }

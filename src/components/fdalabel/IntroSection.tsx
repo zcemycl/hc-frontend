@@ -23,7 +23,7 @@ function IntroSection({
   manufacturer: string;
   xml_link: string;
   pdf_link: string;
-  back_btn_callback: (s: any) => void;
+  back_btn_callback?: (s: any) => void;
 }) {
   const router = useRouter();
   return (
@@ -37,14 +37,16 @@ function IntroSection({
         >
           {tradename}
         </h1>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            back_btn_callback(null);
-          }}
-        >
-          Back
-        </button>
+        {back_btn_callback && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              back_btn_callback(null);
+            }}
+          >
+            Back
+          </button>
+        )}
       </div>
       <div className="flex flex-col space-x-0">
         <TypographyH2 extraClass="text-md">{manufacturer}</TypographyH2>

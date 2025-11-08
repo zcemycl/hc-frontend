@@ -4,13 +4,13 @@ export interface INode {
   level?: number;
   group?: string;
   label: string;
-  id: number;
+  id: number | string;
 }
 
 export interface IEdge {
-  from: number;
-  to: number;
-  id?: string;
+  from: number | string;
+  to: number | string;
+  id?: string | string;
 }
 
 export interface IFlagAttrs {
@@ -25,6 +25,8 @@ export interface ITa2PGraph {
   p: INode[];
   links: IEdge[];
 }
+
+export interface IVisibilityMap extends Record<string, boolean> {}
 
 // API Result interfaces
 export interface GraphResult extends ApiResult<ITa2PGraph> {}

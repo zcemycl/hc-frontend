@@ -11,3 +11,4 @@ export * from "./bundle";
 export * from "./generic";
 export * from "./api";
 export * from "./annotation";
+export * from "./chat";

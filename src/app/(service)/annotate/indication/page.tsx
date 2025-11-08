@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { BackBtn, ProtectedRoute, TypographyH2 } from "@/components";
+import {
+  BackBtn,
+  ProtectedRoute,
+  PulseTemplate,
+  TypographyH2,
+} from "@/components";
 import { useRouter } from "next/navigation";
 import Highlighter from "react-highlight-words";
 import { SelectedWordsContext } from "@/contexts";
@@ -35,7 +40,7 @@ export default function Page() {
           setHoveredIndex,
         }}
       >
-        <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
+        <PulseTemplate>
           <div className="px-2 py-24 flex flex-col justify-center items-center align-center">
             <div
               className="sm:w-10/12 flex flex-col mt-8 
@@ -114,7 +119,7 @@ export default function Page() {
               }
             }
           `}</style>
-        </section>
+        </PulseTemplate>
       </SelectedWordsContext.Provider>
     </ProtectedRoute>
   );

@@ -1,12 +1,17 @@
 "use client";
-import { ProtectedRoute } from "@/components";
+import {
+  ListPageTemplate,
+  ProfileBar,
+  ProtectedRoute,
+  Spinner,
+} from "@/components";
 import { useAuth, useLoader } from "@/contexts";
 import { useState, useEffect } from "react";
 import { fetchUserInfoByIdv2 } from "@/http/backend";
 import { useRouter } from "next/navigation";
 import { IUser } from "@/types";
-import ProfileBar from "./profile-bar";
 import { useApiHandler } from "@/hooks";
+import { History, Boxes, FilePenLine } from "lucide-react";
 
 export default function Profile() {
   const { handleResponse } = useApiHandler();
@@ -29,28 +34,22 @@ export default function Profile() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-          h-[81vh] sm:h-[89vh] overflow-y-scroll
-          ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
-        <div
-          className="mt-[10rem] flex flex-col
-           content-center items-center
-        "
-        >
-          <div className="w-11/12 sm:w-7/12 flex flex-col space-y-10">
-            <ProfileBar
-              {...{
-                username: profileInfo?.username! as string,
-                role: profileInfo?.role!,
-              }}
-            >
-              <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
-            </ProfileBar>
+      <ListPageTemplate>
+        {isLoadingv2 ? (
+          <Spinner />
+        ) : (
+          <ProfileBar
+            {...{
+              username: profileInfo?.username! as string,
+              role: profileInfo?.role!,
+            }}
+          >
+            <p className="leading-relaxed mb-1">{profileInfo?.email!}</p>
+          </ProfileBar>
+        )}
 
-            <div
-              className="
+        <div
+          className="
                     grid gap-4
                     grid-cols-1
                     md:grid-cols-2
@@ -59,52 +58,67 @@ export default function Profile() {
                     place-content-center
                     place-items-center
                 "
-            >
-              {[
-                ["History", "Browse your search history.", "/history"],
-                [
-                  "Annotation",
-                  "View your supports in building robust AI models",
-                  "/annotations",
-                ],
-                [
-                  "Bundle",
-                  "Group your medicines of interest to compare, and let the system learn your preference.",
-                  "/bundles",
-                ],
-              ].map((v) => (
-                <div
-                  className="flex flex-col w-full
+        >
+          {[
+            [
+              <>
+                <span>History</span>
+                <History />
+              </>,
+              "Browse your search history.",
+              "/history",
+              "history",
+            ],
+            [
+              <>
+                <span>Annotation</span>
+                <FilePenLine />
+              </>,
+              "View your supports in building robust AI models",
+              "/annotations",
+              "annotations",
+            ],
+            [
+              <>
+                <span>Bundle</span>
+                <Boxes />
+              </>,
+              "Group your medicines of interest to compare, and let the system learn your preference.",
+              "/bundles",
+              "bundles",
+            ],
+          ].map((v) => (
+            <div
+              className="flex flex-col w-full
                                     h-fit
                                 "
-                  key={`btn-group-${v[0]}`}
-                >
-                  <div className="group flex flex-col">
-                    <button
-                      className="p-4 sm:p-6
+              key={`btn-group-${v[3]}`}
+            >
+              <div className="group flex flex-col">
+                <button
+                  className="p-4 sm:p-6
                         rounded-md
                         text-black font-bold
                         text-md
                         hover:bg-emerald-500
-                        bg-emerald-300"
-                      onClick={() => router.push(`profile${v[2]}`)}
-                    >
-                      {v[0]}
-                    </button>
-                    <span
-                      className="max-h-0 overflow-hidden 
+                        bg-emerald-300
+                        flex flex-row space-x-2 justify-center"
+                  onClick={() => router.push(`profile${v[2]}`)}
+                >
+                  {v[0]}
+                </button>
+                <span
+                  className="max-h-0 overflow-hidden 
                         transition-all duration-300 
                         ease-in-out group-hover:max-h-40"
-                    >
-                      {v[1]}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                >
+                  {v[1]}
+                </span>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
-      </section>
+      </ListPageTemplate>
     </ProtectedRoute>
   );
 }

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTable } from "@fortawesome/free-solid-svg-icons";
 import { ITherapeuticArea } from "@/types/fdalabel";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 function FdaLabelShort({
   setid,
@@ -32,15 +33,29 @@ function FdaLabelShort({
   clickExpandCallback: () => void;
 }) {
   const router = useRouter();
+  const checkboxRef = useRef<HTMLInputElement>(null);
+
+  const handleDivClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Prevent double-calling if the checkbox itself was clicked
+    if (e.target instanceof HTMLInputElement) return;
+
+    // Trigger the checkbox click programmatically
+    checkboxRef.current?.click();
+  };
+
   return (
     <div
-      className="flex flex-col p-10
-      w-screen sm:w-11/12 md:w-8/12"
+      className={`flex flex-col px-10 py-5
+      w-screen sm:w-11/12 md:w-8/12 rounded-lg
+      cursor-pointer hover:bg-purple-900
+      ${showCheckbox ? "border-2 border-white" : ""}`}
       key={setid}
+      onClick={handleDivClick}
     >
       <div className="flex justify-between">
         <TypographyH2>{tradename}</TypographyH2>
         <input
+          ref={checkboxRef}
           type="checkbox"
           checked={showCheckbox}
           onClick={(e) => selectMultipleCallback(e)}
@@ -75,6 +90,7 @@ function FdaLabelShort({
           "
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             let redirectUrl = `/discovery`;
             const params = new URLSearchParams();
             params.append("therapeutic_area", therapeutic_areas[0].name);
@@ -92,14 +108,21 @@ function FdaLabelShort({
 
       <p>{indication}</p>
       <button
+        className="w-full animate-none
+          bg-slate-500 text-black
+          rounded-lg hover:shadow-lg
+          hover:border-2 hover:border-slate-700
+          hover:shadow-black
+          hover:animate-pulse"
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           clickExpandCallback();
         }}
       >
         View more...
       </button>
-      <hr />
+      {/* {!showCheckbox && <hr  className="rounded-lg"/>} */}
     </div>
   );
 }

@@ -1,10 +1,11 @@
-import { FeedbackIcon, LogoutIcon, ProfileIcon } from "@/icons";
+import { FeedbackIcon, LogoutIcon } from "@/icons";
+import { User } from "lucide-react";
 
 export const sidebar_constant = [
   {
     name: "Profile",
     path: "/profile",
-    icon: <p>PF</p>,
+    icon: <User />,
     testid: "profile-link",
   },
   {

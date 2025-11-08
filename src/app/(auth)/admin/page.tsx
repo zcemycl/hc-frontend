@@ -10,13 +10,14 @@ import {
 import { ApiResult, IAddUserInfo, IUser, UserRoleEnum } from "@/types";
 import { useRouter } from "next/navigation";
 import {
-  PaginationBar,
   Modal,
   DropDownBtn,
   DropDownList,
   TypographyH2,
   ProtectedRoute,
   BackBtn,
+  PaginationBar2,
+  PulseTemplate,
 } from "@/components";
 import { convert_datetime_to_date } from "@/utils";
 import { create_user, delete_user } from "@/http/internal";
@@ -36,7 +37,7 @@ export default function Admin() {
   const refUserGroup = useRef(null);
   const router = useRouter();
   const { credentials, setIsAuthenticated, isLoadingAuth } = useAuth();
-  const { isLoadingv2, withLoading } = useLoader();
+  const { withLoading } = useLoader();
   const [isOpenAddUserModal, setIsOpenAddUserModal] = useState(false);
   const [isOpenDelUserModal, setIsOpenDelUserModal] = useState(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -82,13 +83,7 @@ export default function Admin() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font h-[81vh] 
-          sm:h-[89vh] overflow-y-scroll
-          ${isLoadingv2 ? "animate-pulse" : ""}
-          `}
-        ref={refUserGroup}
-      >
+      <PulseTemplate refSection={refUserGroup} overflowY={true}>
         <div
           className="flex flex-col mt-[7rem] 
           content-center items-center space-y-3"
@@ -341,7 +336,7 @@ export default function Admin() {
                 );
               })}
               <div className="flex justify-center space-x-1">
-                <PaginationBar
+                <PaginationBar2
                   topN={topN}
                   pageN={pageN}
                   nPerPage={nPerPage}
@@ -353,7 +348,7 @@ export default function Admin() {
             </>
           )}
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

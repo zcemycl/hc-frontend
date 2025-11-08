@@ -1,4 +1,4 @@
-import { TypographyH2, BackBtn } from "@/components";
+import { TypographyH2, BackBtn, PulseTemplate } from "@/components";
 import { useRouter } from "next/navigation";
 import {
   addEdge,
@@ -109,7 +109,7 @@ export default function Component() {
         setNodes,
       }}
     >
-      <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
+      <PulseTemplate>
         <div className="px-2 py-24 flex flex-col justify-center items-center align-center">
           <div
             className="sm:w-10/12 flex flex-col mt-8 
@@ -180,7 +180,7 @@ export default function Component() {
             </div>
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </NodeEdgeGraphContext.Provider>
   );
 }

@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  Spinner,
   TypographyH2,
   Table,
   ExpandableBtn,
   PaginationBar,
   ProtectedRoute,
   BackBtn,
+  PulseTemplate,
 } from "@/components";
 import { AnnotationTypeEnum } from "@/constants";
 import { useAuth, useLoader } from "@/contexts";
@@ -84,25 +84,11 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font 
-        h-[81vh] sm:h-[89vh] overflow-y-scroll
-        ${isLoadingv2 ? "animate-pulse" : ""}`}
-        ref={refUnannotatedGroup}
-      >
+      <PulseTemplate refSection={refUnannotatedGroup} overflowY={true}>
         <div
           className="px-2 py-24 flex flex-col justify-center 
           items-center align-center w-full"
         >
-          <div
-            role="status"
-            className={`absolute left-1/2 top-1/2 transition-opacity duration-700
-            -translate-x-1/2 -translate-y-1/2 ${isLoadingv2 ? "opacity-1" : "opacity-0"}`}
-          >
-            <Spinner />
-            <span className="sr-only">Loading...</span>
-          </div>
-
           <div className="sm:w-1/2 flex flex-col mt-8 w-full px-1 pt-5 pb-5 space-y-2">
             <div className="flex justify-between items-center">
               <div className="flex justify-between items-center space-x-1">
@@ -188,7 +174,7 @@ export default function Page() {
             />
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

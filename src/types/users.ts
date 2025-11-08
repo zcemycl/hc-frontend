@@ -20,6 +20,13 @@ export interface IUser {
   activities_count: number;
 }
 
+export interface IUserRef {
+  id: number;
+  username: string;
+  email: string;
+  role: UserRoleEnum;
+}
+
 // API Result interfaces
 export interface UsersRes extends ApiResult<IUser[]> {}
 export interface UserResult extends ApiResult<IUser> {}

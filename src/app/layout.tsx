@@ -7,6 +7,7 @@ import {
   LoaderProvider,
   FdaVersionsProvider,
   TableSelectProvider,
+  ApiErrResponseProvider,
 } from "@/contexts";
 import { setupAuthHook, setupScrapeVersionsHook } from "@/http/utils-server";
 export { metadata } from "@/metadata";
@@ -46,46 +47,48 @@ wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
           crossOrigin="anonymous"
         ></link>
       </head>
-      <body className="overflow-x-hidden overflow-y-hidden">
+      <body className="overflow-x-hidden overflow-y-hidden select-none">
         <ClientErrorBoundary>
           <ThemeProvider attribute="class">
-            <LoaderProvider>
-              <OpenBarProvider>
-                <AuthProvider
-                  initialData={{
-                    hasCreds,
-                    defaultCredentials,
-                    hasUsername,
-                    defaultUsername,
-                    hasRole,
-                    defaultRole,
-                    hasUserId,
-                    defaultUserId,
-                  }}
-                >
-                  <FdaVersionsProvider
+            <ApiErrResponseProvider>
+              <LoaderProvider>
+                <OpenBarProvider>
+                  <AuthProvider
                     initialData={{
-                      hasDefaultVers,
-                      defaultVers,
-                      hasDefaultFdaScrapeAvailVers,
-                      defaultFdaScrapeAvailVers,
-                      hasDefaultFdaSectionScrapeAvailVers,
-                      defaultFdaSectionScrapeAvailVers,
+                      hasCreds,
+                      defaultCredentials,
+                      hasUsername,
+                      defaultUsername,
+                      hasRole,
+                      defaultRole,
+                      hasUserId,
+                      defaultUserId,
                     }}
                   >
-                    <SideBar>
-                      <TableSelectProvider>
-                        <div className="h-[100vh] overflow-y-auto">
-                          <NavBar />
-                          {children}
-                          <Footer />
-                        </div>
-                      </TableSelectProvider>
-                    </SideBar>
-                  </FdaVersionsProvider>
-                </AuthProvider>
-              </OpenBarProvider>
-            </LoaderProvider>
+                    <FdaVersionsProvider
+                      initialData={{
+                        hasDefaultVers,
+                        defaultVers,
+                        hasDefaultFdaScrapeAvailVers,
+                        defaultFdaScrapeAvailVers,
+                        hasDefaultFdaSectionScrapeAvailVers,
+                        defaultFdaSectionScrapeAvailVers,
+                      }}
+                    >
+                      <SideBar>
+                        <TableSelectProvider>
+                          <div className="h-[100vh] overflow-y-auto">
+                            <NavBar />
+                            {children}
+                            <Footer />
+                          </div>
+                        </TableSelectProvider>
+                      </SideBar>
+                    </FdaVersionsProvider>
+                  </AuthProvider>
+                </OpenBarProvider>
+              </LoaderProvider>
+            </ApiErrResponseProvider>
           </ThemeProvider>
         </ClientErrorBoundary>
       </body>

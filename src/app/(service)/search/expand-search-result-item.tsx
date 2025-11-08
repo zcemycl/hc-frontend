@@ -6,6 +6,7 @@ export default function ExpandSearchResultItem() {
   const { displayData, displayDataIndex, setDisplayDataIndex } =
     useContext(SearchSupportContext);
   const { versions } = useContext(FdaVersionsContext);
+
   return (
     <>
       {displayData.length > 0 && displayDataIndex != null && (

@@ -1,12 +1,7 @@
 "use client";
-import {
-  FdaVersionsContext,
-  TableSelectContext,
-  useAuth,
-  useLoader,
-} from "@/contexts";
+import { FdaVersionsContext, useAuth, useLoader } from "@/contexts";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, Fragment, useContext } from "react";
+import { useEffect, useContext, useCallback } from "react";
 import {
   fetchAETableByIdsv2,
   addAnnotationByNameIdv2,
@@ -15,27 +10,19 @@ import {
 import {
   AnnotationCategoryEnum,
   IAdverseEffectTable,
-  IBaseTable,
+  IQuestionTemplate,
 } from "@/types";
-import {
-  Table,
-  DropDownBtn,
-  DropDownList,
-  Spinner,
-  ProtectedRoute,
-  BackBtn,
-} from "@/components";
-import { switch_map } from "@/utils";
+import { ProtectedRoute, BackBtn, PulseTemplate } from "@/components";
 import { questions } from "./questions";
 import { AnnotationTypeEnum } from "@/constants";
-import { useApiHandler, useTickableTableCell } from "@/hooks";
-
-interface PageProps {
-  params: {
-    id: string;
-    table_id: number;
-  };
-}
+import { useApiHandler } from "@/hooks";
+import {
+  AnnotateDropdown,
+  AnnotateProgressBar,
+  AnnotateTable,
+} from "./components";
+import { PageProps } from "./props";
+import { useTableCache, useKeyBind } from "./hooks";
 
 export default function Page({ params }: Readonly<PageProps>) {
   const { handleResponse } = useApiHandler();
@@ -44,50 +31,43 @@ export default function Page({ params }: Readonly<PageProps>) {
   const tab = searchParams.has("tab")
     ? searchParams.get("tab")
     : AnnotationTypeEnum.ONGOING;
-  const { credentials, isLoadingAuth } = useAuth();
+  const { isLoadingAuth } = useAuth();
   const { isLoadingv2, withLoading } = useLoader();
-  const [questionIdx, setQuestionIdx] = useState(0);
-  const [tableData, setTableData] = useState<IAdverseEffectTable | null>(null);
-  const n_rows = tableData?.content.table.length ?? 0;
-  const n_cols = tableData?.content.table[0].length ?? 0;
-  const { row_map, col_map, cell_map, none_map, resetCellSelected } =
-    useTickableTableCell({
-      n_rows,
-      n_cols,
-    });
-  const [isCellSelected, setIsCellSelected] = useState<boolean[][]>(
-    structuredClone(resetCellSelected),
-  );
-  const [finalResults, setFinalResults] = useState<{ [key: string]: any }>({});
-  const [selectedOption, setSelectedOption] = useState("");
-  const [isOptionDropdownOpen, setIsOptionDropdownOpen] = useState(false);
   const { versions } = useContext(FdaVersionsContext);
-  const { handleMouseUp } = useContext(TableSelectContext);
-
-  const storeCache = async () => {
-    let tmp = { ...finalResults };
-    tmp[questions[questionIdx].identifier] = isCellSelected;
-    let addtmp = { ...tmp?.additionalRequire! };
-    if (
-      "additionalRequire" in questions[questionIdx] &&
-      "dropdown" in questions[questionIdx].additionalRequire!
-    ) {
-      addtmp[questions[questionIdx].identifier] = {
-        [questions[questionIdx].additionalRequire!.dropdown.identifier]:
-          selectedOption,
-      };
-    }
-    tmp["additionalRequire"] = addtmp;
-    return tmp;
-  };
-
-  useEffect(() => {
-    document.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.userSelect = "";
-    };
-  }, [handleMouseUp]);
+  const {
+    storeCache,
+    questionIdx,
+    setQuestionIdx,
+    tableData,
+    setTableData,
+    isCellSelected,
+    setIsCellSelected,
+    setFinalResults,
+    selectedOption,
+    setSelectedOption,
+    resetCellSelected,
+    filterQuestions: filterQuestionsWithAnswers,
+  } = useTableCache({
+    questions: questions as IQuestionTemplate[],
+    tab: tab as string,
+  });
+  const setPageN = useCallback(
+    async (i: number) => {
+      if (tab !== "ai") {
+        const tmp = await withLoading(() => storeCache());
+        setFinalResults(tmp);
+      }
+      setIsCellSelected(structuredClone(resetCellSelected));
+      setSelectedOption("");
+      setQuestionIdx(i);
+    },
+    [resetCellSelected, storeCache],
+  );
+  useKeyBind({
+    maxPage: filterQuestionsWithAnswers.length,
+    pageN: questionIdx,
+    setPageN,
+  });
 
   // set table
   useEffect(() => {
@@ -118,222 +98,88 @@ export default function Page({ params }: Readonly<PageProps>) {
       }
     }
     if (isLoadingAuth) return;
-    if (credentials.length === 0) return;
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingAuth]);
 
-  // set selected table dimension when table is ready
-  useEffect(() => {
-    let newSelected = Array.from({ length: n_rows }, () =>
-      Array.from({ length: n_cols }, () => false),
-    );
-    setIsCellSelected(newSelected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableData]);
-
-  useEffect(() => {
-    // get cache
-    let isCacheSelected = false;
-    if (questions[questionIdx].identifier in finalResults) {
-      setIsCellSelected(finalResults[questions[questionIdx].identifier]);
-      const questionIdf = questions[questionIdx].identifier;
-      isCacheSelected =
-        "additionalRequire" in finalResults &&
-        questionIdf in finalResults.additionalRequire!;
-      if (isCacheSelected) {
-        const dropdownkey =
-          questions[questionIdx].additionalRequire!.dropdown.identifier;
-        console.log(finalResults.additionalRequire![questionIdf][dropdownkey]);
-        setSelectedOption(
-          finalResults.additionalRequire![questionIdf][dropdownkey],
-        );
-      }
-    }
-    // get default from question
-    if (
-      "additionalRequire" in questions[questionIdx] &&
-      "dropdown" in questions[questionIdx].additionalRequire! &&
-      !isCacheSelected
-    ) {
-      const newDefaultOption =
-        questions[questionIdx].additionalRequire!.dropdown.defaultOption;
-      setSelectedOption(newDefaultOption);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionIdx, finalResults]);
-
   return (
     <ProtectedRoute>
-      <section
-        className={`text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]
-        overflow-y-scroll overflow-x-hidden ${isLoadingv2 ? "animate-pulse" : ""}`}
-      >
-        <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
-          {isLoadingv2 && (
+      <PulseTemplate overflowY={true}>
+        <div className="overflow-x-hidden">
+          <div className="flex flex-col justify-center content-center items-center mt-[7rem]">
             <div
-              className="absolute left-1/2 top-1/2 
-              -translate-x-1/2 -translate-y-1/2"
-            >
-              <Spinner />
-              <span className="sr-only">Loading...</span>
-            </div>
-          )}
-          <div
-            className="flex flex-col mt-8 
+              className="flex flex-col mt-8 
             sm:w-2/3 w-screen
             p-10 space-y-2"
-          >
-            <div className="flex justify-between">
-              <h2 className="text-white text-lg mb-1 font-medium title-font">
-                AE Table Annotation
-              </h2>
-              <BackBtn />
-            </div>
-            <p className="leading-relaxed w-full">
-              A.E Table {params.table_id} from label {params.id}
-            </p>
-            <div className="flex justify-between items-center">
-              <div className="flex space-x-2 items-center">
-                {/* slidebar */}
-                {questions.map((q, idx) => {
-                  return (
-                    <span
-                      className={`relative flex ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
-                      key={q.displayName}
-                      onClick={async () => {
-                        const tmp = await withLoading(() => storeCache());
-                        setFinalResults(tmp);
-                        setIsCellSelected(structuredClone(resetCellSelected));
-                        setSelectedOption("");
-                        setQuestionIdx(idx);
-                      }}
-                    >
-                      <span
-                        className={`${questionIdx === idx ? "animate-ping" : ""} absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75`}
-                      ></span>
-                      <span
-                        className={`relative inline-flex rounded-full 
-                          hover:bg-sky-50 bg-sky-500 focus:bg-sky-950
-                          ${questionIdx === idx ? "h-3 w-3" : "h-2 w-2"}`}
-                      ></span>
-                    </span>
-                  );
-                })}
-                <button
-                  className={`bg-emerald-500 text-white
-                  hover:bg-emerald-300 transition
-                  rounded p-2 origin-left
-                  ${questionIdx === questions.length - 1 ? "scale-x-100 scale-y-100" : "scale-x-0 scale-y-0"}`}
-                  onClick={async () => {
-                    const tmp = await withLoading(() => storeCache());
-                    setFinalResults(tmp);
-                    if (credentials.length === 0) return;
-                    console.log(tmp);
-                    const addres = await withLoading(() =>
-                      addAnnotationByNameIdv2(
-                        tableData?.id!,
-                        AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
-                        tmp,
-                      ),
-                    );
-                    handleResponse(addres);
-                    if (addres.success) {
-                      router.back();
-                    }
-                  }}
-                >
-                  Submit
-                </button>
+            >
+              <div className="flex justify-between">
+                <h2 className="text-white text-lg mb-1 font-medium title-font">
+                  AE Table Annotation
+                </h2>
+                <BackBtn />
               </div>
-            </div>
-            <caption className="text-left">{tableData?.caption}</caption>
-            <p className="leading-none w-full text-white">
-              {questions[questionIdx].displayName}
-            </p>
-
-            <div
-              className={`transition
-                origin-top
-                ${"additionalRequire" in questions[questionIdx] ? "scale-y-100" : "scale-y-0"}`}
-            >
-              {"additionalRequire" in questions[questionIdx] && (
-                <Fragment>
-                  <DropDownBtn
-                    extraClassName="justify-end w-full
-                  bg-blue-500 hover:bg-blue-700
-                  text-black"
-                    onClick={() => {
-                      setIsOptionDropdownOpen(!isOptionDropdownOpen);
-                    }}
-                  >
-                    {
-                      questions[questionIdx].additionalRequire!.dropdown
-                        .displayName
-                    }
-                    :{" "}
-                    {
-                      questions[
-                        questionIdx
-                      ].additionalRequire!.dropdown.options.filter(
-                        (each) => each.type === selectedOption,
-                      )[0]?.displayName
-                    }
-                  </DropDownBtn>
-                  <div className="flex w-full justify-end h-0">
-                    <DropDownList
-                      selected={selectedOption}
-                      displayNameKey="displayName"
-                      selectionKey="type"
-                      allOptions={
-                        questions[questionIdx].additionalRequire!.dropdown
-                          .options
-                      }
-                      isOpen={isOptionDropdownOpen}
-                      setSelectionKey={(s) => {
-                        setSelectedOption(s);
-                      }}
-                      resetCallback={() => {
-                        setIsOptionDropdownOpen(false);
-                        // setAddUserInfo((prev) => ({...prev, role: UserRoleEnum.USER}))
-                      }}
-                    />
-                  </div>
-                </Fragment>
-              )}
-            </div>
-
-            <div
-              className="overflow-x-auto 
-              flex flex-col w-full"
-            >
-              {tableData && (
-                <Table
+              <p className="leading-relaxed w-full">
+                A.E Table {params.table_id} from label {params.id}
+              </p>
+              <div className="flex justify-between items-center">
+                <AnnotateProgressBar
                   {...{
-                    content: {
-                      table: tableData.content.table,
-                    } as IBaseTable,
-                    keyname: "table",
-                    isSelectable: {
-                      table: switch_map(
-                        row_map,
-                        cell_map,
-                        col_map,
-                        none_map,
-                        questions[questionIdx].mapMode,
-                      ),
-                    },
-                    isSelected: {
-                      table: isCellSelected,
-                    },
-                    setIsCellSelected,
+                    questions:
+                      filterQuestionsWithAnswers as IQuestionTemplate[],
+                    pageN: questionIdx,
+                    setPageN,
+                    submit_callback:
+                      tab !== "ai"
+                        ? async () => {
+                            const tmp = await withLoading(() => storeCache());
+                            setFinalResults(tmp);
+                            console.log(tmp);
+                            const addres = await withLoading(() =>
+                              addAnnotationByNameIdv2(
+                                tableData?.id!,
+                                AnnotationCategoryEnum.ADVERSE_EFFECT_TABLE,
+                                tmp,
+                              ),
+                            );
+                            handleResponse(addres);
+                            console.log(addres);
+                            if (addres.success) {
+                              const params_ = new URLSearchParams();
+                              params_.append("annotation_id", addres.data.id);
+                              params_.append("category", addres.data.category);
+                              router.push(`/annotate/bundle?${params_}`);
+                            }
+                          }
+                        : undefined,
                   }}
                 />
-              )}
+              </div>
+              <caption className="text-left">{tableData?.caption}</caption>
+              <p className="leading-none w-full text-white">
+                {questions[questionIdx].displayName}
+              </p>
+              <AnnotateDropdown
+                {...{
+                  questions: filterQuestionsWithAnswers as IQuestionTemplate[],
+                  questionIdx,
+                  selectedOption,
+                  setSelectedOption,
+                  isEnabled: tab !== "ai",
+                }}
+              />
+              <AnnotateTable
+                {...{
+                  tableData: tableData as IAdverseEffectTable,
+                  mapMode:
+                    tab !== "ai" ? questions[questionIdx].mapMode : "none",
+                  isCellSelected,
+                  setIsCellSelected,
+                }}
+              />
             </div>
           </div>
         </div>
-      </section>
+      </PulseTemplate>
     </ProtectedRoute>
   );
 }

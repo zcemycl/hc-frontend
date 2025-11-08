@@ -17,7 +17,7 @@ export default function Component() {
   const { isLoadingv2 } = useLoader();
 
   return (
-    <div>
+    <div className="pb-28 mb-3 sm:pb-10">
       <section
         className={`text-gray-400 bg-gray-900 body-font 
           ${isLoadingv2 ? "animate-pulse" : ""}`}
@@ -67,7 +67,7 @@ export default function Component() {
             </div>
             <HomeStats />
           </div>
-          <div className="w-[600px] h-[300px] rounded-lg sm:mt-6 md:mt-0">
+          <div className="w-[600px] h-[300px] rounded-lg sm:mt-6 md:mt-0 relative">
             <Image
               className="object-none md:object-center object-top 
                 w-full h-full overflow-visible"

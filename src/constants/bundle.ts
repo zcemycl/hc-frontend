@@ -5,4 +5,9 @@ const defaultBundleConfig = {
   description: "",
 } as IBundleConfig;
 
-export { defaultBundleConfig };
+enum BundleConnectEnum {
+  FDALABEL = "fdalabel",
+  ANNOTATION = "annotation",
+}
+
+export { defaultBundleConfig, BundleConnectEnum };

@@ -1,42 +1,70 @@
 "use client";
 
-import { DiscoveryContext, useAuth } from "@/contexts";
+import { DiscoveryContext, useAuth, useLoader } from "@/contexts";
 import VisPanel from "./vis-panel";
-import { useEffect, useRef, useState } from "react";
-import { IEdge, INode, IFlagAttrs, IBundleConfig, IBundle } from "@/types";
-import { Modal, ProtectedRoute } from "@/components";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  IEdge,
+  INode,
+  IFlagAttrs,
+  IBundleConfig,
+  IBundle,
+  IVisibilityMap,
+} from "@/types";
+import {
+  EditBundleModal,
+  HandleNotOKResponseModal,
+  ProtectedRoute,
+  PulseTemplate,
+} from "@/components";
+import {
+  BundleConnectEnum,
   defaultBundleConfig,
   GraphDirectionEnum,
   GraphTabEnum,
   GraphTypeEnum,
+  toggleOptions,
 } from "@/constants";
 import { Network } from "vis-network";
 import { useDbsHealth, useApiHandler } from "@/hooks";
 import { NODE_MINUS_ICON_URI, NODE_PLUS_ICON_URI } from "@/icons/bootstrap";
-import { createBundleByUserIdv2, fetchBundlesByUserIdv2 } from "@/http/backend";
+import {
+  createBundleByUserIdv2,
+  fetchBundlesByUserIdv2,
+  fetchBundlesCountByUserIdv2,
+} from "@/http/backend";
 import { useSearchParams } from "next/navigation";
 
 export default function Discovery() {
+  const { withGenericLoading } = useLoader();
   const { handleResponse } = useApiHandler();
   const searchParams = useSearchParams();
   const { userId } = useAuth();
   const { isNeo4JHealthy, neo4jHealthMsg } = useDbsHealth();
+  // visjs handler obects
   const visJsRef = useRef<HTMLDivElement>(null);
   const visToolBarRef = useRef<HTMLDivElement>(null);
   const [net, setNet] = useState<Network | null>(null);
+  // graph toolbar open
   const [openToolBar, setOpenToolBar] = useState<boolean>(
     searchParams.get("therapeutic_area") !== undefined,
   );
-  const [openSearchCanvas, setOpenSearchCanvas] = useState<boolean>(false);
+  const nPerPage = 5;
+  const [loadingCountLocal, setLoadingCountLocal] = useState(0);
+  const isLoadingLocal = loadingCountLocal > 0;
+  // bundle tab
   const [openBundleModal, setOpenBundleModal] = useState<boolean>(false);
   const [bundleConfig, setBundleConfig] = useState<IBundleConfig>({
     ...defaultBundleConfig,
   });
   const [bundles, setBundles] = useState<IBundle[]>([]);
+  const [bundlesCount, setBundlesCount] = useState<number>(0);
+  const [pageNBundles, setPageNBundles] = useState(0);
+  // filter search term
   const [term, setTerm] = useState<string>(
     searchParams.get("product_name") ?? "",
   );
+  // current tab name
   const [tab, setTab] = useState<GraphTabEnum>(
     searchParams.get("therapeutic_area")
       ? searchParams.get("product_name")
@@ -44,28 +72,55 @@ export default function Discovery() {
         : GraphTabEnum.initialisation
       : GraphTabEnum.information,
   );
+  // node path to drug
   const [path, setPath] = useState<string[]>([]);
+  // all nodes and edges from fetch graph
   const [nodes, setNodes] = useState<INode[]>([]);
   const [edges, setEdges] = useState<IEdge[]>([]);
   const [dNodes, setDNodes] = useState<any>(null);
   const [dEdges, setDEdges] = useState<any>(null);
+  const [hiddenAll, setHiddenAll] = useState<boolean>(false);
+  const [hiddenType, setHiddenType] = useState<IVisibilityMap>(() =>
+    Object.fromEntries(toggleOptions.map((opt) => [opt.key, false])),
+  );
+  const [hiddenNodes, setHiddenNodes] = useState<IVisibilityMap>(() =>
+    Object.fromEntries(nodes.map((node) => [node.id, false])),
+  );
+  // for info tab displaying chain
   const [selectedNodes, setSelectedNodes] = useState<INode[]>([]);
+  // for multi select nodes for drugs
   const [multiSelectNodes, setMultiSelectNodes] = useState<INode[]>([]);
   const [prevSignal, setPrevSignal] = useState<string>("False");
-  const [oncePlusSignal, setOncePlusSignal] = useState<number>(0);
+  // for flag tab, including ta names, max no of nodes, etc.
   const [flagAttrs, setFlagAttrs] = useState<IFlagAttrs>({
     name: searchParams.get("therapeutic_area") ?? "Neoplasms",
     numNodes: 100,
     offset: 0,
     maxLevel: 6,
   });
+  // therapeutic area id for search
   const initTAId = searchParams.get("therapeutic_area_id") ?? null;
+  // for settings tab
   const [settings, defineSettings] = useState<any>({
     graph_type: GraphTypeEnum.radial,
     graph_direction: GraphDirectionEnum.leftright,
     enabled_physics: true,
     physics_stabilisation: true,
   });
+
+  const withLoadingLocal = async <T,>(fn: () => Promise<T>): Promise<T> => {
+    return withGenericLoading(fn, setLoadingCountLocal);
+  };
+
+  useEffect(() => {
+    setSelectedNodes([]);
+    setMultiSelectNodes([]);
+    setHiddenAll(false);
+    setHiddenType(
+      Object.fromEntries(toggleOptions.map((opt) => [opt.key, false])),
+    );
+    setHiddenNodes(Object.fromEntries(nodes.map((node) => [node.id, false])));
+  }, [nodes]);
 
   useEffect(() => {
     if (!net || !visToolBarRef.current) return;
@@ -85,16 +140,38 @@ export default function Discovery() {
     });
   }, [openToolBar]);
 
+  const fetchBundlesCallback = useCallback(async () => {
+    const [tmpBundlesRes, tmpBundlesCount] = await withLoadingLocal(() =>
+      Promise.all([
+        fetchBundlesByUserIdv2(
+          userId as number,
+          nPerPage * pageNBundles,
+          nPerPage,
+          BundleConnectEnum.FDALABEL,
+        ),
+        fetchBundlesCountByUserIdv2(
+          userId as number,
+          BundleConnectEnum.FDALABEL,
+        ),
+      ]),
+    );
+    if (!tmpBundlesRes.success) handleResponse(tmpBundlesRes);
+    setBundles(tmpBundlesRes.data ?? []);
+    if (!tmpBundlesCount) handleResponse(tmpBundlesCount);
+    setBundlesCount(tmpBundlesCount.data ?? 0);
+    console.log("bundles", tmpBundlesRes.data ?? [], tmpBundlesCount);
+  }, [userId, pageNBundles]);
+
   return (
     <ProtectedRoute>
+      {/* LocalContext */}
       <DiscoveryContext.Provider
         value={{
+          nPerPage,
           tab,
           setTab,
           openToolBar,
           setOpenToolBar,
-          openSearchCanvas,
-          setOpenSearchCanvas,
           selectedNodes,
           setSelectedNodes,
           multiSelectNodes,
@@ -118,23 +195,36 @@ export default function Discovery() {
           neo4jHealthMsg,
           prevSignal,
           setPrevSignal,
-          oncePlusSignal,
-          setOncePlusSignal,
           openBundleModal,
           setOpenBundleModal,
           bundleConfig,
           setBundleConfig,
           bundles,
           setBundles,
+          bundlesCount,
+          setBundlesCount,
+          pageNBundles,
+          setPageNBundles,
           term,
           setTerm,
           path,
           setPath,
           initTAId,
+          loadingCountLocal,
+          isLoadingLocal,
+          fetchBundlesCallback,
+          withLoadingLocal,
+          hiddenAll,
+          setHiddenAll,
+          hiddenType,
+          setHiddenType,
+          hiddenNodes,
+          setHiddenNodes,
         }}
       >
-        <section className="text-gray-400 bg-gray-900 body-font h-[81vh] sm:h-[89vh]">
-          <div className="flex flex-col container pt-24 mx-auto px-10">
+        <PulseTemplate overflowY={false} overflowX={false}>
+          <HandleNotOKResponseModal />
+          <div className="flex flex-col container pt-24 mx-auto px-2 sm:px-10">
             <div className="sm:w-1/2 flex flex-col w-screen space-y-2">
               <h2 className="text-white text-lg mb-1 font-medium title-font space-x-1 flex flex-row">
                 <span>Discovery</span>
@@ -152,86 +242,30 @@ export default function Discovery() {
               </h2>
             </div>
             <VisPanel />
-            <Modal
+            <EditBundleModal
               {...{
-                title: "Add Bundle",
                 isOpenModal: openBundleModal,
                 setIsOpenModal: setOpenBundleModal,
+                title: "Add Bundle",
+                bundleConfig,
+                setBundleConfig,
+                submit_callback: async (bc: IBundleConfig) => {
+                  if (bc.name.trim() === "") {
+                    return;
+                  }
+                  const createBundleRes = await withLoadingLocal(() =>
+                    createBundleByUserIdv2(userId as number, bc),
+                  );
+                  if (!createBundleRes) handleResponse(createBundleRes);
+                  if (!createBundleRes.success) return;
+                  await fetchBundlesCallback();
+                  setBundleConfig({ ...defaultBundleConfig });
+                  setOpenBundleModal(false);
+                },
               }}
-            >
-              <div
-                className="flex flex-col space-y-2
-                  px-2 sm:px-5
-                  py-2 pb-5"
-              >
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-white">Name</label>
-                  <input
-                    type="text"
-                    value={bundleConfig.name}
-                    className="bg-slate-300 text-black w-full
-                          rounded-md p-2"
-                    onChange={(e) => {
-                      e.preventDefault();
-                      setBundleConfig({
-                        ...bundleConfig,
-                        name: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-white">Description</label>
-                  <textarea
-                    className="bg-slate-300 text-black w-full
-                        rounded-md p-2 min-w-20"
-                    value={bundleConfig.description}
-                    onChange={(e) => {
-                      e.preventDefault();
-                      setBundleConfig({
-                        ...bundleConfig,
-                        description: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <button
-                    className="bg-emerald-300 hover:bg-emerald-500
-                        rounded-lg
-                        px-4 py-2
-                        font-bold text-black"
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      console.log(bundleConfig);
-                      console.log(userId);
-                      if (bundleConfig.name.trim() === "") {
-                        return;
-                      }
-                      const createBundleRes = await createBundleByUserIdv2(
-                        userId as number,
-                        bundleConfig,
-                      );
-                      handleResponse(createBundleRes);
-                      if (!createBundleRes.success) return;
-                      const tmpBundlesRes = await fetchBundlesByUserIdv2(
-                        userId as number,
-                        0,
-                        5,
-                      );
-                      handleResponse(tmpBundlesRes);
-                      setBundles(tmpBundlesRes.data ?? []);
-                      setBundleConfig({ ...defaultBundleConfig });
-                      setOpenBundleModal(false);
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </Modal>
+            />
           </div>
-        </section>
+        </PulseTemplate>
       </DiscoveryContext.Provider>
     </ProtectedRoute>
   );

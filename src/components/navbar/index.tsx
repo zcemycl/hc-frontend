@@ -48,7 +48,7 @@ export default function NavBar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refDropDown, refMenuBtn]);
   return (
-    <header className="text-gray-400 bg-gray-900 body-font fixed w-full">
+    <header className="text-gray-400 bg-gray-900 body-font fixed w-full z-20">
       <div className="container justify-between mx-auto flex flex-wrap p-5 flex-row items-center">
         <div className="container justify-between flex">
           <Link
@@ -72,7 +72,10 @@ export default function NavBar() {
               );
             })}
           </nav>
-          <div className="ml-4 py-1 pl-4 border-l border-gray-700	flex items-center text-base justify-center">
+          <div
+            className="ml-4 py-1 pl-4 border-l border-gray-700	
+            flex items-center text-base justify-center"
+          >
             <Button />
             <DropDownBtn
               forwardRef={refMenuBtn}

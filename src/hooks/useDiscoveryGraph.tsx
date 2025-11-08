@@ -22,7 +22,7 @@ const useDiscoveryGraph = () => {
     setPath,
   } = useContext(DiscoveryContext);
 
-  const retrieve_path_nodes_edges = (targetNodeId: number) => {
+  const retrieve_path_nodes_edges = (targetNodeId: number | string) => {
     let pathEdges = [];
     let pathNodes = [targetNodeId];
     let currentNode = targetNodeId;
@@ -61,8 +61,44 @@ const useDiscoveryGraph = () => {
     );
   };
 
+  const trace_node_callback = (nodeid: number | string, net_: Network) => {
+    const { pathEdges, pathNodes } = retrieve_path_nodes_edges(nodeid);
+    setSelectedNodes(nodes.filter((v: INode) => pathNodes.includes(v.id)));
+    trace_node_path_with_color(pathEdges, net_);
+  };
+
+  const move_network = (net_: Network, nodeid: number | string) => {
+    const pos = net_.getPositions([nodeid])[nodeid];
+    let offset = { x: 0, y: 0 };
+    if (
+      visToolBarRef !== null &&
+      visToolBarRef.current !== null &&
+      visToolBarRef !== undefined
+    ) {
+      const { width: offsetx, height: offsety } = (
+        visToolBarRef.current as any
+      ).getBoundingClientRect();
+      offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
+    }
+    net_?.moveTo({
+      position: pos,
+      offset: offset,
+      animation: true,
+    });
+  };
+
   const setUpNetwork = () => {
     const tmpDNodes = new DataSet(nodes);
+    tmpDNodes.on("*", (event, properties, senderId) => {
+      console.log(
+        "event:",
+        event,
+        "properties:",
+        properties,
+        "senderId:",
+        senderId,
+      );
+    });
     const tmpDEdges = new DataSet(edges);
     setDNodes(tmpDNodes);
     setDEdges(tmpDEdges);
@@ -84,37 +120,18 @@ const useDiscoveryGraph = () => {
       });
     });
     network?.on("click", (e: any) => {
-      console.log(e);
       if (e.nodes.length >= 1) {
         setMultiSelectNodes(nodes.filter((v: INode) => e.nodes.includes(v.id)));
         // make sure last selected node to be center
         const nodeId = e.nodes[e.nodes.length - 1];
-
-        const { x, y } = network.getPositions([nodeId])[nodeId];
-        const { width: offsetx, height: offsety } = (
-          visToolBarRef.current as any
-        ).getBoundingClientRect();
-        const offset = { x: offsety > 60 ? -offsetx / 2 : 0, y: 0 };
-        network?.moveTo({
-          position: { x, y },
-          offset,
-          animation: true, // default duration is 1000ms and default easingFunction is easeInOutQuad.
-        });
-
-        const { pathEdges, pathNodes } = retrieve_path_nodes_edges(nodeId);
-
-        setSelectedNodes(nodes.filter((v: INode) => pathNodes.includes(v.id)));
-        console.log(pathEdges);
-        trace_node_path_with_color(pathEdges, network);
+        move_network(network, nodeId);
+        trace_node_callback(nodeId, network);
       } else {
         // net?.releaseNode();
         // net?.redraw();
       }
     });
     // network?.on("oncontext", (e: any) => {
-    //   setOpenSearchCanvas((prev: boolean) => {
-    //     return !prev;
-    //   })
     // });
     network.on("stabilizationProgress", (params: any) => {
       const widthFactor = params.iterations / params.total;
@@ -137,12 +154,11 @@ const useDiscoveryGraph = () => {
   };
 
   useEffect(() => {
-    let network_: any = null;
+    let network_: Network | null = null;
     if (visJsRef.current && !isLoadingv2) {
       setIsDrawingGraph(true);
       network_ = setUpNetwork();
     }
-    // return () => network_?.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visJsRef, settings, isLoadingv2]);
 
@@ -150,6 +166,8 @@ const useDiscoveryGraph = () => {
     setUpNetwork,
     retrieve_path_nodes_edges,
     trace_node_path_with_color,
+    move_network,
+    trace_node_callback,
   };
 };
 

@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { ApiResult } from "./api";
+import { AnnotationCategoryEnum } from "./history";
 
 export type IFdaSecAvailVers = Record<string, string[] | null>;
 
